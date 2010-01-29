@@ -1,0 +1,7 @@
+*.pyc
+*~
+.*.swp
+\#*#
+/secrets.py
+.DS_Store
+._*
