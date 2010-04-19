@@ -225,6 +225,9 @@ class OrderItem(models.Model):
         verbose_name = _('order item')
         verbose_name_plural = _('order items')
 
+    def get_price(self):
+        return self.product.get_price(currency=self.order.currency)
+
     @property
     def unit_price(self):
         if pasta_settings.PASTA_PRICE_INCLUDES_TAX:
@@ -240,20 +243,21 @@ class OrderItem(models.Model):
     @property
     def line_item_discount(self):
         if pasta_settings.PASTA_PRICE_INCLUDES_TAX:
-            return self._discount * (1+self.product.tax_class.rate/100)
-        return self._discount
+            price = self.get_price()
+            return self._line_item_discount * (1+price.tax_class.rate/100)
+        return self._line_item_discount
+
+    @property
+    def discounted_line_item_price(self):
+        if self._line_item_discount:
+            return self.line_item_price - self._line_item_discount
+        return self.line_item_price
 
     @property
     def total(self):
         if pasta_settings.PASTA_PRICE_INCLUDES_TAX:
-            return self.subtotal
-        return self.subtotal + self._line_item_tax
-
-    @property
-    def subtotal(self):
-        if self.discount:
-            return self.line_item_price - self.discount
-        return self.line_item_price
+            return self.discounted_line_item_price
+        return self.discounted_line_item_price + self._line_item_tax
 
 
 class OrderStatus(models.Model):
