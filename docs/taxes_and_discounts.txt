@@ -15,7 +15,7 @@ Line item subtotal excl. tax:  92.40
 Line item tax:                  7.60
 
 Discount 20% on paid amount:   18.48
-Stupid discount calculation:   20.00 (WRONG, 1.52 too much)
+Stupid discount calculation:   20.00 (WRONG, 1.52 too much, = 7.6 * 0.2)
 
 Applying 20% discount should yield an order total of 80.00
 

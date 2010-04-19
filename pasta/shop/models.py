@@ -137,13 +137,13 @@ class Order(models.Model):
             # Recalculate item stuff
             item._line_item_price = item.quantity * item._unit_price
             item.line_item_tax = item.quantity * item.unit_tax
-            item.discount = 0 # TODO: No discount handling implemented yet
+            item._line_item_discount = 0 # TODO: No discount handling implemented yet
             item.save()
 
             # Order stuff
             self.items_subtotal += item._line_item_price
             self.items_tax += item.line_item_tax
-            self.items_discount += item.discount
+            self.items_discount += item._line_item_discount
 
         # TODO: Apply order discounts
 
@@ -203,18 +203,21 @@ class OrderItem(models.Model):
     quantity = models.IntegerField(_('quantity'))
 
     _unit_price = models.DecimalField(_('unit price'),
-        max_digits=18, decimal_places=10)
+        max_digits=18, decimal_places=10,
+        help_text=_('Unit price excl. tax'))
     unit_tax = models.DecimalField(_('unit tax'),
         max_digits=18, decimal_places=10)
 
     _line_item_price = models.DecimalField(_('line item price'),
-        max_digits=18, decimal_places=10, default=0)
+        max_digits=18, decimal_places=10, default=0,
+        help_text=_('Line item price excl. tax'))
     line_item_tax = models.DecimalField(_('line item tax'),
         max_digits=18, decimal_places=10, default=0)
 
-    discount = models.DecimalField(_('discount'),
+    _line_item_discount = models.DecimalField(_('discount'),
         max_digits=18, decimal_places=10,
-        blank=True, null=True)
+        blank=True, null=True,
+        help_text=_('Discount excl. tax'))
 
     class Meta:
         ordering = ('product',)
@@ -233,6 +236,12 @@ class OrderItem(models.Model):
         if pasta_settings.PASTA_PRICE_INCLUDES_TAX:
             return self._line_item_price + self.line_item_tax
         return self._line_item_price
+
+    @property
+    def line_item_discount(self):
+        if pasta_settings.PASTA_PRICE_INCLUDES_TAX:
+            return self._discount * (1+self.product.tax_class.rate/100)
+        return self._discount
 
     @property
     def total(self):
