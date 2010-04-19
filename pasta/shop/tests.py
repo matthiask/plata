@@ -52,8 +52,11 @@ class OrderTest(TestCase):
 
         self.assertEqual(product.get_price(order.currency).currency, order.currency)
 
-        order.modify(product, 3)
-        item = order.modify(product, -1)
+        order.modify(product, 5)
+        order.modify(product, -4)
+        item = order.modify(product, 1)
+
+        self.assertEqual(order.items.count(), 1)
 
         self.assertEqual(item.quantity, 2)
 
