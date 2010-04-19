@@ -12,6 +12,7 @@ from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 
+from pasta import pasta_settings
 from pasta.product.models import Product
 
 
@@ -161,6 +162,8 @@ class Order(models.Model):
         Return OrderItem instance
         """
 
+        price = product.get_price(currency=self.currency)
+
         try:
             item = self.items.get(product=product)
         except self.items.model.DoesNotExist:
@@ -168,6 +171,8 @@ class Order(models.Model):
                 order=self,
                 product=product,
                 quantity=0,
+                _unit_price=price.unit_price_excl_tax,
+                unit_tax=price.unit_tax,
                 )
 
         item.quantity += change
@@ -182,56 +187,49 @@ class Order(models.Model):
         return item
 
 
-PASTA_PRICE_INCLUDES_TAX = True # Are prices shown with tax included or not?
-PASTA_DISCOUNT_INCLUDES_TAX = True # Are discounts applied before tax or not?
-
-
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items')
     product = models.ForeignKey(Product)
 
     quantity = models.IntegerField(_('quantity'))
 
-    _unit_price = models.DecimalField(_('unit price'), max_digits=18, decimal_places=10)
-    unit_tax = models.DecimalField(_('unit tax'), max_digits=18, decimal_places=10)
+    _unit_price = models.DecimalField(_('unit price'),
+        max_digits=18, decimal_places=10)
+    unit_tax = models.DecimalField(_('unit tax'),
+        max_digits=18, decimal_places=10)
 
-    _line_item_price = models.DecimalField(_('line item price'), max_digits=18, decimal_places=10)
-    line_item_tax = models.DecimalField(_('line item tax'), max_digits=18, decimal_places=10)
+    _line_item_price = models.DecimalField(_('line item price'),
+        max_digits=18, decimal_places=10, default=0)
+    line_item_tax = models.DecimalField(_('line item tax'),
+        max_digits=18, decimal_places=10, default=0)
 
-    discount = models.DecimalField(_('discount'), max_digits=18, decimal_places=10,
+    discount = models.DecimalField(_('discount'),
+        max_digits=18, decimal_places=10,
         blank=True, null=True)
 
     class Meta:
+        ordering = ('product',)
         unique_together = (('order', 'product'),)
         verbose_name = _('order item')
         verbose_name_plural = _('order items')
 
-    objects = OrderItemManager()
-
-    if PASTA_PRICE_INCLUDES_TAX:
-        @property
-        def unit_price(self):
+    @property
+    def unit_price(self):
+        if pasta_settings.PASTA_PRICE_INCLUDES_TAX:
             return self._unit_price + self.unit_tax
+        return self._unit_price
 
-        @property
-        def line_item_price(self):
+    @property
+    def line_item_price(self):
+        if pasta_settings.PASTA_PRICE_INCLUDES_TAX:
             return self._line_item_price + self.line_item_tax
+        return self._line_item_price
 
-        @property
-        def total(self):
+    @property
+    def total(self):
+        if pasta_settings.PASTA_PRICE_INCLUDES_TAX:
             return self.subtotal
-    else:
-        @property
-        def unit_price(self):
-            return self._unit_price
-
-        @property
-        def line_item_price(self):
-            return self._line_item_price
-
-        @property
-        def total(self):
-            return self.subtotal + self.line_item_tax
+        return self.subtotal + self.line_item_tax
 
     @property
     def subtotal(self):
@@ -261,10 +259,15 @@ class OrderStatus(models.Model):
 
 class OrderPayment(models.Model):
     order = models.ForeignKey(Order)
-    created = models.DateTimeField(_('created'), default=datetime.now)
+    timestamp = models.DateTimeField(_('created'), default=datetime.now)
 
     amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2)
-    payment_method = models.CharField(_('payment method'))
+    payment_method = models.CharField(_('payment method'), max_length=20)
+
+    class Meta:
+        ordering = ('-timestamp',)
+        verbose_name = _('order payment')
+        verbose_name_plural = _('order payments')
 
     def _recalculate_paid(self):
         paid = OrderPayment.objects.filter(order=self.order_id).aggregate(

@@ -3,8 +3,7 @@ from datetime import datetime
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-
-PASTA_PRICE_INCLUDES_TAX = True # Are prices shown with tax included or not?
+from pasta import pasta_settings
 
 
 class TaxClass(models.Model):
@@ -29,12 +28,8 @@ class Product(models.Model):
     def __unicode__(self):
         return self.name
 
-    def get_price(self):
-        return self.prices.latest()
-
-    @property
-    def unit_price(self):
-        return self.prices.latest().unit_price
+    def get_price(self, currency):
+        return self.prices.filter(currency=currency).latest()
 
 
 class ProductPrice(models.Model):
@@ -47,7 +42,7 @@ class ProductPrice(models.Model):
     _unit_price = models.DecimalField(_('unit price'), max_digits=18, decimal_places=10)
     tax_included = models.BooleanField(_('tax included'),
         help_text=_('Is tax included in given unit price?'),
-        default=PASTA_PRICE_INCLUDES_TAX)
+        default=pasta_settings.PASTA_PRICE_INCLUDES_TAX)
     currency = models.CharField(_('currency'), max_length=10)
 
     class Meta:
@@ -55,6 +50,10 @@ class ProductPrice(models.Model):
         ordering = ['-created']
         verbose_name = _('product price')
         verbose_name_plural = _('product prices')
+
+    @property
+    def unit_tax(self):
+        return self.unit_price_excl_tax * (self.tax_class.rate/100)
 
     @property
     def unit_price_incl_tax(self):
@@ -68,13 +67,11 @@ class ProductPrice(models.Model):
             return self._unit_price
         return self._unit_price / (1+self.tax_class.rate/100)
 
-    if PASTA_PRICE_INCLUDES_TAX:
-        @property
-        def unit_price(self):
+    @property
+    def unit_price(self):
+        if pasta_settings.PASTA_PRICE_INCLUDES_TAX:
             return self.unit_price_incl_tax
-    else:
-        @property
-        def unit_price(self):
+        else:
             return self.unit_price_excl_tax
 
 
