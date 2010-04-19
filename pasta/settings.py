@@ -97,10 +97,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
 
     'pasta.contact',
-    'pasta.discount',
-    'pasta.order',
     'pasta.payment',
     'pasta.product',
     'pasta.shop',
-    'pasta.tax',
 )

@@ -92,13 +92,24 @@ class Order(models.Model):
         help_text=_('ISO2 code'))
 
     currency = models.CharField(_('currency'), max_length=10)
-    subtotal = models.DecimalField(_('subtotal'), max_digits=10,
+
+    items_subtotal = models.DecimalField(_('subtotal'), max_digits=10,
         decimal_places=2, default=Decimal('0.00'))
-    discount = models.DecimalField(_('discount'), max_digits=10,
+    items_discount = models.DecimalField(_('items discount'), max_digits=10,
         decimal_places=2, default=Decimal('0.00'))
-    tax = models.DecimalField(_('Tax'), max_digits=10, decimal_places=2,
-        default=Decimal('0.00'),
-        help_text=_('Set tax rate to 0.0 to create an invoice without a tax line.'))
+    items_tax = models.DecimalField(_('items tax'), max_digits=10,
+        decimal_places=2, default=Decimal('0.00'))
+
+    order_discount = models.DecimalField(_('order discount'), max_digits=10,
+        decimal_places=2, default=Decimal('0.00'))
+    #order_tax = ...
+    #order_shipping = ...
+
+
+    tax_amount = models.DecimalField(_('Tax amount'), max_digits=10, decimal_places=2,
+        default=Decimal('0.00'))
+    shipping = models.DecimalField(_('shipping'), max_digits=10,
+        decimal_places=2, default=Decimal('0.00'))
     total = models.DecimalField(_('total'), max_digits=10, decimal_places=2,
         default=Decimal('0.00'))
 
@@ -117,6 +128,24 @@ class Order(models.Model):
     def __unicode__(self):
         return u'Order #%d' % self.pk
 
+    def recalculate_total(self, save=True):
+        self.subtotal = self.discount = self.tax_amount = self.shipping = self.total = 0
+
+        for item in self.items.all():
+            self.items_subtotal += item.line_item_price
+            self.items_tax += item.line_item_tax
+            self.items_discount += item.discount
+
+        self.order_subtotal = self.items_subtotal + self.items_tax - self.items_discount
+        self.total = self.discounted_subtotal + self.tax_amount + self.shipping
+
+        if save:
+            self.save()
+
+    @property
+    def discounted_subtotal(self):
+        return self.subtotal - self.discount
+
     @property
     def balance_remaining(self):
         return (self.total - self.paid).quantize(Decimal('0.00'))
@@ -125,30 +154,96 @@ class Order(models.Model):
     def is_paid(self):
         return self.balance_remaining <= 0
 
+    def modify(self, product, change, recalculate=True):
+        """
+        Update order with the given product
+
+        Return OrderItem instance
+        """
+
+        try:
+            item = self.items.get(product=product)
+        except self.items.model.DoesNotExist:
+            item = self.items.model(
+                order=self,
+                product=product,
+                quantity=0,
+                )
+
+        item.quantity += change
+        item.save()
+
+        if recalculate:
+            self.recalculate_total()
+            # Reload item instance from DB to preserve field values
+            # changed in recalculate_total
+            item = self.items.get(pk=item.pk)
+
+        return item
+
+
+PASTA_PRICE_INCLUDES_TAX = True # Are prices shown with tax included or not?
+PASTA_DISCOUNT_INCLUDES_TAX = True # Are discounts applied before tax or not?
+
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order)
+    order = models.ForeignKey(Order, related_name='items')
     product = models.ForeignKey(Product)
 
-    quantity = models.IntegerField(_('amount'))
+    quantity = models.IntegerField(_('quantity'))
 
-    unit_price = models.DecimalField(_('unit price'), max_digits=18, decimal_places=10)
+    _unit_price = models.DecimalField(_('unit price'), max_digits=18, decimal_places=10)
     unit_tax = models.DecimalField(_('unit tax'), max_digits=18, decimal_places=10)
 
-    line_item_price = models.DecimalField(_('line item price'), max_digits=18, decimal_places=10)
+    _line_item_price = models.DecimalField(_('line item price'), max_digits=18, decimal_places=10)
     line_item_tax = models.DecimalField(_('line item tax'), max_digits=18, decimal_places=10)
 
-    discount = models.DecimalField(_('discount'), max_digits=18, decimal_places=10)
+    discount = models.DecimalField(_('discount'), max_digits=18, decimal_places=10,
+        blank=True, null=True)
 
     class Meta:
+        unique_together = (('order', 'product'),)
         verbose_name = _('order item')
         verbose_name_plural = _('order items')
+
+    objects = OrderItemManager()
+
+    if PASTA_PRICE_INCLUDES_TAX:
+        @property
+        def unit_price(self):
+            return self._unit_price + self.unit_tax
+
+        @property
+        def line_item_price(self):
+            return self._line_item_price + self.line_item_tax
+
+        @property
+        def total(self):
+            return self.subtotal
+    else:
+        @property
+        def unit_price(self):
+            return self._unit_price
+
+        @property
+        def line_item_price(self):
+            return self._line_item_price
+
+        @property
+        def total(self):
+            return self.subtotal + self.line_item_tax
+
+    @property
+    def subtotal(self):
+        if self.discount:
+            return self.line_item_price - self.discount
+        return self.line_item_price
 
 
 class OrderStatus(models.Model):
     order = models.ForeignKey(Order)
     created = models.DateTimeField(_('created'), default=datetime.now)
-    status = models.CharField(_('status'), max_length=20, choices=STATUS_CHOICES)
+    status = models.CharField(_('status'), max_length=20, choices=Order.STATUS_CHOICES)
     notes = models.TextField(_('notes'), blank=True)
 
     class Meta:
@@ -169,6 +264,7 @@ class OrderPayment(models.Model):
     created = models.DateTimeField(_('created'), default=datetime.now)
 
     amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2)
+    payment_method = models.CharField(_('payment method'))
 
     def _recalculate_paid(self):
         paid = OrderPayment.objects.filter(order=self.order_id).aggregate(
@@ -185,130 +281,6 @@ class OrderPayment(models.Model):
         self._recalculate_paid()
 
 
-
-class Shop(object):
-    def get_urls(self):
-        from django.conf.urls.defaults import patterns, url
-
-        return patterns('',
-            url(r'^cart/$', self.cart, name='pasta_shop_cart'),
-            url(r'^checkout/$', self.checkout, name='pasta_shop_checkout'),
-            url(r'^confirmation/$', self.confirmation, name='pasta_shop_confirmation'),
-            )
-
-    @property
-    def urls(self):
-        return self.get_urls()
-
-
-    def get_product_model(self):
-        if not hasattr(self, '_product_model'):
-            self._product_model = type('Product', (ProductBase,), {})
-        return self._product_model
-
-    def get_order_model(self):
-        if not hasattr(self, '_order_model'):
-            self._order_model = type('Order', (OrderBase,), {})
-        return self._order_model
-
-    def get_orderitem_model(self):
-        return self.order_model.items.related.model
-
-    @property
-    def product_model(self):
-        return self.get_product_model()
-
-    @property
-    def order_model(self):
-        return self.get_order_model()
-
-    def order_from_request(self, request, create=False):
-        try:
-            return self.order_model.objects.get(pk=request.session.get('shop_order'))
-        except (ValueError, self.order_model.DoesNotExist):
-            if create:
-                order = self.order_model.objects.create()
-                request.session['shop_order'] = order.pk
-                return order
-
-        return None
-
-    def contact_from_request(self, request, create=False):
-        # TODO: check whether user is logged in, reuse information
-        try:
-            return self.contact_model.objects.get(pk=request.session.get('shop_contact'))
-        except (ValueError, self.contact_model.DoesNotExist):
-            if create:
-                contact = self.contact_model.objects.create()
-                request.session['shop_contact'] = contact.pk
-                return contact
-
-        return None
-
-
-    def get_context(self, request, context):
-        instance = RequestContext(request, self.get_extra_context(request))
-        instance.update(context)
-        return instance
-
-
-    def cart(self, request):
-        order = self.order_from_request(request, create=False)
-
-        OrderItemFormset = inlineformset_factory(
-            self.order_model,
-            self.get_orderitem_model(),
-            extra=0)
-
-        if request.method == 'POST':
-            formset = OrderItemFormset(request.POST, instance=order)
-
-            if formset.is_valid():
-                formset.save()
-
-                messages.success(request, _('The cart has been updated.'))
-
-                return HttpResponseRedirect('.')
-        else:
-            formset = OrderItemFormset(instance=order)
-
-        return self.render_cart(request, {
-            'order': order,
-            'orderitemformset': formset,
-            'empty': request.GET.get('empty', False), # Whether the cart is empty.
-                                                      # Flag gets set by checkout view.
-            })
-
-    def render_cart(self, request, context):
-        return render_to_response('pasta/shop_cart.html',
-            self.get_context(request, context))
-
-    def checkout(self, request):
-        order = self.order_from_request(request, create=False)
-
-        if not order:
-            return HttpResponseRedirect(reverse('pasta_shop_cart') + '?empty=1')
-
-        OrderForm = modelform_factory(self.order_model)
-
-        if request.method == 'POST':
-            form = OrderForm(request.POST, instance=order)
-
-            if form.is_valid():
-                form.save()
-
-                return redirect('pasta_shop_confirmation')
-        else:
-            form = OrderForm(instance=order)
-
-        return render_checkout(request, {
-            'order': order,
-            'orderform': form,
-            })
-
-    def render_checkout(self, request, context):
-        return render_to_response('pasta/shop_checkout.html',
-            self.get_context(request, context))
 
 
 class OrderProcessor(object):
@@ -396,26 +368,6 @@ OldOrder.register_processor(21, AutomaticDiscount)
 OldOrder.register_processor(30, TaxProcessor)
 OldOrder.register_processor(40, ShippingProcessor)
 OldOrder.register_processor(50, AmountDiscount)
-
-
-
-class OrderItem(models.Model):
-    order = models.ForeignKey(Order)
-    product = models.ForeignKey(Product)
-
-    quantity = models.IntegerField(_('amount'))
-
-    """
-    unit_price = models.DecimalField(_('unit price'), max_digits=18, decimal_places=10)
-    unit_tax = models.DecimalField(_('unit tax'), max_digits=18, decimal_places=10)
-
-    line_item_price = models.DecimalField(_('line item price'), max_digits=18, decimal_places=10)
-    line_item_tax = models.DecimalField(_('line item tax'), max_digits=18, decimal_places=10)
-
-    discount = models.DecimalField(_('discount'), max_digits=18, decimal_places=10)
-    """
-
-
 
 
 

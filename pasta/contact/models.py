@@ -51,8 +51,8 @@ class Address(models.Model):
     contact = models.ForeignKey(Contact, related_name='addresses',
         verbose_name=_('Person'))
 
-    billing = models.BooleanField(_('billing'))
-    shipping = models.BooleanField(_('shipping'))
+    is_billing = models.BooleanField(_('billing'))
+    is_shipping = models.BooleanField(_('shipping'))
 
     email = models.EmailField(_('e-mail address'), blank=True)
     website = models.URLField(verify_exists=False, blank=True)
@@ -78,9 +78,9 @@ class Address(models.Model):
 
     def __unicode__(self):
         types = []
-        if self.billing:
+        if self.is_billing:
             types.append(ugettext('billing'))
-        if self.shipping:
+        if self.is_shipping:
             types.append(ugettext('shipping'))
 
-        return (types and ugettext(' and ') or u'') + (_(' address of %s') % self.contact)
+        return (types and ugettext(' and ').join(types) + u' ' or u'') + (_('address of %s') % self.contact)
