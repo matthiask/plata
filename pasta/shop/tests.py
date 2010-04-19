@@ -51,3 +51,9 @@ class OrderTest(TestCase):
 
         self.assertEqual(item.quantity, 2)
 
+        self.assertAlmostEqual(order.items_subtotal,
+            Decimal('159.80') / Decimal('1.076'))
+        self.assertAlmostEqual(order.items_subtotal + order.items_tax,
+            Decimal('159.80'))
+
+        print order.__dict__

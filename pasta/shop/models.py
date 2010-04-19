@@ -101,8 +101,8 @@ class Order(models.Model):
     items_tax = models.DecimalField(_('items tax'), max_digits=10,
         decimal_places=2, default=Decimal('0.00'))
 
-    order_discount = models.DecimalField(_('order discount'), max_digits=10,
-        decimal_places=2, default=Decimal('0.00'))
+    #order_discount = models.DecimalField(_('order discount'), max_digits=10,
+    #    decimal_places=2, default=Decimal('0.00'))
     #order_tax = ...
     #order_shipping = ...
 
@@ -131,14 +131,23 @@ class Order(models.Model):
 
     def recalculate_total(self, save=True):
         self.subtotal = self.discount = self.tax_amount = self.shipping = self.total = 0
+        self.items_subtotal = self.items_tax = self.items_discount = 0
 
         for item in self.items.all():
-            self.items_subtotal += item.line_item_price
+            # Recalculate item stuff
+            item._line_item_price = item.quantity * item._unit_price
+            item.line_item_tax = item.quantity * item.unit_tax
+            item.discount = 0 # TODO: No discount handling implemented yet
+            item.save()
+
+            # Order stuff
+            self.items_subtotal += item._line_item_price
             self.items_tax += item.line_item_tax
             self.items_discount += item.discount
 
-        self.order_subtotal = self.items_subtotal + self.items_tax - self.items_discount
-        self.total = self.discounted_subtotal + self.tax_amount + self.shipping
+        # TODO: Apply order discounts
+
+        self.total = self.items_subtotal + self.items_tax - self.items_discount
 
         if save:
             self.save()
