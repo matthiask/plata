@@ -136,13 +136,13 @@ class Order(models.Model):
         for item in self.items.all():
             # Recalculate item stuff
             item._line_item_price = item.quantity * item._unit_price
-            item.line_item_tax = item.quantity * item.unit_tax
+            item._line_item_tax = item.quantity * item._unit_tax
             item._line_item_discount = 0 # TODO: No discount handling implemented yet
             item.save()
 
             # Order stuff
             self.items_subtotal += item._line_item_price
-            self.items_tax += item.line_item_tax
+            self.items_tax += item._line_item_tax
             self.items_discount += item._line_item_discount
 
         # TODO: Apply order discounts
@@ -181,7 +181,7 @@ class Order(models.Model):
                 product=product,
                 quantity=0,
                 _unit_price=price.unit_price_excl_tax,
-                unit_tax=price.unit_tax,
+                _unit_tax=price.unit_tax,
                 )
 
         item.quantity += change
@@ -205,13 +205,13 @@ class OrderItem(models.Model):
     _unit_price = models.DecimalField(_('unit price'),
         max_digits=18, decimal_places=10,
         help_text=_('Unit price excl. tax'))
-    unit_tax = models.DecimalField(_('unit tax'),
+    _unit_tax = models.DecimalField(_('unit tax'),
         max_digits=18, decimal_places=10)
 
     _line_item_price = models.DecimalField(_('line item price'),
         max_digits=18, decimal_places=10, default=0,
         help_text=_('Line item price excl. tax'))
-    line_item_tax = models.DecimalField(_('line item tax'),
+    _line_item_tax = models.DecimalField(_('line item tax'),
         max_digits=18, decimal_places=10, default=0)
 
     _line_item_discount = models.DecimalField(_('discount'),
@@ -228,13 +228,13 @@ class OrderItem(models.Model):
     @property
     def unit_price(self):
         if pasta_settings.PASTA_PRICE_INCLUDES_TAX:
-            return self._unit_price + self.unit_tax
+            return self._unit_price + self._unit_tax
         return self._unit_price
 
     @property
     def line_item_price(self):
         if pasta_settings.PASTA_PRICE_INCLUDES_TAX:
-            return self._line_item_price + self.line_item_tax
+            return self._line_item_price + self._line_item_tax
         return self._line_item_price
 
     @property
@@ -247,7 +247,7 @@ class OrderItem(models.Model):
     def total(self):
         if pasta_settings.PASTA_PRICE_INCLUDES_TAX:
             return self.subtotal
-        return self.subtotal + self.line_item_tax
+        return self.subtotal + self._line_item_tax
 
     @property
     def subtotal(self):
