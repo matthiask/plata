@@ -15,9 +15,15 @@ class OrderTest(TestCase):
 
     def create_contact(self):
         return Contact.objects.create(
+            billing_company=u'BigCorp',
             billing_first_name=u'Hans',
             billing_last_name=u'Muster',
+            billing_address=u'Musterstrasse 42',
+            billing_zip_code=u'8042',
+            billing_city=u'Beispielstadt',
+            billing_country=u'CH',
             shipping_same_as_billing=True,
+            currency='CHF',
             )
 
     def create_order(self, contact=None):

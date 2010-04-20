@@ -48,7 +48,8 @@ class Contact(models.Model):
     shipping_country = models.CharField(_('country'), max_length=2, blank=True,
         help_text=_('ISO2 code'))
 
-    currency = models.CharField(_('currency'), max_length=10)
+    currency = models.CharField(_('currency'), max_length=10,
+        help_text=_('Preferred currency.'))
 
     class Meta:
         verbose_name = _('contact')
