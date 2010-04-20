@@ -25,10 +25,10 @@ class Order(models.Model):
     COMPLETED = 40
 
     STATUS_CHOICES = (
-        (CART, _('is a cart')),
-        (CHECKOUT, _('checkout process started')),
-        (CONFIRMED, _('order has been confirmed')),
-        (COMPLETED, _('order has been completed')),
+        (CART, _('Is a cart')),
+        (CHECKOUT, _('Checkout process started')),
+        (CONFIRMED, _('Order has been confirmed')),
+        (COMPLETED, _('Order has been completed')),
         )
 
     ADDRESS_FIELDS = ['company', 'first_name', 'last_name', 'address',

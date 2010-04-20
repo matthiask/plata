@@ -1,0 +1,328 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-04-20 12:12+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+
+#: contact/admin.py:10 shop/admin.py:18
+msgid "Billing address"
+msgstr "Rechungsadresse"
+
+#: contact/admin.py:13 shop/admin.py:21
+msgid "Shipping address"
+msgstr "Lieferungsadresse"
+
+#: contact/admin.py:17 shop/admin.py:26
+msgid "Additional fields"
+msgstr "Zusätzliche Felder"
+
+#: contact/models.py:26
+msgid "user"
+msgstr "Benutzer"
+
+#: contact/models.py:27
+msgid "e-mail address"
+msgstr "E-Mail-Adresse"
+
+#: contact/models.py:28 product/models.py:38 shop/models.py:37
+#: shop/models.py:274 shop/models.py:293
+msgid "created"
+msgstr "Erstellt"
+
+#: contact/models.py:30 contact/models.py:42 shop/models.py:43
+#: shop/models.py:52
+msgid "company"
+msgstr "Firma"
+
+#: contact/models.py:31 contact/models.py:43 shop/models.py:44
+#: shop/models.py:53
+msgid "first name"
+msgstr "Vorname"
+
+#: contact/models.py:32 contact/models.py:44 shop/models.py:45
+#: shop/models.py:54
+msgid "last name"
+msgstr "Nachname"
+
+#: contact/models.py:33 contact/models.py:45 shop/models.py:46
+#: shop/models.py:55
+msgid "address"
+msgstr "Adresse"
+
+#: contact/models.py:34 contact/models.py:46 shop/models.py:47
+#: shop/models.py:56
+msgid "ZIP code"
+msgstr "PLZ"
+
+#: contact/models.py:35 contact/models.py:47 shop/models.py:48
+#: shop/models.py:57
+msgid "city"
+msgstr "Ort"
+
+#: contact/models.py:36 contact/models.py:48 shop/models.py:49
+#: shop/models.py:58
+msgid "country"
+msgstr "Land"
+
+#: contact/models.py:37 contact/models.py:49 shop/models.py:50
+#: shop/models.py:59
+msgid "ISO2 code"
+msgstr "ISO2-Code"
+
+#: contact/models.py:39
+msgid "shipping address equals billing address"
+msgstr "Lieferadresse gleich wie Rechnungsadresse"
+
+#: contact/models.py:51 product/models.py:46 shop/models.py:61
+#: shop/models.py:213
+msgid "currency"
+msgstr "Wärhung"
+
+#: contact/models.py:52
+msgid "Preferred currency."
+msgstr "Bevorzugte Währung."
+
+#: contact/models.py:54 shop/models.py:89 shop/models.py:276
+msgid "notes"
+msgstr "Bemerkungen"
+
+#: contact/models.py:57 shop/models.py:39
+msgid "contact"
+msgstr "Kontakt"
+
+#: contact/models.py:58
+msgid "contacts"
+msgstr "Kontakte"
+
+#: product/models.py:10 product/models.py:22
+msgid "name"
+msgstr "Name"
+
+#: product/models.py:11
+msgid "rate"
+msgstr "Rate"
+
+#: product/models.py:12
+msgid "priority"
+msgstr "Priorität"
+
+#: product/models.py:13
+msgid "Used to order the tax classes in the administration interface."
+msgstr "Verwendet, um die Steuerklassen zu sortieren."
+
+#: product/models.py:17 product/models.py:39
+msgid "tax class"
+msgstr "Steuerklasse"
+
+#: product/models.py:18
+msgid "tax classes"
+msgstr "Steuerklassen"
+
+#: product/models.py:23
+msgid "description"
+msgstr "Beschreibung"
+
+#: product/models.py:36 product/models.py:79
+msgid "product"
+msgstr "Produkt"
+
+#: product/models.py:42 shop/models.py:214
+msgid "unit price"
+msgstr "Einheitspreis"
+
+#: product/models.py:43
+msgid "tax included"
+msgstr "MwStenthalten"
+
+#: product/models.py:44
+msgid "Is tax included in given unit price?"
+msgstr "Ist die MwStim angegebenen Einheitspreis enthalten?"
+
+#: product/models.py:51
+msgid "product price"
+msgstr "Produktpreis"
+
+#: product/models.py:52
+msgid "product prices"
+msgstr "Produktpreise"
+
+#: product/models.py:81
+msgid "image"
+msgstr "Bild"
+
+#: product/models.py:83
+msgid "ordering"
+msgstr "Sortierung"
+
+#: product/models.py:87
+msgid "product image"
+msgstr "Produktbild"
+
+#: product/models.py:88
+msgid "product images"
+msgstr "Produktbilder"
+
+#: shop/__init__.py:66
+msgid "The cart has been updated."
+msgstr "Der Warenkorb wurde aktualisiert."
+
+#: shop/admin.py:24
+msgid "Order items"
+msgstr "Bestellte Einzelposten"
+
+#: shop/admin.py:25
+msgid "Total"
+msgstr "Total"
+
+#: shop/models.py:28
+msgid "Is a cart"
+msgstr "Ist ein Warenkorb"
+
+#: shop/models.py:29
+msgid "Checkout process started"
+msgstr "Bestellprozess wurde gestartet"
+
+#: shop/models.py:30
+msgid "Order has been confirmed"
+msgstr "Bestellung wurde bestätigt"
+
+#: shop/models.py:31
+msgid "Order has been completed"
+msgstr "Bestellung wurde abgeschlossen"
+
+#: shop/models.py:38
+msgid "modified"
+msgstr "Verändert"
+
+#: shop/models.py:63
+msgid "subtotal"
+msgstr "Subtotal"
+
+#: shop/models.py:65
+msgid "items discount"
+msgstr "Rabatt auf bestellte Einzelposten"
+
+#: shop/models.py:67
+msgid "items tax"
+msgstr "Steuer auf bestellte Einzelposten"
+
+#: shop/models.py:76
+msgid "Tax amount"
+msgstr "Steuerbetrag"
+
+#: shop/models.py:78
+msgid "shipping"
+msgstr "Lieferung"
+
+#: shop/models.py:80
+msgid "total"
+msgstr "Total"
+
+#: shop/models.py:83
+msgid "paid"
+msgstr "Bezahlt"
+
+#: shop/models.py:85
+msgid "This much has been paid already."
+msgstr "Soviel wurde schon bezahlt."
+
+#: shop/models.py:87 shop/models.py:275
+msgid "status"
+msgstr "Status"
+
+#: shop/models.py:92
+msgid "order"
+msgstr "Bestellung"
+
+#: shop/models.py:93
+msgid "orders"
+msgstr "Bestellungen"
+
+#: shop/models.py:140
+msgid "Order contains more than one currency."
+msgstr "Die Bestellung enthält mehr als eine Währung"
+
+#: shop/models.py:151
+msgid "Cannot modify order in checkout stage."
+msgstr "Kann Bestellung im Bestellprozess nicht mehr verändern."
+
+#: shop/models.py:197
+msgid "Cannot proceed to checkout without order items."
+msgstr "Kann Bestellprozess nicht starten, wenn keine Einzelposten gewählt wurden."
+
+#: shop/models.py:211
+msgid "quantity"
+msgstr "Menge"
+
+#: shop/models.py:216
+msgid "Unit price excl. tax"
+msgstr "Einheitspreis ohne MwSt"
+
+#: shop/models.py:217
+msgid "unit tax"
+msgstr "Steuer pro Einheit"
+
+#: shop/models.py:220
+msgid "line item price"
+msgstr "Einzelpostenpreis"
+
+#: shop/models.py:222
+msgid "Line item price excl. tax"
+msgstr "Einzelpostenpreis ohne MwSt"
+
+#: shop/models.py:223
+msgid "line item tax"
+msgstr "Steuer auf Einzelposten"
+
+#: shop/models.py:226
+msgid "discount"
+msgstr "Rabatt"
+
+#: shop/models.py:229
+msgid "Discount excl. tax"
+msgstr "Rabatt exkl. MwSt"
+
+#: shop/models.py:234
+msgid "order item"
+msgstr "Einzelposten"
+
+#: shop/models.py:235
+msgid "order items"
+msgstr "Einzelposten"
+
+#: shop/models.py:281
+msgid "order status"
+msgstr "Bestellstatus"
+
+#: shop/models.py:282
+msgid "order statuses"
+msgstr "Bestellstatusse"
+
+#: shop/models.py:295
+msgid "amount"
+msgstr "Betrag"
+
+#: shop/models.py:296
+msgid "payment method"
+msgstr "Zahlungsmethode"
+
+#: shop/models.py:300
+msgid "order payment"
+msgstr "Bezahlung"
+
+#: shop/models.py:301
+msgid "order payments"
+msgstr "Bezahlungen"
