@@ -13,6 +13,7 @@ class OrderStatusInline(admin.TabularInline):
     extra = 1
 
 admin.site.register(models.Order,
+    date_hierarchy='created',
     fieldsets=(
         (None, {'fields': ('created', 'modified', 'contact', 'status')}),
         (_('Billing address'), {'fields': ('billing_company', 'billing_first_name',
@@ -26,6 +27,8 @@ admin.site.register(models.Order,
         (_('Additional fields'), {'fields': ('notes',)}),
         ),
     inlines=[OrderItemInline, OrderStatusInline],
+    list_display=('__unicode__', 'created', 'contact', 'status', 'total'),
+    list_filter=('status',),
     raw_id_fields=('contact',),
     )
 

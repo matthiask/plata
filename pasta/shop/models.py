@@ -84,8 +84,8 @@ class Order(models.Model):
         default=Decimal('0.00'),
         help_text=_('This much has been paid already.'))
 
-    status = models.CharField(_('status'), max_length=20, choices=STATUS_CHOICES,
-        default=CART, db_index=True)
+    status = models.PositiveIntegerField(_('status'), choices=STATUS_CHOICES,
+        default=CART)
     notes = models.TextField(_('notes'), blank=True)
 
     class Meta:

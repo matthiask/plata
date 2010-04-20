@@ -17,19 +17,30 @@ class TaxClass(models.Model):
         verbose_name = _('tax class')
         verbose_name_plural = _('tax classes')
 
+    def __unicode__(self):
+        return self.name
+
 
 class Product(models.Model):
     name = models.CharField(_('name'), max_length=100)
     description = models.TextField(_('description'), blank=True)
 
     class Meta:
-        pass
+        verbose_name = _('product')
+        verbose_name_plural = _('products')
 
     def __unicode__(self):
         return self.name
 
-    def get_price(self, currency):
-        return self.prices.filter(currency=currency).latest()
+    def get_price(self, **kwargs):
+        return self.prices.filter(**kwargs).latest()
+
+
+def get_default_taxclass():
+    try:
+        return TaxClass.objects.all()[0]
+    except IndexError:
+        return None
 
 
 class ProductPrice(models.Model):
@@ -37,7 +48,7 @@ class ProductPrice(models.Model):
         related_name='prices')
     created = models.DateTimeField(_('created'), default=datetime.now)
     tax_class = models.ForeignKey(TaxClass, verbose_name=_('tax class'),
-        default=lambda: TaxClass.objects.all()[0])
+        default=get_default_taxclass)
 
     _unit_price = models.DecimalField(_('unit price'), max_digits=18, decimal_places=10)
     tax_included = models.BooleanField(_('tax included'),

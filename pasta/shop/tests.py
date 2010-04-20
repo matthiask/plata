@@ -105,7 +105,7 @@ class OrderTest(TestCase):
         product = self.create_product()
         order = self.create_order()
 
-        self.assertEqual(product.get_price(order.currency).currency, order.currency)
+        self.assertEqual(product.get_price(currency=order.currency).currency, order.currency)
 
         order.modify(product, 5)
         order.modify(product, -4)
