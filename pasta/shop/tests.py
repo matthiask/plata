@@ -131,7 +131,6 @@ class OrderTest(TestCase):
 
 
         self.assertAlmostEqual(item.unit_price, item_price)
-        self.assertAlmostEqual(item.line_item_price, line_item_price)
         self.assertAlmostEqual(item.line_item_discount, 0)
         self.assertAlmostEqual(item.discounted_subtotal, item.discounted_subtotal_incl_tax)
 
@@ -139,7 +138,6 @@ class OrderTest(TestCase):
         pasta_settings.PASTA_PRICE_INCLUDES_TAX = False
 
         self.assertAlmostEqual(item.unit_price, item_price / tax_factor)
-        self.assertAlmostEqual(item.line_item_price, line_item_price / tax_factor)
         self.assertAlmostEqual(item.line_item_discount, 0 / tax_factor)
         self.assertAlmostEqual(item.discounted_subtotal, item.discounted_subtotal_excl_tax)
 
@@ -216,3 +214,44 @@ class OrderTest(TestCase):
             code='order_sealed')
 
         self.assertEqual(order.status, Order.CHECKOUT)
+
+    def test_06_order_discount(self):
+        order = self.create_order()
+        p1 = self.create_product()
+        p2 = self.create_product()
+
+        order.modify(p1, 3)
+        #order.modify(p2, 5)
+
+        order.recalculate_total()
+        #self.assertAlmostEqual(order.total, Decimal('639.20'))
+
+        item = order.modify(p1, 0)
+
+        discount = Decimal('0.20')
+        tax_factor = Decimal('1.076')
+        item_price_incl_tax = Decimal('79.90')
+        item_price_excl_tax = item_price_incl_tax / tax_factor
+
+        # Apply 20% discount
+        item._line_item_discount = discount * item._line_item_price
+        item.save()
+
+        order.recalculate_total()
+        item = order.modify(p1, 0)
+
+        self.assertAlmostEqual(item.unit_price, item_price_incl_tax)
+        self.assertAlmostEqual(item.line_item_discount, item_price_incl_tax * 3 * discount)
+        self.assertAlmostEqual(item.discounted_subtotal, order.total)
+
+        pasta_settings.PASTA_PRICE_INCLUDES_TAX = False
+        order.recalculate_total()
+        item = order.modify(p1, 0)
+
+        self.assertAlmostEqual(item.unit_price, item_price_excl_tax)
+        self.assertAlmostEqual(item.line_item_discount, item_price_excl_tax * 3 * discount)
+        self.assertAlmostEqual(item.discounted_subtotal + order.items_tax, order.total)
+
+        pasta_settings.PASTA_PRICE_INCLUDES_TAX = True
+        order.recalculate_total()
+        item = order.modify(p1, 0)

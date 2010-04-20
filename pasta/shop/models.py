@@ -262,12 +262,6 @@ class OrderItem(models.Model):
         return self._unit_price
 
     @property
-    def line_item_price(self):
-        if pasta_settings.PASTA_PRICE_INCLUDES_TAX:
-            return self._line_item_price + self._line_item_tax
-        return self._line_item_price
-
-    @property
     def line_item_discount_excl_tax(self):
         return self._line_item_discount or 0
 
