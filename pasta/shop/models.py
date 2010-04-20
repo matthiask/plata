@@ -135,8 +135,8 @@ class Order(models.Model):
         A few self-checks. These should never fail under normal circumstances.
         """
 
-        currencies = self.items.distinct().values_list('currency', flat=True)
-        if len(currencies) > 1 or currencies[0] != self.currency:
+        currencies = set(self.items.values_list('currency', flat=True))
+        if len(currencies) > 1 or self.currency not in currencies:
             raise ValidationError(_('Order contains more than one currency.'))
 
     def modify(self, product, change, recalculate=True):
