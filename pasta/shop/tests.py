@@ -33,6 +33,16 @@ class OrderTest(TestCase):
             rate=Decimal('7.60'),
             )
 
+        tax_class_germany = TaxClass.objects.create(
+            name='Umsatzsteuer (Germany)',
+            rate=Decimal('19.00'),
+            )
+
+        tax_class_something = TaxClass.objects.create(
+            name='Some tax rate',
+            rate=Decimal('12.50'),
+            )
+
         product = Product.objects.create(
             name='Test Product 1',
             )
@@ -42,6 +52,20 @@ class OrderTest(TestCase):
             tax_class=tax_class,
             _unit_price=Decimal('79.90'),
             tax_included=True,
+            )
+
+        product.prices.create(
+            currency='EUR',
+            tax_class=tax_class_germany,
+            _unit_price=Decimal('49.90'),
+            tax_included=True,
+            )
+
+        product.prices.create(
+            currency='ASDF',
+            tax_class=tax_class_something,
+            _unit_price=Decimal('65.00'),
+            tax_included=False,
             )
 
         return product
@@ -91,5 +115,13 @@ class OrderTest(TestCase):
         # Switch tax handling back
         pasta_settings.PASTA_PRICE_INCLUDES_TAX = True
 
-        print item.__dict__
-        print order.__dict__
+    def test_02_eur_order(self):
+        product = self.create_product()
+        order = self.create_order()
+
+        order.currency = 'EUR'
+        order.save()
+
+        item = order.modify(product, 2)
+
+        self.assertEqual(item.unit_price, Decimal('49.90'))
