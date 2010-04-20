@@ -150,7 +150,12 @@ class Order(models.Model):
                 )
 
         item.quantity += change
-        item.save()
+
+        if item.quantity > 0:
+            item.save()
+        else:
+            # TODO: Should zero and negative values be handled the same way?
+            item.delete()
 
         if recalculate:
             self.recalculate_total()
