@@ -46,8 +46,8 @@ class ProductPrice(models.Model):
     currency = models.CharField(_('currency'), max_length=10)
 
     class Meta:
-        get_latest_by = 'created'
-        ordering = ['-created']
+        get_latest_by = 'id'
+        ordering = ['-id']
         verbose_name = _('product price')
         verbose_name_plural = _('product prices')
 
