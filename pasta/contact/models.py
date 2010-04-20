@@ -51,6 +51,8 @@ class Contact(models.Model):
     currency = models.CharField(_('currency'), max_length=10,
         help_text=_('Preferred currency.'))
 
+    notes = models.TextField(_('notes'), blank=True)
+
     class Meta:
         verbose_name = _('contact')
         verbose_name_plural = _('contacts')

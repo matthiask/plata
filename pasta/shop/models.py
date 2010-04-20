@@ -89,8 +89,8 @@ class Order(models.Model):
     notes = models.TextField(_('notes'), blank=True)
 
     class Meta:
-        verbose_name = _('contact')
-        verbose_name_plural = _('contacts')
+        verbose_name = _('order')
+        verbose_name_plural = _('orders')
 
     def __unicode__(self):
         return u'Order #%d' % self.pk
