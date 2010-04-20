@@ -156,3 +156,10 @@ class OrderTest(TestCase):
 
         order.currency = 'EUR'
         self.assertRaises(ValidationError, lambda: order.modify(p2, 2))
+
+        # Validation should still fail
+        self.assertRaises(ValidationError, lambda: order.validate())
+
+        order.currency = 'CHF'
+        # Order should validate now
+        order.validate()

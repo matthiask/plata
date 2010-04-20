@@ -174,7 +174,12 @@ class Order(models.Model):
             # changed in recalculate_total
             item = self.items.get(pk=item.pk)
 
-        self.validate()
+        try:
+            self.validate()
+        except ValidationError:
+            item.delete()
+            raise
+
         return item
 
 
