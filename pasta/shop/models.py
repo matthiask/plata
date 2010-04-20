@@ -37,6 +37,8 @@ class Order(models.Model):
     created = models.DateTimeField(_('created'), default=datetime.now)
     modified = models.DateTimeField(_('modified'), default=datetime.now)
     contact = models.ForeignKey(Contact, verbose_name=_('contact'))
+    status = models.PositiveIntegerField(_('status'), choices=STATUS_CHOICES,
+        default=CART)
 
     #order_id = models.CharField(_('order ID'), max_length=20, unique=True)
 
@@ -60,32 +62,27 @@ class Order(models.Model):
 
     currency = models.CharField(_('currency'), max_length=10)
 
-    items_subtotal = models.DecimalField(_('subtotal'), max_digits=10,
-        decimal_places=2, default=Decimal('0.00'))
-    items_discount = models.DecimalField(_('items discount'), max_digits=10,
-        decimal_places=2, default=Decimal('0.00'))
-    items_tax = models.DecimalField(_('items tax'), max_digits=10,
-        decimal_places=2, default=Decimal('0.00'))
+    items_subtotal = models.DecimalField(_('subtotal'),
+        max_digits=18, decimal_places=10, default=Decimal('0.00'))
+    items_discount = models.DecimalField(_('items discount'),
+        max_digits=18, decimal_places=10, default=Decimal('0.00'))
+    items_tax = models.DecimalField(_('items tax'),
+        max_digits=18, decimal_places=10, default=Decimal('0.00'))
 
-    #order_discount = models.DecimalField(_('order discount'), max_digits=10,
-    #    decimal_places=2, default=Decimal('0.00'))
-    #order_tax = ...
-    #order_shipping = ...
+    shipping_cost = models.DecimalField(_('shipping cost'),
+        max_digits=18, decimal_places=10, blank=True, null=True)
+    shipping_discount = models.DecimalField(_('shipping discount'),
+        max_digits=18, decimal_places=10, blank=True, null=True)
+    shipping_tax = models.DecimalField(_('shipping tax'),
+        max_digits=10, decimal_places=10, default=Decimal('0.00'))
 
+    total = models.DecimalField(_('total'),
+        max_digits=18, decimal_places=10, default=Decimal('0.00'))
 
-    tax_amount = models.DecimalField(_('Tax amount'), max_digits=10, decimal_places=2,
-        default=Decimal('0.00'))
-    shipping = models.DecimalField(_('shipping'), max_digits=10,
-        decimal_places=2, default=Decimal('0.00'))
-    total = models.DecimalField(_('total'), max_digits=10, decimal_places=2,
-        default=Decimal('0.00'))
-
-    paid = models.DecimalField(_('paid'), max_digits=10, decimal_places=2,
-        default=Decimal('0.00'),
+    paid = models.DecimalField(_('paid'),
+        max_digits=18, decimal_places=10, default=Decimal('0.00'),
         help_text=_('This much has been paid already.'))
 
-    status = models.PositiveIntegerField(_('status'), choices=STATUS_CHOICES,
-        default=CART)
     notes = models.TextField(_('notes'), blank=True)
 
     class Meta:
@@ -220,13 +217,13 @@ class OrderItem(models.Model):
     _line_item_price = models.DecimalField(_('line item price'),
         max_digits=18, decimal_places=10, default=0,
         help_text=_('Line item price excl. tax'))
-    _line_item_tax = models.DecimalField(_('line item tax'),
-        max_digits=18, decimal_places=10, default=0)
-
     _line_item_discount = models.DecimalField(_('discount'),
         max_digits=18, decimal_places=10,
         blank=True, null=True,
         help_text=_('Discount excl. tax'))
+
+    _line_item_tax = models.DecimalField(_('line item tax'),
+        max_digits=18, decimal_places=10, default=0)
 
     class Meta:
         ordering = ('product',)
