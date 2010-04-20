@@ -47,6 +47,14 @@ class OrderTest(TestCase):
             name='Test Product 1',
             )
 
+        # An old price in CHF which should not influence the rest of the tests
+        product.prices.create(
+            currency='CHF',
+            tax_class=tax_class,
+            _unit_price=Decimal('99.90'),
+            tax_included=True
+            )
+
         product.prices.create(
             currency='CHF',
             tax_class=tax_class,
