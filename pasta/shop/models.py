@@ -35,7 +35,7 @@ class Order(models.Model):
         'zip_code', 'city', 'country']
 
     created = models.DateTimeField(_('created'), default=datetime.now)
-    modified = models.DateTimeField(_('modified'), default=datetime.now)
+    confirmed = models.DateTimeField(_('confirmed'), blank=True, null=True)
     contact = models.ForeignKey(Contact, verbose_name=_('contact'))
     status = models.PositiveIntegerField(_('status'), choices=STATUS_CHOICES,
         default=CART)
@@ -281,7 +281,8 @@ class OrderStatus(models.Model):
     def save(self, *args, **kwargs):
         super(OrderStatus, self).save(*args, **kwargs)
         self.order.status = self.status
-        self.order.modified = self.created
+        if self.status >= Order.CONFIRMED and not self.order.confirmed:
+            self.order.confirmed = datetime.now()
         self.order.save()
 
 
