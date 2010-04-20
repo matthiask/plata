@@ -125,14 +125,15 @@ class OrderTest(TestCase):
         self.assertAlmostEqual(order.total, order_total)
 
         self.assertAlmostEqual(item._unit_price, item_price / tax_factor)
-        self.assertAlmostEqual(item.total, line_item_price)
+        self.assertAlmostEqual(item.discounted_subtotal_incl_tax, line_item_price)
+        self.assertAlmostEqual(item.discounted_subtotal_excl_tax, line_item_price / tax_factor)
+        self.assertAlmostEqual(item.discounted_subtotal_incl_tax, line_item_price)
 
 
         self.assertAlmostEqual(item.unit_price, item_price)
         self.assertAlmostEqual(item.line_item_price, line_item_price)
         self.assertAlmostEqual(item.line_item_discount, 0)
-        self.assertAlmostEqual(item.discounted_line_item_price, line_item_price)
-        self.assertAlmostEqual(item.total, line_item_price)
+        self.assertAlmostEqual(item.discounted_subtotal, item.discounted_subtotal_incl_tax)
 
         # Switch around tax handling and re-test
         pasta_settings.PASTA_PRICE_INCLUDES_TAX = False
@@ -140,8 +141,7 @@ class OrderTest(TestCase):
         self.assertAlmostEqual(item.unit_price, item_price / tax_factor)
         self.assertAlmostEqual(item.line_item_price, line_item_price / tax_factor)
         self.assertAlmostEqual(item.line_item_discount, 0 / tax_factor)
-        self.assertAlmostEqual(item.discounted_line_item_price, line_item_price / tax_factor)
-        self.assertAlmostEqual(item.total, line_item_price) # NOT divided with tax_factor!
+        self.assertAlmostEqual(item.discounted_subtotal, item.discounted_subtotal_excl_tax)
 
         # Switch tax handling back
         pasta_settings.PASTA_PRICE_INCLUDES_TAX = True

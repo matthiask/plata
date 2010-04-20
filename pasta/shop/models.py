@@ -93,27 +93,48 @@ class Order(models.Model):
         return u'Order #%d' % self.pk
 
     def recalculate_total(self, save=True):
-        self.subtotal = self.discount = self.tax_amount = self.shipping = self.total = 0
+        self.total = self.recalculate_items() + self.recalculate_shipping()
+
+        if save:
+            self.save()
+
+    def recalculate_items(self):
         self.items_subtotal = self.items_tax = self.items_discount = 0
 
         for item in self.items.all():
             # Recalculate item stuff
             item._line_item_price = item.quantity * item._unit_price
-            item._line_item_tax = item.quantity * item._unit_tax
-            item._line_item_discount = 0 # TODO: No discount handling implemented yet
+
+            taxable = item._line_item_price - (item._line_item_discount or 0)
+            price = item.get_price()
+            item._line_item_tax = taxable * price.tax_class.rate/100
             item.save()
 
             # Order stuff
             self.items_subtotal += item._line_item_price
+            self.items_discount += item._line_item_discount or 0
             self.items_tax += item._line_item_tax
-            self.items_discount += item._line_item_discount
 
-        # TODO: Apply order discounts
+        return self.items_subtotal - self.items_discount + self.items_tax
 
-        self.total = self.items_subtotal + self.items_tax - self.items_discount
+    def recalculate_shipping(self):
+        self.shipping_cost = self.shipping_discount = None
+        self.shipping_tax = 0
 
-        if save:
-            self.save()
+        subtotal = 0
+
+        if self.shipping_cost:
+            subtotal += self.shipping_cost
+        if self.shipping_discount:
+            subtotal -= self.shipping_discount
+
+        subtotal = max(subtotal, 0)
+
+        # TODO move this into shipping processor
+        self.shipping_tax = subtotal * Decimal('0.076')
+
+        return subtotal + self.shipping_tax
+
 
     @property
     def discounted_subtotal(self):
@@ -247,23 +268,35 @@ class OrderItem(models.Model):
         return self._line_item_price
 
     @property
+    def line_item_discount_excl_tax(self):
+        return self._line_item_discount or 0
+
+    @property
+    def line_item_discount_incl_tax(self):
+        price = self.get_price()
+        return self.line_item_discount_excl_tax * (1+price.tax_class.rate/100)
+
+    @property
     def line_item_discount(self):
         if pasta_settings.PASTA_PRICE_INCLUDES_TAX:
-            price = self.get_price()
-            return self._line_item_discount * (1+price.tax_class.rate/100)
-        return self._line_item_discount
+            return self.line_item_discount_incl_tax
+        else:
+            return self.line_item_discount_excl_tax
 
     @property
-    def discounted_line_item_price(self):
-        if self._line_item_discount:
-            return self.line_item_price - self._line_item_discount
-        return self.line_item_price
+    def discounted_subtotal_excl_tax(self):
+        return self._line_item_price - (self._line_item_discount or 0)
 
     @property
-    def total(self):
+    def discounted_subtotal_incl_tax(self):
+        return self.discounted_subtotal_excl_tax + self._line_item_tax
+
+    @property
+    def discounted_subtotal(self):
         if pasta_settings.PASTA_PRICE_INCLUDES_TAX:
-            return self.discounted_line_item_price
-        return self.discounted_line_item_price + self._line_item_tax
+            return self.discounted_subtotal_incl_tax
+        else:
+            return self.discounted_subtotal_excl_tax
 
 
 class OrderStatus(models.Model):
