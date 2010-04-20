@@ -163,3 +163,15 @@ class OrderTest(TestCase):
         order.currency = 'CHF'
         # Order should validate now
         order.validate()
+
+    def test_04_order_modify(self):
+        p1 = self.create_product()
+        p2 = self.create_product()
+        order = self.create_order()
+
+        order.modify(p1, 42)
+        order.modify(p2, 42)
+        self.assertEqual(order.items.count(), 2)
+
+        order.modify(p1, -42)
+        self.assertEqual(order.items.count(), 1)

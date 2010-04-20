@@ -167,17 +167,21 @@ class Order(models.Model):
         else:
             # TODO: Should zero and negative values be handled the same way?
             item.delete()
+            item.pk = None
 
         if recalculate:
             self.recalculate_total()
+
             # Reload item instance from DB to preserve field values
             # changed in recalculate_total
-            item = self.items.get(pk=item.pk)
+            if item.pk:
+                item = self.items.get(pk=item.pk)
 
         try:
             self.validate()
         except ValidationError:
-            item.delete()
+            if item.pk:
+                item.delete()
             raise
 
         return item
