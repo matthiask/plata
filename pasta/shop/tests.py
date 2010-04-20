@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 #from pasta.contact.models import Contact
@@ -27,21 +28,27 @@ class OrderTest(TestCase):
             currency='CHF',
             )
 
-    def create_product(self):
-        tax_class = TaxClass.objects.create(
+    def create_tax_classes(self):
+        tax_class, created = TaxClass.objects.get_or_create(
             name='Standard Swiss Tax Rate',
             rate=Decimal('7.60'),
             )
 
-        tax_class_germany = TaxClass.objects.create(
+        tax_class_germany, created = TaxClass.objects.get_or_create(
             name='Umsatzsteuer (Germany)',
             rate=Decimal('19.00'),
             )
 
-        tax_class_something = TaxClass.objects.create(
+        tax_class_something, created = TaxClass.objects.get_or_create(
             name='Some tax rate',
             rate=Decimal('12.50'),
             )
+
+        return tax_class, tax_class_germany, tax_class_something
+
+
+    def create_product(self):
+        tax_class, tax_class_germany, tax_class_something = self.create_tax_classes()
 
         product = Product.objects.create(
             name='Test Product 1',
@@ -133,3 +140,19 @@ class OrderTest(TestCase):
         item = order.modify(product, 2)
 
         self.assertEqual(item.unit_price, Decimal('49.90'))
+        self.assertEqual(item.currency, order.currency)
+
+    def test_03_mixed_currencies(self):
+        """
+        Create an invalid order
+        """
+
+        p1 = self.create_product()
+        p2 = self.create_product()
+        order = self.create_order()
+
+        order.currency = 'CHF'
+        i1 = order.modify(p1, 3)
+
+        order.currency = 'EUR'
+        self.assertRaises(ValidationError, lambda: order.modify(p2, 2))

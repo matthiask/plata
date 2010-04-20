@@ -3,6 +3,7 @@ from decimal import Decimal
 
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.forms.formsets import all_valid
@@ -129,6 +130,15 @@ class Order(models.Model):
     def is_paid(self):
         return self.balance_remaining <= 0
 
+    def validate(self):
+        """
+        A few self-checks. These should never fail under normal circumstances.
+        """
+
+        currencies = self.items.distinct().values_list('currency', flat=True)
+        if len(currencies) > 1 or currencies[0] != self.currency:
+            raise ValidationError(_('Order contains more than one currency.'))
+
     def modify(self, product, change, recalculate=True):
         """
         Update order with the given product
@@ -145,6 +155,7 @@ class Order(models.Model):
                 order=self,
                 product=product,
                 quantity=0,
+                currency=self.currency,
                 _unit_price=price.unit_price_excl_tax,
                 _unit_tax=price.unit_tax,
                 )
@@ -163,6 +174,7 @@ class Order(models.Model):
             # changed in recalculate_total
             item = self.items.get(pk=item.pk)
 
+        self.validate()
         return item
 
 
@@ -172,6 +184,7 @@ class OrderItem(models.Model):
 
     quantity = models.IntegerField(_('quantity'))
 
+    currency = models.CharField(_('currency'), max_length=10)
     _unit_price = models.DecimalField(_('unit price'),
         max_digits=18, decimal_places=10,
         help_text=_('Unit price excl. tax'))
