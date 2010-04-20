@@ -3,13 +3,23 @@ from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-#from pasta.contact.models import Contact
 from pasta import pasta_settings
+from pasta.contact.models import Contact
 from pasta.product.models import TaxClass, Product
-from pasta.shop.models import Contact, Order
+from pasta.shop.models import Order, OrderStatus, OrderPayment
 
 
 class OrderTest(TestCase):
+    def assertRaisesWithCode(self, exception, fn, code):
+        try:
+            fn()
+        except exception, e:
+            if e.code == code:
+                return True
+            raise
+
+        raise Exception, '%s did not raise %s' % (fn, exception)
+
     def setUp(self):
         pasta_settings.PASTA_PRICE_INCLUDES_TAX = True
 
@@ -181,3 +191,26 @@ class OrderTest(TestCase):
 
         order.modify(p1, -42)
         self.assertEqual(order.items.count(), 1)
+
+    def test_05_order_status(self):
+        order = self.create_order()
+
+        self.assertRaisesWithCode(ValidationError, lambda: order.update_status(
+            Order.CHECKOUT,
+            'Checkout process has started',
+            ), code='order_empty')
+
+        product = self.create_product()
+        order.modify(product, 1)
+
+        # Should be possible to update order status now
+        order.update_status(
+            Order.CHECKOUT,
+            'Checkout process has started',
+            )
+
+        # Should not be possible to modify order once checkout process has started
+        self.assertRaisesWithCode(ValidationError, lambda: order.modify(product, 2),
+            code='order_sealed')
+
+        self.assertEqual(order.status, Order.CHECKOUT)

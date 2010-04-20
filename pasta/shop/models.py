@@ -19,10 +19,10 @@ from pasta.product.models import Product
 
 
 class Order(models.Model):
-    CART = 'cart'
-    CHECKOUT = 'checkout'
-    CONFIRMED = 'confirmed'
-    COMPLETED = 'completed'
+    CART = 10
+    CHECKOUT = 20
+    CONFIRMED = 30
+    COMPLETED = 40
 
     STATUS_CHOICES = (
         (CART, _('is a cart')),
@@ -137,7 +137,8 @@ class Order(models.Model):
 
         currencies = set(self.items.values_list('currency', flat=True))
         if len(currencies) > 1 or self.currency not in currencies:
-            raise ValidationError(_('Order contains more than one currency.'))
+            raise ValidationError(_('Order contains more than one currency.'),
+                code='multiple_currency')
 
     def modify(self, product, change, recalculate=True):
         """
@@ -145,6 +146,10 @@ class Order(models.Model):
 
         Return OrderItem instance
         """
+
+        if self.status >= self.CHECKOUT:
+            raise ValidationError(_('Cannot modify order in checkout stage.'),
+                code='order_sealed')
 
         price = product.get_price(currency=self.currency)
 
@@ -185,6 +190,18 @@ class Order(models.Model):
             raise
 
         return item
+
+    def update_status(self, status, notes):
+        if status >= Order.CHECKOUT:
+            if not self.items.count():
+                raise ValidationError(_('Cannot proceed to checkout without order items.'),
+                    code='order_empty')
+
+        instance = OrderStatus(
+            order=self,
+            status=status,
+            notes=notes)
+        instance.save()
 
 
 class OrderItem(models.Model):
@@ -253,7 +270,7 @@ class OrderItem(models.Model):
 
 
 class OrderStatus(models.Model):
-    order = models.ForeignKey(Order)
+    order = models.ForeignKey(Order, related_name='statuses')
     created = models.DateTimeField(_('created'), default=datetime.now)
     status = models.CharField(_('status'), max_length=20, choices=Order.STATUS_CHOICES)
     notes = models.TextField(_('notes'), blank=True)
