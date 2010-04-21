@@ -167,7 +167,7 @@ class Order(models.Model):
             raise ValidationError(_('Order contains more than one currency.'),
                 code='multiple_currency')
 
-    def modify(self, product, change, recalculate=True):
+    def modify_item(self, product, change, recalculate=True):
         """
         Update order with the given product
 

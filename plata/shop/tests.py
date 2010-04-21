@@ -107,9 +107,9 @@ class OrderTest(TestCase):
 
         self.assertEqual(product.get_price(currency=order.currency).currency, order.currency)
 
-        order.modify(product, 5)
-        order.modify(product, -4)
-        item = order.modify(product, 1)
+        order.modify_item(product, 5)
+        order.modify_item(product, -4)
+        item = order.modify_item(product, 1)
 
         self.assertEqual(order.items.count(), 1)
 
@@ -151,7 +151,7 @@ class OrderTest(TestCase):
         order.currency = 'EUR'
         order.save()
 
-        item = order.modify(product, 2)
+        item = order.modify_item(product, 2)
 
         self.assertEqual(item.unit_price, Decimal('49.90'))
         self.assertEqual(item.currency, order.currency)
@@ -166,10 +166,10 @@ class OrderTest(TestCase):
         order = self.create_order()
 
         order.currency = 'CHF'
-        i1 = order.modify(p1, 3)
+        i1 = order.modify_item(p1, 3)
 
         order.currency = 'EUR'
-        self.assertRaisesWithCode(ValidationError, lambda: order.modify(p2, 2),
+        self.assertRaisesWithCode(ValidationError, lambda: order.modify_item(p2, 2),
             code='multiple_currency')
 
         # Validation should still fail
@@ -180,16 +180,16 @@ class OrderTest(TestCase):
         # Order should validate now
         order.validate()
 
-    def test_04_order_modify(self):
+    def test_04_order_modify_item(self):
         p1 = self.create_product()
         p2 = self.create_product()
         order = self.create_order()
 
-        order.modify(p1, 42)
-        order.modify(p2, 42)
+        order.modify_item(p1, 42)
+        order.modify_item(p2, 42)
         self.assertEqual(order.items.count(), 2)
 
-        order.modify(p1, -42)
+        order.modify_item(p1, -42)
         self.assertEqual(order.items.count(), 1)
 
     def test_05_order_status(self):
@@ -201,7 +201,7 @@ class OrderTest(TestCase):
             ), code='order_empty')
 
         product = self.create_product()
-        order.modify(product, 1)
+        order.modify_item(product, 1)
 
         # Should be possible to update order status now
         order.update_status(
@@ -210,7 +210,7 @@ class OrderTest(TestCase):
             )
 
         # Should not be possible to modify order once checkout process has started
-        self.assertRaisesWithCode(ValidationError, lambda: order.modify(product, 2),
+        self.assertRaisesWithCode(ValidationError, lambda: order.modify_item(product, 2),
             code='order_sealed')
 
         self.assertEqual(order.status, Order.CHECKOUT)
@@ -220,8 +220,8 @@ class OrderTest(TestCase):
         p1 = self.create_product()
         p2 = self.create_product()
 
-        order.modify(p1, 3)
-        order.modify(p2, 5)
+        order.modify_item(p1, 3)
+        order.modify_item(p2, 5)
 
         discount = Discount.objects.create(
             type=Discount.PERCENTAGE,
@@ -236,8 +236,8 @@ class OrderTest(TestCase):
         item_price_excl_tax = item_price_incl_tax / tax_factor
 
         order.recalculate_total()
-        item = order.modify(p1, 0)
-        item2 = order.modify(p2, 0)
+        item = order.modify_item(p1, 0)
+        item2 = order.modify_item(p2, 0)
 
         self.assertAlmostEqual(item.unit_price, item_price_incl_tax)
         self.assertAlmostEqual(item.line_item_discount, item_price_incl_tax * 3 * Decimal('0.30'))
@@ -246,8 +246,8 @@ class OrderTest(TestCase):
 
         plata_settings.PASTA_PRICE_INCLUDES_TAX = False
         order.recalculate_total()
-        item = order.modify(p1, 0)
-        item2 = order.modify(p2, 0)
+        item = order.modify_item(p1, 0)
+        item2 = order.modify_item(p2, 0)
 
         self.assertAlmostEqual(item.unit_price, item_price_excl_tax)
         self.assertAlmostEqual(item.line_item_discount, item_price_excl_tax * 3 * Decimal('0.30'))
@@ -261,8 +261,8 @@ class OrderTest(TestCase):
         p1 = self.create_product()
         p2 = self.create_product()
 
-        normal1 = order.modify(p1, 3)
-        normal2 = order.modify(p2, 5)
+        normal1 = order.modify_item(p1, 3)
+        normal2 = order.modify_item(p2, 5)
 
         order.recalculate_total()
         self.assertAlmostEqual(order.total, Decimal('639.20'))
@@ -275,8 +275,8 @@ class OrderTest(TestCase):
         order.add_discount(discount)
         order.recalculate_total()
 
-        discounted1 = order.modify(p1, 0)
-        discounted2 = order.modify(p2, 0)
+        discounted1 = order.modify_item(p1, 0)
+        discounted2 = order.modify_item(p2, 0)
 
         tax_factor = Decimal('1.076')
         item_price_incl_tax = Decimal('79.90')
@@ -299,8 +299,8 @@ class OrderTest(TestCase):
 
         plata_settings.PASTA_PRICE_INCLUDES_TAX = False
         order.recalculate_total()
-        discounted1 = order.modify(p1, 0)
-        discounted2 = order.modify(p2, 0)
+        discounted1 = order.modify_item(p1, 0)
+        discounted2 = order.modify_item(p2, 0)
 
         self.assertAlmostEqual(order.total, Decimal('639.20') - Decimal('50.00'))
 
