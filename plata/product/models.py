@@ -100,52 +100,47 @@ class ProductImage(models.Model):
         verbose_name_plural = _('product images')
 
 
+class DiscountBase(models.Model):
+    AMOUNT_EXCL_TAX = 10
+    AMOUNT_INCL_TAX = 20
+    PERCENTAGE = 30
 
-class GenericBase(models.Model):
-    content_type = models.ForeignKey(ContentType)
+    TYPE_CHOICES = (
+        (AMOUNT_EXCL_TAX, _('amount excl. tax')),
+        (AMOUNT_INCL_TAX, _('amount incl. tax')),
+        (PERCENTAGE, _('percentage')),
+        )
+
+    name = models.CharField(_('name'), max_length=100)
+
+    type = models.PositiveIntegerField(_('type'), choices=TYPE_CHOICES)
+    value = models.DecimalField(_('value'), max_digits=10, decimal_places=2)
 
     class Meta:
         abstract = True
-
-    @property
-    def subtype(self):
-        return self.content_type.get_object_for_this_type(pk=self.pk)
-
-    def save(self, *args, **kwargs):
-        if not self.pk and not self.content_type_id:
-            self.content_type = ContentType.objects.get_for_model(self)
-        super(GenericBase, self).save(*args, **kwargs)
-
-
-class Discount(GenericBase):
-    name = models.CharField(_('name'), max_length=100)
-
-    class Meta:
-        verbose_name = _('discount')
-        verbose_name_plural = _('discounts')
 
     def __unicode__(self):
         return self.name
 
     def apply(self, order, items, **kwargs):
-        raise NotImplementedError, 'Discount.apply not implemented'
-
-
-class AmountDiscount(Discount):
-    amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2)
-    tax_included = models.BooleanField(_('tax included'),
-        help_text=_('Is tax included in given unit price?'),
-        default=plata_settings.PASTA_PRICE_INCLUDES_TAX)
-
-    def apply(self, order, items, **kwargs):
         if not items:
             return
 
-        if self.tax_included:
-            tax_rate = items[0].get_price().tax_class.rate
-            discount = self.amount / (1 + tax_rate/100)
+        if self.type == self.AMOUNT_EXCL_TAX:
+            self.apply_amount_discount(order, items, tax_included=False)
+        elif self.type == self.AMOUNT_INCL_TAX:
+            self.apply_amount_discount(order, items, tax_included=True)
+        elif self.type == self.PERCENTAGE:
+            self.apply_percentage_discount(order, items)
         else:
-            discount = self.amount
+            raise NotImplementedError, 'Unknown discount type %s' % self.type
+
+    def apply_amount_discount(self, order, items, tax_included):
+        if tax_included:
+            tax_rate = items[0].get_price().tax_class.rate
+            discount = self.value / (1 + tax_rate/100)
+        else:
+            discount = self.value
 
         items_subtotal = sum([item._line_item_price for item in items], 0)
 
@@ -158,12 +153,16 @@ class AmountDiscount(Discount):
         for item in items:
             item._line_item_discount = item._line_item_price / items_subtotal * discount
 
-
-class PercentageDiscount(Discount):
-    percentage = models.DecimalField(_('percentage'), max_digits=10, decimal_places=2)
-
-    def apply(self, order, items, **kwargs):
-        factor = self.percentage / 100
+    def apply_percentage_discount(self, order, items):
+        factor = self.value / 100
 
         for item in items:
             item._line_item_discount = item._line_item_price * factor
+
+
+class Discount(DiscountBase):
+    key = models.CharField(_('key'), max_length=30, unique=True)
+
+    class Meta:
+        verbose_name = _('discount')
+        verbose_name_plural = _('discounts')

@@ -15,7 +15,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from plata import plata_settings
 from plata.contact.models import Contact
-from plata.product.models import Product, Discount
+from plata.product.models import Product, DiscountBase, Discount
 
 
 class Order(models.Model):
@@ -107,8 +107,7 @@ class Order(models.Model):
             # Recalculate item stuff
             item._line_item_price = item.quantity * item._unit_price
 
-        for applied in self.applied_discounts.all().select_related('discount'):
-            applied.discount.subtype.apply(self, items)
+        self.recalculate_discounts(items)
 
         for item in items:
             taxable = item._line_item_price - (item._line_item_discount or 0)
@@ -122,6 +121,10 @@ class Order(models.Model):
             self.items_tax += item._line_item_tax
 
         return self.items_subtotal - self.items_discount + self.items_tax
+
+    def recalculate_discounts(self, items):
+        for applied in self.applied_discounts.all():
+            applied.apply(self, items)
 
     def recalculate_shipping(self):
         self.shipping_cost = self.shipping_discount = None
@@ -214,6 +217,16 @@ class Order(models.Model):
             raise
 
         return item
+
+    def add_discount(self, discount):
+        instance, created = self.applied_discounts.get_or_create(key=discount.key,
+            defaults={
+                'type': discount.type,
+                'name': discount.name,
+                'value': discount.value,
+            })
+
+        return instance
 
     def update_status(self, status, notes):
         if status >= Order.CHECKOUT:
@@ -346,10 +359,13 @@ class OrderPayment(models.Model):
         self._recalculate_paid()
 
 
-class AppliedDiscount(models.Model):
+class AppliedDiscount(DiscountBase):
     order = models.ForeignKey(Order, related_name='applied_discounts',
         verbose_name=_('order'))
-    discount = models.ForeignKey(Discount, verbose_name=_('discount'))
+    key = models.CharField(_('key'), max_length=30) # We could make this a ForeignKey
+                                                    # to Discount.key, but we do not
+                                                    # want deletions to cascade to this
+                                                    # table.
 
     class Meta:
         verbose_name = _('applied discount')

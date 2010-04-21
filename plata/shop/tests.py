@@ -5,7 +5,7 @@ from django.test import TestCase
 
 from plata import plata_settings
 from plata.contact.models import Contact
-from plata.product.models import TaxClass, Product, AmountDiscount, PercentageDiscount
+from plata.product.models import TaxClass, Product, Discount
 from plata.shop.models import Order, OrderStatus, OrderPayment
 
 
@@ -223,10 +223,12 @@ class OrderTest(TestCase):
         order.modify(p1, 3)
         order.modify(p2, 5)
 
-        discount = PercentageDiscount.objects.create(
+        discount = Discount.objects.create(
+            type=Discount.PERCENTAGE,
+            key='asdf',
             name='Percentage discount',
-            percentage=30)
-        order.applied_discounts.create(discount=discount)
+            value=30)
+        order.add_discount(discount)
         order.recalculate_total()
 
         tax_factor = Decimal('1.076')
@@ -265,11 +267,12 @@ class OrderTest(TestCase):
         order.recalculate_total()
         self.assertAlmostEqual(order.total, Decimal('639.20'))
 
-        discount = AmountDiscount.objects.create(
+        discount = Discount.objects.create(
+            type=Discount.AMOUNT_INCL_TAX,
+            key='asdf',
             name='Amount discount',
-            amount=Decimal('50.00'),
-            tax_included=True)
-        order.applied_discounts.create(discount=discount)
+            value=Decimal('50.00'))
+        order.add_discount(discount)
         order.recalculate_total()
 
         discounted1 = order.modify(p1, 0)
@@ -302,7 +305,7 @@ class OrderTest(TestCase):
         self.assertAlmostEqual(order.total, Decimal('639.20') - Decimal('50.00'))
 
         self.assertAlmostEqual(discounted1.unit_price, item_price_excl_tax)
-        self.assertAlmostEqual(discounted1.line_item_discount, discount.amount / tax_factor / 8 * 3)
+        self.assertAlmostEqual(discounted1.line_item_discount, discount.value / tax_factor / 8 * 3)
         self.assertAlmostEqual(order.total,
             discounted1.discounted_subtotal + discounted2.discounted_subtotal + order.items_tax)
 
