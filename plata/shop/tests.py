@@ -1,3 +1,4 @@
+from datetime import datetime
 from decimal import Decimal
 
 from django.core.exceptions import ValidationError
@@ -310,3 +311,25 @@ class OrderTest(TestCase):
             discounted1.discounted_subtotal + discounted2.discounted_subtotal + order.items_tax)
 
         plata_settings.PLATA_PRICE_INCLUDES_TAX = True
+
+    def test_08_order_payment(self):
+        order = self.create_order()
+        product = self.create_product()
+
+        order.modify_item(product, 10)
+        order.recalculate_total()
+
+        payment = order.payments.create(
+            currency='CHF',
+            amount=Decimal('49.90'),
+            payment_method='Mafia style',
+            )
+
+        order = Order.objects.get(pk=order.pk)
+        self.assertAlmostEqual(order.paid, 0)
+
+        payment.authorized = datetime.now()
+        payment.save()
+
+        order = Order.objects.get(pk=order.pk)
+        self.assertAlmostEqual(order.balance_remaining, order.total - payment.amount)

@@ -146,7 +146,6 @@ class Order(models.Model):
 
         return subtotal + self.shipping_tax
 
-
     @property
     def discounted_subtotal(self):
         return self.subtotal - self.discount
@@ -363,6 +362,7 @@ class OrderPayment(models.Model):
         Order.objects.filter(id=self.order_id).update(paid=paid)
 
     def save(self, *args, **kwargs):
+        # TODO raise error if currencies to not match
         super(OrderPayment, self).save(*args, **kwargs)
         self._recalculate_paid()
 
