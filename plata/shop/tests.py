@@ -5,7 +5,7 @@ from django.test import TestCase
 
 from plata import plata_settings
 from plata.contact.models import Contact
-from plata.product.models import TaxClass, Product
+from plata.product.models import TaxClass, Product, AmountDiscount, PercentageDiscount
 from plata.shop.models import Order, OrderStatus, OrderPayment
 
 
@@ -221,78 +221,89 @@ class OrderTest(TestCase):
         p2 = self.create_product()
 
         order.modify(p1, 3)
-        #order.modify(p2, 5)
+        order.modify(p2, 5)
 
+        discount = PercentageDiscount.objects.create(
+            name='Percentage discount',
+            percentage=30)
+        order.applied_discounts.create(discount=discount)
         order.recalculate_total()
-        #self.assertAlmostEqual(order.total, Decimal('639.20'))
 
-        item = order.modify(p1, 0)
-
-        discount = Decimal('0.20')
         tax_factor = Decimal('1.076')
         item_price_incl_tax = Decimal('79.90')
         item_price_excl_tax = item_price_incl_tax / tax_factor
 
-        # Apply 20% discount
-        item._line_item_discount = discount * item._line_item_price
-        item.save()
-
         order.recalculate_total()
         item = order.modify(p1, 0)
+        item2 = order.modify(p2, 0)
 
         self.assertAlmostEqual(item.unit_price, item_price_incl_tax)
-        self.assertAlmostEqual(item.line_item_discount, item_price_incl_tax * 3 * discount)
-        self.assertAlmostEqual(item.discounted_subtotal, order.total)
+        self.assertAlmostEqual(item.line_item_discount, item_price_incl_tax * 3 * Decimal('0.30'))
+        self.assertAlmostEqual(order.total,
+            item.discounted_subtotal + item2.discounted_subtotal)
 
         plata_settings.PASTA_PRICE_INCLUDES_TAX = False
         order.recalculate_total()
         item = order.modify(p1, 0)
+        item2 = order.modify(p2, 0)
 
         self.assertAlmostEqual(item.unit_price, item_price_excl_tax)
-        self.assertAlmostEqual(item.line_item_discount, item_price_excl_tax * 3 * discount)
-        self.assertAlmostEqual(item.discounted_subtotal + order.items_tax, order.total)
+        self.assertAlmostEqual(item.line_item_discount, item_price_excl_tax * 3 * Decimal('0.30'))
+        self.assertAlmostEqual(order.total,
+            item.discounted_subtotal + item2.discounted_subtotal + order.items_tax)
 
         plata_settings.PASTA_PRICE_INCLUDES_TAX = True
-        order.recalculate_total()
-        item = order.modify(p1, 0)
 
     def test_07_order_amount_discount(self):
         order = self.create_order()
         p1 = self.create_product()
         p2 = self.create_product()
 
-        order.modify(p1, 3)
-        #order.modify(p2, 5)
+        normal1 = order.modify(p1, 3)
+        normal2 = order.modify(p2, 5)
 
         order.recalculate_total()
-        #self.assertAlmostEqual(order.total, Decimal('639.20'))
+        self.assertAlmostEqual(order.total, Decimal('639.20'))
 
-        item = order.modify(p1, 0)
+        discount = AmountDiscount.objects.create(
+            name='Amount discount',
+            amount=Decimal('50.00'),
+            tax_included=True)
+        order.applied_discounts.create(discount=discount)
+        order.recalculate_total()
 
-        discount = Decimal('50.00')
+        discounted1 = order.modify(p1, 0)
+        discounted2 = order.modify(p2, 0)
+
         tax_factor = Decimal('1.076')
         item_price_incl_tax = Decimal('79.90')
         item_price_excl_tax = item_price_incl_tax / tax_factor
 
-        # Apply 50.- discount
-        item._line_item_discount = discount / tax_factor
-        item.save()
+        self.assertAlmostEqual(order.total, Decimal('639.20') - Decimal('50.00'))
 
-        order.recalculate_total()
-        item = order.modify(p1, 0)
+        self.assertAlmostEqual(normal1.unit_price, discounted1.unit_price)
+        self.assertAlmostEqual(normal2.unit_price, discounted2.unit_price)
+        self.assertAlmostEqual(normal1.unit_price, item_price_incl_tax)
 
-        self.assertAlmostEqual(item.unit_price, item_price_incl_tax)
-        self.assertAlmostEqual(item.line_item_discount, discount)
-        self.assertAlmostEqual(item.discounted_subtotal, order.total)
+        self.assertEqual(normal1.line_item_discount, 0)
+        self.assertEqual(normal2.line_item_discount, 0)
+
+        self.assertAlmostEqual(discounted1.line_item_discount, Decimal('50.00') / 8 * 3)
+        self.assertAlmostEqual(discounted2.line_item_discount, Decimal('50.00') / 8 * 5)
+
+        self.assertAlmostEqual(discounted1.discounted_subtotal, order.total / 8 * 3)
+        self.assertAlmostEqual(discounted2.discounted_subtotal, order.total / 8 * 5)
 
         plata_settings.PASTA_PRICE_INCLUDES_TAX = False
         order.recalculate_total()
-        item = order.modify(p1, 0)
+        discounted1 = order.modify(p1, 0)
+        discounted2 = order.modify(p2, 0)
 
-        self.assertAlmostEqual(item.unit_price, item_price_excl_tax)
-        self.assertAlmostEqual(item.line_item_discount, discount / tax_factor)
-        self.assertAlmostEqual(item.discounted_subtotal + order.items_tax, order.total)
+        self.assertAlmostEqual(order.total, Decimal('639.20') - Decimal('50.00'))
+
+        self.assertAlmostEqual(discounted1.unit_price, item_price_excl_tax)
+        self.assertAlmostEqual(discounted1.line_item_discount, discount.amount / tax_factor / 8 * 3)
+        self.assertAlmostEqual(order.total,
+            discounted1.discounted_subtotal + discounted2.discounted_subtotal + order.items_tax)
 
         plata_settings.PASTA_PRICE_INCLUDES_TAX = True
-        order.recalculate_total()
-        item = order.modify(p1, 0)

@@ -107,7 +107,7 @@ class Order(models.Model):
             # Recalculate item stuff
             item._line_item_price = item.quantity * item._unit_price
 
-        for applied in self.discounts.all().select_related('discount'):
+        for applied in self.applied_discounts.all().select_related('discount'):
             applied.discount.subtype.apply(self, items)
 
         for item in items:
@@ -347,7 +347,7 @@ class OrderPayment(models.Model):
 
 
 class AppliedDiscount(models.Model):
-    order = models.ForeignKey(Order, related_name='discounts',
+    order = models.ForeignKey(Order, related_name='applied_discounts',
         verbose_name=_('order'))
     discount = models.ForeignKey(Discount, verbose_name=_('discount'))
 
