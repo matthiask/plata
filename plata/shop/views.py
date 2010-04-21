@@ -1,3 +1,10 @@
+from django.core.urlresolvers import reverse
+from django.forms.models import inlineformset_factory
+from django.http import HttpResponseRedirect
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+
+
 class Shop(object):
     def __init__(self, product_model, contact_model, order_model):
         self.product_model = product_model
@@ -106,3 +113,5 @@ class Shop(object):
         return render_to_response('plata/shop_checkout.html',
             self.get_context(request, context))
 
+    def confirmation(self, request):
+        pass
