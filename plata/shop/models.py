@@ -6,11 +6,13 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.db.models import Sum
 from django.forms.formsets import all_valid
 from django.forms.models import modelform_factory, inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
+from django.utils import simplejson
 from django.utils.translation import ugettext_lazy as _
 
 from plata import plata_settings
@@ -333,11 +335,19 @@ class OrderStatus(models.Model):
 
 
 class OrderPayment(models.Model):
-    order = models.ForeignKey(Order)
-    timestamp = models.DateTimeField(_('created'), default=datetime.now)
+    order = models.ForeignKey(Order, verbose_name=_('order'), related_name='payments')
+    timestamp = models.DateTimeField(_('timestamp'), default=datetime.now)
 
+    currency = models.CharField(_('currency'), max_length=10)
     amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2)
-    payment_method = models.CharField(_('payment method'), max_length=20)
+    payment_method = models.CharField(_('payment method'), max_length=20, blank=True)
+    transaction_id = models.CharField(_('transaction ID'), max_length=50, blank=True,
+        help_text=_('Unique ID identifying this payment in the foreign system.'))
+
+    authorized = models.DateTimeField(_('authorized'), blank=True, null=True,
+        help_text=_('Point in time when payment has been authorized.'))
+
+    data = models.TextField(_('data'), blank=True)
 
     class Meta:
         ordering = ('-timestamp',)
@@ -345,8 +355,10 @@ class OrderPayment(models.Model):
         verbose_name_plural = _('order payments')
 
     def _recalculate_paid(self):
-        paid = OrderPayment.objects.filter(order=self.order_id).aggregate(
-            total=Sum('amount'))['total'] or 0
+        paid = OrderPayment.objects.filter(
+            order=self.order_id,
+            authorized__isnull=False,
+            ).aggregate(total=Sum('amount'))['total'] or 0
 
         Order.objects.filter(id=self.order_id).update(paid=paid)
 
@@ -357,6 +369,18 @@ class OrderPayment(models.Model):
     def delete(self, *args, **kwargs):
         super(OrderPayment, self).delete(*args, **kwargs)
         self._recalculate_paid()
+
+    def _data_json_get(self):
+        try:
+            return simplejson.loads(self.data)
+        except ValueError:
+            return self.data
+
+    def _data_json_set(self, value):
+        self.data = simplejson.dumps(value)
+        return self.data
+
+    data_json = property(fget=_data_json_get, fset=_data_json_set)
 
 
 class AppliedDiscount(DiscountBase):
