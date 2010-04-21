@@ -7,7 +7,7 @@ from django.utils.functional import LazyObject
 
 class LazySettings(LazyObject):
     def _setup(self):
-        from pasta import default_settings
+        from plata import default_settings
         self._wrapped = Settings(default_settings)
 
 class Settings(object):
@@ -16,4 +16,4 @@ class Settings(object):
             if setting == setting.upper():
                 setattr(self, setting, getattr(settings_module, setting))
 
-pasta_settings = LazySettings()
+plata_settings = LazySettings()

@@ -3,10 +3,10 @@ from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from pasta import pasta_settings
-from pasta.contact.models import Contact
-from pasta.product.models import TaxClass, Product
-from pasta.shop.models import Order, OrderStatus, OrderPayment
+from plata import plata_settings
+from plata.contact.models import Contact
+from plata.product.models import TaxClass, Product
+from plata.shop.models import Order, OrderStatus, OrderPayment
 
 
 class OrderTest(TestCase):
@@ -21,7 +21,7 @@ class OrderTest(TestCase):
         raise Exception, '%s did not raise %s' % (fn, exception)
 
     def setUp(self):
-        pasta_settings.PASTA_PRICE_INCLUDES_TAX = True
+        plata_settings.PASTA_PRICE_INCLUDES_TAX = True
 
     def create_contact(self):
         return Contact.objects.create(
@@ -135,14 +135,14 @@ class OrderTest(TestCase):
         self.assertAlmostEqual(item.discounted_subtotal, item.discounted_subtotal_incl_tax)
 
         # Switch around tax handling and re-test
-        pasta_settings.PASTA_PRICE_INCLUDES_TAX = False
+        plata_settings.PASTA_PRICE_INCLUDES_TAX = False
 
         self.assertAlmostEqual(item.unit_price, item_price / tax_factor)
         self.assertAlmostEqual(item.line_item_discount, 0 / tax_factor)
         self.assertAlmostEqual(item.discounted_subtotal, item.discounted_subtotal_excl_tax)
 
         # Switch tax handling back
-        pasta_settings.PASTA_PRICE_INCLUDES_TAX = True
+        plata_settings.PASTA_PRICE_INCLUDES_TAX = True
 
     def test_02_eur_order(self):
         product = self.create_product()
@@ -244,7 +244,7 @@ class OrderTest(TestCase):
         self.assertAlmostEqual(item.line_item_discount, item_price_incl_tax * 3 * discount)
         self.assertAlmostEqual(item.discounted_subtotal, order.total)
 
-        pasta_settings.PASTA_PRICE_INCLUDES_TAX = False
+        plata_settings.PASTA_PRICE_INCLUDES_TAX = False
         order.recalculate_total()
         item = order.modify(p1, 0)
 
@@ -252,7 +252,7 @@ class OrderTest(TestCase):
         self.assertAlmostEqual(item.line_item_discount, item_price_excl_tax * 3 * discount)
         self.assertAlmostEqual(item.discounted_subtotal + order.items_tax, order.total)
 
-        pasta_settings.PASTA_PRICE_INCLUDES_TAX = True
+        plata_settings.PASTA_PRICE_INCLUDES_TAX = True
         order.recalculate_total()
         item = order.modify(p1, 0)
 
@@ -285,7 +285,7 @@ class OrderTest(TestCase):
         self.assertAlmostEqual(item.line_item_discount, discount)
         self.assertAlmostEqual(item.discounted_subtotal, order.total)
 
-        pasta_settings.PASTA_PRICE_INCLUDES_TAX = False
+        plata_settings.PASTA_PRICE_INCLUDES_TAX = False
         order.recalculate_total()
         item = order.modify(p1, 0)
 
@@ -293,6 +293,6 @@ class OrderTest(TestCase):
         self.assertAlmostEqual(item.line_item_discount, discount / tax_factor)
         self.assertAlmostEqual(item.discounted_subtotal + order.items_tax, order.total)
 
-        pasta_settings.PASTA_PRICE_INCLUDES_TAX = True
+        plata_settings.PASTA_PRICE_INCLUDES_TAX = True
         order.recalculate_total()
         item = order.modify(p1, 0)

@@ -13,9 +13,9 @@ from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 
-from pasta import pasta_settings
-from pasta.contact.models import Contact
-from pasta.product.models import Product, Discount
+from plata import plata_settings
+from plata.contact.models import Contact
+from plata.product.models import Product, Discount
 
 
 class Order(models.Model):
@@ -263,7 +263,7 @@ class OrderItem(models.Model):
 
     @property
     def unit_price(self):
-        if pasta_settings.PASTA_PRICE_INCLUDES_TAX:
+        if plata_settings.PASTA_PRICE_INCLUDES_TAX:
             return self._unit_price + self._unit_tax
         return self._unit_price
 
@@ -278,7 +278,7 @@ class OrderItem(models.Model):
 
     @property
     def line_item_discount(self):
-        if pasta_settings.PASTA_PRICE_INCLUDES_TAX:
+        if plata_settings.PASTA_PRICE_INCLUDES_TAX:
             return self.line_item_discount_incl_tax
         else:
             return self.line_item_discount_excl_tax
@@ -293,7 +293,7 @@ class OrderItem(models.Model):
 
     @property
     def discounted_subtotal(self):
-        if pasta_settings.PASTA_PRICE_INCLUDES_TAX:
+        if plata_settings.PASTA_PRICE_INCLUDES_TAX:
             return self.discounted_subtotal_incl_tax
         else:
             return self.discounted_subtotal_excl_tax

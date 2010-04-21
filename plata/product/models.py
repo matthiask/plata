@@ -4,7 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from pasta import pasta_settings
+from plata import plata_settings
 
 
 class TaxClass(models.Model):
@@ -54,7 +54,7 @@ class ProductPrice(models.Model):
     _unit_price = models.DecimalField(_('unit price'), max_digits=18, decimal_places=10)
     tax_included = models.BooleanField(_('tax included'),
         help_text=_('Is tax included in given unit price?'),
-        default=pasta_settings.PASTA_PRICE_INCLUDES_TAX)
+        default=plata_settings.PASTA_PRICE_INCLUDES_TAX)
     currency = models.CharField(_('currency'), max_length=10)
 
     class Meta:
@@ -81,7 +81,7 @@ class ProductPrice(models.Model):
 
     @property
     def unit_price(self):
-        if pasta_settings.PASTA_PRICE_INCLUDES_TAX:
+        if plata_settings.PASTA_PRICE_INCLUDES_TAX:
             return self.unit_price_incl_tax
         else:
             return self.unit_price_excl_tax
@@ -135,7 +135,7 @@ class AmountDiscount(Discount):
     amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2)
     tax_included = models.BooleanField(_('tax included'),
         help_text=_('Is tax included in given unit price?'),
-        default=pasta_settings.PASTA_PRICE_INCLUDES_TAX)
+        default=plata_settings.PASTA_PRICE_INCLUDES_TAX)
 
     def apply(self, order, items, **kwargs):
         if not items:

@@ -1,4 +1,4 @@
-# Django settings for pasta project.
+# Django settings for plata project.
 
 import os
 
@@ -14,7 +14,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'pasta.db',                      # Or path to database file if using sqlite3.
+        'NAME': 'plata.db',                      # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -79,7 +79,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'pasta.urls'
+ROOT_URLCONF = 'plata.urls'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -96,8 +96,8 @@ INSTALLED_APPS = (
 
     'django.contrib.admin',
 
-    'pasta.contact',
-    'pasta.payment',
-    'pasta.product',
-    'pasta.shop',
+    'plata.contact',
+    'plata.payment',
+    'plata.product',
+    'plata.shop',
 )

@@ -10,9 +10,9 @@ class Shop(object):
         from django.conf.urls.defaults import patterns, url
 
         return patterns('',
-            url(r'^cart/$', self.cart, name='pasta_shop_cart'),
-            url(r'^checkout/$', self.checkout, name='pasta_shop_checkout'),
-            url(r'^confirmation/$', self.confirmation, name='pasta_shop_confirmation'),
+            url(r'^cart/$', self.cart, name='plata_shop_cart'),
+            url(r'^checkout/$', self.checkout, name='plata_shop_checkout'),
+            url(r'^confirmation/$', self.confirmation, name='plata_shop_confirmation'),
             )
 
     @property
@@ -77,14 +77,14 @@ class Shop(object):
             })
 
     def render_cart(self, request, context):
-        return render_to_response('pasta/shop_cart.html',
+        return render_to_response('plata/shop_cart.html',
             self.get_context(request, context))
 
     def checkout(self, request):
         order = self.order_from_request(request, create=False)
 
         if not order:
-            return HttpResponseRedirect(reverse('pasta_shop_cart') + '?empty=1')
+            return HttpResponseRedirect(reverse('plata_shop_cart') + '?empty=1')
 
         OrderForm = modelform_factory(self.order_model)
 
@@ -94,7 +94,7 @@ class Shop(object):
             if form.is_valid():
                 form.save()
 
-                return redirect('pasta_shop_confirmation')
+                return redirect('plata_shop_confirmation')
         else:
             form = OrderForm(instance=order)
 
@@ -104,6 +104,6 @@ class Shop(object):
             })
 
     def render_checkout(self, request, context):
-        return render_to_response('pasta/shop_checkout.html',
+        return render_to_response('plata/shop_checkout.html',
             self.get_context(request, context))
 

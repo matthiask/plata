@@ -6,7 +6,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Example:
-    # (r'^pasta/', include('pasta.foo.urls')),
+    # (r'^plata/', include('plata.foo.urls')),
 
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs'
     # to INSTALLED_APPS to enable admin documentation:
