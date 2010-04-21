@@ -54,7 +54,7 @@ class ProductPrice(models.Model):
     _unit_price = models.DecimalField(_('unit price'), max_digits=18, decimal_places=10)
     tax_included = models.BooleanField(_('tax included'),
         help_text=_('Is tax included in given unit price?'),
-        default=plata_settings.PASTA_PRICE_INCLUDES_TAX)
+        default=plata_settings.PLATA_PRICE_INCLUDES_TAX)
     currency = models.CharField(_('currency'), max_length=10)
 
     class Meta:
@@ -81,7 +81,7 @@ class ProductPrice(models.Model):
 
     @property
     def unit_price(self):
-        if plata_settings.PASTA_PRICE_INCLUDES_TAX:
+        if plata_settings.PLATA_PRICE_INCLUDES_TAX:
             return self.unit_price_incl_tax
         else:
             return self.unit_price_excl_tax

@@ -276,7 +276,7 @@ class OrderItem(models.Model):
 
     @property
     def unit_price(self):
-        if plata_settings.PASTA_PRICE_INCLUDES_TAX:
+        if plata_settings.PLATA_PRICE_INCLUDES_TAX:
             return self._unit_price + self._unit_tax
         return self._unit_price
 
@@ -291,7 +291,7 @@ class OrderItem(models.Model):
 
     @property
     def line_item_discount(self):
-        if plata_settings.PASTA_PRICE_INCLUDES_TAX:
+        if plata_settings.PLATA_PRICE_INCLUDES_TAX:
             return self.line_item_discount_incl_tax
         else:
             return self.line_item_discount_excl_tax
@@ -306,7 +306,7 @@ class OrderItem(models.Model):
 
     @property
     def discounted_subtotal(self):
-        if plata_settings.PASTA_PRICE_INCLUDES_TAX:
+        if plata_settings.PLATA_PRICE_INCLUDES_TAX:
             return self.discounted_subtotal_incl_tax
         else:
             return self.discounted_subtotal_excl_tax
