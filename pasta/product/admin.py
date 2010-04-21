@@ -19,3 +19,13 @@ admin.site.register(models.Product,
     inlines=[ProductPriceInline, ProductImageInline],
     list_display=('name', 'description'),
     )
+
+admin.site.register(models.AmountDiscount,
+    list_display=('name', 'amount', 'tax_included'),
+    exclude=('content_type',),
+    )
+
+admin.site.register(models.PercentageDiscount,
+    list_display=('name', 'percentage'),
+    exclude=('content_type',),
+    )

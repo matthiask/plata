@@ -15,7 +15,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from pasta import pasta_settings
 from pasta.contact.models import Contact
-from pasta.product.models import Product
+from pasta.product.models import Product, Discount
 
 
 class Order(models.Model):
@@ -74,7 +74,7 @@ class Order(models.Model):
     shipping_discount = models.DecimalField(_('shipping discount'),
         max_digits=18, decimal_places=10, blank=True, null=True)
     shipping_tax = models.DecimalField(_('shipping tax'),
-        max_digits=10, decimal_places=10, default=Decimal('0.00'))
+        max_digits=18, decimal_places=10, default=Decimal('0.00'))
 
     total = models.DecimalField(_('total'),
         max_digits=18, decimal_places=10, default=Decimal('0.00'))
@@ -101,10 +101,16 @@ class Order(models.Model):
     def recalculate_items(self):
         self.items_subtotal = self.items_tax = self.items_discount = 0
 
-        for item in self.items.all():
+        items = list(self.items.all())
+
+        for item in items:
             # Recalculate item stuff
             item._line_item_price = item.quantity * item._unit_price
 
+        for applied in self.discounts.all().select_related('discount'):
+            applied.discount.subtype.apply(self, items)
+
+        for item in items:
             taxable = item._line_item_price - (item._line_item_discount or 0)
             price = item.get_price()
             item._line_item_tax = taxable * price.tax_class.rate/100
@@ -338,3 +344,13 @@ class OrderPayment(models.Model):
     def delete(self, *args, **kwargs):
         super(OrderPayment, self).delete(*args, **kwargs)
         self._recalculate_paid()
+
+
+class AppliedDiscount(models.Model):
+    order = models.ForeignKey(Order, related_name='discounts',
+        verbose_name=_('order'))
+    discount = models.ForeignKey(Discount, verbose_name=_('discount'))
+
+    class Meta:
+        verbose_name = _('applied discount')
+        verbose_name_plural = _('applied discounts')

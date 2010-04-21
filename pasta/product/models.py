@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -98,3 +99,71 @@ class ProductImage(models.Model):
         verbose_name = _('product image')
         verbose_name_plural = _('product images')
 
+
+
+class GenericBase(models.Model):
+    content_type = models.ForeignKey(ContentType)
+
+    class Meta:
+        abstract = True
+
+    @property
+    def subtype(self):
+        return self.content_type.get_object_for_this_type(pk=self.pk)
+
+    def save(self, *args, **kwargs):
+        if not self.pk and not self.content_type_id:
+            self.content_type = ContentType.objects.get_for_model(self)
+        super(GenericBase, self).save(*args, **kwargs)
+
+
+class Discount(GenericBase):
+    name = models.CharField(_('name'), max_length=100)
+
+    class Meta:
+        verbose_name = _('discount')
+        verbose_name_plural = _('discounts')
+
+    def __unicode__(self):
+        return self.name
+
+    def apply(self, order, items, **kwargs):
+        raise NotImplementedError, 'Discount.apply not implemented'
+
+
+class AmountDiscount(Discount):
+    amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2)
+    tax_included = models.BooleanField(_('tax included'),
+        help_text=_('Is tax included in given unit price?'),
+        default=pasta_settings.PASTA_PRICE_INCLUDES_TAX)
+
+    def apply(self, order, items, **kwargs):
+        if not items:
+            return
+
+        if self.tax_included:
+            tax_rate = items[0].get_price().tax_class.rate
+            discount = self.amount / (1 + tax_rate/100)
+        else:
+            discount = self.amount
+
+        items_subtotal = sum([item._line_item_price for item in items], 0)
+
+        if items_subtotal < discount:
+            remaining = discount - items_subtotal
+            discount = items_subtotal
+
+            # TODO do something with remaining
+
+        for item in items:
+            item._line_item_discount = item._line_item_price / items_subtotal * discount
+
+
+class PercentageDiscount(Discount):
+    percentage = models.DecimalField(_('percentage'), max_digits=10, decimal_places=2)
+
+    def apply(self, order, items, **kwargs):
+        factor = self.percentage / 100
+
+        for item in items:
+            item._line_item_discount = item._line_item_price * factor

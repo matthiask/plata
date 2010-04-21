@@ -8,6 +8,9 @@ class OrderItemInline(admin.TabularInline):
     model = models.OrderItem
     raw_id_fields = ('product',)
 
+class AppliedDiscountInline(admin.TabularInline):
+    model = models.AppliedDiscount
+
 class OrderStatusInline(admin.TabularInline):
     model = models.OrderStatus
     extra = 1
@@ -15,7 +18,7 @@ class OrderStatusInline(admin.TabularInline):
 admin.site.register(models.Order,
     date_hierarchy='created',
     fieldsets=(
-        (None, {'fields': ('created', 'modified', 'contact', 'status')}),
+        (None, {'fields': ('created', 'confirmed', 'contact', 'status')}),
         (_('Billing address'), {'fields': ('billing_company', 'billing_first_name',
             'billing_last_name', 'billing_address', 'billing_zip_code',
             'billing_city', 'billing_country')}),
@@ -23,10 +26,11 @@ admin.site.register(models.Order,
             'shipping_last_name', 'shipping_address', 'shipping_zip_code',
             'shipping_city', 'shipping_country')}),
         (_('Order items'), {'fields': ('items_subtotal', 'items_discount', 'items_tax')}),
-        (_('Total'), {'fields': ('currency', 'tax_amount', 'shipping', 'total', 'paid')}),
+        (_('Shipping'), {'fields': ('shipping_cost', 'shipping_discount', 'shipping_tax')}),
+        (_('Total'), {'fields': ('currency', 'total', 'paid')}),
         (_('Additional fields'), {'fields': ('notes',)}),
         ),
-    inlines=[OrderItemInline, OrderStatusInline],
+    inlines=[OrderItemInline, AppliedDiscountInline, OrderStatusInline],
     list_display=('__unicode__', 'created', 'contact', 'status', 'total'),
     list_filter=('status',),
     raw_id_fields=('contact',),
