@@ -20,12 +20,7 @@ admin.site.register(models.Product,
     list_display=('name', 'description'),
     )
 
-admin.site.register(models.AmountDiscount,
-    list_display=('name', 'amount', 'tax_included'),
-    exclude=('content_type',),
-    )
-
-admin.site.register(models.PercentageDiscount,
-    list_display=('name', 'percentage'),
-    exclude=('content_type',),
+admin.site.register(models.Discount,
+    list_display=('name', 'type', 'key', 'value'),
+    list_filter=('type',),
     )
