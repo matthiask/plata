@@ -18,7 +18,6 @@ class OrderTest(TestCase):
             if e.code == code:
                 return True
             raise
-
         raise Exception, '%s did not raise %s' % (fn, exception)
 
     def setUp(self):

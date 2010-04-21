@@ -31,7 +31,7 @@ TIME_ZONE = 'Europe/Zurich'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'de-ch'
 
 SITE_ID = 1
 
@@ -79,7 +79,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'plata.urls'
+ROOT_URLCONF = 'example.urls'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -96,8 +96,21 @@ INSTALLED_APPS = (
 
     'django.contrib.admin',
 
+    'plata',
     'plata.contact',
     'plata.payment',
     'plata.product',
     'plata.shop',
+
+    'example',
 )
+
+TEST_RUNNER = 'example.test_utils.test_runner_with_coverage'
+COVERAGE_MODULES = [
+    'plata',
+    'plata.contact',
+    'plata.payment',
+    'plata.product',
+    'plata.shop',
+    'plata.views',
+]
