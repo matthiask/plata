@@ -37,12 +37,21 @@ class Shop(object):
         return None
 
     def contact_from_request(self, request, create=False):
-        # TODO: check whether user is logged in, reuse information
         try:
             return self.contact_model.objects.get(pk=request.session.get('shop_contact'))
         except (ValueError, self.contact_model.DoesNotExist):
             if create:
-                contact = self.contact_model.objects.create()
+                initial = {'shipping_same_as_billing': True}
+
+                if request.user.is_authenticated():
+                    initial.update({
+                        'billing_first_name': request.user.first_name,
+                        'billing_last_name': request.user.last_name,
+                        'email': request.user.email,
+                        'user': request.user,
+                    })
+
+                contact = self.contact_model.objects.create(**initial)
                 request.session['shop_contact'] = contact.pk
                 return contact
 
