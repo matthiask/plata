@@ -94,6 +94,17 @@ class Order(models.Model):
     def __unicode__(self):
         return u'Order #%d' % self.pk
 
+    def copy_address(self, contact=None):
+        contact = contact or self.contact
+
+        shipping_prefix = contact.shipping_same_as_billing and 'billing' or 'shipping'
+
+        for field in self.ADDRESS_FIELDS:
+            setattr(self, 'billing_%s' % field,
+                getattr(contact, 'billing_%s' % field))
+            setattr(self, 'shipping_%s' % field,
+                getattr(contact, '%s_%s' % (shipping_prefix, field)))
+
     def recalculate_total(self, save=True):
         self.total = self.recalculate_items() + self.recalculate_shipping()
 

@@ -89,7 +89,7 @@ msgstr "Lieferadresse gleich wie Rechnungsadresse"
 #: contact/models.py:51 product/models.py:58 shop/models.py:63
 #: shop/models.py:250
 msgid "currency"
-msgstr "Wärhung"
+msgstr "Währung"
 
 #: contact/models.py:52
 msgid "Preferred currency."
@@ -269,7 +269,7 @@ msgstr "Lieferungskosten"
 
 #: shop/models.py:74
 msgid "shipping discount"
-msgstr "Rabatt auf Lieferunmg"
+msgstr "Rabatt auf Lieferung"
 
 #: shop/models.py:76
 msgid "shipping tax"
