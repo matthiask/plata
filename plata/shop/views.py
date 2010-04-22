@@ -28,6 +28,11 @@ class Shop(object):
     def default_currency(self, request):
         return 'CHF'
 
+    def clear_session(self, request):
+        for key in ('shop_contact', 'shop_order'):
+            if key in request.session:
+                del request.session[key]
+
     def order_from_request(self, request, create=False):
         try:
             return self.order_model.objects.get(pk=request.session.get('shop_order'))
