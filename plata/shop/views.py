@@ -25,12 +25,19 @@ class Shop(object):
     def urls(self):
         return self.get_urls()
 
+    def default_currency(self, request):
+        return 'CHF'
+
     def order_from_request(self, request, create=False):
         try:
             return self.order_model.objects.get(pk=request.session.get('shop_order'))
         except (ValueError, self.order_model.DoesNotExist):
             if create:
-                order = self.order_model.objects.create()
+                contact = self.contact_from_request(request, create)
+                order = self.order_model.objects.create(
+                    contact=contact,
+                    currency=contact.currency,
+                    )
                 request.session['shop_order'] = order.pk
                 return order
 
@@ -41,7 +48,10 @@ class Shop(object):
             return self.contact_model.objects.get(pk=request.session.get('shop_contact'))
         except (ValueError, self.contact_model.DoesNotExist):
             if create:
-                initial = {'shipping_same_as_billing': True}
+                initial = {
+                    'shipping_same_as_billing': True,
+                    'currency': self.default_currency(request),
+                    }
 
                 if request.user.is_authenticated():
                     initial.update({
