@@ -4,6 +4,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from django.conf import settings
+from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
@@ -11,6 +12,8 @@ from plata import plata_settings
 from plata.contact.models import Contact
 from plata.product.models import TaxClass, Product, Discount
 from plata.shop.models import Order, OrderStatus, OrderPayment
+
+from example.urls import shop
 
 
 class ModelTest(TestCase):
@@ -339,8 +342,6 @@ class ModelTest(TestCase):
 
 class ShopTest(TestCase):
     def setUp(self):
-        from django.contrib.auth.models import AnonymousUser
-        from example.urls import shop
         self.shop = shop
 
         class Empty(object):
@@ -379,3 +380,4 @@ class ViewTest(TestCase):
     def test_01_cart_empty(self):
         self.assertContains(self.client.get('/plata/cart/'), 'Cart is empty')
         self.assertRedirects(self.client.get('/plata/checkout/'), '/plata/cart/?empty=1')
+        self.assertRedirects(self.client.get('/plata/confirmation/'), '/plata/cart/?empty=1')

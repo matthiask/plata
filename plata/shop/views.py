@@ -140,4 +140,13 @@ class Shop(object):
             self.get_context(request, context))
 
     def confirmation(self, request):
-        pass
+        order = self.order_from_request(request, create=False)
+
+        if not order:
+            return HttpResponseRedirect(reverse('plata_shop_cart') + '?empty=1')
+
+        return self.render_confirmation(request, {})
+
+    def render_confirmation(self, request, context):
+        return render_tor_response('plata/shop_confirmation.html',
+            self.get_context(request, context))
