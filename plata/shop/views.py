@@ -4,6 +4,7 @@ from django.forms.models import inlineformset_factory, modelform_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render_to_response
 from django.template import RequestContext
+from django.utils.translation import ugettext as _
 
 
 class Shop(object):
@@ -24,6 +25,7 @@ class Shop(object):
             }
 
         return patterns('django.views.generic',
+            url(r'^$', lambda request: redirect('plata_product_list')),
             url(r'^products/$', 'list_detail.object_list', product_dict, name='plata_product_list'),
             url(r'^products/(?P<object_id>\d+)/$', 'list_detail.object_detail', product_dict, name='plata_product_detail'),
             )
@@ -112,16 +114,21 @@ class Shop(object):
         OrderItemFormset = inlineformset_factory(
             self.order_model,
             self.orderitem_model,
-            extra=0)
+            extra=0,
+            fields=('quantity',),
+            )
 
         if request.method == 'POST':
             formset = OrderItemFormset(request.POST, instance=order)
 
             if formset.is_valid():
                 formset.save()
+                order.recalculate_total()
 
                 messages.success(request, _('The cart has been updated.'))
 
+                if 'checkout' in request.POST:
+                    return redirect('plata_shop_checkout')
                 return HttpResponseRedirect('.')
         else:
             formset = OrderItemFormset(instance=order)
@@ -149,7 +156,7 @@ class Shop(object):
         if not order:
             return HttpResponseRedirect(reverse('plata_shop_cart') + '?empty=1')
 
-        ContactForm = modelform_factory(self.contact_model)
+        ContactForm = modelform_factory(self.contact_model, exclude=('user', 'created', 'notes'))
         OrderForm = modelform_factory(self.order_model, fields=('notes',))
 
         if request.method == 'POST':

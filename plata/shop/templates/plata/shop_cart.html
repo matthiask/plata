@@ -6,10 +6,19 @@
 {% else %}
 <h1>Cart</h1>
 
-<form>
+<form method="post" action=".">
+{% csrf_token %}
+{{ orderitemformset.management_form }}
 <table>
-{{ orderitemformset }}
+{% for orderitemform in orderitemformset.forms %}
+    <tr>
+        <th colspan="2">{{ orderitemform.instance.product }}</th>
+    </tr>
+    {{ orderitemform }}
+{% endfor %}
 </table>
+<input type="submit" name="save" value="save" />
+<input type="submit" name="checkout" value="checkout" />
 </form>
 {% endif %}
 {% endblock %}
