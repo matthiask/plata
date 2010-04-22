@@ -1,0 +1,28 @@
+[
+  {
+    "pk": 1, 
+    "model": "contact.contact", 
+    "fields": {
+      "billing_address": "Beispielstrasse", 
+      "billing_city": "Z\u00fcrich", 
+      "billing_first_name": "Hans", 
+      "created": "2010-04-22 17:31:37", 
+      "shipping_zip_code": "", 
+      "shipping_city": "", 
+      "shipping_last_name": "", 
+      "billing_country": "CH", 
+      "currency": "CHF", 
+      "shipping_first_name": "", 
+      "billing_zip_code": "8001", 
+      "shipping_country": "", 
+      "user": null, 
+      "billing_company": "Musterfirma", 
+      "shipping_address": "", 
+      "notes": "", 
+      "shipping_company": "", 
+      "shipping_same_as_billing": true, 
+      "email": "hans.muster@example.com", 
+      "billing_last_name": "Muster"
+    }
+  }
+]

@@ -1,0 +1,60 @@
+[
+  {
+    "pk": 1, 
+    "model": "product.taxclass", 
+    "fields": {
+      "priority": 100, 
+      "rate": "7.6", 
+      "name": "Normalsatz (CH)"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "product.taxclass", 
+    "fields": {
+      "priority": 10, 
+      "rate": "2.5", 
+      "name": "Reduzierter Satz f\u00fcr allt\u00e4gliche G\u00fcter (CH)"
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "product.product", 
+    "fields": {
+      "name": "Beispielprodukt #1", 
+      "description": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.\r\n\r\nDonec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo."
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "product.product", 
+    "fields": {
+      "name": "Beispielprodukt #2", 
+      "description": "Li Europan lingues es membres del sam familie. Lor separat existentie es un myth.\r\n\r\nPor scientie, musica, sport etc, litot Europa usa li sam vocabular.\r\n\r\nLi lingues differe solmen in li grammatica, li pronunciation e li plu commun vocabules."
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "product.productprice", 
+    "fields": {
+      "product": 2, 
+      "_unit_price": "59.9", 
+      "created": "2010-04-22 17:34:05", 
+      "tax_class": 1, 
+      "currency": "CHF", 
+      "tax_included": true
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "product.productprice", 
+    "fields": {
+      "product": 1, 
+      "_unit_price": "79.9", 
+      "created": "2010-04-22 17:33:17", 
+      "tax_class": 1, 
+      "currency": "CHF", 
+      "tax_included": true
+    }
+  }
+]

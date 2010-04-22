@@ -1,0 +1,66 @@
+[
+  {
+    "pk": 1, 
+    "model": "shop.order", 
+    "fields": {
+      "shipping_discount": null, 
+      "billing_zip_code": "8001", 
+      "shipping_zip_code": "8001", 
+      "currency": "CHF", 
+      "shipping_cost": null, 
+      "total": "539.1999999999", 
+      "shipping_tax": "0", 
+      "billing_country": "CH", 
+      "billing_last_name": "Muster", 
+      "confirmed": null, 
+      "shipping_last_name": "Muster", 
+      "items_discount": "0", 
+      "status": 10, 
+      "billing_address": "Beispielstrasse", 
+      "shipping_city": "Z\u00fcrich", 
+      "billing_first_name": "Hans", 
+      "paid": "0", 
+      "items_subtotal": "501.1152416356", 
+      "items_tax": "38.0847583643", 
+      "billing_city": "Z\u00fcrich", 
+      "shipping_first_name": "Hans", 
+      "created": "2010-04-22 17:35:06", 
+      "notes": "", 
+      "contact": 1, 
+      "billing_company": "Musterfirma", 
+      "shipping_address": "Beispielstrasse", 
+      "shipping_company": "Musterfirma", 
+      "shipping_country": "CH"
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "shop.orderitem", 
+    "fields": {
+      "product": 1, 
+      "_unit_price": "74.2565055762", 
+      "_unit_tax": "5.6434944238", 
+      "_line_item_tax": "16.9304832714", 
+      "_line_item_price": "222.7695167286", 
+      "currency": "CHF", 
+      "_line_item_discount": null, 
+      "order": 1, 
+      "quantity": 3
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "shop.orderitem", 
+    "fields": {
+      "product": 2, 
+      "_unit_price": "55.6691449814", 
+      "_unit_tax": "4.2308550186", 
+      "_line_item_tax": "21.1542750929", 
+      "_line_item_price": "278.345724907", 
+      "currency": "CHF", 
+      "_line_item_discount": null, 
+      "order": 1, 
+      "quantity": 5
+    }
+  }
+]
