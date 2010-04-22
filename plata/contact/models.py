@@ -5,23 +5,6 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _, ugettext
 
 
-class ContactManager(models.Manager):
-    def for_request(self, request, create=False):
-        if request.user.is_authenticated():
-            try:
-                return self.get(user=request.user)
-            except self.model.DoesNotExist:
-                pass
-            except self.model.MultipleObjectsReturned:
-                # XXX Oops.
-                pass
-
-        if create:
-            return Contact.objects.create(
-                user=user,
-                )
-
-
 class Contact(models.Model):
     user = models.ForeignKey(User, verbose_name=_('user'), blank=True, null=True)
     email = models.EmailField(_('e-mail address'), unique=True)
