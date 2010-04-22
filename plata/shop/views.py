@@ -48,15 +48,16 @@ class Shop(object):
 
         return None
 
-
     def get_context(self, request, context):
         instance = RequestContext(request) #, self.get_extra_context(request))
         instance.update(context)
         return instance
 
-
     def cart(self, request):
         order = self.order_from_request(request, create=False)
+
+        if not order:
+            return self.render_cart_empty(request, {})
 
         OrderItemFormset = inlineformset_factory(
             self.order_model,
@@ -81,6 +82,12 @@ class Shop(object):
             'empty': request.GET.get('empty', False), # Whether the cart is empty.
                                                       # Flag gets set by checkout view.
             })
+
+    def render_cart_empty(self, request, context):
+        context.update({'empty': True})
+
+        return render_to_response('plata/shop_cart.html',
+            self.get_context(request, context))
 
     def render_cart(self, request, context):
         return render_to_response('plata/shop_cart.html',
