@@ -283,6 +283,9 @@ class OrderItem(models.Model):
         verbose_name = _('order item')
         verbose_name_plural = _('order items')
 
+    def __unicode__(self):
+        return u'%s of %s' % (self.quantity, self.product)
+
     def get_price(self):
         return self.product.get_price(currency=self.order.currency)
 
