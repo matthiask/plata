@@ -125,7 +125,8 @@ class Shop(object):
                 formset.save()
                 order.recalculate_total()
 
-                messages.success(request, _('The cart has been updated.'))
+                if any(form.changed_data for form in formset.forms):
+                    messages.success(request, _('The cart has been updated.'))
 
                 if 'checkout' in request.POST:
                     return redirect('plata_shop_checkout')
