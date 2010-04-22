@@ -1,6 +1,9 @@
+import os
+
 from datetime import datetime
 from decimal import Decimal
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
@@ -10,7 +13,7 @@ from plata.product.models import TaxClass, Product, Discount
 from plata.shop.models import Order, OrderStatus, OrderPayment
 
 
-class OrderTest(TestCase):
+class ModelTest(TestCase):
     def assertRaisesWithCode(self, exception, fn, code):
         try:
             fn()
@@ -332,3 +335,47 @@ class OrderTest(TestCase):
 
         order = Order.objects.get(pk=order.pk)
         self.assertAlmostEqual(order.balance_remaining, order.total - payment.amount)
+
+
+class ShopTest(TestCase):
+    def setUp(self):
+        from django.contrib.auth.models import AnonymousUser
+        from example.urls import shop
+        self.shop = shop
+
+        class Empty(object):
+            pass
+
+        self.request = Empty()
+        self.request.session = {}
+        self.request.user = AnonymousUser()
+
+    def test_01_creation(self):
+        contact = self.shop.contact_from_request(self.request)
+        self.assertEqual(contact, None)
+
+        contact = self.shop.contact_from_request(self.request, create=True)
+        self.assertNotEqual(contact, None)
+
+        contact = self.shop.contact_from_request(self.request, create=True)
+        self.assertEqual(Contact.objects.count(), 1)
+
+        order = self.shop.order_from_request(self.request)
+        self.assertEqual(order, None)
+
+        order = self.shop.order_from_request(self.request, create=True)
+        self.assertEqual(Order.objects.count(), 1)
+        self.assertEqual(order.contact, contact)
+
+
+class ViewTest(TestCase):
+    def setUp(self):
+        self.ORIG_TEMPLATE_DIRS = settings.TEMPLATE_DIRS
+        settings.TEMPLATE_DIRS = (os.path.join(os.path.dirname(__file__), 'templates'),)
+
+    def tearDown(self):
+        settings.TEMPLATE_DIRS = self.ORIG_TEMPLATE_DIRS
+
+    def test_01_cart_empty(self):
+        self.assertContains(self.client.get('/plata/cart/'), 'Cart is empty')
+        self.assertRedirects(self.client.get('/plata/checkout/'), '/plata/cart/?empty=1')

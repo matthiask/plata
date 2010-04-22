@@ -1,1 +1,11 @@
-<pre>{% debug %}</pre>
+{% if empty %}
+<h1>Cart is empty!</h1>
+{% else %}
+<h1>Cart</h1>
+
+<form>
+<table>
+{{ orderitemformset }}
+</table>
+</form>
+{% endif %}

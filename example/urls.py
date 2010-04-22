@@ -7,8 +7,9 @@ from plata.shop.models import Product, Contact, Order
 
 admin.autodiscover()
 
+shop = Shop(Product, Contact, Order)
 
 urlpatterns = patterns('',
-    url(r'^plata/', include(Shop(Product, Contact, Order).urls)),
+    url(r'^plata/', include(shop.urls)),
     url(r'^admin/', include(admin.site.urls)),
 )
