@@ -1,8 +1,8 @@
 from django.contrib import messages
 from django.core.urlresolvers import reverse
-from django.forms.models import inlineformset_factory
+from django.forms.models import inlineformset_factory, modelform_factory
 from django.http import HttpResponseRedirect
-from django.shortcuts import render_to_response
+from django.shortcuts import redirect, render_to_response
 from django.template import RequestContext
 
 
@@ -149,21 +149,28 @@ class Shop(object):
         if not order:
             return HttpResponseRedirect(reverse('plata_shop_cart') + '?empty=1')
 
-        OrderForm = modelform_factory(self.order_model)
+        ContactForm = modelform_factory(self.contact_model)
+        OrderForm = modelform_factory(self.order_model, fields=('notes',))
 
         if request.method == 'POST':
-            form = OrderForm(request.POST, instance=order)
+            c_form = ContactForm(request.POST, instance=order.contact)
+            o_form = OrderForm(request.POST, instance=order)
 
-            if form.is_valid():
-                form.save()
+            if c_form.is_valid() and o_form.is_valid():
+                c_form.save()
+                order = o_form.save()
+                order.copy_address()
+                order.save()
 
                 return redirect('plata_shop_confirmation')
         else:
-            form = OrderForm(instance=order)
+            c_form = ContactForm(instance=order.contact)
+            o_form = OrderForm(instance=order)
 
         return self.render_checkout(request, {
             'order': order,
-            'orderform': form,
+            'contactform': c_form,
+            'orderform': o_form,
             })
 
     def render_checkout(self, request, context):
@@ -176,8 +183,8 @@ class Shop(object):
         if not order:
             return HttpResponseRedirect(reverse('plata_shop_cart') + '?empty=1')
 
-        return self.render_confirmation(request, {})
+        return self.render_confirmation(request, {'order': order})
 
     def render_confirmation(self, request, context):
-        return render_tor_response('plata/shop_confirmation.html',
+        return render_to_response('plata/shop_confirmation.html',
             self.get_context(request, context))

@@ -1,5 +1,44 @@
 {% extends "base.html" %}
 
 {% block content %}
-<pre>{% debug %}</pre>
+<h1>Order summary</h1>
+
+<h2>Billing</h2>
+{{ order.billing_company }}<br />
+{{ order.billing_first_name }} {{ order.billing_last_name }}<br />
+{{ order.billing_address|linebreaksbr }}<br />
+{{ order.billing_country }}-{{ order.billing_zip_code }} {{ order.billing_city }}<br />
+
+<h2>Shipping</h2>
+{{ order.shipping_company }}<br />
+{{ order.shipping_first_name }} {{ order.shipping_last_name }}<br />
+{{ order.shipping_address|linebreaksbr }}<br />
+{{ order.shipping_country }}-{{ order.shipping_zip_code }} {{ order.shipping_city }}<br />
+
+<h2>Items</h2>
+<table border="1">
+{% for item in order.items.all %}
+<tr>
+    <td>{{ item.product }}</td>
+    <td>{{ item.quantity }} * {{ item.currency }} {{ item.unit_price|floatformat:2 }}</td>
+    <td>{{ item.currency }} {{ item.discounted_subtotal|floatformat:2 }}</td>
+</tr>
+{% endfor %}
+</table>
+
+<h2>Total</h2>
+<table>
+<tr>
+    <th>Subtotal excl tax</th>
+    <td>{{ order.currency }} {{ order.items_subtotal|floatformat:2 }}</td>
+</tr>
+<tr>
+    <th>Tax</th>
+    <td>{{ order.currency }} {{ order.items_tax|floatformat:2 }}</td>
+</tr>
+<tr>
+    <th>Total</th>
+    <td>{{ order.currency }} {{ order.total|floatformat:2 }}</td>
+</tr>
+</table>
 {% endblock %}

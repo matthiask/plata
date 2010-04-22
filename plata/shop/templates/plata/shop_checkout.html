@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-<pre>{% debug %}</pre>
+<form method="post" action=".">
+{% csrf_token %}
+<table>
+{{ contactform }}
+{{ orderform }}
+</table>
+</form>
 {% endblock %}
