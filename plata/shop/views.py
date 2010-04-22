@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect
@@ -13,9 +14,24 @@ class Shop(object):
         self.orderitem_model = self.order_model.items.related.model
 
     def get_urls(self):
+        return self.get_product_urls() + self.get_shop_urls()
+
+    def get_product_urls(self):
         from django.conf.urls.defaults import patterns, url
 
+        product_dict = {
+            'queryset': self.product_model.objects.all(),
+            }
+
+        return patterns('django.views.generic',
+            url(r'^products/$', 'list_detail.object_list', product_dict, name='plata_product_list'),
+            url(r'^products/(?P<object_id>\d+)/$', 'list_detail.object_detail', product_dict, name='plata_product_detail'),
+            )
+
+    def get_shop_urls(self):
+        from django.conf.urls.defaults import patterns, url
         return patterns('',
+            url(r'^api/order_modify_item/$', self.order_modify_item, name='plata_order_modify_item'),
             url(r'^cart/$', self.cart, name='plata_shop_cart'),
             url(r'^checkout/$', self.checkout, name='plata_shop_checkout'),
             url(r'^confirmation/$', self.confirmation, name='plata_shop_confirmation'),
@@ -76,6 +92,16 @@ class Shop(object):
         instance = RequestContext(request) #, self.get_extra_context(request))
         instance.update(context)
         return instance
+
+    def order_modify_item(self, request):
+        order = self.order_from_request(request, create=True)
+        product = self.product_model.objects.get(pk=request.POST.get('product'))
+
+        order.modify_item(product, int(request.POST.get('quantity')))
+        order.recalculate_total()
+
+        messages.success(request, 'Successfully updated cart.')
+        return HttpResponseRedirect(product.get_absolute_url())
 
     def cart(self, request):
         order = self.order_from_request(request, create=False)

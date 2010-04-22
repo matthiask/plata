@@ -1,3 +1,6 @@
+{% extends "base.html" %}
+
+{% block content %}
 {% if empty %}
 <h1>Cart is empty!</h1>
 {% else %}
@@ -9,3 +12,4 @@
 </table>
 </form>
 {% endif %}
+{% endblock %}

@@ -1,0 +1,43 @@
+<html>
+<head>
+<title>plata</title>
+</head>
+<body>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% block content %}
+{% endblock %}
+
+
+<hr />
+<h2>That's what we know about you:</h2>
+<table>
+    <tr>
+        <th>User</th>
+        <td>{{ user }}</td>
+    </tr>
+    <tr>
+        <th>Contact</th>
+        <td>{{ plata.contact }}</td>
+    </tr>
+    <tr>
+        <th>Order</th>
+        <td>
+            {{ plata.order }}, {{ plata.order.currency }} {{ plata.order.total|floatformat:2 }}
+            <ul>
+                {% for item in plata.order.items.all %}
+                <li><a href="{{ item.product.get_absolute_url }}">{{ item }}</a></li>
+                {% endfor %}
+            </ul>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

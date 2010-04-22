@@ -33,6 +33,10 @@ class Product(models.Model):
     def __unicode__(self):
         return self.name
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('plata_product_detail', (), {'object_id': self.pk})
+
     def get_price(self, **kwargs):
         return self.prices.filter(**kwargs).latest()
 

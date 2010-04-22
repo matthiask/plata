@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ object }}</h1>
+
+{{ object.description|linebreaks }}
+
+<form method="post" action="{% url plata_order_modify_item %}">
+{% csrf_token %}
+Add to cart:
+<input type="hidden" name="product" value="{{ object.pk }}" />
+<input type="text" name="quantity" value="1" />
+<input type="submit" />
+</form>
+
+<a href="{% url plata_product_list %}">back to the product list</a>
+{% endblock %}
