@@ -175,7 +175,7 @@ class Order(models.Model):
         """
 
         currencies = set(self.items.values_list('currency', flat=True))
-        if len(currencies) > 1 or self.currency not in currencies:
+        if currencies and (len(currencies) > 1 or self.currency not in currencies):
             raise ValidationError(_('Order contains more than one currency.'),
                 code='multiple_currency')
 
