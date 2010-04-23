@@ -8,12 +8,11 @@ from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
+import plata
 from plata import plata_settings
 from plata.contact.models import Contact
 from plata.product.models import TaxClass, Product, Discount
 from plata.shop.models import Order, OrderStatus, OrderPayment
-
-from example.urls import shop
 
 
 class ModelTest(TestCase):
@@ -342,7 +341,7 @@ class ModelTest(TestCase):
 
 class ShopTest(TestCase):
     def setUp(self):
-        self.shop = shop
+        self.shop = plata.shop_instance()
 
         class Empty(object):
             pass

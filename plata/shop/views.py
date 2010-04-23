@@ -6,6 +6,8 @@ from django.shortcuts import redirect, render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 
+import plata
+
 
 class Shop(object):
     def __init__(self, product_model, contact_model, order_model):
@@ -13,6 +15,8 @@ class Shop(object):
         self.contact_model = contact_model
         self.order_model = order_model
         self.orderitem_model = self.order_model.items.related.model
+
+        plata.register(self)
 
     def get_urls(self):
         return self.get_product_urls() + self.get_shop_urls()

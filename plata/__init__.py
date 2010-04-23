@@ -17,3 +17,17 @@ class Settings(object):
                 setattr(self, setting, getattr(settings_module, setting))
 
 plata_settings = LazySettings()
+
+
+_shop_instance = None
+def register(instance):
+    global _shop_instance
+    _shop_instance = instance
+
+def shop_instance():
+    # Load default URL patterns to ensure that the shop
+    # object has been created
+    from django.core.urlresolvers import get_resolver
+    get_resolver(None)._populate()
+
+    return _shop_instance
