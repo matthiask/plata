@@ -74,23 +74,33 @@ class Shop(object):
         try:
             return self.contact_model.objects.get(pk=request.session.get('shop_contact'))
         except (ValueError, self.contact_model.DoesNotExist):
-            if create:
-                initial = {
-                    'shipping_same_as_billing': True,
-                    'currency': self.default_currency(request),
-                    }
+            pass
 
-                if request.user.is_authenticated():
-                    initial.update({
-                        'billing_first_name': request.user.first_name,
-                        'billing_last_name': request.user.last_name,
-                        'email': request.user.email,
-                        'user': request.user,
-                    })
-
-                contact = self.contact_model.objects.create(**initial)
+        if request.user.is_authenticated():
+            try:
+                contact = self.contact_model.objects.get(user=request.user)
                 request.session['shop_contact'] = contact.pk
                 return contact
+            except (self.contact_model.DoesNotExist, self.contact_model.MultipleObjectsReturned):
+                pass
+
+        if create:
+            initial = {
+                'shipping_same_as_billing': True,
+                'currency': self.default_currency(request),
+                }
+
+            if request.user.is_authenticated():
+                initial.update({
+                    'billing_first_name': request.user.first_name,
+                    'billing_last_name': request.user.last_name,
+                    'email': request.user.email,
+                    'user': request.user,
+                })
+
+            contact = self.contact_model.objects.create(**initial)
+            request.session['shop_contact'] = contact.pk
+            return contact
 
         return None
 
