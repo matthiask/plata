@@ -341,8 +341,6 @@ class ModelTest(TestCase):
 
 class ShopTest(TestCase):
     def setUp(self):
-        self.shop = plata.shop_instance()
-
         class Empty(object):
             pass
 
@@ -351,19 +349,21 @@ class ShopTest(TestCase):
         self.request.user = AnonymousUser()
 
     def test_01_creation(self):
-        contact = self.shop.contact_from_request(self.request)
+        shop = plata.shop_instance()
+
+        contact = shop.contact_from_request(self.request)
         self.assertEqual(contact, None)
 
-        contact = self.shop.contact_from_request(self.request, create=True)
+        contact = shop.contact_from_request(self.request, create=True)
         self.assertNotEqual(contact, None)
 
-        contact = self.shop.contact_from_request(self.request, create=True)
+        contact = shop.contact_from_request(self.request, create=True)
         self.assertEqual(Contact.objects.count(), 1)
 
-        order = self.shop.order_from_request(self.request)
+        order = shop.order_from_request(self.request)
         self.assertEqual(order, None)
 
-        order = self.shop.order_from_request(self.request, create=True)
+        order = shop.order_from_request(self.request, create=True)
         self.assertEqual(Order.objects.count(), 1)
         self.assertEqual(order.contact, contact)
 
