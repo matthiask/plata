@@ -5,7 +5,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _, ugettext
 
 
-class ContactBase(models.Model):
+class BillingShippingAddress(models.Model):
     ADDRESS_FIELDS = ['company', 'first_name', 'last_name', 'address',
         'zip_code', 'city', 'country']
 
@@ -42,7 +42,7 @@ class ContactBase(models.Model):
                 getattr(contact, '%s_%s' % (shipping_prefix, field)))
 
 
-class Contact(ContactBase):
+class Contact(BillingShippingAddress):
     user = models.ForeignKey(User, verbose_name=_('user'), blank=True, null=True)
     email = models.EmailField(_('e-mail address'), unique=True)
     created = models.DateTimeField(_('created'), default=datetime.now)

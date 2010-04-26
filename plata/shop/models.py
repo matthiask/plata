@@ -16,11 +16,11 @@ from django.utils import simplejson
 from django.utils.translation import ugettext_lazy as _
 
 from plata import plata_settings
-from plata.contact.models import Contact
+from plata.contact.models import BillingShippingAddress, Contact
 from plata.product.models import Product, DiscountBase, Discount
 
 
-class Order(models.Model):
+class Order(BillingShippingAddress):
     CART = 10
     CHECKOUT = 20
     CONFIRMED = 30
@@ -33,9 +33,6 @@ class Order(models.Model):
         (COMPLETED, _('Order has been completed')),
         )
 
-    ADDRESS_FIELDS = ['company', 'first_name', 'last_name', 'address',
-        'zip_code', 'city', 'country']
-
     created = models.DateTimeField(_('created'), default=datetime.now)
     confirmed = models.DateTimeField(_('confirmed'), blank=True, null=True)
     contact = models.ForeignKey(Contact, verbose_name=_('contact'))
@@ -43,24 +40,6 @@ class Order(models.Model):
         default=CART)
 
     #order_id = models.CharField(_('order ID'), max_length=20, unique=True)
-
-    billing_company = models.CharField(_('company'), max_length=100, blank=True)
-    billing_first_name = models.CharField(_('first name'), max_length=100, blank=True)
-    billing_last_name = models.CharField(_('last name'), max_length=100, blank=True)
-    billing_address = models.TextField(_('address'), blank=True)
-    billing_zip_code = models.CharField(_('ZIP code'), max_length=50, blank=True)
-    billing_city = models.CharField(_('city'), max_length=100, blank=True)
-    billing_country = models.CharField(_('country'), max_length=2, blank=True,
-        help_text=_('ISO2 code'))
-
-    shipping_company = models.CharField(_('company'), max_length=100, blank=True)
-    shipping_first_name = models.CharField(_('first name'), max_length=100, blank=True)
-    shipping_last_name = models.CharField(_('last name'), max_length=100, blank=True)
-    shipping_address = models.TextField(_('address'), blank=True)
-    shipping_zip_code = models.CharField(_('ZIP code'), max_length=50, blank=True)
-    shipping_city = models.CharField(_('city'), max_length=100, blank=True)
-    shipping_country = models.CharField(_('country'), max_length=2, blank=True,
-        help_text=_('ISO2 code'))
 
     currency = models.CharField(_('currency'), max_length=10)
 
@@ -93,17 +72,6 @@ class Order(models.Model):
 
     def __unicode__(self):
         return u'Order #%d' % self.pk
-
-    def copy_address(self, contact=None):
-        contact = contact or self.contact
-
-        shipping_prefix = contact.shipping_same_as_billing and 'billing' or 'shipping'
-
-        for field in self.ADDRESS_FIELDS:
-            setattr(self, 'billing_%s' % field,
-                getattr(contact, 'billing_%s' % field))
-            setattr(self, 'shipping_%s' % field,
-                getattr(contact, '%s_%s' % (shipping_prefix, field)))
 
     def recalculate_total(self, save=True):
         self.total = self.recalculate_items() + self.recalculate_shipping()
