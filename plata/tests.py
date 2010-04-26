@@ -393,7 +393,7 @@ class ViewTest(TestCase):
         self.assertRedirects(self.client.get('/plata/checkout/'), '/plata/cart/?empty=1')
         self.assertRedirects(self.client.get('/plata/confirmation/'), '/plata/cart/?empty=1')
 
-    def test_02_contact(self):
+    def test_02_authenticated_user_has_contact(self):
         user = User.objects.create_user('test', 'test@example.com', 'testing')
         self.client.login(username='test', password='testing')
 
@@ -403,3 +403,14 @@ class ViewTest(TestCase):
         request = get_request(user=user)
 
         self.assertEqual(shop.contact_from_request(request), contact)
+
+    def test_03_authenticated_user_has_no_contact(self):
+        user = User.objects.create_user('test', 'test@example.com', 'testing')
+        self.client.login(username='test', password='testing')
+        shop = plata.shop_instance()
+
+        self.assertEqual(Contact.objects.count(), 0)
+        contact = shop.contact_from_request(get_request(user=user), create=True)
+
+        self.assertEqual(user.email, contact.email)
+        self.assertEqual(Contact.objects.count(), 1)
