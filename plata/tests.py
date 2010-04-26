@@ -4,7 +4,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from django.conf import settings
-from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth.models import AnonymousUser, User
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
@@ -13,6 +13,25 @@ from plata import plata_settings
 from plata.contact.models import Contact
 from plata.product.models import TaxClass, Product, Discount
 from plata.shop.models import Order, OrderStatus, OrderPayment
+
+
+class Empty(object):
+    pass
+
+
+def get_request(**kwargs):
+    """
+    Helper method which creates a mock request object
+    """
+
+    request = Empty()
+    request.session = {}
+    request.user = AnonymousUser()
+
+    for k, v in kwargs.items():
+       setattr(request, k, v)
+
+    return request
 
 
 class ModelTest(TestCase):
@@ -340,30 +359,23 @@ class ModelTest(TestCase):
 
 
 class ShopTest(TestCase):
-    def setUp(self):
-        class Empty(object):
-            pass
-
-        self.request = Empty()
-        self.request.session = {}
-        self.request.user = AnonymousUser()
-
     def test_01_creation(self):
         shop = plata.shop_instance()
+        request = get_request()
 
-        contact = shop.contact_from_request(self.request)
+        contact = shop.contact_from_request(request)
         self.assertEqual(contact, None)
 
-        contact = shop.contact_from_request(self.request, create=True)
+        contact = shop.contact_from_request(request, create=True)
         self.assertNotEqual(contact, None)
 
-        contact = shop.contact_from_request(self.request, create=True)
+        contact = shop.contact_from_request(request, create=True)
         self.assertEqual(Contact.objects.count(), 1)
 
-        order = shop.order_from_request(self.request)
+        order = shop.order_from_request(request)
         self.assertEqual(order, None)
 
-        order = shop.order_from_request(self.request, create=True)
+        order = shop.order_from_request(request, create=True)
         self.assertEqual(Order.objects.count(), 1)
         self.assertEqual(order.contact, contact)
 
@@ -380,3 +392,14 @@ class ViewTest(TestCase):
         self.assertContains(self.client.get('/plata/cart/'), 'Cart is empty')
         self.assertRedirects(self.client.get('/plata/checkout/'), '/plata/cart/?empty=1')
         self.assertRedirects(self.client.get('/plata/confirmation/'), '/plata/cart/?empty=1')
+
+    def test_02_contact(self):
+        user = User.objects.create_user('test', 'test@example.com', 'testing')
+        self.client.login(username='test', password='testing')
+
+        contact = Contact.objects.create(email=user.email, user=user)
+        shop = plata.shop_instance()
+
+        request = get_request(user=user)
+
+        self.assertEqual(shop.contact_from_request(request), contact)
