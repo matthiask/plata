@@ -34,7 +34,7 @@ def get_request(**kwargs):
     return request
 
 
-class ModelTest(TestCase):
+class PlataTest(TestCase):
     def assertRaisesWithCode(self, exception, fn, code):
         try:
             fn()
@@ -125,6 +125,8 @@ class ModelTest(TestCase):
 
         return product
 
+
+class OrderTest(PlataTest):
     def test_01_basic_order(self):
         product = self.create_product()
         order = self.create_order()
@@ -358,7 +360,7 @@ class ModelTest(TestCase):
         self.assertAlmostEqual(order.balance_remaining, order.total - payment.amount)
 
 
-class ShopTest(TestCase):
+class ShopTest(PlataTest):
     def test_01_creation(self):
         shop = plata.shop_instance()
         request = get_request()
@@ -380,7 +382,7 @@ class ShopTest(TestCase):
         self.assertEqual(order.contact, contact)
 
 
-class ViewTest(TestCase):
+class ViewTest(PlataTest):
     def setUp(self):
         self.ORIG_TEMPLATE_DIRS = settings.TEMPLATE_DIRS
         settings.TEMPLATE_DIRS = (os.path.join(os.path.dirname(__file__), 'templates'),)
@@ -414,3 +416,36 @@ class ViewTest(TestCase):
 
         self.assertEqual(user.email, contact.email)
         self.assertEqual(Contact.objects.count(), 1)
+
+    def test_04_shopping(self):
+        self.assertEqual(Order.objects.count(), 0)
+        product = self.create_product()
+
+        self.client.post('/plata/api/order_modify_item/', {
+            'product': product.pk,
+            'quantity': 5,
+            })
+
+        self.assertEqual(Order.objects.count(), 1)
+        self.assertContains(self.client.get('/plata/cart/'), 'value="5"')
+
+        order = Order.objects.all()[0]
+        item = order.items.all()[0]
+
+        self.assertRedirects(self.client.post('/plata/cart/', {
+            'checkout': True,
+
+            'items-INITIAL_FORMS': 1,
+            'items-TOTAL_FORMS': 1,
+            'items-MAX_NUM_FORMS': 1,
+
+            'items-0-id': item.id,
+            'items-0-quantity': 6, # one additional item
+            }), '/plata/checkout/')
+
+        self.assertEqual(order.modify_item(product, 0).quantity, 6)
+
+        self.assertRedirects(self.client.post('/plata/checkout/', {
+            'contact-email': 'something@example.com',
+            'contact-currency': 'CHF',
+            }), '/plata/confirmation/')

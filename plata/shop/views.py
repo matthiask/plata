@@ -175,8 +175,8 @@ class Shop(object):
         OrderForm = modelform_factory(self.order_model, fields=('notes',))
 
         if request.method == 'POST':
-            c_form = ContactForm(request.POST, instance=order.contact)
-            o_form = OrderForm(request.POST, instance=order)
+            c_form = ContactForm(request.POST, prefix='contact', instance=order.contact)
+            o_form = OrderForm(request.POST, prefix='order', instance=order)
 
             if c_form.is_valid() and o_form.is_valid():
                 c_form.save()
@@ -186,8 +186,8 @@ class Shop(object):
 
                 return redirect('plata_shop_confirmation')
         else:
-            c_form = ContactForm(instance=order.contact)
-            o_form = OrderForm(instance=order)
+            c_form = ContactForm(instance=order.contact, prefix='contact')
+            o_form = OrderForm(instance=order, prefix='order')
 
         return self.render_checkout(request, {
             'order': order,
