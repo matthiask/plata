@@ -379,16 +379,36 @@ class OrderTest(PlataTest):
         p2.name = 'Discountable'
         p2.save()
 
-        d = Discount()
+        d = Discount(
+            type=Discount.PERCENTAGE,
+            name='Some discount',
+            code='asdf',
+            value=Decimal('30'),
+            is_active=True,
+            )
+
         d.data_json = {
             'eligible_filter': {
                 'name__icontains': 'countable',
                 },
             }
 
+        d.save()
+
         self.assertEqual(Product.objects.all().count(), 2)
         self.assertEqual(d.eligible_products(Product.objects.all()).count(), 1)
         self.assertEqual(d.eligible_products().count(), 1)
+
+        order = self.create_order()
+        order.modify_item(p1, 3)
+        order.modify_item(p2, 2)
+        order.add_discount(d)
+        order.recalculate_total()
+
+        # Test that only one order item has its discount applied
+        self.assertEqual(1,
+            len([item for item in order.items.all() if item._line_item_discount]))
+
 
     def test_10_discount_validation(self):
         order = self.create_order()
