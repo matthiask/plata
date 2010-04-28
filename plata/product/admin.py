@@ -21,6 +21,6 @@ admin.site.register(models.Product,
     )
 
 admin.site.register(models.Discount,
-    list_display=('name', 'type', 'key', 'value'),
+    list_display=('name', 'type', 'code', 'value'),
     list_filter=('type',),
     )
