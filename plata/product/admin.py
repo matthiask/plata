@@ -15,9 +15,19 @@ admin.site.register(models.TaxClass,
     list_display=('name', 'rate', 'priority'),
     )
 
+admin.site.register(models.Category,
+    list_display=('is_active', 'is_internal', '__unicode__', 'ordering'),
+    list_display_links=('__unicode__',),
+    list_filter=('is_active', 'is_internal'),
+    prepopulated_fields={'slug': ('name',)},
+    )
+
 admin.site.register(models.Product,
     inlines=[ProductPriceInline, ProductImageInline],
-    list_display=('name', 'description'),
+    list_display=('is_active', 'name', 'ordering'),
+    list_display_links=('name',),
+    list_filter=('is_active',),
+    prepopulated_fields={'slug': ('name',)},
     )
 
 admin.site.register(models.Discount,

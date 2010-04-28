@@ -24,16 +24,54 @@ class TaxClass(models.Model):
         return self.name
 
 
-class Product(models.Model):
+class Category(models.Model):
+    is_active = models.BooleanField(_('is active'), default=True)
+    is_internal = models.BooleanField(_('is internal'), default=False,
+        help_text=_('Only used to internally organize products, f.e. for discounting.'))
+
     name = models.CharField(_('name'), max_length=100)
+    slug = models.SlugField(_('slug'), unique=True)
+    ordering = models.PositiveIntegerField(_('ordering'), default=0)
     description = models.TextField(_('description'), blank=True)
 
+    parent = models.ForeignKey('self', blank=True, null=True,
+        related_name='children', verbose_name=_('parent'))
+
     class Meta:
+        ordering = ['ordering', 'name']
+        verbose_name = _('category')
+        verbose_name_plural = _('categories')
+
+    def __unicode__(self):
+        if self.parent_id:
+            return u'%s - %s' % (self.parent, self.name)
+        return self.name
+
+
+class Product(models.Model):
+    is_active = models.BooleanField(_('is active'), default=True)
+    name = models.CharField(_('name'), max_length=100)
+    slug = models.SlugField(_('slug'), unique=True)
+    ordering = models.PositiveIntegerField(_('ordering'), default=0)
+    sku = models.CharField(_('SKU'), max_length=100, blank=True)
+    description = models.TextField(_('description'), blank=True)
+
+    categories = models.ManyToManyField(Category,
+        verbose_name=_('categories'), related_name='products',
+        blank=True, null=True)
+
+    class Meta:
+        ordering = ['ordering', 'name']
         verbose_name = _('product')
         verbose_name_plural = _('products')
 
     def __unicode__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.sku:
+            self.sku = self.slug
+        super(Product, self).save(*args, **kwargs)
 
     @models.permalink
     def get_absolute_url(self):
@@ -41,6 +79,13 @@ class Product(models.Model):
 
     def get_price(self, **kwargs):
         return self.prices.filter(**kwargs).latest()
+
+    @property
+    def main_image(self):
+        try:
+            return self.images.all()[0]
+        except IndexError:
+            return None
 
 
 def get_default_taxclass():
@@ -104,6 +149,9 @@ class ProductImage(models.Model):
         ordering = ['ordering']
         verbose_name = _('product image')
         verbose_name_plural = _('product images')
+
+    def __unicode__(self):
+        return self.image.name
 
 
 class DiscountBase(models.Model):
