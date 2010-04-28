@@ -1,6 +1,6 @@
 import os
 
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal
 
 from django.conf import settings
@@ -389,6 +389,28 @@ class OrderTest(PlataTest):
         self.assertEqual(Product.objects.all().count(), 2)
         self.assertEqual(d.eligible_products(Product.objects.all()).count(), 1)
         self.assertEqual(d.eligible_products().count(), 1)
+
+    def test_10_discount_validation(self):
+        order = self.create_order()
+        d = Discount(
+            is_active=False,
+            valid_from=date(2100, 1, 1), # far future date
+            valid_until=None,
+            )
+
+        try:
+            d.validate(order)
+        except ValidationError, e:
+            self.assertEqual(len(e.messages), 2)
+
+        d.is_active = True
+        d.valid_until = date(2000, 1, 1)
+
+        try:
+            d.validate(order)
+        except ValidationError, e:
+            self.assertEqual(len(e.messages), 2)
+
 
 class ShopTest(PlataTest):
     def test_01_creation(self):
