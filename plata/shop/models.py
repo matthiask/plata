@@ -204,6 +204,7 @@ class Order(BillingShippingAddress):
                 'type': discount.type,
                 'name': discount.name,
                 'value': discount.value,
+                'data': discount.data,
             })
 
         return instance

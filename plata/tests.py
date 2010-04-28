@@ -367,6 +367,22 @@ class OrderTest(PlataTest):
 
         self.assertEqual(order.payments.all()[0].data_json['anything'], 42)
 
+    def test_09_selective_discount(self):
+        p1 = self.create_product()
+        p2 = self.create_product()
+        p2.name = 'Discountable'
+        p2.save()
+
+        d = Discount()
+        d.data_json = {
+            'eligible_filter': {
+                'name__icontains': 'countable',
+                },
+            }
+
+        self.assertEqual(Product.objects.all().count(), 2)
+        self.assertEqual(d.eligible_products(Product.objects.all()).count(), 1)
+        self.assertEqual(d.eligible_products().count(), 1)
 
 class ShopTest(PlataTest):
     def test_01_creation(self):

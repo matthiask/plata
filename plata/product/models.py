@@ -4,7 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from plata import plata_settings
+from plata import plata_settings, shop_instance
 from plata.utils import JSONFieldDescriptor
 
 
@@ -130,6 +130,16 @@ class DiscountBase(models.Model):
     def __unicode__(self):
         return self.name
 
+    def eligible_products(self, queryset=None):
+        if not queryset:
+            queryset = shop_instance().product_model._default_manager.all()
+
+        data = self.data_json
+        if 'eligible_filter' in data:
+            queryset = queryset.filter(**data['eligible_filter'])
+
+        return queryset
+
     def apply(self, order, items, **kwargs):
         if not items:
             return
@@ -144,13 +154,17 @@ class DiscountBase(models.Model):
             raise NotImplementedError, 'Unknown discount type %s' % self.type
 
     def apply_amount_discount(self, order, items, tax_included):
+        eligible_products = self.eligible_products().values_list('id', flat=True)
+
+        eligible_items = [item for item in items if item.product_id in eligible_products]
+
         if tax_included:
             tax_rate = items[0].get_price().tax_class.rate
             discount = self.value / (1 + tax_rate/100)
         else:
             discount = self.value
 
-        items_subtotal = sum([item._line_item_price for item in items], 0)
+        items_subtotal = sum([item._line_item_price for item in eligible_items], 0)
 
         if items_subtotal < discount:
             remaining = discount - items_subtotal
@@ -158,13 +172,18 @@ class DiscountBase(models.Model):
 
             # TODO do something with remaining
 
-        for item in items:
+        for item in eligible_items:
             item._line_item_discount = item._line_item_price / items_subtotal * discount
 
     def apply_percentage_discount(self, order, items):
+        eligible_products = self.eligible_products().values_list('id', flat=True)
+
         factor = self.value / 100
 
         for item in items:
+            if item.product_id not in eligible_products:
+                continue
+
             item._line_item_discount = item._line_item_price * factor
 
 
