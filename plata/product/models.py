@@ -188,7 +188,7 @@ class DiscountBase(models.Model):
 
 
 class Discount(DiscountBase):
-    key = models.CharField(_('key'), max_length=30, unique=True)
+    code = models.CharField(_('code'), max_length=30, unique=True)
 
     class Meta:
         verbose_name = _('discount')

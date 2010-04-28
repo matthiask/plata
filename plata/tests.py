@@ -251,7 +251,7 @@ class OrderTest(PlataTest):
 
         discount = Discount.objects.create(
             type=Discount.PERCENTAGE,
-            key='asdf',
+            code='asdf',
             name='Percentage discount',
             value=30)
         order.add_discount(discount)
@@ -295,7 +295,7 @@ class OrderTest(PlataTest):
 
         discount = Discount.objects.create(
             type=Discount.AMOUNT_INCL_TAX,
-            key='asdf',
+            code='asdf',
             name='Amount discount',
             value=Decimal('50.00'))
         order.add_discount(discount)

@@ -199,7 +199,7 @@ class Order(BillingShippingAddress):
         return item
 
     def add_discount(self, discount):
-        instance, created = self.applied_discounts.get_or_create(key=discount.key,
+        instance, created = self.applied_discounts.get_or_create(code=discount.code,
             defaults={
                 'type': discount.type,
                 'name': discount.name,
@@ -358,10 +358,10 @@ class OrderPayment(models.Model):
 class AppliedDiscount(DiscountBase):
     order = models.ForeignKey(Order, related_name='applied_discounts',
         verbose_name=_('order'))
-    key = models.CharField(_('key'), max_length=30) # We could make this a ForeignKey
-                                                    # to Discount.key, but we do not
-                                                    # want deletions to cascade to this
-                                                    # table.
+    code = models.CharField(_('code'), max_length=30) # We could make this a ForeignKey
+                                                      # to Discount.code, but we do not
+                                                      # want deletions to cascade to this
+                                                      # table.
 
     class Meta:
         verbose_name = _('applied discount')
