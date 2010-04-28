@@ -12,12 +12,12 @@ from django.forms.models import modelform_factory, inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
-from django.utils import simplejson
 from django.utils.translation import ugettext_lazy as _
 
 from plata import plata_settings
 from plata.contact.models import BillingShippingAddress, Contact
 from plata.product.models import Product, DiscountBase, Discount
+from plata.utils import JSONFieldDescriptor
 
 
 class Order(BillingShippingAddress):
@@ -329,6 +329,7 @@ class OrderPayment(models.Model):
         help_text=_('Point in time when payment has been authorized.'))
 
     data = models.TextField(_('data'), blank=True)
+    data_json = JSONFieldDescriptor('data')
 
     class Meta:
         ordering = ('-timestamp',)
@@ -351,18 +352,6 @@ class OrderPayment(models.Model):
     def delete(self, *args, **kwargs):
         super(OrderPayment, self).delete(*args, **kwargs)
         self._recalculate_paid()
-
-    def _data_json_get(self):
-        try:
-            return simplejson.loads(self.data)
-        except ValueError:
-            return self.data
-
-    def _data_json_set(self, value):
-        self.data = simplejson.dumps(value)
-        return self.data
-
-    data_json = property(fget=_data_json_get, fset=_data_json_set)
 
 
 class AppliedDiscount(DiscountBase):

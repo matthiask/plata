@@ -5,6 +5,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from plata import plata_settings
+from plata.utils import JSONFieldDescriptor
 
 
 class TaxClass(models.Model):
@@ -119,6 +120,9 @@ class DiscountBase(models.Model):
 
     type = models.PositiveIntegerField(_('type'), choices=TYPE_CHOICES)
     value = models.DecimalField(_('value'), max_digits=10, decimal_places=2)
+
+    data = models.TextField(_('data'), blank=True)
+    data_json = JSONFieldDescriptor('data')
 
     class Meta:
         abstract = True

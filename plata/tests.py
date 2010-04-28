@@ -344,11 +344,17 @@ class OrderTest(PlataTest):
         order.modify_item(product, 10)
         order.recalculate_total()
 
-        payment = order.payments.create(
+        payment = order.payments.model(
+            order=order,
             currency='CHF',
             amount=Decimal('49.90'),
             payment_method='Mafia style',
             )
+
+        # The descriptor cannot be used through create(), therefore
+        # we need this stupid little dance
+        payment.data_json = {'anything': 42}
+        payment.save()
 
         order = Order.objects.get(pk=order.pk)
         self.assertAlmostEqual(order.paid, 0)
@@ -358,6 +364,8 @@ class OrderTest(PlataTest):
 
         order = Order.objects.get(pk=order.pk)
         self.assertAlmostEqual(order.balance_remaining, order.total - payment.amount)
+
+        self.assertEqual(order.payments.all()[0].data_json['anything'], 42)
 
 
 class ShopTest(PlataTest):
