@@ -1,6 +1,7 @@
-from datetime import datetime
+from datetime import date, datetime
 
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -190,6 +191,26 @@ class DiscountBase(models.Model):
 class Discount(DiscountBase):
     code = models.CharField(_('code'), max_length=30, unique=True)
 
+    is_active = models.BooleanField(_('is active'))
+    valid_from = models.DateField(_('valid from'), default=date.today)
+    valid_until = models.DateField(_('valid until'), blank=True, null=True)
+
     class Meta:
         verbose_name = _('discount')
         verbose_name_plural = _('discounts')
+
+    def validate(self, order):
+        messages = []
+        if not self.is_active:
+            messages.append(_('Discount is inactive.'))
+
+        today = date.today()
+        if today < self.valid_from:
+            messages.append(_('Discount is not active yet.'))
+        if self.valid_until and today > self.valid_until:
+            messages.append(_('Discount is expired.'))
+
+        if messages:
+            raise ValidationError(messages)
+
+        return True

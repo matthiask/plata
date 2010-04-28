@@ -199,6 +199,8 @@ class Order(BillingShippingAddress):
         return item
 
     def add_discount(self, discount):
+        discount.validate(self)
+
         instance, created = self.applied_discounts.get_or_create(code=discount.code,
             defaults={
                 'type': discount.type,

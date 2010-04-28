@@ -254,6 +254,11 @@ class OrderTest(PlataTest):
             code='asdf',
             name='Percentage discount',
             value=30)
+
+        self.assertRaises(ValidationError, lambda: order.add_discount(discount))
+        discount.is_active = True
+        discount.save()
+
         order.add_discount(discount)
         order.recalculate_total()
 
@@ -297,7 +302,8 @@ class OrderTest(PlataTest):
             type=Discount.AMOUNT_INCL_TAX,
             code='asdf',
             name='Amount discount',
-            value=Decimal('50.00'))
+            value=Decimal('50.00'),
+            is_active=True)
         order.add_discount(discount)
         order.recalculate_total()
 
