@@ -87,6 +87,7 @@ class Order(BillingShippingAddress):
         for item in items:
             # Recalculate item stuff
             item._line_item_price = item.quantity * item._unit_price
+            item._line_item_discount = 0
 
         self.recalculate_discounts(items)
 

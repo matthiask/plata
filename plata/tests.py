@@ -431,6 +431,36 @@ class OrderTest(PlataTest):
         except ValidationError, e:
             self.assertEqual(len(e.messages), 2)
 
+    def test_11_multiple_discounts(self):
+        order = self.create_order()
+        product = self.create_product()
+        order.modify_item(product, 3)
+        order.recalculate_total()
+
+        self.assertAlmostEqual(order.total, Decimal('239.70'))
+
+        order.add_discount(Discount.objects.create(
+            type=Discount.PERCENTAGE,
+            name='Percentage',
+            code='perc20',
+            value=Decimal('20.00'),
+            is_active=True,
+            ))
+        order.recalculate_total()
+
+        self.assertAlmostEqual(order.total, Decimal('239.70') / 5 * 4)
+
+        order.add_discount(Discount.objects.create(
+            type=Discount.AMOUNT_INCL_TAX,
+            name='Amount incl. tax',
+            code='amount_incl_20',
+            value=Decimal('20.00'),
+            is_active=True,
+            ))
+        order.recalculate_total()
+
+        self.assertAlmostEqual(order.total, Decimal('239.70') / 5 * 4 - 20)
+
 
 class ShopTest(PlataTest):
     def test_01_creation(self):

@@ -213,7 +213,7 @@ class DiscountBase(models.Model):
         else:
             discount = self.value
 
-        items_subtotal = sum([item._line_item_price for item in eligible_items], 0)
+        items_subtotal = sum([item.discounted_subtotal_excl_tax for item in eligible_items], 0)
 
         if items_subtotal < discount:
             remaining = discount - items_subtotal
@@ -222,7 +222,7 @@ class DiscountBase(models.Model):
             # TODO do something with remaining
 
         for item in eligible_items:
-            item._line_item_discount = item._line_item_price / items_subtotal * discount
+            item._line_item_discount += item.discounted_subtotal_excl_tax / items_subtotal * discount
 
     def apply_percentage_discount(self, order, items):
         eligible_products = self.eligible_products().values_list('id', flat=True)
@@ -233,7 +233,7 @@ class DiscountBase(models.Model):
             if item.product_id not in eligible_products:
                 continue
 
-            item._line_item_discount = item._line_item_price * factor
+            item._line_item_discount += item.discounted_subtotal_excl_tax * factor
 
 
 class Discount(DiscountBase):
