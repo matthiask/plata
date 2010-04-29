@@ -6,13 +6,14 @@ class JSONFieldDescriptor(object):
         self.field = field
 
     def __get__(self, obj, objtype):
-        if not hasattr(self, '_cached'):
+        cache_field = '_cached_jsonfield_%s' % self.field
+        if not hasattr(obj, cache_field):
             try:
-                self._cached = simplejson.loads(getattr(obj, self.field))
+                setattr(obj, cache_field, simplejson.loads(getattr(obj, self.field)))
             except (TypeError, ValueError):
-                self._cached = {}
-        return self._cached
+                setattr(obj, cache_field, {})
+        return getattr(obj, cache_field)
 
     def __set__(self, obj, value):
-        self._cached = value
+        setattr(obj, '_cached_jsonfield_%s' % self.field, value)
         setattr(obj, self.field, simplejson.dumps(value))
