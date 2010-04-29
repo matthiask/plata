@@ -1,4 +1,5 @@
 import os
+import random
 
 from datetime import date, datetime
 from decimal import Decimal
@@ -92,6 +93,7 @@ class PlataTest(TestCase):
 
         product = Product.objects.create(
             name='Test Product 1',
+            slug='prod%s' % random.random(),
             )
 
         # An old price in CHF which should not influence the rest of the tests
