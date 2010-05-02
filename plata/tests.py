@@ -101,7 +101,7 @@ class PlataTest(TestCase):
             currency='CHF',
             tax_class=tax_class,
             _unit_price=Decimal('99.90'),
-            tax_included=True
+            tax_included=True,
             )
 
         product.prices.create(
@@ -123,6 +123,34 @@ class PlataTest(TestCase):
             tax_class=tax_class_something,
             _unit_price=Decimal('65.00'),
             tax_included=False,
+            )
+
+        # A few prices which are not yet (or no more) active
+        product.prices.create(
+            currency='CHF',
+            tax_class=tax_class,
+            _unit_price=Decimal('110.00'),
+            tax_included=True,
+            is_active=False,
+            )
+
+        product.prices.create(
+            currency='CHF',
+            tax_class=tax_class,
+            _unit_price=Decimal('120.00'),
+            tax_included=True,
+            is_active=True,
+            valid_from=date(2100, 1, 1),
+            )
+
+        product.prices.create(
+            currency='CHF',
+            tax_class=tax_class,
+            _unit_price=Decimal('130.00'),
+            tax_included=True,
+            is_active=True,
+            valid_from=date(2000, 1, 1),
+            valid_until=date(2001, 1, 1),
             )
 
         return product

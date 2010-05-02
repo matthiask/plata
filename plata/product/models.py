@@ -122,7 +122,7 @@ class ProductPrice(models.Model):
 
     class Meta:
         get_latest_by = 'id'
-        ordering = ['-id']
+        ordering = ['-valid_from']
         verbose_name = _('product price')
         verbose_name_plural = _('product prices')
 
