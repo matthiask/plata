@@ -50,6 +50,8 @@ class Order(BillingShippingAddress):
     items_tax = models.DecimalField(_('items tax'),
         max_digits=18, decimal_places=10, default=Decimal('0.00'))
 
+    shipping_method = models.CharField(_('shipping method'),
+        max_length=100, blank=True)
     shipping_cost = models.DecimalField(_('shipping cost'),
         max_digits=18, decimal_places=10, blank=True, null=True)
     shipping_discount = models.DecimalField(_('shipping discount'),
