@@ -117,6 +117,9 @@ class ProductPrice(models.Model):
     valid_from = models.DateField(_('valid from'), default=date.today)
     valid_until = models.DateField(_('valid until'), blank=True, null=True)
 
+    is_sale = models.BooleanField(_('is sale'), default=False,
+        help_text=_('Set this if this price is a sale price. Whether the sale is temporary or not does not matter.'))
+
     class Meta:
         get_latest_by = 'id'
         ordering = ['-id']
