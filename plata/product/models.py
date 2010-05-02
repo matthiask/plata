@@ -197,7 +197,7 @@ class DiscountBase(models.Model):
 
         data = self.data_json
         if 'eligible_filter' in data:
-            queryset = queryset.filter(**data['eligible_filter'])
+            queryset = queryset.filter(**dict((str(k), v) for k, v in data['eligible_filter'].items()))
 
         return queryset
 
