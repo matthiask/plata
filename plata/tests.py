@@ -463,6 +463,98 @@ class OrderTest(PlataTest):
 
         self.assertAlmostEqual(order.total, Decimal('239.70') / 5 * 4 - 20)
 
+    def test_12_order4567_test(self):
+        order = self.create_order()
+
+        p1 = self.create_product()
+        p1.name = 'Kleid'
+        p1.save()
+        p1.prices.all().delete()
+        p1.prices.create(
+            _unit_price=160,
+            tax_included=True,
+            currency=order.currency,
+            )
+
+        p2 = self.create_product()
+        p2.prices.all().delete()
+        p2.prices.create(
+            _unit_price=280,
+            tax_included=True,
+            currency=order.currency,
+            )
+
+        order.modify_item(p1, 1)
+        order.modify_item(p2, 1)
+
+        self.assertAlmostEqual(order.total, Decimal('440.00'))
+
+        discount = Discount(
+            type=Discount.PERCENTAGE,
+            name='Sonderrabatt Kleid',
+            value=Decimal('20.00'),
+            code='1234code',
+            )
+        discount.data_json = {
+            'eligible_filter': {
+                'name__icontains': 'Kleid',
+                },
+            }
+        discount.save()
+
+        order.add_discount(discount)
+        order.recalculate_total()
+
+        self.assertAlmostEqual(order.total, 408)
+        self.assertAlmostEqual(order.subtotal, 440)
+        self.assertAlmostEqual(order.discount, 32)
+        # TODO add 8.00 shipping
+
+    def test_13_order4206_test(self):
+        order = self.create_order()
+
+        p1 = self.create_product()
+        p1.name = 'Venice'
+        p1.save()
+        p1.prices.all().delete()
+        p1.prices.create(
+            _unit_price=170,
+            tax_included=True,
+            currency=order.currency,
+            )
+
+        p2 = self.create_product()
+        p2.prices.all().delete()
+        p2.prices.create(
+            _unit_price=Decimal('40.80'),
+            tax_included=True,
+            currency=order.currency,
+            )
+
+        order.modify_item(p1, 1)
+        order.modify_item(p2, 1)
+
+        discount = Discount(
+            type=Discount.AMOUNT_INCL_TAX,
+            name='Sonderrabatt Venice',
+            value=Decimal('20.00'),
+            code='1234code',
+            )
+        discount.data_json = {
+            'eligible_filter': {
+                'name__icontains': 'Venice',
+                },
+            }
+        discount.save()
+
+        order.add_discount(discount)
+        order.recalculate_total()
+
+        self.assertAlmostEqual(order.total, Decimal('190.80'))
+        self.assertAlmostEqual(order.subtotal, Decimal('210.80'))
+        self.assertAlmostEqual(order.discount, 20)
+        # TODO add 8.00 shipping
+
 
 class ShopTest(PlataTest):
     def test_01_creation(self):
