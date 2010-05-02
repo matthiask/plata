@@ -169,9 +169,10 @@ class Order(BillingShippingAddress):
                 product=product,
                 quantity=0,
                 currency=self.currency,
-                _unit_price=price.unit_price_excl_tax,
-                _unit_tax=price.unit_tax,
                 )
+
+        item._unit_price = price.unit_price_excl_tax
+        item._unit_tax = price.unit_tax
 
         item.quantity += change
 
