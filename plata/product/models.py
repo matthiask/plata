@@ -3,6 +3,7 @@ from datetime import date, datetime
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
 from plata import plata_settings, shop_instance
@@ -78,7 +79,11 @@ class Product(models.Model):
         return ('plata_product_detail', (), {'object_id': self.pk})
 
     def get_price(self, **kwargs):
-        return self.prices.filter(**kwargs).latest()
+        return self.prices.filter(
+            Q(is_active=True),
+            Q(valid_from__lte=date.today()),
+            Q(valid_until__isnull=True) | Q(valid_until__gte=date.today()),
+            ).filter(**kwargs).latest()
 
     @property
     def main_image(self):
@@ -107,6 +112,10 @@ class ProductPrice(models.Model):
         help_text=_('Is tax included in given unit price?'),
         default=plata_settings.PLATA_PRICE_INCLUDES_TAX)
     currency = models.CharField(_('currency'), max_length=10)
+
+    is_active = models.BooleanField(_('is active'), default=True)
+    valid_from = models.DateField(_('valid from'), default=date.today)
+    valid_until = models.DateField(_('valid until'), blank=True, null=True)
 
     class Meta:
         get_latest_by = 'id'
