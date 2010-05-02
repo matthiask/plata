@@ -239,7 +239,7 @@ class DiscountBase(models.Model):
 class Discount(DiscountBase):
     code = models.CharField(_('code'), max_length=30, unique=True)
 
-    is_active = models.BooleanField(_('is active'))
+    is_active = models.BooleanField(_('is active'), default=True)
     valid_from = models.DateField(_('valid from'), default=date.today)
     valid_until = models.DateField(_('valid until'), blank=True, null=True)
 

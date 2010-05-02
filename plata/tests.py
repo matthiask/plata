@@ -157,7 +157,6 @@ class OrderTest(PlataTest):
         self.assertAlmostEqual(item.discounted_subtotal_excl_tax, line_item_price / tax_factor)
         self.assertAlmostEqual(item.discounted_subtotal_incl_tax, line_item_price)
 
-
         self.assertAlmostEqual(item.unit_price, item_price)
         self.assertAlmostEqual(item.line_item_discount, 0)
         self.assertAlmostEqual(item.discounted_subtotal, item.discounted_subtotal_incl_tax)
@@ -252,6 +251,7 @@ class OrderTest(PlataTest):
         order.modify_item(p2, 5)
 
         discount = Discount.objects.create(
+            is_active=False,
             type=Discount.PERCENTAGE,
             code='asdf',
             name='Percentage discount',
