@@ -91,6 +91,8 @@ class PlataTest(TestCase):
     def create_product(self):
         tax_class, tax_class_germany, tax_class_something = self.create_tax_classes()
 
+        self.tax_class = tax_class
+
         product = Product.objects.create(
             name='Test Product 1',
             slug='prod%s' % random.random(),
@@ -502,6 +504,7 @@ class OrderTest(PlataTest):
             _unit_price=160,
             tax_included=True,
             currency=order.currency,
+            tax_class=self.tax_class,
             )
 
         p2 = self.create_product()
@@ -510,6 +513,7 @@ class OrderTest(PlataTest):
             _unit_price=280,
             tax_included=True,
             currency=order.currency,
+            tax_class=self.tax_class,
             )
 
         order.modify_item(p1, 1)
@@ -549,6 +553,7 @@ class OrderTest(PlataTest):
             _unit_price=170,
             tax_included=True,
             currency=order.currency,
+            tax_class=self.tax_class,
             )
 
         p2 = self.create_product()
@@ -557,6 +562,7 @@ class OrderTest(PlataTest):
             _unit_price=Decimal('40.80'),
             tax_included=True,
             currency=order.currency,
+            tax_class=self.tax_class,
             )
 
         order.modify_item(p1, 1)
