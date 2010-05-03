@@ -2,7 +2,12 @@ import os
 import sys
 import types
 
-from plata.product.simple import models as product_models
+from django.utils.importlib import import_module
+
+from plata import plata_settings
+
+
+product_models = import_module(plata_settings.PLATA_PRODUCT_MODULE)
 
 # Create mock models module
 models = types.ModuleType('plata.product.models')
