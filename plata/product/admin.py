@@ -4,7 +4,7 @@ from django.utils.translation import ugettext_lazy as _
 from . import models
 
 
-class ProductPriceInline(admin.TabularInline):
+class ProductPriceInline(admin.StackedInline):
     model = models.ProductPrice
 
 class ProductImageInline(admin.TabularInline):

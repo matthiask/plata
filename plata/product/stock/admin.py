@@ -11,6 +11,7 @@ admin.site.register(models.Period,
 admin.site.register(models.StockTransaction,
     date_hierarchy='created',
     list_display=('period', 'created', 'product', 'type', 'change', 'order'),
+    list_display_links=('created',),
     list_filter=('period', 'type'),
     raw_id_fields=('product',),
     )
