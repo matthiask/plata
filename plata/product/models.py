@@ -55,6 +55,7 @@ class Product(models.Model):
     slug = models.SlugField(_('slug'), unique=True)
     ordering = models.PositiveIntegerField(_('ordering'), default=0)
     sku = models.CharField(_('SKU'), max_length=100, blank=True)
+    items_in_stock = models.IntegerField(_('items in stock'), default=0)
     description = models.TextField(_('description'), blank=True)
 
     categories = models.ManyToManyField(Category,

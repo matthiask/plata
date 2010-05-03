@@ -24,7 +24,7 @@ admin.site.register(models.Category,
 
 admin.site.register(models.Product,
     inlines=[ProductPriceInline, ProductImageInline],
-    list_display=('is_active', 'name', 'ordering'),
+    list_display=('is_active', 'name', 'sku', 'items_in_stock', 'ordering'),
     list_display_links=('name',),
     list_filter=('is_active',),
     prepopulated_fields={'slug': ('name',)},
