@@ -94,25 +94,16 @@ class Product(models.Model):
             return None
 
 
-def get_default_taxclass():
-    try:
-        return TaxClass.objects.all()[0]
-    except IndexError:
-        return None
-
-
 class ProductPrice(models.Model):
     product = models.ForeignKey(Product, verbose_name=_('product'),
         related_name='prices')
-    created = models.DateTimeField(_('created'), default=datetime.now)
-    tax_class = models.ForeignKey(TaxClass, verbose_name=_('tax class'),
-        default=get_default_taxclass)
+    tax_class = models.ForeignKey(TaxClass, verbose_name=_('tax class'))
 
+    currency = models.CharField(_('currency'), max_length=10)
     _unit_price = models.DecimalField(_('unit price'), max_digits=18, decimal_places=10)
     tax_included = models.BooleanField(_('tax included'),
         help_text=_('Is tax included in given unit price?'),
         default=plata_settings.PLATA_PRICE_INCLUDES_TAX)
-    currency = models.CharField(_('currency'), max_length=10)
 
     is_active = models.BooleanField(_('is active'), default=True)
     valid_from = models.DateField(_('valid from'), default=date.today)
