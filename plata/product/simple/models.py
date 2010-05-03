@@ -38,6 +38,13 @@ class Product(abstract.Product):
         verbose_name = _('product')
         verbose_name_plural = _('products')
 
+    @property
+    def main_image(self):
+        try:
+            return self.images.all()[0]
+        except IndexError:
+            return None
+
 
 class ProductPrice(abstract.ProductPrice):
     product = models.ForeignKey(Product, verbose_name=_('product'),

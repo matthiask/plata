@@ -9,7 +9,7 @@ from feincms.models import Base
 from plata.product import abstract
 
 
-__all__ = ['Product', 'ProductPrice', 'ProductImage',
+__all__ = ['Product', 'ProductPrice',
     'Category', 'Discount', 'TaxClass']
 
 
@@ -59,23 +59,6 @@ class ProductPrice(abstract.ProductPrice):
         ordering = ['-valid_from']
         verbose_name = _('product price')
         verbose_name_plural = _('product prices')
-
-
-class ProductImage(models.Model):
-    product = models.ForeignKey(Product, verbose_name=_('product'),
-        related_name='images')
-    image = models.ImageField(_('image'),
-        upload_to=lambda instance, filename: '%s/%s' % (instance.product.slug, filename))
-    ordering = models.PositiveIntegerField(_('ordering'), default=0)
-
-    class Meta:
-        app_label = 'product'
-        ordering = ['ordering']
-        verbose_name = _('product image')
-        verbose_name_plural = _('product images')
-
-    def __unicode__(self):
-        return self.image.name
 
 
 class Discount(abstract.DiscountBase):

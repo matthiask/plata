@@ -9,12 +9,10 @@ from . import models
 class ProductPriceInline(admin.TabularInline):
     model = models.ProductPrice
 
-class ProductImageInline(admin.TabularInline):
-    model = models.ProductImage
 
 class ProductAdmin(ItemEditor):
     show_on_top = ('is_active', 'name', 'slug')
-    inlines=[ProductPriceInline, ProductImageInline]
+    inlines=[ProductPriceInline]
     list_display=('is_active', 'name', 'sku', 'items_in_stock', 'ordering')
     list_display_links=('name',)
     list_filter=('is_active',)
