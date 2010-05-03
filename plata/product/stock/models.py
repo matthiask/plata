@@ -47,7 +47,7 @@ class StockTransactionManager(models.Manager):
                 )
 
     def items_in_stock(self, product):
-        return self.filter(period=Period.objects.current(), product=product).aggregate(items=Sum('change')).get('items', 0)
+        return self.filter(period=Period.objects.current(), product=product).aggregate(items=Sum('change')).get('items') or 0
 
 
 class StockTransaction(models.Model):
