@@ -9,6 +9,7 @@ from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
 from plata import plata_settings, shop_instance
+from plata.fields import CurrencyField
 from plata.utils import JSONFieldDescriptor
 
 
@@ -96,7 +97,7 @@ class Product(models.Model):
 
 
 class ProductPrice(models.Model):
-    currency = models.CharField(_('currency'), max_length=10)
+    currency = CurrencyField()
     _unit_price = models.DecimalField(_('unit price'), max_digits=18, decimal_places=10)
     tax_included = models.BooleanField(_('tax included'),
         help_text=_('Is tax included in given unit price?'),

@@ -16,6 +16,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from plata import plata_settings
 from plata.contact.models import BillingShippingAddress, Contact
+from plata.fields import CurrencyField
 from plata.product.abstract import DiscountBase
 from plata.product.models import Product, Discount
 from plata.utils import JSONFieldDescriptor
@@ -42,7 +43,7 @@ class Order(BillingShippingAddress):
 
     #order_id = models.CharField(_('order ID'), max_length=20, unique=True)
 
-    currency = models.CharField(_('currency'), max_length=10)
+    currency = CurrencyField()
 
     items_subtotal = models.DecimalField(_('subtotal'),
         max_digits=18, decimal_places=10, default=Decimal('0.00'))
@@ -250,7 +251,7 @@ class OrderItem(models.Model):
 
     quantity = models.IntegerField(_('quantity'))
 
-    currency = models.CharField(_('currency'), max_length=10)
+    currency = CurrencyField()
     _unit_price = models.DecimalField(_('unit price'),
         max_digits=18, decimal_places=10,
         help_text=_('Unit price excl. tax'))
@@ -342,7 +343,7 @@ class OrderPayment(models.Model):
     order = models.ForeignKey(Order, verbose_name=_('order'), related_name='payments')
     timestamp = models.DateTimeField(_('timestamp'), default=datetime.now)
 
-    currency = models.CharField(_('currency'), max_length=10)
+    currency = CurrencyField()
     amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2)
     payment_method = models.CharField(_('payment method'), max_length=20, blank=True)
     transaction_id = models.CharField(_('transaction ID'), max_length=50, blank=True,

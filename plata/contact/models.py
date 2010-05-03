@@ -2,7 +2,9 @@ from datetime import datetime
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import ugettext_lazy as _
+
+from plata.fields import CurrencyField
 
 
 class BillingShippingAddress(models.Model):
@@ -50,8 +52,7 @@ class Contact(BillingShippingAddress):
     shipping_same_as_billing = models.BooleanField(_('shipping address equals billing address'),
         default=True)
 
-    currency = models.CharField(_('currency'), max_length=10,
-        help_text=_('Preferred currency.'))
+    currency = CurrencyField(help_text=_('Preferred currency.'))
     notes = models.TextField(_('notes'), blank=True)
 
     class Meta:
