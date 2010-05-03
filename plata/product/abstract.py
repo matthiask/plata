@@ -1,3 +1,5 @@
+# abstract product base models
+
 from datetime import date, datetime
 
 from django.contrib.contenttypes.models import ContentType
@@ -17,6 +19,7 @@ class TaxClass(models.Model):
         help_text = _('Used to order the tax classes in the administration interface.'))
 
     class Meta:
+        abstract = True
         ordering = ['-priority']
         verbose_name = _('tax class')
         verbose_name_plural = _('tax classes')
@@ -39,6 +42,7 @@ class Category(models.Model):
         related_name='children', verbose_name=_('parent'))
 
     class Meta:
+        abstract = True
         ordering = ['ordering', 'name']
         verbose_name = _('category')
         verbose_name_plural = _('categories')
@@ -58,11 +62,8 @@ class Product(models.Model):
     items_in_stock = models.IntegerField(_('items in stock'), default=0)
     description = models.TextField(_('description'), blank=True)
 
-    categories = models.ManyToManyField(Category,
-        verbose_name=_('categories'), related_name='products',
-        blank=True, null=True)
-
     class Meta:
+        abstract = True
         ordering = ['ordering', 'name']
         verbose_name = _('product')
         verbose_name_plural = _('products')
@@ -95,10 +96,6 @@ class Product(models.Model):
 
 
 class ProductPrice(models.Model):
-    product = models.ForeignKey(Product, verbose_name=_('product'),
-        related_name='prices')
-    tax_class = models.ForeignKey(TaxClass, verbose_name=_('tax class'))
-
     currency = models.CharField(_('currency'), max_length=10)
     _unit_price = models.DecimalField(_('unit price'), max_digits=18, decimal_places=10)
     tax_included = models.BooleanField(_('tax included'),
@@ -113,6 +110,7 @@ class ProductPrice(models.Model):
         help_text=_('Set this if this price is a sale price. Whether the sale is temporary or not does not matter.'))
 
     class Meta:
+        abstract = True
         get_latest_by = 'id'
         ordering = ['-valid_from']
         verbose_name = _('product price')
@@ -140,22 +138,6 @@ class ProductPrice(models.Model):
             return self.unit_price_incl_tax
         else:
             return self.unit_price_excl_tax
-
-
-class ProductImage(models.Model):
-    product = models.ForeignKey(Product, verbose_name=_('product'),
-        related_name='images')
-    image = models.ImageField(_('image'),
-        upload_to=lambda instance, filename: '%s/%s' % (instance.product.slug, filename))
-    ordering = models.PositiveIntegerField(_('ordering'), default=0)
-
-    class Meta:
-        ordering = ['ordering']
-        verbose_name = _('product image')
-        verbose_name_plural = _('product images')
-
-    def __unicode__(self):
-        return self.image.name
 
 
 class DiscountBase(models.Model):
@@ -239,30 +221,3 @@ class DiscountBase(models.Model):
 
             item._line_item_discount += item.discounted_subtotal_excl_tax * factor
 
-
-class Discount(DiscountBase):
-    code = models.CharField(_('code'), max_length=30, unique=True)
-
-    is_active = models.BooleanField(_('is active'), default=True)
-    valid_from = models.DateField(_('valid from'), default=date.today)
-    valid_until = models.DateField(_('valid until'), blank=True, null=True)
-
-    class Meta:
-        verbose_name = _('discount')
-        verbose_name_plural = _('discounts')
-
-    def validate(self, order):
-        messages = []
-        if not self.is_active:
-            messages.append(_('Discount is inactive.'))
-
-        today = date.today()
-        if today < self.valid_from:
-            messages.append(_('Discount is not active yet.'))
-        if self.valid_until and today > self.valid_until:
-            messages.append(_('Discount is expired.'))
-
-        if messages:
-            raise ValidationError(messages)
-
-        return True

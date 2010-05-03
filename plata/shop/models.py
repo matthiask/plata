@@ -16,7 +16,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from plata import plata_settings
 from plata.contact.models import BillingShippingAddress, Contact
-from plata.product.models import Product, DiscountBase, Discount
+from plata.product.abstract import DiscountBase
+from plata.product.models import Product, Discount
 from plata.utils import JSONFieldDescriptor
 
 
