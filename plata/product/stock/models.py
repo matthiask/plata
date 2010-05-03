@@ -11,7 +11,10 @@ from plata.shop.models import Order
 
 class PeriodManager(models.Manager):
     def current(self):
-        return self.filter(start__lte=datetime.now()).latest()
+        try:
+            return self.filter(start__lte=datetime.now()).order_by('-start')[0]
+        except IndexError:
+            return None
 
 
 class Period(models.Model):
