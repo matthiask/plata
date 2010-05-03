@@ -1,3 +1,5 @@
+import os
+
 from django.conf.urls.defaults import *
 from django.contrib import admin
 
@@ -12,4 +14,10 @@ shop = Shop(Product, Contact, Order)
 urlpatterns = patterns('',
     url(r'^plata/', include(shop.urls)),
     url(r'^admin/', include(admin.site.urls)),
+
+    (r'^media/sys/feincms/(?P<path>.*)$', 'django.views.static.serve',
+        {'document_root': os.path.join(os.path.dirname(os.path.dirname(__file__)), 'feincms/media/feincms/')}),
+
+    (r'^media/(?P<path>.*)$', 'django.views.static.serve',
+        {'document_root': os.path.join(os.path.dirname(__file__), 'media/')}),
 )
