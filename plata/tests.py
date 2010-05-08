@@ -12,7 +12,7 @@ from django.test import TestCase
 import plata
 from plata import plata_settings
 from plata.contact.models import Contact
-from plata.product.models import TaxClass, Product, Discount
+from plata.product.models import TaxClass, Product, ProductVariation, Discount
 from plata.shop.models import Order, OrderStatus, OrderPayment
 
 
@@ -97,6 +97,8 @@ class PlataTest(TestCase):
             name='Test Product 1',
             slug='prod%s' % random.random(),
             )
+
+        product.variations.create()
 
         # An old price in CHF which should not influence the rest of the tests
         product.prices.create(

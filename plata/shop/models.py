@@ -18,7 +18,7 @@ from plata import plata_settings
 from plata.contact.models import BillingShippingAddress, Contact
 from plata.fields import CurrencyField
 from plata.product.abstract import DiscountBase
-from plata.product.models import Product, Discount
+from plata.product.models import Product, Discount, ProductVariation
 from plata.utils import JSONFieldDescriptor
 
 
@@ -167,7 +167,7 @@ class Order(BillingShippingAddress):
             raise ValidationError(_('Order contains more than one currency.'),
                 code='multiple_currency')
 
-    def modify_item(self, product, change, recalculate=True):
+    def modify_item(self, product, change, recalculate=True, **kwargs):
         """
         Update order with the given product
 
@@ -178,14 +178,19 @@ class Order(BillingShippingAddress):
             raise ValidationError(_('Cannot modify order in checkout stage.'),
                 code='order_sealed')
 
+        if isinstance(product, ProductVariation):
+            product, variation = product.product, product
+        else:
+            product, variation = product, product.variations.get(**kwargs)
+
         price = product.get_price(currency=self.currency)
 
         try:
-            item = self.items.get(product=product)
+            item = self.items.get(variation=variation)
         except self.items.model.DoesNotExist:
             item = self.items.model(
                 order=self,
-                product=product,
+                variation=variation,
                 quantity=0,
                 currency=self.currency,
                 )
@@ -247,7 +252,7 @@ class Order(BillingShippingAddress):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items')
-    product = models.ForeignKey(Product)
+    variation = models.ForeignKey(ProductVariation)
 
     quantity = models.IntegerField(_('quantity'))
 
@@ -270,16 +275,16 @@ class OrderItem(models.Model):
         max_digits=18, decimal_places=10, default=0)
 
     class Meta:
-        ordering = ('product',)
-        unique_together = (('order', 'product'),)
+        ordering = ('variation',)
+        unique_together = (('order', 'variation'),)
         verbose_name = _('order item')
         verbose_name_plural = _('order items')
 
     def __unicode__(self):
-        return u'%s of %s' % (self.quantity, self.product)
+        return u'%s of %s' % (self.quantity, self.variation)
 
     def get_price(self):
-        return self.product.get_price(currency=self.order.currency)
+        return self.variation.product.get_price(currency=self.order.currency)
 
     @property
     def unit_price(self):

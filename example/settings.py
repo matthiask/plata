@@ -103,16 +103,14 @@ INSTALLED_APPS = (
     'plata.contact',
     'plata.payment',
     'plata.product',
-    'plata.product.feincms',
-    'plata.product.groups',
-    'plata.product.stock',
+    'plata.product.inventary',
     'plata.shop',
 
     'feincms',
     'example',
 )
 
-PLATA_PRODUCT_MODULE = 'plata.product.feincms.models'
+PLATA_PRODUCT_MODULE = 'plata.product.inventary.models'
 
 TEST_RUNNER = 'example.test_utils.test_runner_with_coverage'
 COVERAGE_MODULES = [

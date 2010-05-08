@@ -60,8 +60,6 @@ class Product(models.Model):
     slug = models.SlugField(_('slug'), unique=True)
     ordering = models.PositiveIntegerField(_('ordering'), default=0)
     sku = models.CharField(_('SKU'), max_length=100, blank=True)
-    items_in_stock = models.IntegerField(_('items in stock'), default=0)
-    description = models.TextField(_('description'), blank=True)
 
     class Meta:
         abstract = True
@@ -185,7 +183,7 @@ class DiscountBase(models.Model):
     def apply_amount_discount(self, order, items, tax_included):
         eligible_products = self.eligible_products().values_list('id', flat=True)
 
-        eligible_items = [item for item in items if item.product_id in eligible_products]
+        eligible_items = [item for item in items if item.variation.product_id in eligible_products]
 
         if tax_included:
             tax_rate = items[0].get_price().tax_class.rate
@@ -210,7 +208,7 @@ class DiscountBase(models.Model):
         factor = self.value / 100
 
         for item in items:
-            if item.product_id not in eligible_products:
+            if item.variation.product_id not in eligible_products:
                 continue
 
             item._line_item_discount += item.discounted_subtotal_excl_tax * factor
