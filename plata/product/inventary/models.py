@@ -54,6 +54,9 @@ class Option(models.Model):
         verbose_name_plural = _('options')
 
     def __unicode__(self):
+        return self.name
+
+    def full_name(self):
         return u'%s - %s' % (self.group, self.name)
 
 
