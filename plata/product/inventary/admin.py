@@ -1,7 +1,6 @@
 from django import forms
 from django.contrib import admin
 from django.forms.models import BaseInlineFormSet
-from django.forms.util import ErrorList
 from django.utils.translation import ugettext_lazy as _
 
 from . import models
@@ -33,7 +32,7 @@ class ProductVariationFormSet(BaseInlineFormSet):
                 s = tuple(sorted(o.id for o in options))
 
                 if s in variations:
-                    form._errors['options'] = ErrorList([
+                    form._errors['options'] = form.error_class([
                         _('Combination of options already encountered.')])
                     continue
 
@@ -53,7 +52,7 @@ class ProductVariationForm(forms.ModelForm):
             options_errors.append(_('Please select an option from all groups.'))
 
         if options_errors:
-            self._errors['options'] = ErrorList(options_errors)
+            self._errors['options'] = self.error_class(options_errors)
 
         return self.cleaned_data
 
