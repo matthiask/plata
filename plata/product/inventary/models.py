@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from plata.compat import product as itertools_product
 from plata.product import abstract
 
 
@@ -77,21 +78,43 @@ class Product(abstract.Product):
         except IndexError:
             return None
 
+    def create_variations(self):
+        variations = itertools_product(*[group.options.all() for group in self.option_groups.all()])
+
+        for idx, variation in enumerate(variations):
+            try:
+                qset = self.variations
+                for o in variation:
+                    qset = qset.filter(options=o)
+
+                instance = qset.get()
+            except ProductVariation.DoesNotExist:
+                instance = self.variations.create(
+                    is_active=self.is_active,
+                    sku=self.sku + '-' + u'-'.join(v.value for v in variation),
+                    )
+                instance.options = variation
+            except ProductVariation.MultipleObjectsReturned:
+                raise Exception('DAMN!')
+
+            instance.ordering = idx
+            instance.save()
+
 
 class ProductVariation(models.Model):
     product = models.ForeignKey(Product, related_name='variations')
     is_active = models.BooleanField(_('is active'), default=True)
-    ordering = models.PositiveIntegerField(_('ordering'), default=0)
     sku = models.CharField(_('SKU'), max_length=100, blank=True)
     items_in_stock = models.IntegerField(_('items in stock'), default=0)
     options = models.ManyToManyField(Option, related_name='products',
         blank=True, null=True, verbose_name=_('options'))
+    ordering = models.PositiveIntegerField(_('ordering'), default=0)
 
     class Meta:
         app_label = 'product'
         ordering = ['ordering']
-        verbose_name = _('concrete product')
-        verbose_name_plural = _('concrete products')
+        verbose_name = _('product variation')
+        verbose_name_plural = _('product variations')
 
     def __unicode__(self):
         options = u', '.join(unicode(o) for o in self.options.all())
