@@ -136,12 +136,14 @@ class Shop(object):
 
     def order_modify_item_form(self, request, product):
         class Form(forms.Form):
-            quantity = forms.IntegerField()
+            quantity = forms.IntegerField(label=_('quantity'), initial=1)
 
             def __init__(self, *args, **kwargs):
                 super(Form, self).__init__(*args, **kwargs)
                 for group in product.option_groups.all():
-                    self.fields['option_%s' % group.id] = forms.ModelChoiceField(group.options.all())
+                    self.fields['option_%s' % group.id] = forms.ModelChoiceField(
+                        queryset=group.options.all(),
+                        label=group.name)
 
             def clean(self):
                 data = super(Form, self).clean()
