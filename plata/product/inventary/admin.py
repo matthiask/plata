@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib import admin
+from django.forms.models import BaseInlineFormSet
 from django.forms.util import ErrorList
 from django.utils.translation import ugettext_lazy as _
 
@@ -11,6 +12,34 @@ class ProductPriceInline(admin.TabularInline):
 
 class ProductImageInline(admin.TabularInline):
     model = models.ProductImage
+
+
+class ProductVariationFormSet(BaseInlineFormSet):
+    def clean(self):
+        super(ProductVariationFormSet, self).clean()
+
+        variations = set()
+
+        for form in self.forms:
+            if self._should_delete_form(form):
+                # Skip objects which are about to be deleted
+                continue
+
+            if not form.instance.pk and not form.has_changed():
+                # Skip forms which will not end up as new instances
+                continue
+
+            options = form.cleaned_data.get('options')
+
+            if options:
+                s = tuple(o.id for o in options)
+
+                if s in variations:
+                    form._errors['options'] = ErrorList([
+                        _('Combination of options already encountered.')])
+                    continue
+
+                variations.add(s)
 
 
 class ProductVariationForm(forms.ModelForm):
@@ -34,6 +63,7 @@ class ProductVariationForm(forms.ModelForm):
 class ProductVariationInline(admin.TabularInline):
     model = models.ProductVariation
     form = ProductVariationForm
+    formset = ProductVariationFormSet
 
 class OptionInline(admin.TabularInline):
     model = models.Option
