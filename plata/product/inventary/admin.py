@@ -32,7 +32,7 @@ class ProductVariationFormSet(BaseInlineFormSet):
             options = form.cleaned_data.get('options')
 
             if options:
-                s = tuple(o.id for o in options)
+                s = tuple(sorted(o.id for o in options))
 
                 if s in variations:
                     form._errors['options'] = ErrorList([
