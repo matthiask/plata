@@ -146,12 +146,15 @@ class Shop(object):
             def clean(self):
                 data = super(Form, self).clean()
 
-                variations = product.variations.all()
+                options = [data.get('option_%s' % group.id) for group in product.option_groups.all()]
 
-                for group in product.option_groups.all():
-                    variations = variations.filter(options=self.cleaned_data.get('option_%s' % group.id))
+                if all(options):
+                    variations = product.variations.all()
 
-                data['variation'] = variations.get()
+                    for group in product.option_groups.all():
+                        variations = variations.filter(options=self.cleaned_data.get('option_%s' % group.id))
+
+                    data['variation'] = variations.get()
 
                 return data
         return Form
