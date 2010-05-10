@@ -5,11 +5,12 @@
 
 {{ object.description|linebreaks }}
 
-<form method="post" action="{% url plata_order_modify_item %}">
+<form method="post" action=".">
 {% csrf_token %}
 Add to cart:
-<input type="hidden" name="product" value="{{ object.pk }}" />
-<input type="text" name="quantity" value="1" />
+<table>
+{{ form }}
+</table>
 <input type="submit" />
 </form>
 

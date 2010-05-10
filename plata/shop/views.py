@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.forms.models import inlineformset_factory, modelform_factory
@@ -31,13 +32,12 @@ class Shop(object):
         return patterns('django.views.generic',
             url(r'^$', lambda request: redirect('plata_product_list')),
             url(r'^products/$', 'list_detail.object_list', product_dict, name='plata_product_list'),
-            url(r'^products/(?P<object_id>\d+)/$', 'list_detail.object_detail', product_dict, name='plata_product_detail'),
+            url(r'^products/(?P<object_id>\d+)/$', self.product_detail, product_dict, name='plata_product_detail'),
             )
 
     def get_shop_urls(self):
         from django.conf.urls.defaults import patterns, url
         return patterns('',
-            url(r'^api/order_modify_item/$', self.order_modify_item, name='plata_order_modify_item'),
             url(r'^cart/$', self.cart, name='plata_shop_cart'),
             url(r'^checkout/$', self.checkout, name='plata_shop_checkout'),
             url(r'^confirmation/$', self.confirmation, name='plata_shop_confirmation'),
@@ -109,15 +109,52 @@ class Shop(object):
         instance.update(context)
         return instance
 
-    def order_modify_item(self, request):
-        order = self.order_from_request(request, create=True)
-        product = self.product_model.objects.get(pk=request.POST.get('product'))
+    def product_detail(self, request, *args, **kwargs):
+        p = self.product_model.objects.get(pk=kwargs.get('object_id'))
+        form_class = self.order_modify_item_form(request, p)
 
-        order.modify_item(product, int(request.POST.get('quantity')))
-        order.recalculate_total()
+        if request.method == 'POST':
+            form = form_class(request.POST)
 
-        messages.success(request, 'Successfully updated cart.')
-        return HttpResponseRedirect(product.get_absolute_url())
+            if form.is_valid():
+                order = self.order_from_request(request, create=True)
+
+                order.modify_item(
+                    form.cleaned_data.get('variation'),
+                    form.cleaned_data.get('quantity'),
+                    )
+                order.recalculate_total()
+
+                messages.success(request, 'Successfully updated cart.')
+                return HttpResponseRedirect('.')
+        else:
+            form = form_class()
+
+        return render_to_response('product/product_detail.html', self.get_context(request, {
+            'form': form,
+            }))
+
+    def order_modify_item_form(self, request, product):
+        class Form(forms.Form):
+            quantity = forms.IntegerField()
+
+            def __init__(self, *args, **kwargs):
+                super(Form, self).__init__(*args, **kwargs)
+                for group in product.option_groups.all():
+                    self.fields['option_%s' % group.id] = forms.ModelChoiceField(group.options.all())
+
+            def clean(self):
+                data = super(Form, self).clean()
+
+                variations = product.variations.all()
+
+                for group in product.option_groups.all():
+                    variations = variations.filter(options=self.cleaned_data.get('option_%s' % group.id))
+
+                data['variation'] = variations.get()
+
+                return data
+        return Form
 
     def cart(self, request):
         order = self.order_from_request(request, create=False)
