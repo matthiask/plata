@@ -653,8 +653,7 @@ class ViewTest(PlataTest):
         self.assertEqual(Order.objects.count(), 0)
         product = self.create_product()
 
-        self.client.post('/plata/api/order_modify_item/', {
-            'product': product.pk,
+        self.client.post('/plata/products/%s/' % product.pk, {
             'quantity': 5,
             })
 

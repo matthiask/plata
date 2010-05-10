@@ -5,7 +5,7 @@ from django.db.models import Sum, signals
 from django.utils.translation import ugettext_lazy as _
 
 # TODO do not hardcode imports
-from plata.product.models import Product
+from plata.product.models import ProductVariation
 from plata.shop.models import Order
 
 
@@ -76,8 +76,8 @@ class StockTransaction(models.Model):
     period = models.ForeignKey(Period, default=Period.objects.current,
         related_name='stock_transactions', verbose_name=_('period'))
     created = models.DateTimeField(_('created'), default=datetime.now)
-    product = models.ForeignKey(Product, related_name='stock_transactions',
-        verbose_name=_('product'))
+    product = models.ForeignKey(ProductVariation, related_name='stock_transactions',
+        verbose_name=_('product variation'))
     type = models.PositiveIntegerField(_('type'), choices=TYPE_CHOICES)
     change = models.IntegerField(_('change'),
         help_text=_('Use negative numbers for sales, lendings and other outgoings.'))
@@ -104,4 +104,4 @@ def product_pre_save_handler(sender, instance, **kwargs):
         return
 
     instance.items_in_stock = StockTransaction.objects.items_in_stock(instance)
-signals.pre_save.connect(product_pre_save_handler, sender=Product)
+signals.pre_save.connect(product_pre_save_handler, sender=ProductVariation)
