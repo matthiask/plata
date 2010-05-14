@@ -187,7 +187,7 @@ class DiscountBase(models.Model):
 
         if tax_included:
             # TODO how should this value be calculated in the presence of multiple tax rates?
-            tax_rate = items[0].get_price().tax_class.rate
+            tax_rate = items[0].get_product_price().tax_class.rate
             discount = self.value / (1 + tax_rate/100)
         else:
             discount = self.value

@@ -97,7 +97,7 @@ class Order(BillingShippingAddress):
 
         for item in items:
             taxable = item._line_item_price - (item._line_item_discount or 0)
-            price = item.get_price()
+            price = item.get_product_price()
             item._line_item_tax = taxable * price.tax_class.rate/100
             item.save()
 
@@ -290,7 +290,7 @@ class OrderItem(models.Model):
     def __unicode__(self):
         return u'%s of %s' % (self.quantity, self.variation)
 
-    def get_price(self):
+    def get_product_price(self):
         return self.variation.product.get_price(currency=self.order.currency)
 
     @property
@@ -305,7 +305,7 @@ class OrderItem(models.Model):
 
     @property
     def line_item_discount_incl_tax(self):
-        price = self.get_price()
+        price = self.get_product_price()
         return self.line_item_discount_excl_tax * (1+price.tax_class.rate/100)
 
     @property
