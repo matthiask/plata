@@ -70,28 +70,26 @@ class PlataTest(TestCase):
             )
 
     def create_tax_classes(self):
-        tax_class, created = TaxClass.objects.get_or_create(
+        self.tax_class, created = TaxClass.objects.get_or_create(
             name='Standard Swiss Tax Rate',
             rate=Decimal('7.60'),
             )
 
-        tax_class_germany, created = TaxClass.objects.get_or_create(
+        self.tax_class_germany, created = TaxClass.objects.get_or_create(
             name='Umsatzsteuer (Germany)',
-            rate=Decimal('19.00'),
+            rate=Decimal('19.60'),
             )
 
-        tax_class_something, created = TaxClass.objects.get_or_create(
+        self.tax_class_something, created = TaxClass.objects.get_or_create(
             name='Some tax rate',
             rate=Decimal('12.50'),
             )
 
-        return tax_class, tax_class_germany, tax_class_something
+        return self.tax_class, self.tax_class_germany, self.tax_class_something
 
 
     def create_product(self):
         tax_class, tax_class_germany, tax_class_something = self.create_tax_classes()
-
-        self.tax_class = tax_class
 
         product = Product.objects.create(
             name='Test Product 1',
