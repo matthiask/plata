@@ -231,7 +231,7 @@ class Order(BillingShippingAddress):
 
         return item
 
-    def add_discount(self, discount):
+    def add_discount(self, discount, recalculate=True):
         discount.validate(self)
 
         instance, created = self.applied_discounts.get_or_create(code=discount.code,
@@ -241,6 +241,9 @@ class Order(BillingShippingAddress):
                 'value': discount.value,
                 'data': discount.data,
             })
+
+        if recalculate:
+            self.recalculate_total()
 
         return instance
 
