@@ -42,14 +42,16 @@ class ProductVariationFormSet(BaseInlineFormSet):
 class ProductVariationForm(forms.ModelForm):
     def clean(self):
         options = self.cleaned_data.get('options', [])
-        groups_on_product = set(self.instance.product.option_groups.values_list('id', flat=True))
+        groups_on_product_objects = self.instance.product.option_groups.all()
+        groups_on_product = set(g.id for g in groups_on_product_objects)
         groups_on_variation = [o.group_id for o in options]
         options_errors = []
 
         if len(groups_on_variation) != len(set(groups_on_variation)):
             options_errors.append(_('Only one option per group allowed.'))
         if groups_on_product != set(groups_on_variation):
-            options_errors.append(_('Please select an option from all groups.'))
+            options_errors.append(_('Please select options from the following groups: %s') %\
+                u', '.join(unicode(g) for g in groups_on_product_objects))
 
         if options_errors:
             self._errors['options'] = self.error_class(options_errors)
