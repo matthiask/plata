@@ -319,6 +319,10 @@ class OrderItem(models.Model):
             return self.line_item_discount_excl_tax
 
     @property
+    def subtotal(self):
+        return self.unit_price * self.quantity
+
+    @property
     def discounted_subtotal_excl_tax(self):
         return self._line_item_price - (self._line_item_discount or 0)
 
