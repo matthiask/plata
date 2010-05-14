@@ -136,7 +136,7 @@ class Order(BillingShippingAddress):
             return self.items_subtotal + self.items_tax * (self.items_subtotal /
                 (self.items_subtotal - self.items_discount))
         else:
-            raise NotImplementedError
+            return self.items_subtotal
 
     @property
     def discount(self):
@@ -147,7 +147,14 @@ class Order(BillingShippingAddress):
 
             return self.items_tax * (1+self.items_subtotal/(self.items_subtotal - self.items_tax))
         else:
+            return self.items_discount
+
+    @property
+    def tax(self):
+        if plata_settings.PLATA_PRICE_INCLUDES_TAX:
             raise NotImplementedError
+        else:
+            return self.items_tax
 
     @property
     def balance_remaining(self):
