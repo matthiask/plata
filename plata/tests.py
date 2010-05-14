@@ -621,6 +621,25 @@ class OrderTest(PlataTest):
         self.assertAlmostEqual(order.total, Decimal('581.04'))
         plata_settings.PLATA_PRICE_INCLUDES_TAX = True
 
+    def test_15_remaining_discount(self):
+        order = self.create_order()
+        product = self.create_product()
+
+        order.modify_item(product, 1)
+        self.assertAlmostEqual(order.total, Decimal('79.90'))
+
+        order.add_discount(Discount.objects.create(
+            type=Discount.AMOUNT_INCL_TAX,
+            name='Discount',
+            value='100',
+            code='1234code',
+            ))
+
+        self.assertAlmostEqual(order.subtotal, Decimal('79.90'))
+        self.assertAlmostEqual(order.discount, Decimal('79.90'))
+        self.assertAlmostEqual(order.total, 0)
+        self.assertAlmostEqual(order.discount_remaining, Decimal('20.10'))
+
 
 class ShopTest(PlataTest):
     def test_01_creation(self):

@@ -198,8 +198,6 @@ class DiscountBase(models.Model):
             remaining = discount - items_subtotal
             discount = items_subtotal
 
-            # TODO do something with remaining
-
         for item in eligible_items:
             item._line_item_discount += item.discounted_subtotal_excl_tax / items_subtotal * discount
 

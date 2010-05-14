@@ -236,6 +236,20 @@ class Order(BillingShippingAddress):
 
         return instance
 
+    @property
+    def discount_remaining(self):
+        discounts_excl = sum((d.value for d in self.applied_discounts.filter(
+            type=DiscountBase.AMOUNT_EXCL_TAX)), 0)
+        discounts_incl = sum((d.value for d in self.applied_discounts.filter(
+            type=DiscountBase.AMOUNT_INCL_TAX)), 0)
+
+        # TODO remove hardcoded tax rate
+        remaining = (discounts_excl * Decimal('1.076') + discounts_incl) - self.discount
+
+        if remaining > 0:
+            return remaining
+        return Decimal('0.00')
+
     def update_status(self, status, notes):
         if status >= Order.CHECKOUT:
             if not self.items.count():
