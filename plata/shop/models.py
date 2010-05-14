@@ -132,22 +132,11 @@ class Order(BillingShippingAddress):
 
     @property
     def subtotal(self):
-        if plata_settings.PLATA_PRICE_INCLUDES_TAX:
-            return self.items_subtotal + self.items_tax * (self.items_subtotal /
-                (self.items_subtotal - self.items_discount))
-        else:
-            return self.items_subtotal
+        return sum(item.subtotal for item in self.items.all())
 
     @property
     def discount(self):
-        if plata_settings.PLATA_PRICE_INCLUDES_TAX:
-            return self.items_discount + self.items_discount * (
-                self.items_tax / (self.items_subtotal - self.items_discount)
-                )
-
-            return self.items_tax * (1+self.items_subtotal/(self.items_subtotal - self.items_tax))
-        else:
-            return self.items_discount
+        return self.subtotal - sum(item.discounted_subtotal for item in self.items.all())
 
     @property
     def tax(self):
