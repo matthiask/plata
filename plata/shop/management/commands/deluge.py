@@ -57,3 +57,5 @@ class Command(NoArgsCommand):
                 tax_included=True,
                 is_active=True,
                 tax_class=tax_class)
+
+            p.create_variations()
