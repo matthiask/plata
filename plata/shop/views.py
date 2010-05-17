@@ -264,6 +264,11 @@ class Shop(object):
 
     def blabla_pdf(self, request, order_id):
         order = get_object_or_404(self.order_model, pk=order_id)
+
+        order.shipping_cost = 8 / Decimal('1.076')
+        order.shipping_discount = 0
+        order.recalculate_total(save=False)
+
         from pdfdocument.document import PDFDocument, cm, mm
         from pdfdocument.utils import pdf_response
 
@@ -295,8 +300,11 @@ class Shop(object):
             ('Subtotal', u'%.2f' % order.subtotal),
             ]
 
-        if order.discount.quantize(Decimal('0.00')):
+        if order.discount:
             summary_table.append(('Discount', u'%.2f' % order.discount))
+
+        if order.shipping:
+            summary_table.append(('Shipping', u'%.2f' % order.shipping))
 
         pdf.table(summary_table, (12*cm, 4.4*cm), pdf.style.table)
 

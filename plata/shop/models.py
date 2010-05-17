@@ -113,7 +113,7 @@ class Order(BillingShippingAddress):
             applied.apply(self, items)
 
     def recalculate_shipping(self):
-        self.shipping_cost = self.shipping_discount = None
+        #self.shipping_cost = self.shipping_discount = None
         self.shipping_tax = 0
 
         subtotal = 0
@@ -132,18 +132,26 @@ class Order(BillingShippingAddress):
 
     @property
     def subtotal(self):
-        return sum(item.subtotal for item in self.items.all())
+        return sum(item.subtotal for item in self.items.all()).quantize(Decimal('0.00'))
 
     @property
     def discount(self):
-        return self.subtotal - sum(item.discounted_subtotal for item in self.items.all())
+        return (self.subtotal - sum(item.discounted_subtotal for item in self.items.all())).quantize(Decimal('0.00'))
+
+    @property
+    def shipping(self):
+        if plata_settings.PLATA_PRICE_INCLUDES_TAX:
+            return self.shipping_cost - self.shipping_discount + self.shipping_tax
+        else:
+            raise NotImplementedError
 
     @property
     def tax(self):
+        # TODO shipping tax?
         if plata_settings.PLATA_PRICE_INCLUDES_TAX:
             raise NotImplementedError
         else:
-            return self.items_tax
+            return self.items_tax.quantize(Decimal('0.00'))
 
     @property
     def balance_remaining(self):
