@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django import forms
 from django.contrib import messages
 from django.core.urlresolvers import reverse
@@ -288,12 +290,15 @@ class Shop(object):
             ) for item in order.items.all()],
             (8*cm, 1*cm, 3*cm, 4.4*cm), pdf.style.tableHead)
 
-        pdf.table([
+        summary_table = [
             ('', ''),
             ('Subtotal', u'%.2f' % order.subtotal),
-            ('Discount', u'%.2f' % order.discount),
-            #('Tax', u'%.2f' % order.tax),
-            ], (12*cm, 4.4*cm), pdf.style.table)
+            ]
+
+        if order.discount.quantize(Decimal('0.00')):
+            summary_table.append(('Discount', u'%.2f' % order.discount))
+
+        pdf.table(summary_table, (12*cm, 4.4*cm), pdf.style.table)
 
         pdf.table([
             ('Total', u'%.2f' % order.total),
