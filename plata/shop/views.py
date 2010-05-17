@@ -2,8 +2,8 @@ from django import forms
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.forms.models import inlineformset_factory, modelform_factory
-from django.http import HttpResponseRedirect
-from django.shortcuts import redirect, render_to_response
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
 
@@ -20,7 +20,7 @@ class Shop(object):
         plata.register(self)
 
     def get_urls(self):
-        return self.get_product_urls() + self.get_shop_urls()
+        return self.get_product_urls() + self.get_shop_urls() + self.get_blabla_urls()
 
     def get_product_urls(self):
         from django.conf.urls.defaults import patterns, url
@@ -41,6 +41,12 @@ class Shop(object):
             url(r'^cart/$', self.cart, name='plata_shop_cart'),
             url(r'^checkout/$', self.checkout, name='plata_shop_checkout'),
             url(r'^confirmation/$', self.confirmation, name='plata_shop_confirmation'),
+            )
+
+    def get_blabla_urls(self):
+        from django.conf.urls.defaults import patterns, url
+        return patterns('',
+            url(r'^pdf/(?P<order_id>\d+)/$', self.blabla_pdf),
             )
 
     @property
@@ -252,3 +258,46 @@ class Shop(object):
     def render_confirmation(self, request, context):
         return render_to_response('plata/shop_confirmation.html',
             self.get_context(request, context))
+
+
+    def blabla_pdf(self, request, order_id):
+        order = get_object_or_404(self.order_model, pk=order_id)
+        from pdfdocument.document import PDFDocument, cm, mm
+        from pdfdocument.utils import pdf_response
+
+        pdf, response = pdf_response('order-%09d' % order.id)
+        pdf.init_letter()
+
+        pdf.address_head()
+        pdf.address(order, 'billing_')
+        pdf.next_frame()
+
+        pdf.h1('Order %09d' % order.id)
+
+        pdf.table([(
+                'Product',
+                'Quantity',
+                'Unit price',
+                'Line item price',
+            )]+[
+            (
+                unicode(item.variation),
+                item.quantity,
+                u'%.2f' % item.unit_price,
+                u'%.2f' % item.discounted_subtotal,
+            ) for item in order.items.all()],
+            (8*cm, 1*cm, 3*cm, 4.4*cm), pdf.style.tableHead)
+
+        pdf.table([
+            ('', ''),
+            ('Subtotal', u'%.2f' % order.subtotal),
+            ('Discount', u'%.2f' % order.discount),
+            #('Tax', u'%.2f' % order.tax),
+            ], (12*cm, 4.4*cm), pdf.style.table)
+
+        pdf.table([
+            ('Total', u'%.2f' % order.total),
+            ], (12*cm, 4.4*cm), pdf.style.tableHead)
+
+        pdf.generate()
+        return response

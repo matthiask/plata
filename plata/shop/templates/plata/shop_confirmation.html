@@ -41,4 +41,6 @@
     <td>{{ order.currency }} {{ order.total|floatformat:2 }}</td>
 </tr>
 </table>
+
+<a href="../pdf/{{ order.id }}/">PDF</a>
 {% endblock %}
