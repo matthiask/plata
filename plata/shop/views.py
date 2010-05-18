@@ -118,7 +118,7 @@ class Shop(object):
         return instance
 
     def product_detail(self, request, *args, **kwargs):
-        p = self.product_model.objects.get(pk=kwargs.get('object_id'))
+        p = get_object_or_404(self.product_model, pk=kwargs.get('object_id'))
         form_class = self.order_modify_item_form(request, p)
 
         if request.method == 'POST':
