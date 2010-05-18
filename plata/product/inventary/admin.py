@@ -8,9 +8,11 @@ from . import models
 
 class ProductPriceInline(admin.TabularInline):
     model = models.ProductPrice
+    extra = 0
 
 class ProductImageInline(admin.TabularInline):
     model = models.ProductImage
+    extra = 0
 
 
 class ProductVariationFormSet(BaseInlineFormSet):
@@ -63,6 +65,8 @@ class ProductVariationInline(admin.TabularInline):
     model = models.ProductVariation
     form = ProductVariationForm
     formset = ProductVariationFormSet
+    extra = 0
+    can_delete = False
 
 class OptionInline(admin.TabularInline):
     model = models.Option
@@ -84,6 +88,7 @@ admin.site.register(models.OptionGroup,
     )
 
 admin.site.register(models.Product,
+    filter_horizontal=('categories',),
     inlines=[ProductVariationInline, ProductPriceInline, ProductImageInline],
     list_display=('is_active', 'name', 'sku', 'ordering'),
     list_display_links=('name',),
