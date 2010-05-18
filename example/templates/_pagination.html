@@ -1,0 +1,25 @@
+{% load i18n %}
+{% if is_paginated %}
+<div class="pagination">
+    <ul>
+    {% if page_obj.has_previous %}
+        <li><a href="?{{ querystring }}&page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+    {% endif %}
+    {% for p in page_range %}
+        <li {% ifequal p page %}class="mark"{% endifequal %}><a href="?{{ querystring }}&page={{ p }}">{{ p }}</a></li>
+    {% endfor %}
+    {% if page_obj.has_next %}
+        <li><a href="?{{ querystring }}&page={{ page_obj.next_page_number }}">&raquo;</a></li>
+    {% endif %}
+    </ul>
+
+    <div style="float:left;padding:3px 3px 0 3px;">
+        {% blocktrans with page_obj.start_index as start_index and page_obj.end_index as end_index and paginator.count as count %}
+            {{ start_index }} - {{ end_index }} / {{ count }}
+        {% endblocktrans %}
+    </div>
+    <a style="float:left;padding:0px 3px" href="?{{ querystring }}&all=1">{% trans "show all" %}</a>
+
+    <br style="clear:left" />
+</div>
+{% endif %}

@@ -7,4 +7,6 @@
 <h2><a href="{{ product.get_absolute_url }}">{{ product }}</a></h2>
 {{ product.description|linebreaks }}
 {% endfor %}
+
+{% include "_pagination.html" %}
 {% endblock %}

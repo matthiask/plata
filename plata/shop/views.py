@@ -33,7 +33,10 @@ class Shop(object):
 
         return patterns('django.views.generic',
             url(r'^$', lambda request: redirect('plata_product_list')),
-            url(r'^products/$', 'list_detail.object_list', product_dict, name='plata_product_list'),
+            url(r'^products/$', 'list_detail.object_list', dict(
+                product_dict,
+                paginate_by=20,
+                ), name='plata_product_list'),
             url(r'^products/(?P<object_id>\d+)/$', self.product_detail, product_dict, name='plata_product_detail'),
             )
 
