@@ -1,0 +1,3 @@
+<span class="{{ additional_classes|default_if_none:"" }} {% if item.field.required %}required {% endif %}{% if item.errors %}invalid {% endif %}">
+    {{ item }}
+</span>
