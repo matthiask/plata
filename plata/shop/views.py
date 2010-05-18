@@ -235,7 +235,8 @@ class Shop(object):
         if not order:
             return HttpResponseRedirect(reverse('plata_shop_cart') + '?empty=1')
 
-        ContactForm = modelform_factory(self.contact_model, exclude=('user', 'created', 'notes'))
+        ContactForm = modelform_factory(self.contact_model,
+            exclude=('user', 'created', 'notes', 'currency'))
         OrderForm = modelform_factory(self.order_model, fields=('notes',))
 
         if request.method == 'POST':
