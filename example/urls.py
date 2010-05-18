@@ -12,7 +12,7 @@ admin.autodiscover()
 shop = Shop(Product, Contact, Order)
 
 urlpatterns = patterns('',
-    url(r'^plata/', include(shop.urls)),
+    url(r'^', include(shop.urls)),
     url(r'^admin/', include(admin.site.urls)),
 
     (r'^media/sys/feincms/(?P<path>.*)$', 'django.views.static.serve',
