@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-18 17:39+0200\n"
+"POT-Creation-Date: 2010-05-18 17:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,11 +24,13 @@ msgstr "Währung"
 
 #: contact/admin.py:10 shop/admin.py:22
 #: shop/templates/plata/shop_checkout.html:13
+#: shop/templates/plata/shop_confirmation.html:8
 msgid "Billing address"
 msgstr "Rechungsadresse"
 
 #: contact/admin.py:13 shop/admin.py:25
 #: shop/templates/plata/shop_checkout.html:26
+#: shop/templates/plata/shop_confirmation.html:14
 msgid "Shipping address"
 msgstr "Lieferungsadresse"
 
@@ -265,7 +267,7 @@ msgid "code"
 msgstr "Code"
 
 #: product/feincms/models.py:73 product/inventary/models.py:173
-#: shop/models.py:292
+#: shop/models.py:292 shop/templates/plata/shop_confirmation.html:38
 msgid "discount"
 msgstr "Rabatt"
 
@@ -419,7 +421,7 @@ msgstr "Lagerbestands-Transaktion"
 msgid "stock transactions"
 msgstr "Lagerbestands-Transaktionen"
 
-#: shop/admin.py:28
+#: shop/admin.py:28 shop/templates/plata/shop_confirmation.html:20
 msgid "Order items"
 msgstr "Bestellte Einzelposten"
 
@@ -427,7 +429,7 @@ msgstr "Bestellte Einzelposten"
 msgid "Shipping"
 msgstr "Lieferung"
 
-#: shop/admin.py:30
+#: shop/admin.py:30 shop/templates/plata/shop_confirmation.html:31
 msgid "Total"
 msgstr "Total"
 
@@ -455,7 +457,7 @@ msgstr "bestätigt"
 msgid "status"
 msgstr "Status"
 
-#: shop/models.py:48
+#: shop/models.py:48 shop/templates/plata/shop_confirmation.html:34
 msgid "subtotal"
 msgstr "Subtotal"
 
@@ -483,7 +485,7 @@ msgstr "Rabatt auf Lieferung"
 msgid "shipping tax"
 msgstr "MwSt auf Lieferung"
 
-#: shop/models.py:64
+#: shop/models.py:64 shop/templates/plata/shop_confirmation.html:46
 msgid "total"
 msgstr "Total"
 
@@ -606,7 +608,7 @@ msgstr "Der Warenkorb wurde aktualisiert."
 
 #: shop/views.py:251
 msgid "This field is required."
-msgstr ""
+msgstr "Dieses Feld ist zwingend erforderlich."
 
 #: shop/templates/_form_errors.html:3
 msgid "Please correct the following errors:"
@@ -620,7 +622,7 @@ msgstr "Startseite"
 msgid "Products"
 msgstr "Produkte"
 
-#: shop/templates/base.html:64
+#: shop/templates/base.html:64 shop/templates/plata/shop_cart.html:9
 msgid "Cart"
 msgstr "Warenkorb"
 
@@ -644,6 +646,30 @@ msgstr "Kontakt"
 msgid "Order"
 msgstr "Bestellung"
 
+#: shop/templates/plata/shop_cart.html:7
+msgid "Cart is empty!"
+msgstr "Warenkorb ist leer!"
+
+#: shop/templates/plata/shop_cart.html:16
+msgid "Product"
+msgstr "Produkt"
+
+#: shop/templates/plata/shop_cart.html:17
+msgid "Quantity"
+msgstr "Menge"
+
+#: shop/templates/plata/shop_cart.html:18
+msgid "Delete"
+msgstr "Löschen"
+
+#: shop/templates/plata/shop_cart.html:33
+msgid "Save"
+msgstr "Sichern"
+
+#: shop/templates/plata/shop_cart.html:34
+msgid "Checkout"
+msgstr "Zur Kasse"
+
 #: shop/templates/plata/shop_checkout.html:46
 msgid "Notes"
 msgstr "Bemerkungen"
@@ -652,5 +678,14 @@ msgstr "Bemerkungen"
 msgid "Submit"
 msgstr "Abschicken"
 
-#~ msgid "Billing"
-#~ msgstr "Rechungsadresse"
+#: shop/templates/plata/shop_confirmation.html:6
+msgid "Order summary"
+msgstr "Bestellungs-Übersicht"
+
+#: shop/templates/plata/shop_confirmation.html:42
+msgid "tax"
+msgstr "MwSt"
+
+#: shop/templates/plata/shop_confirmation.html:52
+msgid "Confirm order"
+msgstr "Bestellung bestätigen"
