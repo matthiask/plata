@@ -1,4 +1,5 @@
 <html>
+{% load i18n %}
 <head>
 <title>plata</title>
 <style type="text/css">
@@ -42,9 +43,9 @@ ul.messages li {
 <body>
 
 <div id="navigation">
-<a href="/"><span>Startseite</span></a>
-<a href="/products/"><span>Produkte</span></a>
-<a href="/cart/"><span>Warenkorb</span></a>
+<a href="/"><span>{% trans "Home" %}</span></a>
+<a href="/products/"><span>{% trans "Products" %}</span></a>
+<a href="/cart/"><span>{% trans "Cart" %}</span></a>
 <br style="clear:left" />
 </div>
 
@@ -61,20 +62,20 @@ ul.messages li {
 {% endblock %}
 
 <hr />
-<a href="{% url plata_shop_cart %}">view cart</a>
+<a href="{% url plata_shop_cart %}">{% trans "Go to cart" %}</a>
 <hr />
-<h2>That's what we know about you:</h2>
+<h2>{% trans "That's what we know about you:" %}</h2>
 <table>
     <tr>
-        <th>User</th>
+        <th>{% trans "User" %}</th>
         <td>{{ user }}</td>
     </tr>
     <tr>
-        <th>Contact</th>
+        <th>{% trans "Contact" %}</th>
         <td>{{ plata.contact }}</td>
     </tr>
     <tr>
-        <th>Order</th>
+        <th>{% trans "Order" %}</th>
         <td>
             {{ plata.order }}, {{ plata.order.currency }} {{ plata.order.total|floatformat:2 }}
             <ul>
