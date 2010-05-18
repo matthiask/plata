@@ -127,6 +127,9 @@ class ProductVariation(models.Model):
 
         return u'%s' % self.product
 
+    def get_absolute_url(self):
+        return self.product.get_absolute_url()
+
 
 class ProductPrice(abstract.ProductPrice):
     product = models.ForeignKey(Product, verbose_name=_('product'),
