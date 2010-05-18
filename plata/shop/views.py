@@ -255,12 +255,15 @@ class Shop(object):
         if not order:
             return HttpResponseRedirect(reverse('plata_shop_cart') + '?empty=1')
 
+        if request.method == 'POST':
+            # TODO any validation or data necessary here?
+            order.update_status(self.order_model.CONFIRMED, 'Confirmation given')
+
         return self.render_confirmation(request, {'order': order})
 
     def render_confirmation(self, request, context):
         return render_to_response('plata/shop_confirmation.html',
             self.get_context(request, context))
-
 
     def blabla_pdf(self, request, order_id):
         order = get_object_or_404(self.order_model, pk=order_id)

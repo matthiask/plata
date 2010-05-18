@@ -19,7 +19,7 @@
 <table border="1">
 {% for item in order.items.all %}
 <tr>
-    <td>{{ item.product }}</td>
+    <td>{{ item.variation }}</td>
     <td>{{ item.quantity }} * {{ item.currency }} {{ item.unit_price|floatformat:2 }}</td>
     <td>{{ item.currency }} {{ item.discounted_subtotal|floatformat:2 }}</td>
 </tr>
@@ -29,18 +29,26 @@
 <h2>Total</h2>
 <table>
 <tr>
-    <th>Subtotal excl tax</th>
-    <td>{{ order.currency }} {{ order.items_subtotal|floatformat:2 }}</td>
+    <th>Subtotal</th>
+    <td>{{ order.currency }} {{ order.subtotal|floatformat:2 }}</td>
+</tr>
+<tr>
+    <th>Discount</th>
+    <td>{{ order.currency }} {{ order.discount|floatformat:2 }}</td>
 </tr>
 <tr>
     <th>Tax</th>
-    <td>{{ order.currency }} {{ order.items_tax|floatformat:2 }}</td>
+    <td>{{ order.currency }} {{ order.tax|floatformat:2 }}</td>
 </tr>
 <tr>
     <th>Total</th>
     <td>{{ order.currency }} {{ order.total|floatformat:2 }}</td>
 </tr>
 </table>
+
+<form method="post" action=".">{% csrf_token %}
+<input type="submit" value="Confirm order" />
+</form>
 
 <a href="../pdf/{{ order.id }}/">PDF</a>
 {% endblock %}
