@@ -235,8 +235,25 @@ class Shop(object):
         if not order:
             return HttpResponseRedirect(reverse('plata_shop_cart') + '?empty=1')
 
-        ContactForm = modelform_factory(self.contact_model,
-            exclude=('user', 'created', 'notes', 'currency'))
+        ADDRESS_FIELDS = self.order_model.ADDRESS_FIELDS
+
+        class ContactForm(forms.ModelForm):
+            class Meta:
+                model = self.contact_model
+                exclude = ('user', 'created', 'notes', 'currency')
+
+            def clean(self):
+                if not self.cleaned_data.get('shipping_same_as_billing'):
+                    for f in ADDRESS_FIELDS:
+                        field = 'shipping_%s' % f
+                        if not self.cleaned_data.get(field):
+                            self._errors[field] = self.error_class([
+                                _('This field is required.')])
+                return self.cleaned_data
+
+        for f in ADDRESS_FIELDS:
+            ContactForm.base_fields['billing_%s' % f].required = True
+
         OrderForm = modelform_factory(self.order_model, fields=('notes',))
 
         if request.method == 'POST':
