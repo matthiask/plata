@@ -180,8 +180,8 @@ class Order(BillingShippingAddress):
 
         assert (relative is not None and absolute is None) or (absolute is not None and relative is None), 'One of relative or absolute must be provided.'
 
-        if self.status >= self.CHECKOUT:
-            raise ValidationError(_('Cannot modify order in checkout stage.'),
+        if self.status >= self.CONFIRMED:
+            raise ValidationError(_('Cannot modify order once it has been confirmed.'),
                 code='order_sealed')
 
         if isinstance(product, ProductVariation):
