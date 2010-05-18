@@ -186,10 +186,21 @@ class Shop(object):
             formset = OrderItemFormset(request.POST, instance=order)
 
             if formset.is_valid():
-                formset.save()
-                order.recalculate_total()
+                changed = False
+                for form in formset.forms:
+                    if formset._should_delete_form(form):
+                        order.modify_item(form.instance.variation,
+                            absolute=0,
+                            recalculate=False)
+                        changed = True
+                    elif form.has_changed():
+                        order.modify_item(form.instance.variation,
+                            absolute=form.cleaned_data['quantity'],
+                            recalculate=False)
+                        changed = True
 
-                if any(form.changed_data for form in formset.forms):
+                if changed:
+                    order.recalculate_total()
                     messages.success(request, _('The cart has been updated.'))
 
                 if 'checkout' in request.POST:
