@@ -326,6 +326,7 @@ class Shop(object):
 
         pdf.table(summary_table, (12*cm, 4.4*cm), pdf.style.table)
 
+        pdf.spacer(1*mm)
         pdf.table([
             ('Total', u'%.2f' % order.total),
             ], (12*cm, 4.4*cm), pdf.style.tableHead)
