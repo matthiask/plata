@@ -171,12 +171,14 @@ class Order(BillingShippingAddress):
             raise ValidationError(_('Order contains more than one currency.'),
                 code='multiple_currency')
 
-    def modify_item(self, product, change, recalculate=True, **kwargs):
+    def modify_item(self, product, relative=None, absolute=None, recalculate=True, **kwargs):
         """
         Update order with the given product
 
         Return OrderItem instance
         """
+
+        assert (relative is not None and absolute is None) or (absolute is not None and relative is None), 'One of relative or absolute must be provided.'
 
         if self.status >= self.CHECKOUT:
             raise ValidationError(_('Cannot modify order in checkout stage.'),
@@ -202,7 +204,10 @@ class Order(BillingShippingAddress):
         item._unit_price = price.unit_price_excl_tax
         item._unit_tax = price.unit_tax
 
-        item.quantity += change
+        if relative:
+            item.quantity += relative
+        else:
+            item.quantity = absolute
 
         if item.quantity > 0:
             item.save()
