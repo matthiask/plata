@@ -357,7 +357,7 @@ class OrderItem(models.Model):
 class OrderStatus(models.Model):
     order = models.ForeignKey(Order, related_name='statuses')
     created = models.DateTimeField(_('created'), default=datetime.now)
-    status = models.CharField(_('status'), max_length=20, choices=Order.STATUS_CHOICES)
+    status = models.PositiveIntegerField(_('status'), max_length=20, choices=Order.STATUS_CHOICES)
     notes = models.TextField(_('notes'), blank=True)
 
     class Meta:
