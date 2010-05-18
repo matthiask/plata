@@ -40,6 +40,10 @@ class ProductVariationFormSet(BaseInlineFormSet):
 
                 variations.add(s)
 
+    def save(self):
+        super(ProductVariationFormSet, self).save()
+        self.instance.create_variations()
+
 
 class ProductVariationForm(forms.ModelForm):
     def clean(self):
