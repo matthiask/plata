@@ -245,6 +245,9 @@ class Shop(object):
                 order.copy_address()
                 order.save()
 
+                if order.status < self.order_model.CHECKOUT:
+                    order.update_status(self.order_model.CHECKOUT, 'Checkout completed')
+
                 return redirect('plata_shop_confirmation')
         else:
             c_form = ContactForm(instance=order.contact, prefix='contact')
