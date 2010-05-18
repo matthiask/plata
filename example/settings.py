@@ -112,6 +112,7 @@ INSTALLED_APPS = (
 )
 
 PLATA_PRODUCT_MODULE = 'plata.product.inventary.models'
+#PLATA_PRICE_INCLUDES_TAX = False
 
 TEST_RUNNER = 'example.test_utils.test_runner_with_coverage'
 COVERAGE_MODULES = [
