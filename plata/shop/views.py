@@ -229,33 +229,41 @@ class Shop(object):
         return render_to_response('plata/shop_cart.html',
             self.get_context(request, context))
 
+    def checkout_contact_form(self, request, order):
+        if not hasattr(self, '_checkout_contact_form_cache'):
+            REQUIRED_ADDRESS_FIELDS = self.order_model.ADDRESS_FIELDS[:]
+            REQUIRED_ADDRESS_FIELDS.remove('company')
+
+            class ContactForm(forms.ModelForm):
+                class Meta:
+                    model = self.contact_model
+                    exclude = ('user', 'created', 'notes', 'currency')
+
+                def clean(self):
+                    if not self.cleaned_data.get('shipping_same_as_billing'):
+                        for f in REQUIRED_ADDRESS_FIELDS:
+                            field = 'shipping_%s' % f
+                            if not self.cleaned_data.get(field):
+                                self._errors[field] = self.error_class([
+                                    _('This field is required.')])
+                    return self.cleaned_data
+
+            for f in REQUIRED_ADDRESS_FIELDS:
+                ContactForm.base_fields['billing_%s' % f].required = True
+            self._checkout_contact_form_cache = ContactForm
+        return self._checkout_contact_form_cache
+
+    def checkout_order_form(self, request, order):
+        return modelform_factory(self.order_model, fields=('notes',))
+
     def checkout(self, request):
         order = self.order_from_request(request, create=False)
 
         if not order:
             return HttpResponseRedirect(reverse('plata_shop_cart') + '?empty=1')
 
-        REQUIRED_ADDRESS_FIELDS = self.order_model.ADDRESS_FIELDS[:]
-        REQUIRED_ADDRESS_FIELDS.remove('company')
-
-        class ContactForm(forms.ModelForm):
-            class Meta:
-                model = self.contact_model
-                exclude = ('user', 'created', 'notes', 'currency')
-
-            def clean(self):
-                if not self.cleaned_data.get('shipping_same_as_billing'):
-                    for f in REQUIRED_ADDRESS_FIELDS:
-                        field = 'shipping_%s' % f
-                        if not self.cleaned_data.get(field):
-                            self._errors[field] = self.error_class([
-                                _('This field is required.')])
-                return self.cleaned_data
-
-        for f in REQUIRED_ADDRESS_FIELDS:
-            ContactForm.base_fields['billing_%s' % f].required = True
-
-        OrderForm = modelform_factory(self.order_model, fields=('notes',))
+        ContactForm = self.checkout_contact_form(request, order)
+        OrderForm = self.checkout_order_form(request, order)
 
         if request.method == 'POST':
             c_form = ContactForm(request.POST, prefix='contact', instance=order.contact)
