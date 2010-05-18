@@ -48,7 +48,7 @@ class Shop(object):
     def get_blabla_urls(self):
         from django.conf.urls.defaults import patterns, url
         return patterns('',
-            url(r'^pdf/(?P<order_id>\d+)/$', self.blabla_pdf),
+            url(r'^pdf/(?P<order_id>\d+)/$', self.blabla_pdf, name='plata_blabla_pdf'),
             )
 
     @property
