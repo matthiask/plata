@@ -12,7 +12,7 @@
 <table>
 {% for orderitemform in orderitemformset.forms %}
     <tr>
-        <th colspan="2">{{ orderitemform.instance.product }}</th>
+        <th colspan="2">{{ orderitemform.instance.variation }}</th>
     </tr>
     {{ orderitemform }}
 {% endfor %}
