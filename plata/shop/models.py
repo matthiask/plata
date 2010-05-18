@@ -148,10 +148,7 @@ class Order(BillingShippingAddress):
     @property
     def tax(self):
         # TODO shipping tax?
-        if plata_settings.PLATA_PRICE_INCLUDES_TAX:
-            raise NotImplementedError
-        else:
-            return self.items_tax.quantize(Decimal('0.00'))
+        return self.items_tax.quantize(Decimal('0.00'))
 
     @property
     def balance_remaining(self):
