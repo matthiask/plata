@@ -262,15 +262,15 @@ class OrderTest(PlataTest):
 
         # Should be possible to update order status now
         order.update_status(
-            Order.CHECKOUT,
-            'Checkout process has started',
+            Order.CONFIRMED,
+            'Order has been confirmed',
             )
 
         # Should not be possible to modify order once checkout process has started
         self.assertRaisesWithCode(ValidationError, lambda: order.modify_item(product, 2),
             code='order_sealed')
 
-        self.assertEqual(order.status, Order.CHECKOUT)
+        self.assertEqual(order.status, Order.CONFIRMED)
 
     def test_06_order_percentage_discount(self):
         order = self.create_order()
@@ -299,8 +299,8 @@ class OrderTest(PlataTest):
         item_price_excl_tax = item_price_incl_tax / tax_factor
 
         order.recalculate_total()
-        item = order.modify_item(p1, 0)
-        item2 = order.modify_item(p2, 0)
+        item = order.modify_item(p1, relative=0)
+        item2 = order.modify_item(p2, relative=0)
 
         self.assertAlmostEqual(item.unit_price, item_price_incl_tax)
         self.assertAlmostEqual(item.line_item_discount, item_price_incl_tax * 3 * Decimal('0.30'))
@@ -672,9 +672,9 @@ class ViewTest(PlataTest):
         settings.TEMPLATE_DIRS = self.ORIG_TEMPLATE_DIRS
 
     def test_01_cart_empty(self):
-        self.assertContains(self.client.get('/plata/cart/'), 'Cart is empty')
-        self.assertRedirects(self.client.get('/plata/checkout/'), '/plata/cart/?empty=1')
-        self.assertRedirects(self.client.get('/plata/confirmation/'), '/plata/cart/?empty=1')
+        self.assertContains(self.client.get('/cart/'), 'Cart is empty')
+        self.assertRedirects(self.client.get('/checkout/'), '/cart/?empty=1')
+        self.assertRedirects(self.client.get('/confirmation/'), '/cart/?empty=1')
 
     def test_02_authenticated_user_has_contact(self):
         user = User.objects.create_user('test', 'test@example.com', 'testing')
@@ -702,17 +702,17 @@ class ViewTest(PlataTest):
         self.assertEqual(Order.objects.count(), 0)
         product = self.create_product()
 
-        self.client.post('/plata/products/%s/' % product.pk, {
+        self.client.post('/products/%s/' % product.pk, {
             'quantity': 5,
             })
 
         self.assertEqual(Order.objects.count(), 1)
-        self.assertContains(self.client.get('/plata/cart/'), 'value="5"')
+        self.assertContains(self.client.get('/cart/'), 'value="5"')
 
         order = Order.objects.all()[0]
         item = order.items.all()[0]
 
-        self.assertRedirects(self.client.post('/plata/cart/', {
+        self.assertRedirects(self.client.post('/cart/', {
             'checkout': True,
 
             'items-INITIAL_FORMS': 1,
@@ -721,11 +721,19 @@ class ViewTest(PlataTest):
 
             'items-0-id': item.id,
             'items-0-quantity': 6, # one additional item
-            }), '/plata/checkout/')
+            }), '/checkout/')
 
         self.assertEqual(order.modify_item(product, 0).quantity, 6)
 
-        self.assertRedirects(self.client.post('/plata/checkout/', {
+        self.assertRedirects(self.client.post('/checkout/', {
+            'contact-billing_company': u'BigCorp',
+            'contact-billing_first_name': u'Hans',
+            'contact-billing_last_name': u'Muster',
+            'contact-billing_address': u'Musterstrasse 42',
+            'contact-billing_zip_code': u'8042',
+            'contact-billing_city': u'Beispielstadt',
+            'contact-billing_country': u'CH',
+            'contact-shipping_same_as_billing': True,
             'contact-email': 'something@example.com',
             'contact-currency': 'CHF',
-            }), '/plata/confirmation/')
+            }), '/confirmation/')
