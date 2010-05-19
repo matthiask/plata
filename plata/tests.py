@@ -925,6 +925,11 @@ class AdminTest(PlataTest):
         self.assertRedirects(self.client.post('/admin/product/product/2/', product_data),
             '/admin/product/product/')
 
+        product_data['variations-0-options'] = [1, 4]
+        self.assertContains(self.client.post('/admin/product/product/2/', product_data),
+            'Combination of options already encountered')
+        product_data['variations-0-options'] = [1, 3]
+
         p = Product.objects.get(pk=2)
         options = list(OptionGroup.objects.all())
         p.option_groups.remove(options[1])
