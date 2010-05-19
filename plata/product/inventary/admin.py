@@ -22,7 +22,7 @@ class ProductVariationFormSet(BaseInlineFormSet):
         variations = set()
 
         for form in self.forms:
-            if self._should_delete_form(form) or \
+            if self.can_delete and self._should_delete_form(form) or \
                     (not form.instance.pk and not form.has_changed()) or \
                     (not form.is_valid()):
                 # Skip forms which will not end up as instances or aren't valid yet

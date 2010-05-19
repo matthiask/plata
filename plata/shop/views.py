@@ -192,7 +192,7 @@ class Shop(object):
             if formset.is_valid():
                 changed = False
                 for form in formset.forms:
-                    if formset._should_delete_form(form):
+                    if formset.can_delete and formset._should_delete_form(form):
                         order.modify_item(form.instance.variation,
                             absolute=0,
                             recalculate=False)
