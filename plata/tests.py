@@ -12,7 +12,8 @@ from django.test import TestCase
 import plata
 from plata import plata_settings
 from plata.contact.models import Contact
-from plata.product.models import TaxClass, Product, ProductVariation, Discount
+from plata.product.models import TaxClass, Product, ProductVariation, Discount,\
+    ProductPrice
 from plata.product.stock.models import Period, StockTransaction
 from plata.shop.models import Order, OrderStatus, OrderPayment
 
@@ -97,7 +98,7 @@ class PlataTest(TestCase):
             slug='prod%s' % random.random(),
             )
 
-        product.variations.create()
+        product.create_variations()
 
         # An old price in CHF which should not influence the rest of the tests
         product.prices.create(
@@ -767,6 +768,72 @@ class ShopTest(PlataTest):
         order = shop.order_from_request(request, create=True)
         self.assertEqual(Order.objects.count(), 1)
         self.assertEqual(order.contact, contact)
+
+
+class AdminTest(PlataTest):
+    def setUp(self):
+        u = User.objects.create_user('admin', 'admin@example.com', 'password')
+        u.is_staff = True
+        u.is_superuser = True
+        u.save()
+
+    def login(self):
+        self.client.login(username='admin', password='password')
+
+    def test_01_products(self):
+        self.login()
+
+        tax_class = TaxClass.objects.create(
+            name='Standard Swiss Tax Rate',
+            rate=Decimal('7.60'),
+            )
+
+        self.client.post('/admin/product/product/add/',  {
+            'description': '',
+            'images-INITIAL_FORMS': '0',
+            'images-MAX_NUM_FORMS': '',
+            'images-TOTAL_FORMS': '0',
+            'is_active': 'on',
+            'name': 'Product 3',
+            'slug': '324wregft5re',
+            'ordering': '100',
+            'sku': '324wregft5re',
+
+            'prices-0-id': '',
+            'prices-0-product': '',
+
+            'prices-0-_unit_price': '79.90',
+            'prices-0-currency': 'CHF',
+            'prices-0-is_active': 'on',
+            'prices-0-tax_class': '1',
+            'prices-0-tax_included': 'on',
+            'prices-0-valid_from': '2010-05-19',
+            'prices-0-valid_until': '',
+
+            'prices-INITIAL_FORMS': '0',
+            'prices-MAX_NUM_FORMS': '',
+            'prices-TOTAL_FORMS': '1',
+
+            'rawcontent-INITIAL_FORMS': '0',
+            'rawcontent-MAX_NUM_FORMS': '',
+            'rawcontent-TOTAL_FORMS': '0',
+
+            'variations-0-id': '',
+            'variations-0-product': '',
+
+            'variations-0-is_active': 'on',
+            'variations-0-items_in_stock': '0',
+            'variations-0-ordering': '0',
+            'variations-0-sk': '324wregft5re-',
+
+            'variations-INITIAL_FORMS': '0',
+            'variations-MAX_NUM_FORMS': '',
+            'variations-TOTAL_FORMS': '1',
+            })
+
+        self.assertEqual(Product.objects.count(), 1)
+        self.assertEqual(ProductVariation.objects.count(), 1)
+        self.assertEqual(ProductPrice.objects.count(), 1)
 
 
 class ViewTest(PlataTest):
