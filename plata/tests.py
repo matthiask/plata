@@ -164,7 +164,17 @@ class OrderTest(PlataTest):
         product = self.create_product()
         order = self.create_order()
 
-        self.assertEqual(product.get_price(currency=order.currency).currency, order.currency)
+        item_price = Decimal('79.90')
+        line_item_price = item_price * 2
+        order_total = Decimal('159.80')
+        tax_factor = Decimal('1.076')
+
+        price = product.get_price(currency=order.currency)
+        self.assertEqual(price.currency, order.currency)
+        self.assertAlmostEqual(price.unit_price, item_price)
+        self.assertAlmostEqual(price.unit_price_incl_tax, price.unit_price)
+        self.assertAlmostEqual(price.unit_price_excl_tax, item_price / tax_factor)
+        self.assertAlmostEqual(price.unit_tax, price.unit_price_excl_tax * Decimal('0.076'))
 
         order.modify_item(product, 5)
         order.modify_item(product, -4)
@@ -173,11 +183,6 @@ class OrderTest(PlataTest):
         self.assertEqual(order.items.count(), 1)
 
         self.assertEqual(item.quantity, 2)
-
-        item_price = Decimal('79.90')
-        line_item_price = item_price * item.quantity
-        order_total = Decimal('159.80')
-        tax_factor = Decimal('1.076')
 
         self.assertAlmostEqual(order.items_subtotal, order_total / tax_factor)
         self.assertAlmostEqual(order.items_subtotal + order.items_tax, order_total)
