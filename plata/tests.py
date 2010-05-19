@@ -13,6 +13,7 @@ import plata
 from plata import plata_settings
 from plata.contact.models import Contact
 from plata.product.models import TaxClass, Product, ProductVariation, Discount
+from plata.product.stock.models import Period, StockTransaction
 from plata.shop.models import Order, OrderStatus, OrderPayment
 
 
@@ -669,10 +670,69 @@ class OrderTest(PlataTest):
 
         order = Order.objects.get(pk=order.pk)
         self.assertAlmostEqual(order.balance_remaining, Decimal('0.00'))
+        self.assertTrue(order.is_paid)
 
         payment.delete()
         order = Order.objects.get(pk=order.pk)
         self.assertAlmostEqual(order.balance_remaining, Decimal('100.00'))
+
+    def test_17_stocktransactions(self):
+        order = self.create_order()
+        product = self.create_product()
+        variation = product.variations.get()
+
+        period = Period.objects.create(
+            name='Period 1',
+            start=datetime.now(),
+            )
+        # Create a period which has been superceeded by Period 1
+        Period.objects.create(
+            name='Period 0',
+            start=datetime(2000, 1, 1, 0, 0),
+            )
+
+        # Create a period in the far future
+        Period.objects.create(
+            name='Period 2',
+            start=datetime(2100, 1, 1, 0, 0),
+            )
+
+        s = StockTransaction.objects.create(
+            product=variation,
+            type=StockTransaction.INITIAL,
+            change=10,
+            )
+
+        self.assertEqual(s.period, period)
+        self.assertEqual(ProductVariation.objects.get(pk=variation.id).items_in_stock, 10)
+
+        StockTransaction.objects.create(
+            product=variation,
+            type=StockTransaction.CORRECTION,
+            change=-3,
+            )
+
+        self.assertEqual(StockTransaction.objects.items_in_stock(variation), 7)
+
+        StockTransaction.objects.create(
+            product=variation,
+            type=StockTransaction.SALE,
+            change=-2,
+            )
+
+        StockTransaction.objects.create(
+            product=variation,
+            type=StockTransaction.PURCHASE,
+            change=4,
+            )
+
+        StockTransaction.objects.open_new_period(name='Something')
+
+        transaction = StockTransaction.objects.filter(product=variation)[0]
+
+        self.assertEqual(transaction.type, StockTransaction.INITIAL)
+        self.assertEqual(transaction.change, 9)
+        self.assertEqual(transaction.period.name, 'Something')
 
 
 class ShopTest(PlataTest):

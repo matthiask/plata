@@ -38,12 +38,12 @@ class StockTransactionManager(models.Manager):
     def open_new_period(self, name=None):
         period = Period.objects.create(name=name or 'New period')
 
-        for p in Product.objects.all():
+        for p in ProductVariation.objects.all():
             p.stock_transactions.create(
                 period=period,
                 type=StockTransaction.INITIAL,
                 change=p.items_in_stock,
-                note='New period',
+                notes='New period',
                 )
 
     def items_in_stock(self, product):
@@ -87,7 +87,7 @@ class StockTransaction(models.Model):
     notes = models.TextField(_('notes'), blank=True)
 
     class Meta:
-        ordering = ['-created']
+        ordering = ['-id']
         verbose_name = _('stock transaction')
         verbose_name_plural = _('stock transactions')
 
