@@ -120,13 +120,6 @@ class Product(models.Model):
             Q(valid_until__isnull=True) | Q(valid_until__gte=date.today()),
             ).filter(**kwargs).latest()
 
-    @property
-    def main_image(self):
-        try:
-            return self.images.all()[0]
-        except IndexError:
-            return None
-
     def create_variations(self):
         variations = itertools_product(*[group.options.all() for group in self.option_groups.all()])
 
