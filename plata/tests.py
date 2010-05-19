@@ -640,6 +640,40 @@ class OrderTest(PlataTest):
         self.assertAlmostEqual(order.total, 0)
         self.assertAlmostEqual(order.discount_remaining, Decimal('20.10'))
 
+    def test_16_payment(self):
+        order = self.create_order()
+        product = self.create_product()
+
+        order.modify_item(product, 3)
+        self.assertAlmostEqual(order.balance_remaining, Decimal('79.90') * 3)
+
+        payment = order.payments.create(
+            currency=order.currency,
+            amount=100,
+            )
+
+        self.assertAlmostEqual(order.balance_remaining, Decimal('79.90') * 3)
+
+        payment.transaction_id = '1234' # Not strictly required
+        payment.authorized = datetime.now()
+        payment.save()
+
+        order = Order.objects.get(pk=order.pk)
+        self.assertAlmostEqual(order.balance_remaining, Decimal('139.70'))
+
+        order.payments.create(
+            currency=order.currency,
+            amount=Decimal('139.70'),
+            authorized=datetime.now(),
+            )
+
+        order = Order.objects.get(pk=order.pk)
+        self.assertAlmostEqual(order.balance_remaining, Decimal('0.00'))
+
+        payment.delete()
+        order = Order.objects.get(pk=order.pk)
+        self.assertAlmostEqual(order.balance_remaining, Decimal('100.00'))
+
 
 class ShopTest(PlataTest):
     def test_01_creation(self):
