@@ -801,30 +801,77 @@ class ViewTest(PlataTest):
 
     def test_04_shopping(self):
         self.assertEqual(Order.objects.count(), 0)
-        product = self.create_product()
+        p1 = self.create_product()
+        p2 = self.create_product()
 
-        self.client.post('/products/%s/' % product.pk, {
+        self.assertContains(self.client.get(p1.get_absolute_url()),
+            p1.name)
+
+        self.client.post(p1.get_absolute_url(), {
             'quantity': 5,
+            })
+        self.client.post(p2.get_absolute_url(), {
+            'quantity': 3,
             })
 
         self.assertEqual(Order.objects.count(), 1)
         self.assertContains(self.client.get('/cart/'), 'value="5"')
 
         order = Order.objects.all()[0]
-        item = order.items.all()[0]
+        i1 = order.modify_item(p1, 0)
+        i2 = order.modify_item(p2, 0)
+
+        self.assertRedirects(self.client.post('/cart/', {
+            'items-INITIAL_FORMS': 2,
+            'items-TOTAL_FORMS': 2,
+            'items-MAX_NUM_FORMS': 2,
+
+            'items-0-id': i1.id,
+            'items-0-quantity': 6, # one additional item
+
+            'items-1-id': i2.id,
+            'items-1-quantity': i2.quantity,
+            }), '/cart/')
+
+        self.assertEqual(order.modify_item(p1, 0).quantity, 6)
 
         self.assertRedirects(self.client.post('/cart/', {
             'checkout': True,
 
-            'items-INITIAL_FORMS': 1,
-            'items-TOTAL_FORMS': 1,
-            'items-MAX_NUM_FORMS': 1,
+            'items-INITIAL_FORMS': 2,
+            'items-TOTAL_FORMS': 2,
+            'items-MAX_NUM_FORMS': 2,
 
-            'items-0-id': item.id,
+            'items-0-id': i1.id,
             'items-0-quantity': 6, # one additional item
+
+            'items-1-id': i2.id,
+            'items-1-quantity': 0,
             }), '/checkout/')
 
-        self.assertEqual(order.modify_item(product, 0).quantity, 6)
+        self.assertEqual(order.modify_item(p1, 0).quantity, 6)
+        self.assertEqual(order.items.count(), 1)
+
+        self.client.post(p2.get_absolute_url(), {
+            'quantity': 5,
+            })
+        self.assertEqual(order.items.count(), 2)
+
+        self.assertRedirects(self.client.post('/cart/', {
+            'checkout': True,
+
+            'items-INITIAL_FORMS': 2,
+            'items-TOTAL_FORMS': 2,
+            'items-MAX_NUM_FORMS': 2,
+
+            'items-0-id': i1.id,
+            'items-0-quantity': 6,
+            'items-0-DELETE': True,
+
+            'items-1-id': i2.id,
+            'items-1-quantity': 5,
+            }), '/checkout/')
+        self.assertEqual(order.items.count(), 1)
 
         self.assertRedirects(self.client.post('/checkout/', {
             'contact-billing_company': u'BigCorp',
