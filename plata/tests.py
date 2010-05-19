@@ -873,6 +873,19 @@ class ViewTest(PlataTest):
             }), '/checkout/')
         self.assertEqual(order.items.count(), 1)
 
+        self.assertEqual(self.client.post('/checkout/', {
+            'contact-billing_company': u'BigCorp',
+            'contact-billing_first_name': u'Hans',
+            'contact-billing_last_name': u'Muster',
+            'contact-billing_address': u'Musterstrasse 42',
+            'contact-billing_zip_code': u'8042',
+            'contact-billing_city': u'Beispielstadt',
+            'contact-billing_country': u'CH',
+            #'contact-shipping_same_as_billing': True, # billing information is missing...
+            'contact-email': 'something@example.com',
+            'contact-currency': 'CHF',
+            }).status_code, 200) # ... therefore view does not redirect
+
         self.assertRedirects(self.client.post('/checkout/', {
             'contact-billing_company': u'BigCorp',
             'contact-billing_first_name': u'Hans',
