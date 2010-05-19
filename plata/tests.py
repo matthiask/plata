@@ -793,7 +793,7 @@ class AdminTest(PlataTest):
 
             'options-INITIAL_FORMS': 0,
             'options-MAX_NUM_FORMS': '',
-            'options-TOTAL_FORMS': 3,
+            'options-TOTAL_FORMS': 2,
 
             'options-0-name': 'S',
             'options-0-value': 's',
@@ -802,10 +802,6 @@ class AdminTest(PlataTest):
             'options-1-name': 'M',
             'options-1-value': 'm',
             'options-1-ordering': 20,
-
-            'options-2-name': 'L',
-            'options-2-value': 'l',
-            'options-2-ordering': 30,
             })
 
         self.client.post('/admin/product/optiongroup/add/', {
@@ -813,7 +809,7 @@ class AdminTest(PlataTest):
 
             'options-INITIAL_FORMS': 0,
             'options-MAX_NUM_FORMS': '',
-            'options-TOTAL_FORMS': 3,
+            'options-TOTAL_FORMS': 2,
 
             'options-0-name': 'red',
             'options-0-value': 'red',
@@ -822,10 +818,6 @@ class AdminTest(PlataTest):
             'options-1-name': 'blue',
             'options-1-value': 'blue',
             'options-1-ordering': 20,
-
-            'options-2-name': 'green',
-            'options-2-value': 'green',
-            'options-2-ordering': 30,
             })
 
         self.client.post('/admin/product/product/add/',  {
@@ -838,6 +830,7 @@ class AdminTest(PlataTest):
             'slug': '324wregft5re',
             'ordering': '100',
             'sku': '324wregft5re',
+            'option_groups': [1,2],
 
             'prices-0-id': '',
             'prices-0-product': '',
@@ -872,10 +865,10 @@ class AdminTest(PlataTest):
             })
 
         self.assertEqual(Product.objects.count(), 1)
-        self.assertEqual(ProductVariation.objects.count(), 1)
+        self.assertEqual(ProductVariation.objects.count(), 4)
         self.assertEqual(ProductPrice.objects.count(), 1)
         self.assertEqual(OptionGroup.objects.count(), 2)
-        self.assertEqual(Option.objects.count(), 6)
+        self.assertEqual(Option.objects.count(), 4)
 
 
 class ViewTest(PlataTest):
