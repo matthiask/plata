@@ -9,6 +9,11 @@
 
 {{ object.description|linebreaks }}
 
+{% if object.cmsproduct %}
+{% load feincms_tags %}
+{% feincms_render_region object.cmsproduct "main" request %}
+{% endif %}
+
 <form method="post" action=".">
 {% csrf_token %}
 <table>
