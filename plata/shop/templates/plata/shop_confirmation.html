@@ -2,6 +2,8 @@
 
 {% load i18n %}
 
+{% block title %}{% trans "Order summary" %} - {{ block.super }}{% endblock %}
+
 {% block content %}
 <h1>{% trans "Order summary" %}</h1>
 

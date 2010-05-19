@@ -2,6 +2,8 @@
 
 {% load i18n %}
 
+{% block title %}{{ object }} - {% trans "Products" %} - {{ block.super }}{% endblock %}
+
 {% block content %}
 <h1>{{ object }}</h1>
 

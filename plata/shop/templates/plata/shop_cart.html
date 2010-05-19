@@ -2,6 +2,8 @@
 
 {% load i18n plata_tags %}
 
+{% block title %}{% trans "Cart" %} - {{ block.super }}{% endblock %}
+
 {% block content %}
 {% if empty %}
 <h1>{% trans "Cart is empty!" %}</h1>
