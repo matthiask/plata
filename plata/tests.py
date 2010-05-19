@@ -898,3 +898,9 @@ class ViewTest(PlataTest):
             'contact-email': 'something@example.com',
             'contact-currency': 'CHF',
             }), '/confirmation/')
+
+        self.client.post('/confirmation/', {})
+        self.assertEqual(Order.objects.get(pk=order.id).status, Order.CONFIRMED)
+
+        self.assertEqual(self.client.get('/pdf/%s/' % order.id)['Content-Type'],
+            'application/pdf')
