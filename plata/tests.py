@@ -250,6 +250,13 @@ class OrderTest(PlataTest):
         order.modify_item(p1, -42)
         self.assertEqual(order.items.count(), 1)
 
+        item = order.modify_item(p1, relative=3)
+        self.assertEqual(item.quantity, 3)
+        item = order.modify_item(p1, relative=2)
+        self.assertEqual(item.quantity, 5)
+        item = order.modify_item(p1, absolute=33)
+        self.assertEqual(item.quantity, 33)
+
     def test_05_order_status(self):
         order = self.create_order()
 
