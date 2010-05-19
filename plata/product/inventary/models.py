@@ -115,7 +115,7 @@ class ProductVariation(models.Model):
 
     class Meta:
         app_label = 'product'
-        ordering = ['ordering']
+        ordering = ['ordering', 'product']
         verbose_name = _('product variation')
         verbose_name_plural = _('product variations')
 
