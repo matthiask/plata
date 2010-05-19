@@ -925,9 +925,20 @@ class AdminTest(PlataTest):
         self.assertRedirects(self.client.post('/admin/product/product/2/', product_data),
             '/admin/product/product/')
 
-        p = Product.objects.all()[0]
+        p = Product.objects.get(pk=2)
         options = list(OptionGroup.objects.all())
         p.option_groups.remove(options[1])
+
+        self.assertEqual(p.option_groups.count(), 1)
+
+        self.assertContains(self.client.post('/admin/product/product/2/', product_data),
+            'Please select options from the following groups')
+
+        product_data['variations-0-options'] = [1, 2]
+        self.assertContains(self.client.post('/admin/product/product/2/', product_data),
+            'Please select options from the following groups')
+        self.assertContains(self.client.post('/admin/product/product/2/', product_data),
+            'Only one option per group allowed')
 
 
 class ViewTest(PlataTest):
