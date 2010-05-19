@@ -104,7 +104,6 @@ INSTALLED_APPS = (
     'plata.payment',
     'plata.product',
     'plata.product.feincms',
-    'plata.product.inventary',
     'plata.product.stock',
     'plata.shop',
 
@@ -112,7 +111,6 @@ INSTALLED_APPS = (
     'example',
 )
 
-PLATA_PRODUCT_MODULE = 'plata.product.inventary.models'
 #PLATA_PRICE_INCLUDES_TAX = False
 
 TEST_RUNNER = 'example.test_utils.test_runner_with_coverage'

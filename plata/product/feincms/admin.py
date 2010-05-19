@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from feincms.admin.item_editor import ItemEditor
 
-from plata.product.inventary.admin import ProductVariationInline,\
+from plata.product.admin import ProductVariationInline,\
     ProductPriceInline, ProductImageInline
 from . import models
 
