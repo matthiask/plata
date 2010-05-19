@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load i18n %}
+
 {% block content %}
 <h1>{{ object }}</h1>
 
@@ -7,12 +9,9 @@
 
 <form method="post" action=".">
 {% csrf_token %}
-Add to cart:
 <table>
 {{ form }}
 </table>
-<input type="submit" />
+<input type="submit" value="{% trans "Add to cart" %}" />
 </form>
-
-<a href="{% url plata_product_list %}">back to the product list</a>
 {% endblock %}

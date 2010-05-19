@@ -122,10 +122,10 @@ class Shop(object):
 
     def product_detail(self, request, *args, **kwargs):
         p = get_object_or_404(self.product_model, pk=kwargs.get('object_id'))
-        form_class = self.order_modify_item_form(request, p)
+        OrderItemForm = self.order_modify_item_form(request, p)
 
         if request.method == 'POST':
-            form = form_class(request.POST)
+            form = OrderItemForm(request.POST)
 
             if form.is_valid():
                 order = self.order_from_request(request, create=True)
@@ -139,9 +139,10 @@ class Shop(object):
                 messages.success(request, 'Successfully updated cart.')
                 return HttpResponseRedirect('.')
         else:
-            form = form_class()
+            form = OrderItemForm()
 
         return render_to_response('product/product_detail.html', self.get_context(request, {
+            'object': p,
             'form': form,
             }))
 
