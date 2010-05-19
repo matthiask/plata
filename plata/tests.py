@@ -13,7 +13,7 @@ import plata
 from plata import plata_settings
 from plata.contact.models import Contact
 from plata.product.models import TaxClass, Product, ProductVariation, Discount,\
-    ProductPrice
+    ProductPrice, OptionGroup, Option
 from plata.product.stock.models import Period, StockTransaction
 from plata.shop.models import Order, OrderStatus, OrderPayment
 
@@ -788,6 +788,46 @@ class AdminTest(PlataTest):
             rate=Decimal('7.60'),
             )
 
+        self.client.post('/admin/product/optiongroup/add/', {
+            'name': 'size',
+
+            'options-INITIAL_FORMS': 0,
+            'options-MAX_NUM_FORMS': '',
+            'options-TOTAL_FORMS': 3,
+
+            'options-0-name': 'S',
+            'options-0-value': 's',
+            'options-0-ordering': 10,
+
+            'options-1-name': 'M',
+            'options-1-value': 'm',
+            'options-1-ordering': 20,
+
+            'options-2-name': 'L',
+            'options-2-value': 'l',
+            'options-2-ordering': 30,
+            })
+
+        self.client.post('/admin/product/optiongroup/add/', {
+            'name': 'color',
+
+            'options-INITIAL_FORMS': 0,
+            'options-MAX_NUM_FORMS': '',
+            'options-TOTAL_FORMS': 3,
+
+            'options-0-name': 'red',
+            'options-0-value': 'red',
+            'options-0-ordering': 10,
+
+            'options-1-name': 'blue',
+            'options-1-value': 'blue',
+            'options-1-ordering': 20,
+
+            'options-2-name': 'green',
+            'options-2-value': 'green',
+            'options-2-ordering': 30,
+            })
+
         self.client.post('/admin/product/product/add/',  {
             'description': '',
             'images-INITIAL_FORMS': '0',
@@ -834,6 +874,8 @@ class AdminTest(PlataTest):
         self.assertEqual(Product.objects.count(), 1)
         self.assertEqual(ProductVariation.objects.count(), 1)
         self.assertEqual(ProductPrice.objects.count(), 1)
+        self.assertEqual(OptionGroup.objects.count(), 2)
+        self.assertEqual(Option.objects.count(), 6)
 
 
 class ViewTest(PlataTest):
