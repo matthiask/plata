@@ -201,7 +201,7 @@ class Order(BillingShippingAddress):
         item._unit_price = price.unit_price_excl_tax
         item._unit_tax = price.unit_tax
 
-        if relative:
+        if relative is not None:
             item.quantity += relative
         else:
             item.quantity = absolute
