@@ -125,7 +125,13 @@ class PaymentProcessor(object):
                 return HttpResponseForbidden('Malformed order ID')
 
             order = get_object_or_404(self.shop.order_model, pk=order_id)
-            payment = get_object_or_404(order.payments, pk=payment_id)
+            try:
+                payment = order.payments.get(pk=payment_id)
+            except order.payments.model.DoesNotExist:
+                payment = order.payments.model(
+                    order=order,
+                    payment_method=u'%s' % self.name,
+                    )
 
             payment.currency = currency
             payment.amount = Decimal(amount)
