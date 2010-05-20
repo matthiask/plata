@@ -47,7 +47,7 @@ class PaymentProcessor(object):
         if not order:
             return redirect('plata_shop_checkout')
 
-        if order.is_paid:
+        if order.is_paid():
             # TODO better message
             return HttpResponse('Order is already fully paid')
 

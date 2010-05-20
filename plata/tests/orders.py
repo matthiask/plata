@@ -541,7 +541,7 @@ class OrderTest(PlataTest):
 
         order = Order.objects.get(pk=order.pk)
         self.assertAlmostEqual(order.balance_remaining, Decimal('0.00'))
-        self.assertTrue(order.is_paid)
+        self.assertTrue(order.is_paid())
 
         payment.delete()
         order = Order.objects.get(pk=order.pk)

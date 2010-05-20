@@ -108,9 +108,9 @@ class Order(BillingShippingAddress):
     def balance_remaining(self):
         return (self.total - self.paid).quantize(Decimal('0.00'))
 
-    @property
     def is_paid(self):
         return self.balance_remaining <= 0
+    is_paid.boolean = True
 
     def validate(self):
         """
