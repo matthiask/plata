@@ -51,7 +51,10 @@ class TaxProcessor(ProcessorBase):
             item._line_item_tax = taxable * price.tax_class.rate/100
             item.save()
 
-            # Order stuff
+
+class ItemSummationProcessor(ProcessorBase):
+    def process(self, instance, items):
+        for item in items:
             instance.items_subtotal += item._line_item_price
             instance.items_discount += item._line_item_discount or 0
             instance.items_tax += item._line_item_tax
@@ -80,6 +83,6 @@ class ShippingProcessor(ProcessorBase):
            subtotal + instance.shipping_tax
 
 
-class SummationProcessor(ProcessorBase):
+class OrderSummationProcessor(ProcessorBase):
     def process(self, instance, items):
         instance.total = sum(self.processor.state['total'].values(), 0)
