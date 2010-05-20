@@ -18,6 +18,7 @@ from plata import plata_settings
 from plata.contact.models import BillingShippingAddress, Contact
 from plata.fields import CurrencyField
 from plata.product.models import Product, DiscountBase, Discount, ProductVariation
+from plata.shop import processors
 from plata.utils import JSONFieldDescriptor
 
 
@@ -77,57 +78,11 @@ class Order(BillingShippingAddress):
         return u'Order #%d' % self.pk
 
     def recalculate_total(self, save=True):
-        self.total = self.recalculate_items() + self.recalculate_shipping()
+        processor = processors.OrderProcessor()
+        processor.process(self, list(self.items.all()))
 
         if save:
             self.save()
-
-    def recalculate_items(self):
-        self.items_subtotal = self.items_tax = self.items_discount = 0
-
-        items = list(self.items.all())
-
-        for item in items:
-            # Recalculate item stuff
-            item._line_item_price = item.quantity * item._unit_price
-            item._line_item_discount = 0
-
-        self.recalculate_discounts(items)
-
-        for item in items:
-            taxable = item._line_item_price - (item._line_item_discount or 0)
-            price = item.get_product_price()
-            item._line_item_tax = taxable * price.tax_class.rate/100
-            item.save()
-
-            # Order stuff
-            self.items_subtotal += item._line_item_price
-            self.items_discount += item._line_item_discount or 0
-            self.items_tax += item._line_item_tax
-
-        return self.items_subtotal - self.items_discount + self.items_tax
-
-    def recalculate_discounts(self, items):
-        for applied in self.applied_discounts.all():
-            applied.apply(self, items)
-
-    def recalculate_shipping(self):
-        #self.shipping_cost = self.shipping_discount = None
-        self.shipping_tax = 0
-
-        subtotal = 0
-
-        if self.shipping_cost:
-            subtotal += self.shipping_cost
-        if self.shipping_discount:
-            subtotal -= self.shipping_discount
-
-        subtotal = max(subtotal, 0)
-
-        # TODO move this into shipping processor
-        self.shipping_tax = subtotal * Decimal('0.076')
-
-        return subtotal + self.shipping_tax
 
     @property
     def subtotal(self):
