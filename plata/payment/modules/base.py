@@ -16,7 +16,8 @@ class ProcessorBase(object):
         return self.get_urls()
 
     def get_urls(self):
-        raise NotImplementedError
+        from django.conf.urls.defaults import patterns, url
+        return patterns('')
 
     def process_order_confirmed(self, request, order):
         raise NotImplementedError

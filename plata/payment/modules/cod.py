@@ -9,13 +9,6 @@ from plata.payment.modules.base import ProcessorBase
 class PaymentProcessor(ProcessorBase):
     name = _('Cash on delivery')
 
-    def get_urls(self):
-        from django.conf.urls.defaults import patterns, url
-
-        return patterns('',
-            url(r'payment/cod/$', lambda request: HttpResponse('COD')),
-            )
-
     def process_order_confirmed(self, request, order):
         if order.is_paid():
             return redirect('plata_order_already_paid')
