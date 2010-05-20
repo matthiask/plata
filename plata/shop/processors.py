@@ -98,4 +98,13 @@ class ShippingProcessor(ProcessorBase):
 
 class OrderSummationProcessor(ProcessorBase):
     def process(self, instance, items):
-        instance.total = sum(self.get_processor_value('total').values(), 0)
+        """
+        The value must be quantized here, because otherwise f.e. the payment
+        modules will be susceptible to rounding errors giving f.e. missing
+        payments of 0.01 units.
+        """
+
+        instance.total = sum(
+            self.get_processor_value('total').values(),
+            Decimal('0.00'),
+            ).quantize(Decimal('0.00'))
