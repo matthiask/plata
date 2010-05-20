@@ -315,11 +315,29 @@ class Shop(object):
         if not order:
             return HttpResponseRedirect(reverse('plata_shop_cart') + '?empty=1')
 
-        if request.method == 'POST':
-            # TODO any validation or data necessary here?
-            order.update_status(self.order_model.CONFIRMED, 'Confirmation given')
+        payment_modules = self.get_payment_modules()
+        class Form(forms.Form):
+            def __init__(self, *args, **kwargs):
+                super(Form, self).__init__(*args, **kwargs)
+                self.fields['payment_method'] = forms.ChoiceField(
+                    label=_('Payment method'),
+                    choices=[('', '----------')]+[
+                        (module.__module__, module.name) for module in payment_modules],
+                    )
 
-        return self.render_confirmation(request, {'order': order})
+        if request.method == 'POST':
+            form = Form(request.POST)
+
+            if form.is_valid():
+                # TODO payment processing
+                order.update_status(self.order_model.CONFIRMED, 'Confirmation given')
+        else:
+            form = Form()
+
+        return self.render_confirmation(request, {
+            'order': order,
+            'form': form,
+            })
 
     def render_confirmation(self, request, context):
         return render_to_response('plata/shop_confirmation.html',

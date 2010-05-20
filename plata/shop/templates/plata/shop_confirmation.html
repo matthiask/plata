@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load i18n %}
+{% load i18n plata_tags %}
 
 {% block title %}{% trans "Order summary" %} - {{ block.super }}{% endblock %}
 
@@ -50,8 +50,18 @@
 </tr>
 </table>
 
+
 <form method="post" action=".">{% csrf_token %}
-<input type="submit" value="{% trans "Confirm order" %}" />
+<h2>{% trans "Payment and order confirmation" %}</h2>
+{% form_errors form %}
+
+<table>
+{% form_item form.payment_method %}
+<tr>
+    <td></td>
+    <td><button type="submit">{% trans "Proceed to payment" %}</button></td>
+</tr>
+</table>
 </form>
 
 <a href="../pdf/{{ order.id }}/">PDF</a>
