@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% load i18n plata_tags %}
+
+{% block title %}{% trans "Order successful" %} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<h1>{% trans "Order successful" %}</h1>
+
+<a href="/pdf/{{ order.id }}/">PDF</a>
+{% endblock %}

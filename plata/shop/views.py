@@ -49,6 +49,8 @@ class Shop(object):
             url(r'^cart/$', self.cart, name='plata_shop_cart'),
             url(r'^checkout/$', self.checkout, name='plata_shop_checkout'),
             url(r'^confirmation/$', self.confirmation, name='plata_shop_confirmation'),
+
+            url(r'^order/success/$', self.order_success, name='plata_order_success'),
             )
 
     def get_blabla_urls(self):
@@ -311,26 +313,31 @@ class Shop(object):
 
     def confirmation(self, request):
         order = self.order_from_request(request, create=False)
+        order.recalculate_total()
 
         if not order:
             return HttpResponseRedirect(reverse('plata_shop_cart') + '?empty=1')
 
         payment_modules = self.get_payment_modules()
+        payment_module_choices = [(m.__module__, m.name) for m in payment_modules]
+        payment_module_dict = dict((m.__module__, m) for m in payment_modules)
+
         class Form(forms.Form):
             def __init__(self, *args, **kwargs):
                 super(Form, self).__init__(*args, **kwargs)
                 self.fields['payment_method'] = forms.ChoiceField(
                     label=_('Payment method'),
-                    choices=[('', '----------')]+[
-                        (module.__module__, module.name) for module in payment_modules],
+                    choices=[('', '----------')]+payment_module_choices,
                     )
 
         if request.method == 'POST':
             form = Form(request.POST)
 
             if form.is_valid():
-                # TODO payment processing
                 order.update_status(self.order_model.CONFIRMED, 'Confirmation given')
+
+                payment_module = payment_module_dict[form.cleaned_data['payment_method']]
+                return payment_module.process_order_confirmed(request, order)
         else:
             form = Form()
 
@@ -342,6 +349,17 @@ class Shop(object):
     def render_confirmation(self, request, context):
         return render_to_response('plata/shop_confirmation.html',
             self.get_context(request, context))
+
+    def order_success(self, request):
+        order = self.order_from_request(request)
+
+        if 'shop_order' in request.session:
+            del request.session['shop_order']
+
+        return render_to_response('plata/shop_order_success.html',
+            self.get_context(request, {
+                'order': order,
+                }))
 
     def blabla_pdf(self, request, order_id):
         order = get_object_or_404(self.order_model, pk=order_id)
