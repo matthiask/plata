@@ -48,8 +48,9 @@ class PaymentProcessor(object):
             return redirect('plata_shop_checkout')
 
         if order.is_paid():
-            # TODO better message
-            return HttpResponse('Order is already fully paid')
+            return render_to_response('plata/shop_order_already_paid.html', {
+                'order': order,
+                }, context_instance=RequestContext(request))
 
         payment = order.payments.create(
             currency=order.currency,
