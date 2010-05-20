@@ -23,6 +23,15 @@ class ProcessorBase(object):
     def __init__(self, processor):
         self.processor = processor
 
+    def set_processor_value(self, group, key, value):
+        self.processor.state.setdefault(group, {})[key] = value
+
+    def get_processor_value(self, group, key=None):
+        dic = self.processor.state.get('group', {})
+        if key:
+            return dic.get(key)
+        return dic
+
     def process(self, instance, items):
         raise NotImplementedError
 
@@ -59,8 +68,8 @@ class ItemSummationProcessor(ProcessorBase):
             instance.items_discount += item._line_item_discount or 0
             instance.items_tax += item._line_item_tax
 
-        self.processor.state.setdefault('total', {})['items'] =\
-            instance.items_subtotal - instance.items_discount + instance.items_tax
+        self.set_processor_value('total', 'items',
+            instance.items_subtotal - instance.items_discount + instance.items_tax)
 
 
 class ShippingProcessor(ProcessorBase):
@@ -79,10 +88,10 @@ class ShippingProcessor(ProcessorBase):
         # TODO move this into shipping processor
         instance.shipping_tax = subtotal * Decimal('0.076')
 
-        self.processor.state.setdefault('total', {})['shipping'] =\
-           subtotal + instance.shipping_tax
+        self.set_processor_value('total', 'shipping',
+            subtotal + instance.shipping_tax)
 
 
 class OrderSummationProcessor(ProcessorBase):
     def process(self, instance, items):
-        instance.total = sum(self.processor.state['total'].values(), 0)
+        instance.total = sum(self.get_processor_value('total').values(), 0)
