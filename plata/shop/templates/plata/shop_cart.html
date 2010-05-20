@@ -15,9 +15,10 @@
 {% form_errors orderitemformset %}
 <table>
     <tr>
-        <th>{% trans "Product" %}</th>
-        <th>{% trans "Unit price" %}</th>
-        <th>{% trans "Quantity" %}</th
+        <th>{% trans "product"|capfirst %}</th>
+        <th>{% trans "unit price"|capfirst %}</th>
+        <th>{% trans "quantity"|capfirst %}</th
+        <th>{% trans "line item price"|capfirst %}</th>
         <th>{% trans "Delete" %}</th>
     </tr>
 {% for orderitemform in orderitemformset.forms %}
@@ -28,12 +29,13 @@
             {{ orderitemform.id }}
             {% form_item_plain orderitemform.quantity %}
         </td>
+        <td>{{ orderitemform.instance.discounted_subtotal|floatformat:2 }}</td>
         <td>{% form_item_plain orderitemform.DELETE %}</td>
     </tr>
 {% endfor %}
     <tr>
         <td colspan="2"></td>
-        <td colspan="2">
+        <td colspan="3">
             <input type="submit" name="save" value="{% trans "Save" %}" />
             <input type="submit" name="checkout" value="{% trans "Checkout" %}" />
         </td>
