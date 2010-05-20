@@ -851,14 +851,6 @@ class AdminTest(PlataTest):
             'rawcontent-MAX_NUM_FORMS': '',
             'rawcontent-TOTAL_FORMS': '0',
 
-            'variations-0-id': '',
-            'variations-0-product': '',
-
-            'variations-0-is_active': 'on',
-            'variations-0-items_in_stock': '0',
-            'variations-0-ordering': '0',
-            'variations-0-sk': '324wregft5re-',
-
             'variations-INITIAL_FORMS': '0',
             'variations-MAX_NUM_FORMS': '',
             'variations-TOTAL_FORMS': '0',
@@ -872,6 +864,7 @@ class AdminTest(PlataTest):
         self.assertEqual(Option.objects.count(), 4)
 
         product_data['slug'] += '-'
+        product_data['sku'] += '-'
         self.client.post('/admin/product/product/add/', product_data)
         self.client.post('/admin/product/product/add/', product_data)
         self.assertEqual(Product.objects.count(), 2)
@@ -887,7 +880,6 @@ class AdminTest(PlataTest):
             'variations-0-is_active': 'on',
             'variations-0-items_in_stock': '0',
             'variations-0-ordering': '0',
-            'variations-0-sk': '324wregft5re-',
             'variations-0-options': [1, 3],
 
             'variations-1-id': '6',
@@ -896,7 +888,6 @@ class AdminTest(PlataTest):
             'variations-1-is_active': 'on',
             'variations-1-items_in_stock': '0',
             'variations-1-ordering': '0',
-            'variations-1-sk': '324wregft5re-',
             'variations-1-options': [1, 4],
 
             'variations-2-id': '7',
@@ -905,7 +896,6 @@ class AdminTest(PlataTest):
             'variations-2-is_active': 'on',
             'variations-2-items_in_stock': '0',
             'variations-2-ordering': '0',
-            'variations-2-sk': '324wregft5re-',
             'variations-2-options': [2, 3],
 
             'variations-3-id': '8',
@@ -914,12 +904,21 @@ class AdminTest(PlataTest):
             'variations-3-is_active': 'on',
             'variations-3-items_in_stock': '0',
             'variations-3-ordering': '0',
-            'variations-3-sk': '324wregft5re-',
             'variations-3-options': [2, 4],
 
             'variations-INITIAL_FORMS': '4',
             'variations-MAX_NUM_FORMS': '',
             'variations-TOTAL_FORMS': '4',
+            })
+
+        self.assertRedirects(self.client.post('/admin/product/product/2/', product_data),
+            '/admin/product/product/')
+
+        product_data.update({
+            'variations-0-sku': '324wregft5re-0',
+            'variations-1-sku': '324wregft5re-1',
+            'variations-2-sku': '324wregft5re-2',
+            'variations-3-sku': '324wregft5re-3',
             })
 
         self.assertRedirects(self.client.post('/admin/product/product/2/', product_data),

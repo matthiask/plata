@@ -87,7 +87,7 @@ class Product(models.Model):
     name = models.CharField(_('name'), max_length=100)
     slug = models.SlugField(_('slug'), unique=True)
     ordering = models.PositiveIntegerField(_('ordering'), default=0)
-    sku = models.CharField(_('SKU'), max_length=100, blank=True)
+    sku = models.CharField(_('SKU'), max_length=100, unique=True)
 
     categories = models.ManyToManyField(Category,
         verbose_name=_('categories'), related_name='products',
@@ -146,7 +146,7 @@ class Product(models.Model):
 class ProductVariation(models.Model):
     product = models.ForeignKey(Product, related_name='variations')
     is_active = models.BooleanField(_('is active'), default=True)
-    sku = models.CharField(_('SKU'), max_length=100, blank=True)
+    sku = models.CharField(_('SKU'), max_length=100, unique=True)
     items_in_stock = models.IntegerField(_('items in stock'), default=0)
     options = models.ManyToManyField(Option, related_name='products',
         blank=True, null=True, verbose_name=_('options'))

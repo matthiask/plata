@@ -20,6 +20,7 @@ class ProductVariationFormSet(BaseInlineFormSet):
         super(ProductVariationFormSet, self).clean()
 
         variations = set()
+        skus = set()
 
         for form in self.forms:
             if self.can_delete and self._should_delete_form(form) or \
@@ -40,12 +41,27 @@ class ProductVariationFormSet(BaseInlineFormSet):
 
                 variations.add(s)
 
+            sku = form.cleaned_data.get('sku')
+            if not sku or sku in skus:
+                # Need to regenerate SKU
+                parts = [self.instance.sku]
+                parts.extend(o.value for o in options)
+                sku = u'-'.join(parts)
+
+                while sku in skus:
+                    sku += u'-'
+
+                form.instance.sku = sku
+            skus.add(form.instance.sku)
+
     def save(self):
         super(ProductVariationFormSet, self).save()
         self.instance.create_variations()
 
 
 class ProductVariationForm(forms.ModelForm):
+    sku = forms.CharField(label=_('SKU'), max_length=100, required=False)
+
     def clean(self):
         options = self.cleaned_data.get('options', [])
         groups_on_product_objects = self.instance.product.option_groups.all()
