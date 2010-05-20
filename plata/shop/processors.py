@@ -23,7 +23,7 @@ class ProcessorBase(object):
     def __init__(self, processor):
         self.processor = processor
 
-    def split_cost(cost_incl_tax, tax_rate):
+    def split_cost(self, cost_incl_tax, tax_rate):
         tax = cost_incl_tax * tax_rate / 100
         return cost_incl_tax - tax, tax
 
@@ -31,7 +31,7 @@ class ProcessorBase(object):
         self.processor.state.setdefault(group, {})[key] = value
 
     def get_processor_value(self, group, key=None):
-        dic = self.processor.state.get('group', {})
+        dic = self.processor.state.get(group, {})
         if key:
             return dic.get(key)
         return dic
