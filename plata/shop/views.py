@@ -51,6 +51,7 @@ class Shop(object):
             url(r'^confirmation/$', self.confirmation, name='plata_shop_confirmation'),
 
             url(r'^order/success/$', self.order_success, name='plata_order_success'),
+            url(r'^order/payment_failure/$', self.order_payment_failure, name='plata_order_payment_failure'),
             )
 
     def get_blabla_urls(self):
@@ -358,6 +359,14 @@ class Shop(object):
             del request.session['shop_order']
 
         return render_to_response('plata/shop_order_success.html',
+            self.get_context(request, {
+                'order': order,
+                }))
+
+    def order_payment_failure(self, request):
+        order = self.order_from_request(request)
+
+        return render_to_response('plata/shop_order_payment_failure.html',
             self.get_context(request, {
                 'order': order,
                 }))

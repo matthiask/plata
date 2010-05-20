@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% load i18n plata_tags %}
+
+{% block title %}{% trans "Order payment failure" %} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<h1>{% trans "Order payment failure" %}</h1>
+
+<p>{% trans "You can continue editing your order and try again." %}</p>
+<a href="{% url plata_shop_cart %}">{% trans "Cart" %}</a>
+
+<a href="/pdf/{{ order.id }}/">PDF</a>
+{% endblock %}
