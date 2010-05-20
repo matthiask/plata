@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from django import forms
 from django.contrib import messages
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import get_callable, reverse
 from django.forms.models import inlineformset_factory, modelform_factory
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render_to_response
@@ -22,7 +22,10 @@ class Shop(object):
         plata.register(self)
 
     def get_urls(self):
-        return self.get_product_urls() + self.get_shop_urls() + self.get_blabla_urls()
+        return self.get_product_urls()\
+            + self.get_shop_urls()\
+            + self.get_blabla_urls()\
+            + self.get_payment_urls()
 
     def get_product_urls(self):
         from django.conf.urls.defaults import patterns, url
@@ -53,6 +56,18 @@ class Shop(object):
         return patterns('',
             url(r'^pdf/(?P<order_id>\d+)/$', self.blabla_pdf, name='plata_blabla_pdf'),
             )
+
+    def get_payment_urls(self):
+        from django.conf.urls.defaults import patterns, url, include
+
+        urls = [url(r'^', include(module.urls)) for module in self.get_payment_modules()]
+
+        return patterns('', *urls)
+
+    def get_payment_modules(self):
+        return [get_callable(module)(self) for module in [
+            'plata.payment.modules.cod.PaymentProcessor',
+            ]]
 
     @property
     def urls(self):
