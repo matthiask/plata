@@ -313,11 +313,11 @@ class Shop(object):
 
     def confirmation(self, request):
         order = self.order_from_request(request, create=False)
-        order.recalculate_total()
 
         if not order:
             return HttpResponseRedirect(reverse('plata_shop_cart') + '?empty=1')
 
+        order.recalculate_total()
         payment_modules = self.get_payment_modules()
         payment_module_choices = [(m.__module__, m.name) for m in payment_modules]
         payment_module_dict = dict((m.__module__, m) for m in payment_modules)
