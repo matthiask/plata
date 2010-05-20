@@ -16,10 +16,9 @@ from plata.payment.modules.base import ProcessorBase
 csrf_exempt_m = method_decorator(csrf_exempt)
 
 
-POSTFINANCE_SHA1_IN = settings.POSTFINANCE_SHA1_IN
-POSTFINANCE_SHA1_OUT = settings.POSTFINANCE_SHA1_OUT
-POSTFINANCE_PSPID = settings.POSTFINANCE_PSPID
-POSTFINANCE_LIVE = settings.POSTFINANCE_LIVE
+# Do not crash if settings do not exist
+# Stil, we absolutely require SHA1_IN, SHA1_OUT, PSPID and LIVE
+POSTFINANCE = getattr(settings, 'POSTFINANCE', {})
 
 
 # Copied from http://e-payment.postfinance.ch/ncol/paymentinfos1.asp
@@ -95,8 +94,8 @@ class PaymentProcessor(ProcessorBase):
             'orderID': 'Order-%d-%d' % (order.id, payment.id),
             'amount': u'%s' % int(order.balance_remaining.quantize(Decimal('0.00'))*100),
             'currency': order.currency,
-            'PSPID': POSTFINANCE_PSPID,
-            'mode': POSTFINANCE_LIVE and 'prod' or 'test',
+            'PSPID': POSTFINANCE['PSPID'],
+            'mode': POSTFINANCE['LIVE'] and 'prod' or 'test',
             }
 
         form_params['SHASign'] = sha1(u''.join((
@@ -104,7 +103,7 @@ class PaymentProcessor(ProcessorBase):
             form_params['amount'],
             form_params['currency'],
             form_params['PSPID'],
-            POSTFINANCE_SHA1_IN,
+            POSTFINANCE['SHA1_IN'],
             ))).hexdigest()
 
         return render_to_response('payment/postfinance_form.html', {
@@ -142,7 +141,7 @@ class PaymentProcessor(ProcessorBase):
                 PAYID,
                 NCERROR,
                 BRAND,
-                POSTFINANCE_SHA1_OUT,
+                POSTFINANCE['SHA1_OUT'],
                 ))
 
             sha1_out = sha1(sha1_source).hexdigest()
