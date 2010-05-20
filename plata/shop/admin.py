@@ -34,11 +34,27 @@ admin.site.register(models.Order,
     list_display=('__unicode__', 'created', 'contact', 'status', 'total', 'balance_remaining', 'is_paid'),
     list_filter=('status',),
     raw_id_fields=('contact',),
+    search_fields=tuple('billing_%s' % s for s in models.Order.ADDRESS_FIELDS)\
+        +tuple('shipping_%s' % s for s in models.Order.ADDRESS_FIELDS)\
+        +('total', 'notes'),
     )
 
-admin.site.register(models.OrderPayment,
-    list_display=('order', 'timestamp', 'currency', 'amount', 'authorized', 'payment_module', 'payment_method'),
-    list_display_links=('timestamp',),
-    list_filter=('authorized',),
-    raw_id_fields=('order',),
-    )
+
+class OrderPaymentAdmin(admin.ModelAdmin):
+    date_hierarchy = 'timestamp'
+    list_display = ('order', 'timestamp', 'currency', 'amount', 'authorized',
+        'payment_module', 'payment_method', 'notes_short')
+    list_display_links = ('timestamp',)
+    list_filter = ('authorized',)
+    raw_id_fields = ('order',)
+    search_fields = ('amount', 'payment_module', 'payment_method', 'transaction_id',
+        'notes', 'data')
+
+    def notes_short(self, obj):
+        if len(obj.notes) > 50:
+            return obj.notes[:40]+'...'
+        return obj.notes
+    notes_short.short_description = _('notes')
+
+
+admin.site.register(models.OrderPayment, OrderPaymentAdmin)
