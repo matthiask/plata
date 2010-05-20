@@ -141,8 +141,6 @@ class PaymentProcessor(object):
             sha1_source = u''.join((
                 orderID,
                 currency,
-                #u'%s' % int(100*float(amount)),
-                #u'%.2f' % float(amount),
                 amount,
                 PM,
                 ACCEPTANCE,
