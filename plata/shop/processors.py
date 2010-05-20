@@ -1,35 +1,34 @@
 from decimal import Decimal
 
+from django.core.urlresolvers import get_callable
+
+from plata import plata_settings
+
 
 class OrderProcessor(object):
     def __init__(self):
         self.state = {}
+        self.processor_classes = [get_callable(processor)\
+            for processor in plata_settings.PLATA_ORDER_PROCESSORS]
 
     def load_processors(self):
-        # TODO make this list configurable
-        return [
-            InitializeOrderProcessor(self),
-            DiscountProcessor(self),
-            TaxProcessor(self),
-            ShippingProcessor(self),
-            SummationProcessor(self),
-            ]
+        return [cls(self) for cls in self.processor_classes]
 
     def process(self, order, items):
         for p in self.load_processors():
-            p(order, items)
+            p.process(order, items)
 
 
 class ProcessorBase(object):
     def __init__(self, processor):
         self.processor = processor
 
-    def __call__(self, instance, items):
+    def process(self, instance, items):
         raise NotImplementedError
 
 
 class InitializeOrderProcessor(ProcessorBase):
-    def __call__(self, instance, items):
+    def process(self, instance, items):
         instance.items_subtotal = instance.items_tax = instance.items_discount = 0
 
         for item in items:
@@ -39,13 +38,13 @@ class InitializeOrderProcessor(ProcessorBase):
 
 
 class DiscountProcessor(ProcessorBase):
-    def __call__(self, instance, items):
+    def process(self, instance, items):
         for applied in instance.applied_discounts.all():
             applied.apply(instance, items)
 
 
 class TaxProcessor(ProcessorBase):
-    def __call__(self, instance, items):
+    def process(self, instance, items):
         for item in items:
             taxable = item._line_item_price - (item._line_item_discount or 0)
             price = item.get_product_price()
@@ -62,7 +61,7 @@ class TaxProcessor(ProcessorBase):
 
 
 class ShippingProcessor(ProcessorBase):
-    def __call__(self, instance, items):
+    def process(self, instance, items):
         instance.shipping_tax = 0
 
         subtotal = 0
@@ -82,5 +81,5 @@ class ShippingProcessor(ProcessorBase):
 
 
 class SummationProcessor(ProcessorBase):
-    def __call__(self, instance, items):
+    def process(self, instance, items):
         instance.total = sum(self.processor.state['total'].values(), 0)
