@@ -25,7 +25,7 @@ class PaymentProcessor(object):
     def process_order_confirmed(self, request, order):
         order.payments.create(
             currency=order.currency,
-            amount=order.total,
+            amount=order.balance_remaining,
             payment_module=u'%s' % self.name,
             authorized=datetime.now(),
             )

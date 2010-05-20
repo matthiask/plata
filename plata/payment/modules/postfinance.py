@@ -100,7 +100,7 @@ class PaymentProcessor(object):
 
         form_params = {
             'orderID': 'Order-%d-%d' % (order.id, payment.id),
-            'amount': u'%s' % int(order.total.quantize(Decimal('0.00'))*100),
+            'amount': u'%s' % int(order.balance_remaining.quantize(Decimal('0.00'))*100),
             'currency': order.currency,
             'PSPID': POSTFINANCE_PSPID,
             'mode': POSTFINANCE_LIVE and 'prod' or 'test',
