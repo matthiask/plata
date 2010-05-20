@@ -332,14 +332,20 @@ class OrderPayment(models.Model):
 
     currency = CurrencyField()
     amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2)
-    payment_method = models.CharField(_('payment method'), max_length=20, blank=True)
+    payment_module = models.CharField(_('payment module'), max_length=50, blank=True,
+        help_text=_('For example \'Cash on delivery\', \'PayPal\', ...'))
+    payment_method = models.CharField(_('payment method'), max_length=50, blank=True,
+        help_text=_('For example \'MasterCard\', \'VISA\' or some other card.'))
     transaction_id = models.CharField(_('transaction ID'), max_length=50, blank=True,
         help_text=_('Unique ID identifying this payment in the foreign system.'))
 
     authorized = models.DateTimeField(_('authorized'), blank=True, null=True,
         help_text=_('Point in time when payment has been authorized.'))
 
-    data = models.TextField(_('data'), blank=True)
+    notes = models.TextField(_('notes'), blank=True)
+
+    data = models.TextField(_('data'), blank=True,
+        help_text=_('JSON-encoded additional data about the order payment.'))
     data_json = JSONFieldDescriptor('data')
 
     class Meta:

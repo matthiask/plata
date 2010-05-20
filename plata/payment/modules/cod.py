@@ -26,7 +26,7 @@ class PaymentProcessor(object):
         order.payments.create(
             currency=order.currency,
             amount=order.total,
-            payment_method=u'%s' % self.name,
+            payment_module=u'%s' % self.name,
             authorized=datetime.now(),
             )
 

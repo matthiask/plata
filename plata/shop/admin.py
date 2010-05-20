@@ -37,7 +37,8 @@ admin.site.register(models.Order,
     )
 
 admin.site.register(models.OrderPayment,
-    list_display=('order', 'timestamp', 'amount', 'authorized', 'payment_method'),
+    list_display=('order', 'timestamp', 'currency', 'amount', 'authorized', 'payment_module', 'payment_method'),
+    list_display_links=('timestamp',),
     list_filter=('authorized',),
     raw_id_fields=('order',),
     )
