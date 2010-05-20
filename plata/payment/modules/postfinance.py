@@ -10,6 +10,8 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
 
+from plata.payment.modules.base import ProcessorBase
+
 
 csrf_exempt_m = method_decorator(csrf_exempt)
 
@@ -60,15 +62,8 @@ STATUSES = """\
 STATUS_DICT = dict(line.split('\t') for line in STATUSES.splitlines())
 
 
-class PaymentProcessor(object):
+class PaymentProcessor(ProcessorBase):
     name = _('Postfinance')
-
-    def __init__(self, shop):
-        self.shop = shop
-
-    @property
-    def urls(self):
-        return self.get_urls()
 
     def get_urls(self):
         from django.conf.urls.defaults import patterns, url
@@ -88,9 +83,7 @@ class PaymentProcessor(object):
             return redirect('plata_shop_checkout')
 
         if order.is_paid():
-            return render_to_response('plata/shop_order_already_paid.html', {
-                'order': order,
-                }, context_instance=RequestContext(request))
+            return redirect('plata_order_already_paid')
 
         payment = order.payments.create(
             currency=order.currency,

@@ -4,16 +4,10 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 
+from plata.payment.modules.base import ProcessorBase
 
-class PaymentProcessor(object):
+class PaymentProcessor(ProcessorBase):
     name = _('Cash on delivery')
-
-    def __init__(self, shop):
-        self.shop = shop
-
-    @property
-    def urls(self):
-        return self.get_urls()
 
     def get_urls(self):
         from django.conf.urls.defaults import patterns, url
@@ -23,6 +17,9 @@ class PaymentProcessor(object):
             )
 
     def process_order_confirmed(self, request, order):
+        if order.is_paid():
+            return redirect('plata_order_already_paid')
+
         order.payments.create(
             currency=order.currency,
             amount=order.balance_remaining,
