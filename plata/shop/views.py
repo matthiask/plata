@@ -69,6 +69,7 @@ class Shop(object):
     def get_payment_modules(self):
         return [get_callable(module)(self) for module in [
             'plata.payment.modules.cod.PaymentProcessor',
+            'plata.payment.modules.postfinance.PaymentProcessor',
             ]]
 
     @property

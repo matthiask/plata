@@ -31,12 +31,13 @@ admin.site.register(models.Order,
         (_('Additional fields'), {'fields': ('notes',)}),
         ),
     inlines=[OrderItemInline, AppliedDiscountInline, OrderStatusInline],
-    list_display=('__unicode__', 'created', 'contact', 'status', 'total'),
+    list_display=('__unicode__', 'created', 'contact', 'status', 'total', 'balance_remaining', 'is_paid'),
     list_filter=('status',),
     raw_id_fields=('contact',),
     )
 
 admin.site.register(models.OrderPayment,
-    list_display=('order', 'timestamp', 'amount', 'payment_method'),
+    list_display=('order', 'timestamp', 'amount', 'authorized', 'payment_method'),
+    list_filter=('authorized',),
     raw_id_fields=('order',),
     )

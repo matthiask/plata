@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block content %}
+<h1>{% trans "Payment" %}</h1>
+
+<p>{% trans "You will be forwarded to Postfinance for payment now." %}</p>
+
+<form method="post" action="https://e-payment.postfinance.ch/ncol/{{ form_params.mode }}/orderstandard.asp">
+<input type="hidden" name="PSPID" value="{{ form_params.PSPID }}" />
+<input type="hidden" name="orderID" value="{{ form_params.orderID }}" />
+<input type="hidden" name="amount" value="{{ form_params.amount }}" />
+<input type="hidden" name="currency" value="{{ form_params.currency }}" />
+<input type="hidden" name="language" value="{{ LANGUAGE_CODE }}" />
+<input type="hidden" name="SHASign" value="{{ form_params.SHASign }}" />
+<input type="hidden" name="CN" value="{{ order.billing_first_name }} {{ order.billing_last_name }}" />
+<input type="hidden" name="EMAIL" value="{{ order.contact.email }}" />
+<input type="hidden" name="owneraddress" value="{{ order.billing_address }}" />
+<input type="hidden" name="ownerZIP" value="{{ order.billing_zip_code }}" />
+<input type="hidden" name="ownertown" value="{{ order.billing_city }}" />
+<input type="hidden" name="ownercty" value="{{ order.billing_country }}" />
+
+<input type="hidden" name="accepturl" value="http://{{ HTTP_HOST }}{% url plata_order_success %}" />
+
+{% comment %}
+<input type="hidden" name="declineurl" value="http://{{ HTTP_HOST }}{% url payment_feedback mode="decline" %}" />
+<input type="hidden" name="exceptionurl" value="http://{{ HTTP_HOST }}{% url payment_feedback mode="exception" %}" />
+<input type="hidden" name="cancelurl" value="http://{{ HTTP_HOST }}{% url payment_feedback mode="cancel" %}" />
+{% endcomment %}
+
+<input type="submit" value="{% trans "Pay now" %}" />
+</form>
+{% endblock %}
