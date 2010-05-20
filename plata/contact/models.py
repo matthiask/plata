@@ -60,4 +60,7 @@ class Contact(BillingShippingAddress):
         verbose_name_plural = _('contacts')
 
     def __unicode__(self):
+        if not self.billing_first_name and not self.billing_last_name:
+            return self.email
+
         return u'%s %s' % (self.billing_first_name, self.billing_last_name)
