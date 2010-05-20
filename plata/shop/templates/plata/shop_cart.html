@@ -16,12 +16,14 @@
 <table>
     <tr>
         <th>{% trans "Product" %}</th>
+        <th>{% trans "Unit price" %}</th>
         <th>{% trans "Quantity" %}</th
         <th>{% trans "Delete" %}</th>
     </tr>
 {% for orderitemform in orderitemformset.forms %}
     <tr>
         <td>{{ orderitemform.instance.variation }}</td>
+        <td>{{ orderitemform.instance.unit_price|floatformat:2 }}</td>
         <td>
             {{ orderitemform.id }}
             {% form_item_plain orderitemform.quantity %}
@@ -30,7 +32,7 @@
     </tr>
 {% endfor %}
     <tr>
-        <td></td>
+        <td colspan="2"></td>
         <td colspan="2">
             <input type="submit" name="save" value="{% trans "Save" %}" />
             <input type="submit" name="checkout" value="{% trans "Checkout" %}" />
