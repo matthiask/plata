@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-05-20 21:42+0200\n"
+"POT-Creation-Date: 2010-05-21 12:46+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -116,7 +116,7 @@ msgstr "Postfinance"
 msgid "Combination of options already encountered."
 msgstr "Diese Kombination von Optionen wurde schon angetroffen."
 
-#: product/admin.py:63 product/models.py:90 product/models.py:149
+#: product/admin.py:63 product/models.py:95 product/models.py:165
 msgid "SKU"
 msgstr "Artikelnummer"
 
@@ -130,8 +130,8 @@ msgid "Please select options from the following groups: %s"
 msgstr "Bitte wählen Sie eine Optionen aus den folgenden Gruppen: %s"
 
 #: product/models.py:17 product/models.py:36 product/models.py:56
-#: product/models.py:69 product/models.py:87 product/models.py:246
-#: product/stock/models.py:21
+#: product/models.py:69 product/models.py:92 product/models.py:262
+#: product/producer/models.py:17 product/stock/models.py:21
 msgid "name"
 msgstr "Name"
 
@@ -147,7 +147,7 @@ msgstr "Priorität"
 msgid "Used to order the tax classes in the administration interface."
 msgstr "Verwendet, um die Steuerklassen zu sortieren."
 
-#: product/models.py:24 product/models.py:180
+#: product/models.py:24 product/models.py:196
 msgid "tax class"
 msgstr "Steuerklasse"
 
@@ -155,8 +155,8 @@ msgstr "Steuerklasse"
 msgid "tax classes"
 msgstr "Steuerklassen"
 
-#: product/models.py:32 product/models.py:86 product/models.py:148
-#: product/models.py:182 product/models.py:319
+#: product/models.py:32 product/models.py:91 product/models.py:164
+#: product/models.py:198 product/models.py:335 product/producer/models.py:16
 msgid "is active"
 msgstr "ist aktiv"
 
@@ -170,16 +170,16 @@ msgstr ""
 "Nur verwendet, um Produkte intern zu organisieren, z.B. für die "
 "Rabattberechnung."
 
-#: product/models.py:37 product/models.py:88
+#: product/models.py:37 product/models.py:93 product/producer/models.py:18
 msgid "slug"
 msgstr "Slug"
 
-#: product/models.py:38 product/models.py:71 product/models.py:89
-#: product/models.py:153 product/models.py:224
+#: product/models.py:38 product/models.py:71 product/models.py:94
+#: product/models.py:169 product/models.py:240 product/producer/models.py:19
 msgid "ordering"
 msgstr "Sortierung"
 
-#: product/models.py:39 product/models.py:95
+#: product/models.py:39 product/models.py:100 product/producer/models.py:20
 msgid "description"
 msgstr "Beschreibung"
 
@@ -191,7 +191,7 @@ msgstr "übergeordnet"
 msgid "category"
 msgstr "Kategorie"
 
-#: product/models.py:47 product/models.py:93
+#: product/models.py:47 product/models.py:98
 msgid "categories"
 msgstr "Kategorien"
 
@@ -199,11 +199,11 @@ msgstr "Kategorien"
 msgid "option group"
 msgstr "Optionsgruppe"
 
-#: product/models.py:60 product/models.py:97
+#: product/models.py:60 product/models.py:102
 msgid "option groups"
 msgstr "Optionsgruppen"
 
-#: product/models.py:70 product/models.py:249
+#: product/models.py:70 product/models.py:265
 msgid "value"
 msgstr "Wert"
 
@@ -211,57 +211,57 @@ msgstr "Wert"
 msgid "option"
 msgstr "Option"
 
-#: product/models.py:76 product/models.py:152
+#: product/models.py:76 product/models.py:168
 msgid "options"
 msgstr "Optionen"
 
-#: product/models.py:101 product/models.py:173 product/models.py:220
+#: product/models.py:106 product/models.py:189 product/models.py:236
 #: shop/templates/plata/shop_cart.html:18
 msgid "product"
 msgstr "Produkt"
 
-#: product/models.py:102
+#: product/models.py:107
 msgid "products"
 msgstr "Produkte"
 
-#: product/models.py:150
+#: product/models.py:166
 msgid "items in stock"
 msgstr "Lagerbestand"
 
-#: product/models.py:157 product/stock/models.py:80
+#: product/models.py:173 product/stock/models.py:80
 msgid "product variation"
 msgstr "Produktvariation"
 
-#: product/models.py:158
+#: product/models.py:174
 msgid "product variations"
 msgstr "Produktvariationen"
 
-#: product/models.py:176 shop/models.py:238
+#: product/models.py:192 shop/models.py:238
 #: shop/templates/plata/shop_cart.html:19
 msgid "unit price"
 msgstr "Einheitspreis"
 
-#: product/models.py:177
+#: product/models.py:193
 msgid "tax included"
 msgstr "MwSt enthalten"
 
-#: product/models.py:178
+#: product/models.py:194
 msgid "Is tax included in given unit price?"
 msgstr "Ist die MwSt im angegebenen Einheitspreis enthalten?"
 
-#: product/models.py:183 product/models.py:320
+#: product/models.py:199 product/models.py:336
 msgid "valid from"
 msgstr "gültig von"
 
-#: product/models.py:184 product/models.py:321
+#: product/models.py:200 product/models.py:337
 msgid "valid until"
 msgstr "gültig bis"
 
-#: product/models.py:186
+#: product/models.py:202
 msgid "is sale"
 msgstr "ist im Ausverkauf"
 
-#: product/models.py:187
+#: product/models.py:203
 msgid ""
 "Set this if this price is a sale price. Whether the sale is temporary or not "
 "does not matter."
@@ -269,68 +269,68 @@ msgstr ""
 "Aktivieren falls Preis ein Ausverkaufspreis ist. Ob der Ausverkauf temporär "
 "ist oder nicht spielt keine Rolle."
 
-#: product/models.py:192
+#: product/models.py:208
 msgid "product price"
 msgstr "Produktpreis"
 
-#: product/models.py:193
+#: product/models.py:209
 msgid "product prices"
 msgstr "Produktpreise"
 
-#: product/models.py:222
+#: product/models.py:238
 msgid "image"
 msgstr "Bild"
 
-#: product/models.py:228
+#: product/models.py:244
 msgid "product image"
 msgstr "Produktbild"
 
-#: product/models.py:229
+#: product/models.py:245
 msgid "product images"
 msgstr "Produktbilder"
 
-#: product/models.py:241
+#: product/models.py:257
 msgid "amount excl. tax"
 msgstr "Betrag exkl. MwSt"
 
-#: product/models.py:242
+#: product/models.py:258
 msgid "amount incl. tax"
 msgstr "Betrag exkl. MwSt"
 
-#: product/models.py:243
+#: product/models.py:259
 msgid "percentage"
 msgstr "Prozentsatz"
 
-#: product/models.py:248 product/stock/models.py:81
+#: product/models.py:264 product/stock/models.py:81
 msgid "type"
 msgstr "Typ"
 
-#: product/models.py:251 shop/models.py:347
+#: product/models.py:267 shop/models.py:347
 msgid "data"
 msgstr "Daten"
 
-#: product/models.py:317 shop/models.py:377
+#: product/models.py:333 shop/models.py:377
 msgid "code"
 msgstr "Code"
 
-#: product/models.py:324 shop/models.py:247
+#: product/models.py:340 shop/models.py:247
 #: shop/templates/plata/shop_confirmation.html:40
 msgid "discount"
 msgstr "Rabatt"
 
-#: product/models.py:325
+#: product/models.py:341
 msgid "discounts"
 msgstr "Rabatte"
 
-#: product/models.py:330
+#: product/models.py:346
 msgid "Discount is inactive."
 msgstr "Rabatt ist inaktiv."
 
-#: product/models.py:334
+#: product/models.py:350
 msgid "Discount is not active yet."
 msgstr "Rabatt ist noch nicht aktiv."
 
-#: product/models.py:336
+#: product/models.py:352
 msgid "Discount is expired."
 msgstr "Rabatt ist abgelaufen."
 
@@ -345,6 +345,14 @@ msgstr "Englisch"
 #: product/feincms/models.py:28
 msgid "French"
 msgstr "Französisch"
+
+#: product/producer/models.py:25 product/producer/models.py:33
+msgid "producer"
+msgstr "Hersteller"
+
+#: product/producer/models.py:26
+msgid "producers"
+msgstr "Hersteller"
 
 #: product/stock/admin.py:9
 msgid "initial stock"
@@ -640,15 +648,7 @@ msgstr "Bezahlungsmethode"
 msgid "Please correct the following errors:"
 msgstr "Bitte korrigieren Sie die folgenden Fehler:"
 
-#: shop/templates/_pagination.html:17
-#, python-format
-msgid ""
-"\n"
-"            %(start_index)s - %(end_index)s / %(count)s\n"
-"        "
-msgstr ""
-
-#: shop/templates/_pagination.html:21
+#: shop/templates/_pagination.html:19
 msgid "show all"
 msgstr "Alle anzeigen"
 
@@ -767,12 +767,3 @@ msgstr "Bestellung erfolgreich"
 #: shop/templates/product/product_detail.html:22
 msgid "Add to cart"
 msgstr "Zum Warenkorb hinzufügen"
-
-#~ msgid "Product"
-#~ msgstr "Produkt"
-
-#~ msgid "Unit price"
-#~ msgstr "Einheitspreis"
-
-#~ msgid "Quantity"
-#~ msgstr "Menge"
