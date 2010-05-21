@@ -115,6 +115,14 @@ admin.site.register(models.Product,
     list_display_links=('name',),
     list_filter=('is_active',),
     prepopulated_fields={'slug': ('name',), 'sku': ('name',)},
+    search_fields=('name', 'description'),
+    )
+
+admin.site.register(models.ProductVariation,
+    list_display=('product', 'is_active', 'sku', 'items_in_stock', 'ordering'),
+    list_filter=('is_active',),
+    readonly_fields=('product', 'is_active', 'sku', 'items_in_stock', 'options', 'ordering'),
+    search_fields=('product__name', 'product__description'),
     )
 
 admin.site.register(models.Discount,
