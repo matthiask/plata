@@ -31,7 +31,7 @@ class Shop(object):
         from django.conf.urls.defaults import patterns, url
 
         product_dict = {
-            'queryset': self.product_model.objects.all(),
+            'queryset': self.product_model.objects.active().select_related(),
             }
 
         return patterns('django.views.generic',

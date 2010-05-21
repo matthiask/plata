@@ -82,6 +82,11 @@ class Option(models.Model):
         return u'%s - %s' % (self.group, self.name)
 
 
+class ProductManager(models.Manager):
+    def active(self):
+        return self.filter(is_active=True)
+
+
 class Product(models.Model):
     is_active = models.BooleanField(_('is active'), default=True)
     name = models.CharField(_('name'), max_length=100)
@@ -100,6 +105,8 @@ class Product(models.Model):
         ordering = ['ordering', 'name']
         verbose_name = _('product')
         verbose_name_plural = _('products')
+
+    objects = ProductManager()
 
     def __unicode__(self):
         return self.name
