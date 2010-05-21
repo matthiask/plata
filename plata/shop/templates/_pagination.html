@@ -14,9 +14,7 @@
     </ul>
 
     <div style="float:left;padding:3px 3px 0 3px;">
-        {% blocktrans with page_obj.start_index as start_index and page_obj.end_index as end_index and paginator.count as count %}
-            {{ start_index }} - {{ end_index }} / {{ count }}
-        {% endblocktrans %}
+        {{ page_obj.start_index }} - {{ page_obj.end_index }} / {{ paginator.count }}
     </div>
     <a style="float:left;padding:0px 3px" href="?{{ querystring }}&all=1">{% trans "show all" %}</a>
 
