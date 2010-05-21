@@ -236,7 +236,7 @@ class ProductImage(models.Model):
     product = models.ForeignKey(Product, verbose_name=_('product'),
         related_name='images')
     image = models.ImageField(_('image'),
-        upload_to=lambda instance, filename: '%s/%s' % (instance.product.slug, filename))
+        upload_to=lambda instance, filename: 'products/%s/%s' % (instance.product.slug, filename))
     ordering = models.PositiveIntegerField(_('ordering'), default=0)
 
     class Meta:
