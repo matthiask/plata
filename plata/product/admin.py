@@ -118,6 +118,7 @@ admin.site.register(models.Product,
     search_fields=('name', 'description'),
     )
 
+# All fields are read only; this model is only used for raw_id_fields supports
 admin.site.register(models.ProductVariation,
     list_display=('product', 'is_active', 'sku', 'items_in_stock', 'ordering'),
     list_filter=('is_active',),
