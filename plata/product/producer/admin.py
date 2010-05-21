@@ -8,5 +8,6 @@ from . import models
 admin.site.register(models.Producer,
     list_display=('is_active', 'name', 'ordering'),
     list_display_links=('name',),
+    prepopulated_fields={'slug': ('name',)},
     search_fields=('name', 'description'),
     )
