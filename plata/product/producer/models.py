@@ -20,6 +20,7 @@ class Producer(models.Model):
     description = models.TextField(_('description'), blank=True)
 
     class Meta:
+        app_label = 'product'
         ordering = ['ordering', 'name']
         verbose_name = _('producer')
         verbose_name_plural = _('producers')
