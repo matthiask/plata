@@ -430,7 +430,7 @@ class Shop(object):
 
         pdf.spacer(1*mm)
         pdf.table([
-            ('Total', u'%.2f' % order.total),
+            ('Total %s' % order.currency, u'%.2f' % order.total),
             ], (12*cm, 4.4*cm), pdf.style.tableHead)
 
         pdf.generate()
