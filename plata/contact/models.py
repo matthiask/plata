@@ -47,6 +47,7 @@ class BillingShippingAddress(models.Model):
 class Contact(BillingShippingAddress):
     user = models.ForeignKey(User, verbose_name=_('user'), blank=True, null=True)
     email = models.EmailField(_('e-mail address'), unique=True)
+    dob = models.DateField(_('date of birth'), blank=True, null=True)
     created = models.DateTimeField(_('created'), default=datetime.now)
 
     shipping_same_as_billing = models.BooleanField(_('shipping address equals billing address'),
