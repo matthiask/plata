@@ -13,6 +13,8 @@ import plata
 
 
 class Shop(object):
+    paginate_by = 20
+
     def __init__(self, product_model, contact_model, order_model):
         self.product_model = product_model
         self.contact_model = contact_model
@@ -38,7 +40,7 @@ class Shop(object):
             url(r'^$', lambda request: redirect('plata_product_list')),
             url(r'^products/$', 'list_detail.object_list', dict(
                 product_dict,
-                paginate_by=20,
+                paginate_by=self.paginate_by,
                 ), name='plata_product_list'),
             url(r'^products/(?P<object_id>\d+)/$', self.product_detail, product_dict, name='plata_product_detail'),
             )
