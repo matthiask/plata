@@ -113,6 +113,15 @@ class Product(models.Model):
     def get_absolute_url(self):
         return ('plata_product_detail', (), {'object_id': self.pk})
 
+    @property
+    def main_image(self):
+        if not hasattr(self, '_main_image'):
+            try:
+                self._main_image = self.images.all()[0]
+            except IndexError:
+                self._main_image = None
+        return self._main_image
+
     def get_price(self, **kwargs):
         return self.prices.filter(
             Q(is_active=True),
