@@ -45,8 +45,7 @@ class BillingShippingAddress(models.Model):
 
 
 class Contact(BillingShippingAddress):
-    user = models.ForeignKey(User, verbose_name=_('user'), blank=True, null=True)
-    email = models.EmailField(_('e-mail address'), unique=True)
+    email = models.EmailField(_('e-mail address'))
     dob = models.DateField(_('date of birth'), blank=True, null=True)
     created = models.DateTimeField(_('created'), default=datetime.now)
 
@@ -65,3 +64,17 @@ class Contact(BillingShippingAddress):
             return self.email
 
         return u'%s %s' % (self.billing_first_name, self.billing_last_name)
+
+
+class ContactUser(models.Model):
+    contact = models.OneToOneField(Contact, primary_key=True, verbose_name=_('contact'),
+        related_name='contactuser')
+    user = models.OneToOneField(User, verbose_name=_('user'),
+        related_name='contactuser')
+
+    class Meta:
+        verbose_name = _('contact user')
+        verbose_name_plural = _('contact users')
+
+    def __unicode__(self):
+        return u'%s - %s' % (self.contact, self.user)

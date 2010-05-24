@@ -112,7 +112,7 @@ class Shop(object):
 
         if request.user.is_authenticated():
             try:
-                contact = self.contact_model.objects.get(user=request.user)
+                contact = self.contact_model.objects.get(contactuser__user=request.user)
                 request.session['shop_contact'] = contact.pk
                 return contact
             except (self.contact_model.DoesNotExist, self.contact_model.MultipleObjectsReturned):
@@ -129,10 +129,15 @@ class Shop(object):
                     'billing_first_name': request.user.first_name,
                     'billing_last_name': request.user.last_name,
                     'email': request.user.email,
-                    'user': request.user,
                 })
 
             contact = self.contact_model.objects.create(**initial)
+
+            if request.user.is_authenticated():
+                self.contact_model.contactuser.related.model.objects.create(
+                    contact=contact,
+                    user=request.user)
+
             request.session['shop_contact'] = contact.pk
             return contact
 

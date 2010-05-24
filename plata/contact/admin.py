@@ -4,9 +4,14 @@ from django.utils.translation import ugettext_lazy as _
 from . import models
 
 
+class ContactUserInline(admin.TabularInline):
+    model = models.ContactUser
+    max_num = 1
+    raw_id_fields = ('user',)
+
 admin.site.register(models.Contact,
     fieldsets=(
-        (None, {'fields': ('created', 'user', 'email', 'currency')}),
+        (None, {'fields': ('created', 'email', 'currency')}),
         (_('Billing address'), {'fields': ('billing_company', 'billing_first_name',
             'billing_last_name', 'billing_address', 'billing_zip_code',
             'billing_city', 'billing_country')}),
@@ -16,6 +21,6 @@ admin.site.register(models.Contact,
             'shipping_city', 'shipping_country')}),
         (_('Additional fields'), {'fields': ('notes',)}),
         ),
-    raw_id_fields=('user',),
+    inlines=[ContactUserInline],
     )
 

@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 from plata import plata_settings, shop_instance
-from plata.contact.models import Contact
+from plata.contact.models import Contact, ContactUser
 from plata.product.models import TaxClass, Product, ProductVariation, Discount,\
     ProductPrice, OptionGroup, Option
 from plata.product.stock.models import Period, StockTransaction
@@ -35,7 +35,8 @@ class ViewTest(PlataTest):
         user = User.objects.create_user('test', 'test@example.com', 'testing')
         self.client.login(username='test', password='testing')
 
-        contact = Contact.objects.create(email=user.email, user=user)
+        contact = Contact.objects.create(email=user.email)
+        ContactUser.objects.create(contact=contact, user=user)
         shop = shop_instance()
 
         request = get_request(user=user)
