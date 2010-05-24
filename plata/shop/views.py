@@ -105,6 +105,7 @@ class Shop(object):
         return None
 
     def contact_from_request(self, request, create=False):
+        # TODO after login, a new contact might be available. what should be done then?
         try:
             return self.contact_model.objects.get(pk=request.session.get('shop_contact'))
         except (ValueError, self.contact_model.DoesNotExist):
