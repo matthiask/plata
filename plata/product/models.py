@@ -130,11 +130,7 @@ class Product(models.Model):
         return self._main_image
 
     def get_price(self, **kwargs):
-        return self.prices.filter(
-            Q(is_active=True),
-            Q(valid_from__lte=date.today()),
-            Q(valid_until__isnull=True) | Q(valid_until__gte=date.today()),
-            ).filter(**kwargs).latest()
+        return self.prices.active().filter(**kwargs).latest()
 
     def create_variations(self):
         variations = itertools_product(*[group.options.all() for group in self.option_groups.all()])
@@ -185,6 +181,14 @@ class ProductVariation(models.Model):
         return self.product.get_absolute_url()
 
 
+class ProductPriceManager(models.Manager):
+    def active(self):
+        return self.filter(
+            Q(is_active=True),
+            Q(valid_from__lte=date.today()),
+            Q(valid_until__isnull=True) | Q(valid_until__gte=date.today()))
+
+
 class ProductPrice(models.Model):
     product = models.ForeignKey(Product, verbose_name=_('product'),
         related_name='prices')
@@ -207,6 +211,8 @@ class ProductPrice(models.Model):
         ordering = ['-valid_from']
         verbose_name = _('product price')
         verbose_name_plural = _('product prices')
+
+    objects = ProductPriceManager()
 
     def __unicode__(self):
         return u'%s %.2f' % (self.currency, self.unit_price)
