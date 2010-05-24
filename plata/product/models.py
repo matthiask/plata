@@ -208,6 +208,9 @@ class ProductPrice(models.Model):
         verbose_name = _('product price')
         verbose_name_plural = _('product prices')
 
+    def __unicode__(self):
+        return u'%s %.2f' % (self.currency, self.unit_price)
+
     @property
     def unit_tax(self):
         return self.unit_price_excl_tax * (self.tax_class.rate/100)
