@@ -132,6 +132,39 @@ class Product(models.Model):
     def get_price(self, **kwargs):
         return self.prices.active().filter(**kwargs).latest()
 
+    def get_prices(self):
+        from django.core.cache import cache
+
+        key = 'product-prices-%s' % self.pk
+
+        if cache.has_key(key):
+            return cache.get(key)
+
+        # TODO determine currencies differently
+        currencies = ('CHF', 'EUR', 'USD')
+
+        prices = []
+        for currency in currencies:
+            try:
+                normal, sale = self.prices.active().filter(currency=currency).latest(), None
+            except self.prices.model.DoesNotExist:
+                continue
+
+            if normal.is_sale:
+                sale = normal
+                try:
+                    normal = self.prices.active().filter(is_sale=False, currency=currency).latest()
+                except self.prices.model.DoesNotExist:
+                    normal = None
+
+            prices.append((currency, {
+                'normal': normal,
+                'sale': sale,
+                }))
+
+        cache.set(key, prices)
+        return prices
+
     def create_variations(self):
         variations = itertools_product(*[group.options.all() for group in self.option_groups.all()])
 
