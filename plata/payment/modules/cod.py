@@ -14,7 +14,7 @@ class PaymentProcessor(ProcessorBase):
         if order.is_paid():
             return redirect('plata_order_already_paid')
 
-        order.payments.create(
+        payment = order.payments.create(
             currency=order.currency,
             amount=order.balance_remaining,
             payment_module=u'%s' % self.name,
@@ -28,6 +28,7 @@ class PaymentProcessor(ProcessorBase):
                 'order': order,
                 'payment_module': self.name,
                 },
-            negative=True)
+            negative=True,
+            payment=payment)
 
         return redirect('plata_order_success')

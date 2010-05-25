@@ -89,7 +89,8 @@ class PaymentProcessor(ProcessorBase):
                 'order': order,
                 'payment_module': self.name,
                 },
-            negative=True)
+            negative=True,
+            payment=payment)
 
         form_params = {
             'orderID': 'Order-%d-%d' % (order.id, payment.id),
@@ -183,7 +184,8 @@ class PaymentProcessor(ProcessorBase):
                     'order': order,
                     'payment_module': self.name,
                     },
-                negative=False)
+                negative=False,
+                payment=payment)
 
             if payment.authorized:
                 StockTransaction.objects.bulk_create(order,
@@ -193,7 +195,8 @@ class PaymentProcessor(ProcessorBase):
                         'order': order,
                         'payment_module': self.name,
                         },
-                    negative=True)
+                    negative=True,
+                    payment=payment)
 
             return HttpResponse('OK')
         except Exception, e:

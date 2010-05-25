@@ -6,7 +6,7 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 
 # TODO do not hardcode imports
 from plata.product.models import ProductVariation
-from plata.shop.models import Order
+from plata.shop.models import Order, OrderPayment
 
 
 class PeriodManager(models.Manager):
@@ -49,7 +49,7 @@ class StockTransactionManager(models.Manager):
     def items_in_stock(self, product):
         return self.filter(period=Period.objects.current(), product=product).aggregate(items=Sum('change')).get('items') or 0
 
-    def bulk_create(self, order, type, negative=False, notes=u''):
+    def bulk_create(self, order, type, negative=False):
         factor = negative and -1 or 1
 
         for item in order.items.all():
@@ -58,8 +58,7 @@ class StockTransactionManager(models.Manager):
                 type=type,
                 change=item.quantity * factor,
                 order=order,
-                notes=notes,
-                )
+                **kwargs)
 
 
 class StockTransaction(models.Model):
@@ -99,6 +98,8 @@ class StockTransaction(models.Model):
         help_text=_('Use negative numbers for sales, lendings and other outgoings.'))
     order = models.ForeignKey(Order, blank=True, null=True,
         related_name='stock_transactions', verbose_name=_('order'))
+    payment = models.ForeignKey(OrderPayment, blank=True, null=True,
+        related_name='stock_transactions', verbose_name=_('order payment'))
 
     notes = models.TextField(_('notes'), blank=True)
 
