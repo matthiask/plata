@@ -49,7 +49,7 @@ class StockTransactionManager(models.Manager):
     def items_in_stock(self, product):
         return self.filter(period=Period.objects.current(), product=product).aggregate(items=Sum('change')).get('items') or 0
 
-    def bulk_create(self, order, type, negative=False):
+    def bulk_create(self, order, type, negative=False, **kwargs):
         factor = negative and -1 or 1
 
         for item in order.items.all():
