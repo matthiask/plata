@@ -37,7 +37,8 @@ class Order(BillingShippingAddress):
 
     created = models.DateTimeField(_('created'), default=datetime.now)
     confirmed = models.DateTimeField(_('confirmed'), blank=True, null=True)
-    contact = models.ForeignKey(Contact, verbose_name=_('contact'))
+    contact = models.ForeignKey(Contact, verbose_name=_('contact'),
+        related_name='orders')
     status = models.PositiveIntegerField(_('status'), choices=STATUS_CHOICES,
         default=CART)
 
