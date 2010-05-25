@@ -11,7 +11,7 @@ class ContactUserInline(admin.TabularInline):
 
 admin.site.register(models.Contact,
     fieldsets=(
-        (None, {'fields': ('created', 'email', 'currency')}),
+        (None, {'fields': ('created', 'email', 'dob', 'currency')}),
         (_('Billing address'), {'fields': ('billing_company', 'billing_first_name',
             'billing_last_name', 'billing_address', 'billing_zip_code',
             'billing_city', 'billing_country')}),
