@@ -26,5 +26,5 @@ admin.site.register(models.StockTransaction,
     list_display=('period', 'created', 'product', 'type', 'change', 'order'),
     list_display_links=('created',),
     list_filter=('period', 'type'),
-    raw_id_fields=('product',),
+    raw_id_fields=('product', 'order', 'payment'),
     )
