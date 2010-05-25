@@ -69,28 +69,10 @@ class PaymentProcessor(ProcessorBase):
         from django.conf.urls.defaults import patterns, url
 
         return patterns('',
-            url(r'^payment/postfinance/$', self.form, name='plata_payment_postfinance_form'),
             url(r'^payment/postfinance/ipn/$', self.ipn, name='plata_payment_postfinance_ipn'),
             )
 
     def process_order_confirmed(self, request, order):
-        StockTransaction.objects.bulk_create(order,
-            type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
-            notes=_('%(type)s transaction. %(order)s processed by %(payment_module)s') % {
-                'type': _('payment process reservation'),
-                'order': order,
-                'payment_module': self.name,
-                },
-            negative=True)
-
-        return redirect('plata_payment_postfinance_form')
-
-    def form(self, request):
-        order = self.shop.order_from_request(request)
-
-        if not order:
-            return redirect('plata_shop_checkout')
-
         if order.is_paid():
             return redirect('plata_order_already_paid')
 
@@ -99,6 +81,15 @@ class PaymentProcessor(ProcessorBase):
             amount=order.balance_remaining,
             payment_module=u'%s' % self.name,
             )
+
+        StockTransaction.objects.bulk_create(order,
+            type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
+            notes=_('%(type)s transaction. %(order)s processed by %(payment_module)s') % {
+                'type': _('payment process reservation'),
+                'order': order,
+                'payment_module': self.name,
+                },
+            negative=True)
 
         form_params = {
             'orderID': 'Order-%d-%d' % (order.id, payment.id),
