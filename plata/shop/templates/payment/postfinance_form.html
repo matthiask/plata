@@ -7,7 +7,7 @@
 
 <p>{% trans "You will be forwarded to Postfinance for payment now." %}</p>
 
-<form method="post" action="https://e-payment.postfinance.ch/ncol/{{ form_params.mode }}/orderstandard.asp">
+<form method="post" action="https://e-payment.postfinance.ch/ncol/{{ form_params.mode }}/orderstandard.asp" id="postfinanceform">
 <input type="hidden" name="PSPID" value="{{ form_params.PSPID }}" />
 <input type="hidden" name="orderID" value="{{ form_params.orderID }}" />
 <input type="hidden" name="amount" value="{{ form_params.amount }}" />
@@ -28,4 +28,10 @@
 
 <input type="submit" value="{% trans "Pay now" %}" />
 </form>
+
+<script type="text/javascript">
+window.setTimeout(function(){
+    document.getElementById('postfinanceform').submit();
+}, 4000);
+</script>
 {% endblock %}
