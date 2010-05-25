@@ -319,6 +319,9 @@ class OrderStatus(models.Model):
         verbose_name = _('order status')
         verbose_name_plural = _('order statuses')
 
+    def __unicode__(self):
+        return u'Status %s for %s' % (self.get_status_display(), self.order)
+
     def save(self, *args, **kwargs):
         super(OrderStatus, self).save(*args, **kwargs)
         self.order.status = self.status
@@ -353,6 +356,19 @@ class OrderPayment(models.Model):
         ordering = ('-timestamp',)
         verbose_name = _('order payment')
         verbose_name_plural = _('order payments')
+
+    def __unicode__(self):
+        if self.authorized:
+            return u'Authorized payment of %s %.2f for %s' % (
+                self.currency,
+                self.amount,
+                self.order,
+                )
+        return u'Not authorized payment of %s %.2f for %s' % (
+            self.currency,
+            self.amount,
+            self.order,
+            )
 
     def _recalculate_paid(self):
         paid = OrderPayment.objects.filter(
