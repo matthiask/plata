@@ -9,7 +9,8 @@ TYPE_CHOICES = [('', '---------')]
 TYPE_CHOICES.append((_('initial stock'), models.StockTransaction.TYPE_CHOICES[:2]))
 TYPE_CHOICES.append((_('purchases and sales'), models.StockTransaction.TYPE_CHOICES[2:4]))
 TYPE_CHOICES.append((_('stock management'), models.StockTransaction.TYPE_CHOICES[4:6]))
-TYPE_CHOICES.append((_('generic warehousing'), models.StockTransaction.TYPE_CHOICES[6:]))
+TYPE_CHOICES.append((_('generic warehousing'), models.StockTransaction.TYPE_CHOICES[6:8]))
+TYPE_CHOICES.append((_('internal use'), models.StockTransaction.TYPE_CHOICES[8:]))
 
 class StockTransactionForm(forms.ModelForm):
     type = forms.ChoiceField(choices=TYPE_CHOICES)

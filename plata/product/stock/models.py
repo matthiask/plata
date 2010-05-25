@@ -2,7 +2,7 @@ from datetime import datetime
 
 from django.db import models
 from django.db.models import Sum, signals
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ugettext
 
 # TODO do not hardcode imports
 from plata.product.models import ProductVariation
@@ -43,11 +43,23 @@ class StockTransactionManager(models.Manager):
                 period=period,
                 type=StockTransaction.INITIAL,
                 change=p.items_in_stock,
-                notes='New period',
+                notes=ugettext('New period'),
                 )
 
     def items_in_stock(self, product):
         return self.filter(period=Period.objects.current(), product=product).aggregate(items=Sum('change')).get('items') or 0
+
+    def bulk_create(self, order, type, negative=False, notes=u''):
+        factor = negative and -1 or 1
+
+        for item in order.items.all():
+            self.model.objects.create(
+                product=item.variation,
+                type=type,
+                change=item.quantity * factor,
+                order=order,
+                notes=notes,
+                )
 
 
 class StockTransaction(models.Model):
@@ -62,6 +74,9 @@ class StockTransaction(models.Model):
     INCOMING = 70
     OUTGOING = 80
 
+    # Semi-internal use
+    PAYMENT_PROCESS_RESERVATION = 100 # reservation during payment process
+
     TYPE_CHOICES = (
         (INITIAL, _('initial amount')),
         (CORRECTION, _('correction')),
@@ -71,6 +86,7 @@ class StockTransaction(models.Model):
         (RESERVATION, _('reservation')),
         (INCOMING, _('incoming')),
         (OUTGOING, _('outgoing')),
+        (PAYMENT_PROCESS_RESERVATION, _('payment process reservation')),
         )
 
     period = models.ForeignKey(Period, default=Period.objects.current,

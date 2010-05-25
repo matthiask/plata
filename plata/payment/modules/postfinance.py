@@ -7,10 +7,11 @@ from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
 from django.utils.decorators import method_decorator
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import csrf_exempt
 
 from plata.payment.modules.base import ProcessorBase
+from plata.product.stock.models import StockTransaction
 
 
 csrf_exempt_m = method_decorator(csrf_exempt)
@@ -73,6 +74,15 @@ class PaymentProcessor(ProcessorBase):
             )
 
     def process_order_confirmed(self, request, order):
+        StockTransaction.objects.bulk_create(order,
+            type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
+            notes=_('%(type)s transaction. %(order)s processed by %(payment_module)s') % {
+                'type': _('payment process reservation'),
+                'order': order,
+                'payment_module': self.name,
+                },
+            negative=True)
+
         return redirect('plata_payment_postfinance_form')
 
     def form(self, request):
@@ -174,6 +184,25 @@ class PaymentProcessor(ProcessorBase):
                 payment.authorized = datetime.now()
 
             payment.save()
+
+            StockTransaction.objects.bulk_create(order,
+                type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
+                notes=_('%(type)s transaction. %(order)s processed by %(payment_module)s') % {
+                'type': _('payment process reservation release'),
+                    'order': order,
+                    'payment_module': self.name,
+                    },
+                negative=False)
+
+            if payment.authorized:
+                StockTransaction.objects.bulk_create(order,
+                    type=StockTransaction.SALE,
+                    notes=_('%(type)s transaction. %(order)s processed by %(payment_module)s') % {
+                        'type': _('sale'),
+                        'order': order,
+                        'payment_module': self.name,
+                        },
+                    negative=True)
 
             return HttpResponse('OK')
         except Exception, e:

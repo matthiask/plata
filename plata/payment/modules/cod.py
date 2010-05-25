@@ -2,9 +2,10 @@ from datetime import datetime
 
 from django.http import HttpResponse
 from django.shortcuts import redirect
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 
 from plata.payment.modules.base import ProcessorBase
+from plata.product.stock.models import StockTransaction
 
 class PaymentProcessor(ProcessorBase):
     name = _('Cash on delivery')
@@ -19,5 +20,14 @@ class PaymentProcessor(ProcessorBase):
             payment_module=u'%s' % self.name,
             authorized=datetime.now(),
             )
+
+        StockTransaction.objects.bulk_create(order,
+            type=StockTransaction.SALE,
+            notes=_('%(type)s transaction. %(order)s processed by %(payment_module)s') % {
+                'type': _('sale'),
+                'order': order,
+                'payment_module': self.name,
+                },
+            negative=True)
 
         return redirect('plata_order_success')
