@@ -157,11 +157,12 @@ class ViewTest(PlataTest):
         self.assertEqual(self.client.post('/confirmation/', {}).status_code, 200)
         self.assertEqual(Order.objects.get(pk=order.id).status, Order.CHECKOUT)
 
+        Period.objects.create(name='Test period')
+
         self.assertContains(self.client.post('/confirmation/', {
             'payment_method': 'plata.payment.modules.postfinance',
             }), 'SHASign')
 
-        Period.objects.create(name='Test period')
         self.assertRedirects(self.client.post('/confirmation/', {
             'payment_method': 'plata.payment.modules.cod',
             }), '/order/success/')
