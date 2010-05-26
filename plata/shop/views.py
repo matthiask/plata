@@ -397,11 +397,11 @@ class Shop(object):
         order.recalculate_total(save=False)
 
         from pdfdocument.document import PDFDocument, cm, mm
-        from pdfdocument.elements import create_stationery_fn, MetronomStationery
+        from pdfdocument.elements import create_stationery_fn, ExampleStationery
         from pdfdocument.utils import pdf_response
 
         pdf, response = pdf_response('order-%09d' % order.id)
-        pdf.init_letter(page_fn=create_stationery_fn(MetronomStationery()))
+        pdf.init_letter(page_fn=create_stationery_fn(ExampleStationery()))
 
         pdf.address_head(u'FEINHEIT GmbH - Molkenstrasse 21 - CH-8004 Z\374rich')
         pdf.address(order, 'billing_')
