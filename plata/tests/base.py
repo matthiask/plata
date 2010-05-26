@@ -108,6 +108,7 @@ class PlataTest(TestCase):
             tax_class=tax_class,
             _unit_price=Decimal('79.90'),
             tax_included=True,
+            is_sale=True,
             )
 
         product.prices.create(

@@ -35,6 +35,12 @@ class OrderTest(PlataTest):
         self.assertAlmostEqual(price.unit_price_excl_tax, item_price / tax_factor)
         self.assertAlmostEqual(price.unit_tax, price.unit_price_excl_tax * Decimal('0.076'))
 
+        prices = dict(product.get_prices())
+        self.assertAlmostEqual(prices['CHF']['normal'].unit_price, Decimal('99.90'))
+        self.assertAlmostEqual(prices['CHF']['sale'].unit_price, Decimal('79.90'))
+        self.assertAlmostEqual(prices['EUR']['normal'].unit_price, Decimal('49.90'))
+        self.assertEqual(prices['EUR']['sale'], None)
+
         order.modify_item(product, 5)
         order.modify_item(product, -4)
         item = order.modify_item(product, 1)
