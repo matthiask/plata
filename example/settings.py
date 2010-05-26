@@ -111,7 +111,18 @@ INSTALLED_APPS = (
     'example',
 )
 
+# PLATA settings
+
 #PLATA_PRICE_INCLUDES_TAX = False
+
+POSTFINANCE = {
+    'PSPID': 'plataTEST',
+    'SHA1_IN': 'plataSHA1_IN',
+    'SHA1_OUT': 'plataSHA1_OUT',
+    'LIVE': False,
+    }
+
+# PLATA settings
 
 TEST_RUNNER = 'example.test_utils.test_runner_with_coverage'
 COVERAGE_MODULES = [

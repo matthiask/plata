@@ -22,11 +22,6 @@ class ViewTest(PlataTest):
     def setUp(self):
         self.ORIG_TEMPLATE_DIRS = settings.TEMPLATE_DIRS
         settings.TEMPLATE_DIRS = (os.path.join(os.path.dirname(__file__), 'templates'),)
-        settings.POSTFINANCE = {
-            'PSPID': 'plataTEST',
-            'SHA1_IN': 'plataSHA1_IN',
-            'LIVE': False,
-            }
 
     def tearDown(self):
         settings.TEMPLATE_DIRS = self.ORIG_TEMPLATE_DIRS
