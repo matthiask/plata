@@ -195,3 +195,55 @@ class ViewTest(PlataTest):
         self.assertEqual(Order.objects.count(), 1)
         self.assertEqual(order.contact, contact)
 
+    def test_06_postfinance_ipn(self):
+        shop = shop_instance()
+        request = get_request()
+
+        product = self.create_product()
+        self.client.post(product.get_absolute_url(), {
+            'quantity': 5,
+            })
+
+        Period.objects.create(name='Test period')
+
+        response = self.client.post('/confirmation/', {
+            'payment_method': 'plata.payment.modules.postfinance',
+            })
+        self.assertContains(response, 'SHASign')
+        self.assertContains(response, '721735bc3876094bb7e5ff075de8411d85494a66')
+
+        self.assertEqual(StockTransaction.objects.count(), 1)
+        self.assertEqual(Order.objects.count(), 1)
+        self.assertEqual(OrderPayment.objects.count(), 1)
+
+        self.assertContains(self.client.post('/payment/postfinance/ipn/', {
+            }), 'Missing data', status_code=403)
+
+        order = Order.objects.get(pk=1)
+
+        ipn_data = {
+            'orderID': 'Order-1-1',
+            'currency': order.currency,
+            'amount': order.balance_remaining,
+            'PM': 'Postfinance',
+            'ACCEPTANCE': 'xxx',
+            'STATUS': '5', # Authorized
+            'CARDNO': 'xxxxxxxxxxxx1111',
+            'PAYID': '123456789',
+            'NCERROR': '',
+            'BRAND': 'VISA',
+            'SHASIGN': 'this-value-is-invalid',
+            }
+
+        self.assertContains(self.client.post('/payment/postfinance/ipn/', ipn_data),
+            'Hash did not validate', status_code=403)
+
+        ipn_data['SHASIGN'] = '4b4cf5f9a5f0b54cc119be3696f43f81139232ae'
+
+        self.assertContains(self.client.post('/payment/postfinance/ipn/', ipn_data),
+            'OK', status_code=200)
+
+        order = Order.objects.get(pk=1)
+        assert order.is_paid()
+
+        self.assertEqual(StockTransaction.objects.count(), 3)
