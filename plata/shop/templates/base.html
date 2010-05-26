@@ -100,7 +100,7 @@ div.pagination ul li a {
                 {% endfor %}
             </ul>
             {% if plata.order.id %}
-            <a href="{% url plata_blabla_pdf plata.order.id %}">PDF</a>
+            <a href="{% url plata_admin_pdf plata.order.id %}">PDF</a>
             {% endif %}
         </td>
     </tr>

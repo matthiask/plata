@@ -13,8 +13,6 @@ import plata
 
 
 class Shop(object):
-    paginate_by = 20
-
     def __init__(self, product_model, contact_model, order_model):
         self.product_model = product_model
         self.contact_model = contact_model
@@ -23,27 +21,12 @@ class Shop(object):
 
         plata.register(self)
 
+    @property
+    def urls(self):
+        return self.get_urls()
+
     def get_urls(self):
-        return self.get_product_urls()\
-            + self.get_shop_urls()\
-            + self.get_blabla_urls()\
-            + self.get_payment_urls()
-
-    def get_product_urls(self):
-        from django.conf.urls.defaults import patterns, url
-
-        product_dict = {
-            'queryset': self.product_model.objects.active().select_related(),
-            }
-
-        return patterns('django.views.generic',
-            url(r'^$', lambda request: redirect('plata_product_list')),
-            url(r'^products/$', 'list_detail.object_list', dict(
-                product_dict,
-                paginate_by=self.paginate_by,
-                ), name='plata_product_list'),
-            url(r'^products/(?P<object_id>\d+)/$', self.product_detail, product_dict, name='plata_product_detail'),
-            )
+        return self.get_shop_urls() + self.get_admin_urls() + self.get_payment_urls()
 
     def get_shop_urls(self):
         from django.conf.urls.defaults import patterns, url
@@ -58,10 +41,10 @@ class Shop(object):
             url(r'^order/already_paid/$', self.order_already_paid, name='plata_order_already_paid'),
             )
 
-    def get_blabla_urls(self):
+    def get_admin_urls(self):
         from django.conf.urls.defaults import patterns, url
         return patterns('',
-            url(r'^pdf/(?P<order_id>\d+)/$', self.blabla_pdf, name='plata_blabla_pdf'),
+            url(r'^pdf/(?P<order_id>\d+)/$', self.admin_pdf, name='plata_admin_pdf'),
             )
 
     def get_payment_urls(self):
@@ -76,10 +59,6 @@ class Shop(object):
             'plata.payment.modules.cod.PaymentProcessor',
             'plata.payment.modules.postfinance.PaymentProcessor',
             ]]
-
-    @property
-    def urls(self):
-        return self.get_urls()
 
     def default_currency(self, request):
         return 'CHF'
@@ -149,9 +128,12 @@ class Shop(object):
         instance.update(context)
         return instance
 
-    def product_detail(self, request, *args, **kwargs):
-        p = get_object_or_404(self.product_model, pk=kwargs.get('object_id'))
-        OrderItemForm = self.order_modify_item_form(request, p)
+    def product_detail(self, request, product, context=None,
+            template_name='product/product_detail.html',
+            template_form_name='form',
+            template_object_name='object'):
+
+        OrderItemForm = self.order_modify_item_form(request, product)
 
         if request.method == 'POST':
             form = OrderItemForm(request.POST)
@@ -170,10 +152,13 @@ class Shop(object):
         else:
             form = OrderItemForm()
 
-        return render_to_response('product/product_detail.html', self.get_context(request, {
-            'object': p,
-            'form': form,
-            }))
+        context = context or {}
+        context.update({
+            template_form_name: form,
+            template_object_name: product,
+            })
+
+        return render_to_response(template_name, self.get_context(request, context))
 
     def order_modify_item_form(self, request, product):
         class Form(forms.Form):
@@ -389,7 +374,7 @@ class Shop(object):
                 'order': order,
                 }))
 
-    def blabla_pdf(self, request, order_id):
+    def admin_pdf(self, request, order_id):
         order = get_object_or_404(self.order_model, pk=order_id)
 
         order.shipping_cost = 8 / Decimal('1.076')
