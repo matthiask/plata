@@ -17,11 +17,6 @@ from plata.product.stock.models import StockTransaction
 csrf_exempt_m = method_decorator(csrf_exempt)
 
 
-# Do not crash if settings do not exist
-# Stil, we absolutely require SHA1_IN, SHA1_OUT, PSPID and LIVE
-POSTFINANCE = getattr(settings, 'POSTFINANCE', {})
-
-
 # Copied from http://e-payment.postfinance.ch/ncol/paymentinfos1.asp
 STATUSES = """\
 0	Incomplete or invalid
@@ -73,6 +68,8 @@ class PaymentProcessor(ProcessorBase):
             )
 
     def process_order_confirmed(self, request, order):
+        POSTFINANCE = settings.POSTFINANCE
+
         if order.is_paid():
             return redirect('plata_order_already_paid')
 
@@ -116,6 +113,8 @@ class PaymentProcessor(ProcessorBase):
 
     @csrf_exempt_m
     def ipn(self, request):
+        POSTFINANCE = settings.POSTFINANCE
+
         try:
             try:
                 orderID = request.POST['orderID']
