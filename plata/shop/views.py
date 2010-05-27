@@ -58,6 +58,7 @@ class Shop(object):
         return [get_callable(module)(self) for module in [
             'plata.payment.modules.cod.PaymentProcessor',
             'plata.payment.modules.postfinance.PaymentProcessor',
+            'plata.payment.modules.paypal.PaymentProcessor',
             ]]
 
     def default_currency(self, request):
