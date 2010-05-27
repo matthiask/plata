@@ -7,7 +7,7 @@ import sys
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseForbidden,\
     HttpResponseServerError
-from django.shortcuts import get_object_or_404, render_to_response
+from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
