@@ -55,11 +55,7 @@ class Shop(object):
         return patterns('', *urls)
 
     def get_payment_modules(self):
-        return [get_callable(module)(self) for module in [
-            'plata.payment.modules.cod.PaymentProcessor',
-            'plata.payment.modules.postfinance.PaymentProcessor',
-            'plata.payment.modules.paypal.PaymentProcessor',
-            ]]
+        return [get_callable(module)(self) for module in plata.plata_settings.PLATA_PAYMENT_MODULES]
 
     def default_currency(self, request):
         return 'CHF'
