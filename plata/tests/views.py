@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from plata import plata_settings, shop_instance
+import plata
 from plata.contact.models import Contact, ContactUser
 from plata.product.models import TaxClass, Product, ProductVariation, Discount,\
     ProductPrice, OptionGroup, Option
@@ -37,7 +37,7 @@ class ViewTest(PlataTest):
 
         contact = Contact.objects.create(email=user.email)
         ContactUser.objects.create(contact=contact, user=user)
-        shop = shop_instance()
+        shop = plata.shop_instance()
 
         request = get_request(user=user)
 
@@ -46,7 +46,7 @@ class ViewTest(PlataTest):
     def test_03_authenticated_user_has_no_contact(self):
         user = User.objects.create_user('test', 'test@example.com', 'testing')
         self.client.login(username='test', password='testing')
-        shop = shop_instance()
+        shop = plata.shop_instance()
 
         self.assertEqual(Contact.objects.count(), 0)
         contact = shop.contact_from_request(get_request(user=user), create=True)
@@ -176,7 +176,7 @@ class ViewTest(PlataTest):
             'application/pdf')
 
     def test_05_creation(self):
-        shop = shop_instance()
+        shop = plata.shop_instance()
         request = get_request()
 
         contact = shop.contact_from_request(request)
@@ -196,7 +196,7 @@ class ViewTest(PlataTest):
         self.assertEqual(order.contact, contact)
 
     def test_06_postfinance_ipn(self):
-        shop = shop_instance()
+        shop = plata.shop_instance()
         request = get_request()
 
         product = self.create_product()

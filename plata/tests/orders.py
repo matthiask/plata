@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from plata import plata_settings, shop_instance
+import plata
 from plata.contact.models import Contact
 from plata.product.models import TaxClass, Product, ProductVariation, Discount,\
     ProductPrice, OptionGroup, Option
@@ -63,14 +63,14 @@ class OrderTest(PlataTest):
         self.assertAlmostEqual(item.discounted_subtotal, item.discounted_subtotal_incl_tax)
 
         # Switch around tax handling and re-test
-        plata_settings.PLATA_PRICE_INCLUDES_TAX = False
+        plata.settings.PLATA_PRICE_INCLUDES_TAX = False
 
         self.assertAlmostEqual(item.unit_price, item_price / tax_factor)
         self.assertAlmostEqual(item.line_item_discount, 0 / tax_factor)
         self.assertAlmostEqual(item.discounted_subtotal, item.discounted_subtotal_excl_tax)
 
         # Switch tax handling back
-        plata_settings.PLATA_PRICE_INCLUDES_TAX = True
+        plata.settings.PLATA_PRICE_INCLUDES_TAX = True
 
     def test_02_eur_order(self):
         product = self.create_product()
@@ -185,7 +185,7 @@ class OrderTest(PlataTest):
         self.assertAlmostEqual(order.total,
             item.discounted_subtotal + item2.discounted_subtotal)
 
-        plata_settings.PLATA_PRICE_INCLUDES_TAX = False
+        plata.settings.PLATA_PRICE_INCLUDES_TAX = False
         order.recalculate_total()
         item = order.modify_item(p1, 0)
         item2 = order.modify_item(p2, 0)
@@ -195,7 +195,7 @@ class OrderTest(PlataTest):
         self.assertAlmostEqual(order.total,
             item.discounted_subtotal + item2.discounted_subtotal + order.items_tax)
 
-        plata_settings.PLATA_PRICE_INCLUDES_TAX = True
+        plata.settings.PLATA_PRICE_INCLUDES_TAX = True
 
     def test_07_order_amount_discount(self):
         order = self.create_order()
@@ -239,7 +239,7 @@ class OrderTest(PlataTest):
         self.assertAlmostEqual(discounted1.discounted_subtotal, order.total / 8 * 3)
         self.assertAlmostEqual(discounted2.discounted_subtotal, order.total / 8 * 5)
 
-        plata_settings.PLATA_PRICE_INCLUDES_TAX = False
+        plata.settings.PLATA_PRICE_INCLUDES_TAX = False
         order.recalculate_total()
         discounted1 = order.modify_item(p1, 0)
         discounted2 = order.modify_item(p2, 0)
@@ -251,7 +251,7 @@ class OrderTest(PlataTest):
         self.assertAlmostEqual(order.total,
             discounted1.discounted_subtotal + discounted2.discounted_subtotal + order.items_tax)
 
-        plata_settings.PLATA_PRICE_INCLUDES_TAX = True
+        plata.settings.PLATA_PRICE_INCLUDES_TAX = True
 
     def test_08_order_payment(self):
         order = self.create_order()
@@ -492,12 +492,12 @@ class OrderTest(PlataTest):
 
         order.recalculate_total()
 
-        plata_settings.PLATA_PRICE_INCLUDES_TAX = False
+        plata.settings.PLATA_PRICE_INCLUDES_TAX = False
         self.assertAlmostEqual(order.subtotal, Decimal('1072.00'))
         self.assertAlmostEqual(order.discount, Decimal('532.00'))
         self.assertAlmostEqual(order.items_tax, Decimal('41.04'))
         self.assertAlmostEqual(order.total, Decimal('581.04'))
-        plata_settings.PLATA_PRICE_INCLUDES_TAX = True
+        plata.settings.PLATA_PRICE_INCLUDES_TAX = True
 
     def test_15_remaining_discount(self):
         order = self.create_order()

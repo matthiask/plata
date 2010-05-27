@@ -5,7 +5,7 @@ import random
 from django.test import TestCase
 from django.contrib.auth.models import AnonymousUser
 
-from plata import plata_settings
+import plata
 from plata.contact.models import Contact
 from plata.product.models import TaxClass, Product, ProductVariation, Discount,\
     ProductPrice, OptionGroup, Option
@@ -43,7 +43,7 @@ class PlataTest(TestCase):
         raise Exception, '%s did not raise %s' % (fn, exception)
 
     def setUp(self):
-        plata_settings.PLATA_PRICE_INCLUDES_TAX = True
+        plata.settings.PLATA_PRICE_INCLUDES_TAX = True
 
     def create_contact(self):
         return Contact.objects.create(

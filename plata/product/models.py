@@ -7,7 +7,7 @@ from django.db.models import Q
 
 from django.utils.translation import ugettext_lazy as _
 
-from plata import plata_settings, shop_instance
+import plata
 from plata.compat import product as itertools_product
 from plata.fields import CurrencyField
 from plata.utils import JSONFieldDescriptor
@@ -229,7 +229,7 @@ class ProductPrice(models.Model):
     _unit_price = models.DecimalField(_('unit price'), max_digits=18, decimal_places=10)
     tax_included = models.BooleanField(_('tax included'),
         help_text=_('Is tax included in given unit price?'),
-        default=plata_settings.PLATA_PRICE_INCLUDES_TAX)
+        default=plata.settings.PLATA_PRICE_INCLUDES_TAX)
     tax_class = models.ForeignKey(TaxClass, verbose_name=_('tax class'))
 
     is_active = models.BooleanField(_('is active'), default=True)
@@ -268,7 +268,7 @@ class ProductPrice(models.Model):
 
     @property
     def unit_price(self):
-        if plata_settings.PLATA_PRICE_INCLUDES_TAX:
+        if plata.settings.PLATA_PRICE_INCLUDES_TAX:
             return self.unit_price_incl_tax
         else:
             return self.unit_price_excl_tax
@@ -317,7 +317,7 @@ class DiscountBase(models.Model):
 
     def eligible_products(self, queryset=None):
         if not queryset:
-            queryset = shop_instance().product_model._default_manager.all()
+            queryset = plata.shop_instance().product_model._default_manager.all()
 
         data = self.data_json
         if 'eligible_filter' in data:

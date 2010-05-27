@@ -2,14 +2,14 @@ from decimal import Decimal
 
 from django.core.urlresolvers import get_callable
 
-from plata import plata_settings
+import plata
 
 
 class OrderProcessor(object):
     def __init__(self):
         self.state = {}
         self.processor_classes = [get_callable(processor)\
-            for processor in plata_settings.PLATA_ORDER_PROCESSORS]
+            for processor in plata.settings.PLATA_ORDER_PROCESSORS]
 
     def load_processors(self):
         return [cls(self) for cls in self.processor_classes]

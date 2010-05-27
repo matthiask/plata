@@ -14,7 +14,7 @@ from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 
-from plata import plata_settings
+import plata
 from plata.contact.models import BillingShippingAddress, Contact
 from plata.fields import CurrencyField
 from plata.product.models import Product, DiscountBase, Discount, ProductVariation
@@ -95,7 +95,7 @@ class Order(BillingShippingAddress):
 
     @property
     def shipping(self):
-        if plata_settings.PLATA_PRICE_INCLUDES_TAX:
+        if plata.settings.PLATA_PRICE_INCLUDES_TAX:
             return self.shipping_cost - self.shipping_discount + self.shipping_tax
         else:
             raise NotImplementedError
@@ -267,7 +267,7 @@ class OrderItem(models.Model):
 
     @property
     def unit_price(self):
-        if plata_settings.PLATA_PRICE_INCLUDES_TAX:
+        if plata.settings.PLATA_PRICE_INCLUDES_TAX:
             return self._unit_price + self._unit_tax
         return self._unit_price
 
@@ -282,7 +282,7 @@ class OrderItem(models.Model):
 
     @property
     def line_item_discount(self):
-        if plata_settings.PLATA_PRICE_INCLUDES_TAX:
+        if plata.settings.PLATA_PRICE_INCLUDES_TAX:
             return self.line_item_discount_incl_tax
         else:
             return self.line_item_discount_excl_tax
@@ -301,7 +301,7 @@ class OrderItem(models.Model):
 
     @property
     def discounted_subtotal(self):
-        if plata_settings.PLATA_PRICE_INCLUDES_TAX:
+        if plata.settings.PLATA_PRICE_INCLUDES_TAX:
             return self.discounted_subtotal_incl_tax
         else:
             return self.discounted_subtotal_excl_tax

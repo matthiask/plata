@@ -16,7 +16,7 @@ class Settings(object):
             if setting == setting.upper():
                 setattr(self, setting, getattr(settings_module, setting))
 
-plata_settings = LazySettings()
+settings = LazySettings()
 
 
 _shop_instance = None

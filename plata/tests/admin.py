@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from plata import plata_settings, shop_instance
+import plata
 from plata.contact.models import Contact
 from plata.product.models import TaxClass, Product, ProductVariation, Discount,\
     ProductPrice, OptionGroup, Option
