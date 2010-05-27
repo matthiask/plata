@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block content %}
+<h1>{% trans "Payment" %}</h1>
+
+<p>{% trans "You will be forwarded to Paypal for payment now." %}</p>
+
+<form action="{{ post_url }}" method="post">
+<input type="hidden" name="business" value="mk_1274980307_biz@spinlock.ch" />
+<input type="hidden" name="currency_code" value="EUR" />
+<input type="hidden" name="return" value="http://{{ HTTP_HOST }}{% url plata_order_success %}" />
+
+<input type="hidden" name="cmd" value="_cart" />
+<input type="hidden" name="upload" value="1" />
+<input type="hidden" name="no_shipping" value="1" />
+<input type="hidden" name="invoice" value="Order-{{ order.id }}-{{ payment.id }}" />
+{% if order.partially_paid %}
+    <input type="hidden" name="item_name_1" value="Remaining Balance for order {{ order.id }}" />
+    <input type="hidden" name="amount_1" value="{{ order.balance|floatformat:2 }}" />
+    <input type="hidden" name="quantity_1" value="1" />
+{% else %}
+
+{% for item in order.items.all %}
+    <input type="hidden" name="item_name_{{ forloop.counter }}"
+        value="{{ item }}" />
+    <input type="hidden" name="amount_{{ forloop.counter }}"
+        value="{{ item.unit_price|floatformat:2 }}" />
+    {% if item.line_item_discount %}<input type="hidden" name="discount_amount_{{ forloop.counter }}"
+        value="{{ item.line_item_discount|floatformat:2 }}" />{% endif %}
+    <input type="hidden" name="quantity_{{ forloop.counter }}"
+        value="{{ item.quantity|floatformat:0 }}" />
+{% endfor %}
+
+{# LEAVE THE HANDLING CHARGE ALONE!  PAYPAL SHIPPING WILL INEVITABLY BE MESSED UP IF YOU USE THEIR SHIPPING METHODS #}
+{# To work around their bizarre system, we are telling Paypal "no shipping" and adding all shipping charges as handling #}
+<input type="hidden" name="handling_cart" value="{{ order.shipping|floatformat:2 }}" />
+<input type="hidden" name="tax_cart" value="{{ order.tax|floatformat:2 }}" />
+
+{% endif %}
+
+    <input type="hidden" name="first_name" value="{{ order.billing_first_name }}" />
+    <input type="hidden" name="last_name" value="{{ order.billing_last_name }}" />
+    <input type="hidden" name="address1" value="{{ order.billing_address }}" />
+    <input type="hidden" name="city" value="{{ order.billing_city }}" />
+    {# only U.S. abbreviations may be used here #}{% ifequal address.country.iso2_code|lower 'us' %}{% ifequal address.state|length 2 %}<input type="hidden" name="state" value="{{ address.state }}" />{% endifequal %}{% endifequal %}
+    <input type="hidden" name="country" value="{{ order.billing_country }}" />
+    <input type="hidden" name="zip" value="{{ order.billing_zip_code }}" />
+    <input type="hidden" name="email" value="{{ order.contact.email }}" />
+    <input type="hidden" name="address_override" value="0" />
+
+    <input type="hidden" name="notify_url" value="http://{{ HTTP_HOST }}{% url plata_payment_paypal_ipn %}" />
+    <input type="submit" value="{% trans "Purchase Items" %}" />
+</form>
+{% endblock %}
