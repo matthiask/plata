@@ -50,7 +50,7 @@ class Shop(object):
     def get_payment_urls(self):
         from django.conf.urls.defaults import patterns, url, include
 
-        urls = [url(r'^', include(module.urls)) for module in self.get_payment_modules()]
+        urls = [url(r'', include(module.urls)) for module in self.get_payment_modules()]
 
         return patterns('', *urls)
 
