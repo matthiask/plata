@@ -3,7 +3,8 @@ from decimal import Decimal
 from hashlib import sha1
 
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseForbidden,\
+    HttpResponseServerError
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
 from django.utils.decorators import method_decorator
@@ -182,4 +183,4 @@ class PaymentProcessor(ProcessorBase):
             import sys
             sys.stderr.write(unicode(e))
             sys.stderr.flush()
-            return HttpResponseForbidden()
+            return HttpResponseServerError()
