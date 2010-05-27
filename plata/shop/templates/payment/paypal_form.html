@@ -8,8 +8,8 @@
 <p>{% trans "You will be forwarded to Paypal for payment now." %}</p>
 
 <form action="{{ post_url }}" method="post">
-<input type="hidden" name="business" value="mk_1274980307_biz@spinlock.ch" />
-<input type="hidden" name="currency_code" value="EUR" />
+<input type="hidden" name="business" value="{{ business }}" />
+<input type="hidden" name="currency_code" value="{{ order.currency }}" />
 <input type="hidden" name="return" value="http://{{ HTTP_HOST }}{% url plata_order_success %}" />
 
 <input type="hidden" name="cmd" value="_cart" />
@@ -36,7 +36,9 @@
 {# LEAVE THE HANDLING CHARGE ALONE!  PAYPAL SHIPPING WILL INEVITABLY BE MESSED UP IF YOU USE THEIR SHIPPING METHODS #}
 {# To work around their bizarre system, we are telling Paypal "no shipping" and adding all shipping charges as handling #}
 <input type="hidden" name="handling_cart" value="{{ order.shipping|floatformat:2 }}" />
+<!--
 <input type="hidden" name="tax_cart" value="{{ order.tax|floatformat:2 }}" />
+-->
 
 {% endif %}
 

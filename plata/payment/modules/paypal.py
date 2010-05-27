@@ -58,6 +58,7 @@ class PaymentProcessor(ProcessorBase):
             'payment': payment,
             'HTTP_HOST': request.META.get('HTTP_HOST'),
             'post_url': PP_URL,
+            'business': PAYPAL['BUSINESS'],
             }, context_instance=RequestContext(request))
 
     @method_decorator(csrf_exempt)
@@ -75,15 +76,7 @@ class PaymentProcessor(ProcessorBase):
         sys.stderr.write('stage 1');sys.stderr.flush()
 
         try:
-            if request.POST.get('payment_status') == 'Completed':
-                if request.POST:
-                    parameters = request.POST.copy()
-                else:
-                    parameters = request.GET.copy()
-            else:
-                pass
-                #log_error("IPN", "The parameter payment_status was not Completed.")
-
+            parameters = request.POST.copy()
             sys.stderr.write('stage 2');sys.stderr.flush()
 
             if parameters:
@@ -112,9 +105,6 @@ class PaymentProcessor(ProcessorBase):
                 invoice_id = parameters['invoice']
                 currency = parameters['mc_currency']
                 amount = parameters['mc_gross']
-                fee = parameters['mc_fee']
-                email = parameters['payer_email']
-                identifier = parameters['payer_id']
 
                 sys.stderr.write('stage 5');sys.stderr.flush()
 
@@ -141,7 +131,8 @@ class PaymentProcessor(ProcessorBase):
                 payment.transaction_id = reference
                 #payment.payment_method = BRAND
                 #payment.notes = STATUS_DICT.get(STATUS)
-                payment.authorized = datetime.now()
+                if parameters['payment_status'] == 'Completed':
+                    payment.authorized = datetime.now()
 
                 sys.stderr.write('stage 8');sys.stderr.flush()
                 payment.save()
