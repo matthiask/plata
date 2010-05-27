@@ -9,12 +9,10 @@ from django.template import RequestContext
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 
 from plata.payment.modules.base import ProcessorBase
 from plata.product.stock.models import StockTransaction
-
-
-csrf_exempt_m = method_decorator(csrf_exempt)
 
 
 # Copied from http://e-payment.postfinance.ch/ncol/paymentinfos1.asp
@@ -79,15 +77,9 @@ class PaymentProcessor(ProcessorBase):
             payment_module=u'%s' % self.name,
             )
 
-        StockTransaction.objects.bulk_create(order,
+        self.create_transactions(order, _('payment process reservation'),
             type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
-            notes=_('%(type)s transaction. %(order)s processed by %(payment_module)s') % {
-                'type': _('payment process reservation'),
-                'order': order,
-                'payment_module': self.name,
-                },
-            negative=True,
-            payment=payment)
+            negative=True, payment=payment)
 
         form_params = {
             'orderID': 'Order-%d-%d' % (order.id, payment.id),
@@ -111,7 +103,8 @@ class PaymentProcessor(ProcessorBase):
             'form_params': form_params,
             }, context_instance=RequestContext(request))
 
-    @csrf_exempt_m
+    @method_decorator(csrf_exempt)
+    @method_decorator(require_POST)
     def ipn(self, request):
         POSTFINANCE = settings.POSTFINANCE
 
@@ -176,26 +169,13 @@ class PaymentProcessor(ProcessorBase):
 
             payment.save()
 
-            StockTransaction.objects.bulk_create(order,
+            self.create_transactions(order, _('payment process reservation release'),
                 type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
-                notes=_('%(type)s transaction. %(order)s processed by %(payment_module)s') % {
-                'type': _('payment process reservation release'),
-                    'order': order,
-                    'payment_module': self.name,
-                    },
-                negative=False,
-                payment=payment)
+                negative=False, payment=payment)
 
             if payment.authorized:
-                StockTransaction.objects.bulk_create(order,
-                    type=StockTransaction.SALE,
-                    notes=_('%(type)s transaction. %(order)s processed by %(payment_module)s') % {
-                        'type': _('sale'),
-                        'order': order,
-                        'payment_module': self.name,
-                        },
-                    negative=True,
-                    payment=payment)
+                self.create_transactions(order, _('sale'),
+                    type=StockTransaction.SALE, negative=True, payment=payment)
 
             return HttpResponse('OK')
         except Exception, e:

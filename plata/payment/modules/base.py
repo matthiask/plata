@@ -4,6 +4,8 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 
+from plata.product.stock.models import StockTransaction
+
 
 class ProcessorBase(object):
     name = 'unnamed'
@@ -21,3 +23,12 @@ class ProcessorBase(object):
 
     def process_order_confirmed(self, request, order):
         raise NotImplementedError
+
+    def create_transactions(self, order, stage, **kwargs):
+        StockTransaction.objects.bulk_create(order,
+            notes=_('%(stage)s: %(order)s processed by %(payment_module)s') % {
+                'stage': stage,
+                'order': order,
+                'payment_module': self.name,
+                },
+            **kwargs)

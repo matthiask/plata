@@ -7,6 +7,7 @@ from django.utils.translation import ugettext as _
 from plata.payment.modules.base import ProcessorBase
 from plata.product.stock.models import StockTransaction
 
+
 class PaymentProcessor(ProcessorBase):
     name = _('Cash on delivery')
 
@@ -21,14 +22,7 @@ class PaymentProcessor(ProcessorBase):
             authorized=datetime.now(),
             )
 
-        StockTransaction.objects.bulk_create(order,
-            type=StockTransaction.SALE,
-            notes=_('%(type)s transaction. %(order)s processed by %(payment_module)s') % {
-                'type': _('sale'),
-                'order': order,
-                'payment_module': self.name,
-                },
-            negative=True,
-            payment=payment)
+        self.create_transactions(order, _('sale'),
+            type=StockTransaction.SALE, negative=True, payment=payment)
 
         return redirect('plata_order_success')
