@@ -1,3 +1,4 @@
+from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import simplejson
 
 
@@ -16,4 +17,4 @@ class JSONFieldDescriptor(object):
 
     def __set__(self, obj, value):
         setattr(obj, '_cached_jsonfield_%s' % self.field, value)
-        setattr(obj, self.field, simplejson.dumps(value))
+        setattr(obj, self.field, simplejson.dumps(value, cls=DjangoJSONEncoder))
