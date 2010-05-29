@@ -79,8 +79,13 @@ class DiscountAdmin(admin.ModelAdmin):
 
     def get_fieldsets(self, request, obj=None):
         fieldsets = super(DiscountAdmin, self).get_fieldsets(request, obj)
+        fieldsets[0][1]['fields'].remove('config_json')
 
-        fieldsets.append((_('configuration'), {
+        fieldsets.append((_('Raw configuration'), {
+            'fields': ('config_json',),
+            'classes': ('collapse',),
+            }))
+        fieldsets.append((_('Configuration'), {
             'fields': ('config_options',),
             }))
 
