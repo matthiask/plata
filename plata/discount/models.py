@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 
 from django import forms
 from django.core.urlresolvers import get_callable
@@ -6,6 +6,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from plata.fields import CurrencyField
+from plata.product.models import Category
 from plata.utils import JSONFieldDescriptor
 
 
@@ -23,14 +24,16 @@ class DiscountBase(models.Model):
     CONFIG_OPTIONS = {
         'exclude_sale': {
             'form_fields': [
-                forms.BooleanField(label=_('exclude sales'), required=False, initial=True),
+                ('exclude_sales', forms.BooleanField(label=_('exclude sales'), required=False, initial=True)),
                 ],
             'query': lambda value: Q(price__sale=False),
             },
         'only_categories': {
             'form_fields': [
-                forms.MultipleModelChoiceField(label=_('only from categories'),
-                    required=True),
+                ('categories', forms.ModelMultipleChoiceField(
+                    Category.objects.all(),
+                    label=_('only from categories'),
+                    required=True)),
                 ],
             'query': lambda value: Q(category__in=value),
             },
@@ -43,9 +46,6 @@ class DiscountBase(models.Model):
 
     config_json = models.TextField(_('configuration'), blank=True)
     config = JSONFieldDescriptor('config_json')
-
-    parameters_json = models.TextField(_('parameters'), blank=True)
-    parameters = JSONFieldDescriptor('parameters_json')
 
     class Meta:
         abstract = True
@@ -115,6 +115,11 @@ class Discount(DiscountBase):
     is_active = models.BooleanField(_('is active'), default=True)
     valid_from = models.DateField(_('valid from'), default=date.today)
     valid_until = models.DateField(_('valid until'), blank=True, null=True)
+
+    allowed_uses = models.IntegerField(_('number of allowed uses'),
+        blank=True, null=True,
+        help_text=_('Leave empty if there is no limit on the number of uses of this discount.'))
+    used = models.IntegerField(_('number of times already used'), default=0)
 
     class Meta:
         verbose_name = _('discount')
