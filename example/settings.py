@@ -122,6 +122,11 @@ POSTFINANCE = {
     'LIVE': False,
     }
 
+PAYPAL = {
+    'BUSINESS': 'example@paypal.com',
+    'LIVE': False,
+    }
+
 # PLATA settings
 
 TEST_RUNNER = 'example.test_utils.test_runner_with_coverage'
