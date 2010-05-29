@@ -1,5 +1,4 @@
 from django import forms, template
-from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 
