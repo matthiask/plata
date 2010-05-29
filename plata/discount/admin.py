@@ -21,10 +21,10 @@ class DiscountAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(DiscountAdminForm, self).__init__(*args, **kwargs)
 
-        config_options = self._meta.model.CONFIG_OPTIONS.keys()
+        choices = ((key, cfg.get('title', key)) for key, cfg in self._meta.model.CONFIG_OPTIONS)
 
         self.fields['config_options'] = forms.MultipleChoiceField(
-            choices=zip(config_options, config_options),
+            choices=choices,
             label=_('configuration options'),
             help_text=_('Save and continue editing to configure options.'),
             )
@@ -36,13 +36,17 @@ class DiscountAdminForm(forms.ModelForm):
             self.fields['config_options'].initial = selected
 
             for s in selected:
-                cfg = self._meta.model.CONFIG_OPTIONS[s]
+                cfg = dict(self._meta.model.CONFIG_OPTIONS)[s]
 
-                fieldset = [s, {'fields': []}]
+                fieldset = [
+                    _('Discount configuration: %s') % cfg.get('title', s),
+                    {'fields': []},
+                    ]
 
-                for k, f in cfg['form_fields']:
+                for k, f in cfg.get('form_fields', []):
                     self.fields['%s_%s' % (s, k)] = f
-                    f.initial = self.instance.config[s].get(k)
+                    if k in self.instance.config[s]:
+                        f.initial = self.instance.config[s].get(k)
                     fieldset[1]['fields'].append('%s_%s' % (s, k))
 
                 self.instance.config_fieldsets.append(fieldset)
@@ -54,16 +58,17 @@ class DiscountAdminForm(forms.ModelForm):
         config_options = {}
 
         for s in selected:
-            cfg = self._meta.model.CONFIG_OPTIONS[s]
+            cfg = dict(self._meta.model.CONFIG_OPTIONS)[s]
 
             option_item = {}
-            for k, f in cfg['form_fields']:
-                option_item[k] = data.get('%s_%s' % (s, k))
+            for k, f in cfg.get('form_fields', []):
+                key = '%s_%s' % (s, k)
+                if key in data:
+                    option_item[k] = data.get(key)
 
             config_options[s] = option_item
 
         data['config_json'] = simplejson.dumps(jsonize(config_options))
-
         return data
 
 

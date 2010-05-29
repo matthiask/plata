@@ -6,7 +6,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from plata.fields import CurrencyField
-from plata.product.models import Category
+from plata.product.models import Category, Product
 from plata.utils import JSONFieldDescriptor
 
 
@@ -21,14 +21,19 @@ class DiscountBase(models.Model):
         (PERCENTAGE, _('percentage')),
         )
 
-    CONFIG_OPTIONS = {
-        'exclude_sale': {
+    CONFIG_OPTIONS = [
+        ('all', {
+            'title': _('All products'),
+            }),
+        ('exclude_sale', {
+            'title': _('Exclude sale prices'),
             'form_fields': [
                 ('exclude_sales', forms.BooleanField(label=_('exclude sales'), required=False, initial=True)),
                 ],
-            'query': lambda value: Q(price__sale=False),
-            },
-        'only_categories': {
+            'query': lambda item: Q(price__sale=False),
+            }),
+        ('only_categories', {
+            'title': _('Only product from selected categories'),
             'form_fields': [
                 ('categories', forms.ModelMultipleChoiceField(
                     Category.objects.all(),
@@ -36,8 +41,18 @@ class DiscountBase(models.Model):
                     required=True)),
                 ],
             'query': lambda value: Q(category__in=value),
-            },
-        }
+            }),
+        ('products', {
+            'title': _('Discountable products list'),
+            'form_fields': [
+                ('products', forms.ModelMultipleChoiceField(
+                    Product.objects.all(),
+                    label=_('products'),
+                    required=True)),
+                ],
+            'query': lambda value: Q(category__in=value),
+            }),
+        ]
 
     name = models.CharField(_('name'), max_length=100)
 
