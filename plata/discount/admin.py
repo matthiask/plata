@@ -25,7 +25,7 @@ class DiscountAdminForm(forms.ModelForm):
 
         self.fields['config_options'] = forms.MultipleChoiceField(
             choices=choices,
-            label=_('configuration options'),
+            label=_('Configuration options'),
             help_text=_('Save and continue editing to configure options.'),
             )
 
