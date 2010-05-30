@@ -76,12 +76,16 @@ class DiscountBase(models.Model):
     def __unicode__(self):
         return self.name
 
-    def eligible_products(self, queryset=None):
+    def eligible_products(self, queryset=None, items=None):
         if not queryset:
             queryset = plata.shop_instance().product_model._default_manager.all()
 
         variations = ProductVariation.objects.all()
         prices = ProductPrice.objects.all()
+
+        if items:
+            variations = variations.filter(id__in=[item.variation_id for item in items])
+            prices = prices.filter(id__in=[item.get_product_price().id for item in items])
 
         for key, parameters in self.config.items():
             parameters = dict((str(k), v) for k, v in parameters.items())
@@ -109,7 +113,7 @@ class DiscountBase(models.Model):
             raise NotImplementedError, 'Unknown discount type %s' % self.type
 
     def apply_amount_discount(self, order, items, tax_included):
-        eligible_products = self.eligible_products().values_list('id', flat=True)
+        eligible_products = self.eligible_products(items=items).values_list('id', flat=True)
 
         eligible_items = [item for item in items if item.variation.product_id in eligible_products]
 
@@ -130,7 +134,7 @@ class DiscountBase(models.Model):
             item._line_item_discount += item.discounted_subtotal_excl_tax / items_subtotal * discount
 
     def apply_percentage_discount(self, order, items):
-        eligible_products = self.eligible_products().values_list('id', flat=True)
+        eligible_products = self.eligible_products(items=items).values_list('id', flat=True)
 
         factor = self.value / 100
 
