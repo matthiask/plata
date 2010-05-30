@@ -50,6 +50,8 @@ class DiscountAdminForm(forms.ModelForm):
                     fieldset[1]['fields'].append('%s_%s' % (s, k))
 
                 self.instance.config_fieldsets.append(fieldset)
+        else:
+            self.fields['config_options'].initial = ('all',)
 
     def clean(self):
         data = self.cleaned_data

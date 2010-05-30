@@ -25,37 +25,41 @@ class DiscountBase(models.Model):
         ('all', {
             'title': _('All products'),
             }),
-        ('exclude_sale', {
-            'title': _('Exclude sale prices'),
-            'form_fields': [
-                ('exclude_sales', forms.BooleanField(label=_('exclude sales'), required=False, initial=True)),
-                ],
-            'query': lambda item: Q(price__sale=False),
-            }),
-        ('only_categories', {
-            'title': _('Only product from selected categories'),
-            'form_fields': [
-                ('categories', forms.ModelMultipleChoiceField(
-                    Category.objects.all(),
-                    label=_('only from categories'),
-                    required=True)),
-                ],
-            'query': lambda value: Q(category__in=value),
-            }),
         ('products', {
-            'title': _('Discountable products list'),
+            'title': _('Explicitly define discountable products'),
             'form_fields': [
                 ('products', forms.ModelMultipleChoiceField(
                     Product.objects.all(),
                     label=_('products'),
                     required=True)),
                 ],
-            'query': lambda value: Q(category__in=value),
+            'variation_query': lambda products: Q(product__in=values.get('products', (0,))),
+            }),
+        ('exclude_sale', {
+            'title': _('Exclude sale prices'),
+            'form_fields': [
+                ('exclude_sales', forms.BooleanField(
+                    label=_('exclude sales'),
+                    required=False,
+                    initial=True)),
+                ],
+            'price_query': lambda **values: Q(is_sale=False),
+            }),
+        ('only_categories', {
+            'title': _('Only products from selected categories'),
+            'form_fields': [
+                ('categories', forms.ModelMultipleChoiceField(
+                    Category.objects.all(),
+                    label=_('categories'),
+                    required=True)),
+                ],
+            'variation_query': lambda categories: Q(product__category__in=categories),
             }),
         ]
 
     name = models.CharField(_('name'), max_length=100)
 
+    # TODO currency handling. Maybe split type/value into amount, tax, currency, percentage?
     type = models.PositiveIntegerField(_('type'), choices=TYPE_CHOICES)
     value = models.DecimalField(_('value'), max_digits=10, decimal_places=2)
 
