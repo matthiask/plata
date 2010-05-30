@@ -79,7 +79,7 @@ class DiscountBase(models.Model):
 
         if items:
             variations = variations.filter(id__in=[item.variation_id for item in items])
-            prices = prices.filter(id__in=[item.get_product_price().id for item in items])
+            prices = prices.filter(id__in=[item.product_price_id for item in items])
 
         for key, parameters in self.config.items():
             parameters = dict((str(k), v) for k, v in parameters.items())
@@ -113,7 +113,7 @@ class DiscountBase(models.Model):
 
         if tax_included:
             # TODO how should this value be calculated in the presence of multiple tax rates?
-            tax_rate = items[0].get_product_price().tax_class.rate
+            tax_rate = items[0].product_price.tax_class.rate
             discount = self.value / (1 + tax_rate/100)
         else:
             discount = self.value

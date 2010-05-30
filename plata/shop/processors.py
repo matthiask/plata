@@ -60,7 +60,7 @@ class TaxProcessor(ProcessorBase):
     def process(self, instance, items):
         for item in items:
             taxable = item._line_item_price - (item._line_item_discount or 0)
-            price = item.get_product_price()
+            price = item.product_price
             item._line_item_tax = taxable * price.tax_class.rate/100
             item.save()
 
