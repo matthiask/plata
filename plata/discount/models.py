@@ -3,10 +3,13 @@ from datetime import date, datetime
 from django import forms
 from django.core.urlresolvers import get_callable
 from django.db import models
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
+import plata
 from plata.fields import CurrencyField
-from plata.product.models import Category, Product
+from plata.product.models import Category, Product, ProductVariation, ProductPrice
+from plata.shop.processors import ProcessorBase
 from plata.utils import JSONFieldDescriptor
 
 
@@ -33,7 +36,7 @@ class DiscountBase(models.Model):
                     label=_('products'),
                     required=True)),
                 ],
-            'variation_query': lambda products: Q(product__in=values.get('products', (0,))),
+            'variation_query': lambda products: Q(product__in=products),
             }),
         ('exclude_sale', {
             'title': _('Exclude sale prices'),
@@ -53,7 +56,7 @@ class DiscountBase(models.Model):
                     label=_('categories'),
                     required=True)),
                 ],
-            'variation_query': lambda categories: Q(product__category__in=categories),
+            'variation_query': lambda categories: Q(product__categories__in=categories),
             }),
         ]
 
@@ -76,11 +79,20 @@ class DiscountBase(models.Model):
         if not queryset:
             queryset = plata.shop_instance().product_model._default_manager.all()
 
-        data = self.data_json
-        if 'eligible_filter' in data:
-            queryset = queryset.filter(**dict((str(k), v) for k, v in data['eligible_filter'].items()))
+        variations = ProductVariation.objects.all()
+        prices = ProductPrice.objects.all()
 
-        return queryset
+        for key, parameters in self.config.items():
+            parameters = dict((str(k), v) for k, v in parameters.items())
+
+            cfg = dict(self.CONFIG_OPTIONS)[key]
+
+            if 'variation_query' in cfg:
+                variations = variations.filter(cfg['variation_query'](**parameters))
+            if 'price_query' in cfg:
+                prices = prices.filter(cfg['price_query'](**parameters))
+
+        return queryset.filter(id__in=variations.values('product_id')).filter(id__in=prices.values('product_id'))
 
     def apply(self, order, items, **kwargs):
         if not items:
