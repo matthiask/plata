@@ -125,8 +125,3 @@ admin.site.register(models.ProductVariation,
     readonly_fields=('product', 'is_active', 'sku', 'items_in_stock', 'options', 'ordering'),
     search_fields=('product__name', 'product__description'),
     )
-
-admin.site.register(models.Discount,
-    list_display=('name', 'type', 'code', 'value'),
-    list_filter=('type',),
-    )

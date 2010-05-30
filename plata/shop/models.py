@@ -16,8 +16,9 @@ from django.utils.translation import ugettext_lazy as _
 
 import plata
 from plata.contact.models import BillingShippingAddress, Contact
+from plata.discount.models import DiscountBase, Discount
 from plata.fields import CurrencyField
-from plata.product.models import Product, DiscountBase, Discount, ProductVariation
+from plata.product.models import Product, ProductVariation
 from plata.shop import processors
 from plata.utils import JSONFieldDescriptor
 
@@ -194,7 +195,7 @@ class Order(BillingShippingAddress):
                 'type': discount.type,
                 'name': discount.name,
                 'value': discount.value,
-                'data': discount.data,
+                'config_json': discount.config_json,
             })
 
         if recalculate:

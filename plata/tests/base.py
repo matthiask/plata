@@ -7,7 +7,8 @@ from django.contrib.auth.models import AnonymousUser
 
 import plata
 from plata.contact.models import Contact
-from plata.product.models import TaxClass, Product, ProductVariation, Discount,\
+
+from plata.product.models import TaxClass, Product, ProductVariation,\
     ProductPrice, OptionGroup, Option
 from plata.product.stock.models import Period, StockTransaction
 from plata.shop.models import Order, OrderStatus, OrderPayment

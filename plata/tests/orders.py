@@ -9,7 +9,8 @@ from django.test import TestCase
 
 import plata
 from plata.contact.models import Contact
-from plata.product.models import TaxClass, Product, ProductVariation, Discount,\
+from plata.discount.models import Discount
+from plata.product.models import TaxClass, Product, ProductVariation, Category,\
     ProductPrice, OptionGroup, Option
 from plata.product.stock.models import Period, StockTransaction
 from plata.shop.models import Order, OrderStatus, OrderPayment
@@ -288,6 +289,12 @@ class OrderTest(PlataTest):
         p2.name = 'Discountable'
         p2.save()
 
+        c = Category.objects.create(
+            name='category',
+            slug='category',
+            )
+        p2.categories.add(c)
+
         d = Discount(
             type=Discount.PERCENTAGE,
             name='Some discount',
@@ -296,12 +303,7 @@ class OrderTest(PlataTest):
             is_active=True,
             )
 
-        d.data_json = {
-            'eligible_filter': {
-                'name__icontains': 'countable',
-                },
-            }
-
+        d.config = {'only_categories': {'categories': [c.pk]}}
         d.save()
 
         self.assertEqual(Product.objects.all().count(), 2)
@@ -393,6 +395,12 @@ class OrderTest(PlataTest):
             tax_class=self.tax_class,
             )
 
+        c = Category.objects.create(
+            name='category',
+            slug='category',
+            )
+        p1.categories.add(c)
+
         order.modify_item(p1, 1)
         order.modify_item(p2, 1)
 
@@ -404,11 +412,7 @@ class OrderTest(PlataTest):
             value=Decimal('20.00'),
             code='1234code',
             )
-        discount.data_json = {
-            'eligible_filter': {
-                'name__icontains': 'Kleid',
-                },
-            }
+        discount.config = {'only_categories': {'categories': [c.pk]}}
         discount.save()
 
         order.add_discount(discount)
@@ -445,17 +449,19 @@ class OrderTest(PlataTest):
         order.modify_item(p1, 1)
         order.modify_item(p2, 1)
 
+        c = Category.objects.create(
+            name='category',
+            slug='category',
+            )
+        p1.categories.add(c)
+
         discount = Discount(
             type=Discount.AMOUNT_INCL_TAX,
             name='Sonderrabatt Venice',
             value=Decimal('20.00'),
             code='1234code',
             )
-        discount.data_json = {
-            'eligible_filter': {
-                'name__icontains': 'Venice',
-                },
-            }
+        discount.config = {'only_categories': {'categories': [c.pk]}}
         discount.save()
 
         order.add_discount(discount)
