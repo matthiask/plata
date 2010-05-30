@@ -10,7 +10,6 @@ from django.utils.translation import ugettext_lazy as _
 import plata
 from plata.compat import product as itertools_product
 from plata.fields import CurrencyField
-from plata.utils import JSONFieldDescriptor
 
 
 class TaxClass(models.Model):

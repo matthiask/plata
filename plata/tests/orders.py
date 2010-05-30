@@ -269,7 +269,7 @@ class OrderTest(PlataTest):
 
         # The descriptor cannot be used through create(), therefore
         # we need this stupid little dance
-        payment.data_json = {'anything': 42}
+        payment.data = {'anything': 42}
         payment.save()
 
         order = Order.objects.get(pk=order.pk)
@@ -281,7 +281,7 @@ class OrderTest(PlataTest):
         order = Order.objects.get(pk=order.pk)
         self.assertAlmostEqual(order.balance_remaining, order.total - payment.amount)
 
-        self.assertEqual(order.payments.all()[0].data_json['anything'], 42)
+        self.assertEqual(order.payments.all()[0].data['anything'], 42)
 
     def test_09_selective_discount(self):
         p1 = self.create_product()

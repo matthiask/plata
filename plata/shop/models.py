@@ -349,9 +349,9 @@ class OrderPayment(models.Model):
 
     notes = models.TextField(_('notes'), blank=True)
 
-    data = models.TextField(_('data'), blank=True,
+    data_json = models.TextField(_('data'), blank=True,
         help_text=_('JSON-encoded additional data about the order payment.'))
-    data_json = JSONFieldDescriptor('data')
+    data = JSONFieldDescriptor('data_json')
 
     class Meta:
         ordering = ('-timestamp',)

@@ -127,7 +127,7 @@ class PaymentProcessor(ProcessorBase):
                 sys.stderr.write('stage 7');sys.stderr.flush()
                 payment.currency = currency
                 payment.amount = Decimal(amount)
-                payment.data_json = request.POST.copy()
+                payment.data = request.POST.copy()
                 payment.transaction_id = reference
                 #payment.payment_method = BRAND
                 #payment.notes = STATUS_DICT.get(STATUS)

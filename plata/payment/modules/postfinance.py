@@ -160,7 +160,7 @@ class PaymentProcessor(ProcessorBase):
 
             payment.currency = currency
             payment.amount = Decimal(amount)
-            payment.data_json = request.POST.copy()
+            payment.data = request.POST.copy()
             payment.transaction_id = PAYID
             payment.payment_method = BRAND
             payment.notes = STATUS_DICT.get(STATUS)
