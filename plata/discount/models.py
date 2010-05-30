@@ -29,6 +29,10 @@ class DiscountBase(models.Model):
         ('all', {
             'title': _('All products'),
             }),
+        ('exclude_sale', {
+            'title': _('Exclude sale prices'),
+            'price_query': lambda **values: Q(is_sale=False),
+            }),
         ('products', {
             'title': _('Explicitly define discountable products'),
             'form_fields': [
@@ -38,16 +42,6 @@ class DiscountBase(models.Model):
                     required=True)),
                 ],
             'variation_query': lambda products: Q(product__in=products),
-            }),
-        ('exclude_sale', {
-            'title': _('Exclude sale prices'),
-            'form_fields': [
-                ('exclude_sales', forms.BooleanField(
-                    label=_('exclude sales'),
-                    required=False,
-                    initial=True)),
-                ],
-            'price_query': lambda **values: Q(is_sale=False),
             }),
         ('only_categories', {
             'title': _('Only products from selected categories'),
