@@ -13,11 +13,12 @@ import plata
 
 
 class Shop(object):
-    def __init__(self, product_model, contact_model, order_model):
+    def __init__(self, product_model, contact_model, order_model, discount_model):
         self.product_model = product_model
         self.contact_model = contact_model
         self.order_model = order_model
         self.orderitem_model = self.order_model.items.related.model
+        self.discount_model = discount_model
 
         plata.register(self)
 
@@ -306,34 +307,39 @@ class Shop(object):
         return render_to_response('plata/shop_checkout.html',
             self.get_context(request, context))
 
+    def discount_form(self, request, order):
+        if not hasattr(self, '_discount_form_cache'):
+            class DiscountForm(forms.Form):
+                code = forms.CharField(label=_('code'), max_length=30, required=False)
+
+                def __init__(self, *args, **kwargs):
+                    self.order = kwargs.pop('order')
+                    super(DiscountForm, self).__init__(*args, **kwargs)
+
+                def clean_code(self):
+                    code = self.cleaned_data.get('code')
+                    if not code:
+                        return self.cleaned_data
+
+                    try:
+                        shop = plata.shop_instance()
+                        discount = shop.discount_model.objects.get(code=code)
+                    except shop.discount_model.DoesNotExist:
+                        raise forms.ValidationError(_('This code does not validate'))
+
+                    discount.validate(self.order)
+                    self.cleaned_data['discount'] = discount
+                    return code
+            self._discount_form_cache = DiscountForm
+        return self._discount_form_cache
+
     def discounts(self, request):
         order = self.order_from_request(request, create=False)
 
         if not order:
             return HttpResponseRedirect(reverse('plata_shop_cart') + '?empty=1')
 
-
-        class DiscountForm(forms.Form):
-            code = forms.CharField(label=_('code'), max_length=30, required=False)
-
-            def __init__(self, *args, **kwargs):
-                self.order = kwargs.pop('order')
-                super(DiscountForm, self).__init__(*args, **kwargs)
-
-            def clean_code(self):
-                code = self.cleaned_data.get('code')
-                if not code:
-                    return self.cleaned_data
-
-                from plata.discount.models import Discount
-                try:
-                    discount = Discount.objects.get(code=code)
-                except Discount.DoesNotExist:
-                    raise forms.ValidationError(_('This code does not validate'))
-
-                discount.validate(self.order)
-                self.cleaned_data['discount'] = discount
-                return code
+        DiscountForm = self.discount_form(request, order)
 
         if request.method == 'POST':
             form = DiscountForm(request.POST, order=order)
