@@ -172,6 +172,10 @@ class ViewTest(PlataTest):
             'payment_method': 'plata.payment.modules.cod',
             }), '/cart/?empty=1')
 
+        self.assertRedirects(self.client.post('/confirmation/', {
+            'payment_method': 'plata.payment.modules.paypal',
+            }), '/cart/?empty=1')
+
         self.assertEqual(self.client.get('/pdf/%s/' % order.id)['Content-Type'],
             'application/pdf')
 
