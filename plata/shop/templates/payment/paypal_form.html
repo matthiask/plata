@@ -18,7 +18,7 @@
 <input type="hidden" name="invoice" value="Order-{{ order.id }}-{{ payment.id }}" />
 {% if order.partially_paid %}
     <input type="hidden" name="item_name_1" value="Remaining Balance for order {{ order.id }}" />
-    <input type="hidden" name="amount_1" value="{{ order.balance|floatformat:2 }}" />
+    <input type="hidden" name="amount_1" value="{{ order.balance_remaining|floatformat:2 }}" />
     <input type="hidden" name="quantity_1" value="1" />
 {% else %}
 
