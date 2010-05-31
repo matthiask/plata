@@ -5,10 +5,12 @@ from decimal import Decimal
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.forms.models import model_to_dict
 from django.test import TestCase
 
 import plata
 from plata.contact.models import Contact
+from plata.discount.models import Discount
 from plata.product.models import TaxClass, Product, ProductVariation,\
     ProductPrice, OptionGroup, Option
 from plata.product.stock.models import Period, StockTransaction
@@ -190,3 +192,70 @@ class AdminTest(PlataTest):
             'Please select options from the following groups')
         self.assertContains(self.client.post('/admin/product/product/2/', product_data),
             'Only one option per group allowed')
+
+        discount_data = {
+            'name': 'Discount 1',
+            'type': Discount.PERCENTAGE,
+            'value': 30,
+            'code': 'discount1',
+            'is_active': True,
+            'valid_from': '2010-01-01',
+            'valid_until': '',
+            'allowed_uses': '',
+            'used': 0,
+            }
+
+        self.assertContains(self.client.post('/admin/discount/discount/add/', discount_data),
+            'required')
+
+        discount_data['config_options'] = ('all',)
+        self.assertRedirects(self.client.post('/admin/discount/discount/add/', discount_data),
+            '/admin/discount/discount/')
+
+        discount_data['config_options'] = ('exclude_sale',)
+        discount_data['code'] += '-'
+        self.client.post('/admin/discount/discount/add/', discount_data)
+        self.assertContains(self.client.get('/admin/discount/discount/2/'),
+            'Discount configuration: Exclude sale prices')
+
+        discount_data['config_options'] = ('products',)
+        discount_data['code'] += '-'
+        self.client.post('/admin/discount/discount/add/', discount_data)
+        discount_data['config_json'] = Discount.objects.get(pk=3).config_json
+
+        # Does not redirect (invalid configuration)
+        self.assertEqual(self.client.post('/admin/discount/discount/3/', discount_data).status_code, 200)
+
+        discount_data['products_products'] = ('1',)
+        self.assertRedirects(self.client.post('/admin/discount/discount/3/', discount_data),
+            '/admin/discount/discount/')
+
+        discount_data = model_to_dict(Discount.objects.get(pk=3))
+        discount_data.update({
+            'config_options': ('products',),
+            'products_products': ('1', '2'),
+            'valid_from': '2010-01-01',
+            'valid_until': '',
+            'allowed_uses': '',
+            'used': 0,
+            })
+        self.assertRedirects(self.client.post('/admin/discount/discount/3/', discount_data),
+            '/admin/discount/discount/')
+
+        discount_data = model_to_dict(Discount.objects.get(pk=3))
+        discount_data.update({
+            'config_options': ('products',),
+            'products_products': ('1'),
+            'valid_from': '2010-01-01',
+            'valid_until': '',
+            'allowed_uses': '',
+            'used': 0,
+
+            # Manually modified config_json overrides anything selected in the
+            # generated form items
+            'config_json': u'{"products": {"products": [2]}}',
+            })
+        self.assertRedirects(self.client.post('/admin/discount/discount/3/', discount_data),
+            '/admin/discount/discount/')
+
+        self.assertEqual(Discount.objects.get(pk=3).config['products']['products'], [2])
