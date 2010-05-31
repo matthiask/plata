@@ -61,7 +61,8 @@ class DiscountBase(models.Model):
     type = models.PositiveIntegerField(_('type'), choices=TYPE_CHOICES)
     value = models.DecimalField(_('value'), max_digits=10, decimal_places=2)
 
-    config_json = models.TextField(_('configuration'), blank=True)
+    config_json = models.TextField(_('configuration'), blank=True,
+        help_text=_('If you edit this field directly, changes below will be ignored.'))
     config = JSONFieldDescriptor('config_json')
 
     class Meta:
