@@ -8,3 +8,11 @@ configuration buttons here and there", Plata only provides simple
 order, product and payment models. Building a shop on top of Django
 and Plata requires programming skills -- but that's what we are here
 for, no?
+
+
+Visit these sites for more information
+======================================
+
+* Plata's own website: http://www.feinheit.ch/labs/plata-django-shop/
+* Documentation: http://www.feinheit.ch/media/labs/plata/
+* Plata on github: http://github.com/matthiask/plata
