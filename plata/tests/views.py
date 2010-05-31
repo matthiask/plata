@@ -10,6 +10,7 @@ from django.test import TestCase
 
 import plata
 from plata.contact.models import Contact, ContactUser
+from plata.discount.models import Discount
 from plata.product.models import TaxClass, Product, ProductVariation,\
     ProductPrice, OptionGroup, Option
 from plata.product.stock.models import Period, StockTransaction
@@ -152,6 +153,21 @@ class ViewTest(PlataTest):
             'contact-shipping_same_as_billing': True,
             'contact-email': 'something@example.com',
             'contact-currency': 'CHF',
+            }), '/discounts/')
+
+        self.assertContains(self.client.post('/discounts/', {
+            'code': 'something-invalid',
+            }), 'not validate')
+
+        Discount.objects.create(
+            is_active=True,
+            type=Discount.PERCENTAGE,
+            code='asdf',
+            name='Percentage discount',
+            value=30)
+
+        self.assertRedirects(self.client.post('/discounts/', {
+            'code': 'asdf',
             }), '/discounts/')
 
         self.assertRedirects(self.client.post('/discounts/', {
