@@ -170,9 +170,3 @@ class Discount(DiscountBase):
             raise ValidationError(messages)
 
         return True
-
-
-class DiscountProcessor(ProcessorBase):
-    def process(self, instance, items):
-        for applied in instance.applied_discounts.all():
-            applied.apply(instance, items)
