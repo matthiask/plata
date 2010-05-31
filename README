@@ -5,10 +5,6 @@ Plata - the lean and mean Django-based Shop
 Instead of fighting against a big and all-knowing shop system, which
 never does the right thing although it "only requires pushing a few
 configuration buttons here and there", Plata only provides simple
-order and payment models. Building a shop on top of Django and Plata
-requires programming skills -- but that's what we are here for, no?
-
-
-Note: This project suffers severely suffers from the NIH syndrome.
-If you find the ideas expressed in code interesting, then maybe this
-project is for you. Otherwise, have a look at Satchmo or Django-LFS.
+order, product and payment models. Building a shop on top of Django
+and Plata requires programming skills -- but that's what we are here
+for, no?
