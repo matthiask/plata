@@ -389,7 +389,14 @@ class Shop(object):
         pdf.address(order, 'billing_')
         pdf.next_frame()
 
+        pdf.p(u'%s: %s' % (
+            _('Order date'),
+            order.confirmed and order.confirmed.strftime('%d.%m.%Y') or _('Not confirmed yet'),
+            ))
+        pdf.spacer(3*mm)
+
         pdf.h1('Order %09d' % order.id)
+        pdf.hr()
 
         pdf.table([(
                 'Product',
