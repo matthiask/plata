@@ -18,7 +18,7 @@ import plata
 from plata.contact.models import BillingShippingAddress, Contact
 from plata.discount.models import DiscountBase, Discount
 from plata.fields import CurrencyField
-from plata.product.models import Product, ProductPrice, ProductVariation
+from plata.product.models import Product, ProductVariation, TaxClass
 from plata.shop import processors
 from plata.utils import JSONFieldDescriptor
 
@@ -155,9 +155,10 @@ class Order(BillingShippingAddress):
                 currency=self.currency,
                 )
 
-        item.product_price = price
         item._unit_price = price.unit_price_excl_tax
         item._unit_tax = price.unit_tax
+        item.tax_class = price.tax_class
+        item.is_sale = price.is_sale
 
         if relative is not None:
             item.quantity += relative
@@ -237,16 +238,14 @@ class OrderItem(models.Model):
 
     quantity = models.IntegerField(_('quantity'))
 
-    # TODO maybe this relation should be nullable, and be cleared on product price
-    # deletion?
-    product_price = models.ForeignKey(ProductPrice, verbose_name=_('product price'))
-
     currency = CurrencyField()
     _unit_price = models.DecimalField(_('unit price'),
         max_digits=18, decimal_places=10,
         help_text=_('Unit price excl. tax'))
     _unit_tax = models.DecimalField(_('unit tax'),
         max_digits=18, decimal_places=10)
+    tax_class = models.ForeignKey(TaxClass, verbose_name=_('tax class'))
+    is_sale = models.BooleanField(_('is sale'))
 
     _line_item_price = models.DecimalField(_('line item price'),
         max_digits=18, decimal_places=10, default=0,
@@ -280,8 +279,7 @@ class OrderItem(models.Model):
 
     @property
     def line_item_discount_incl_tax(self):
-        price = self.product_price
-        return self.line_item_discount_excl_tax * (1+price.tax_class.rate/100)
+        return self.line_item_discount_excl_tax * (1+self.tax_class.rate/100)
 
     @property
     def line_item_discount(self):

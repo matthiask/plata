@@ -6,7 +6,7 @@ from . import models
 
 class OrderItemInline(admin.TabularInline):
     model = models.OrderItem
-    raw_id_fields = ('variation', 'product_price')
+    raw_id_fields = ('variation',)
 
 class AppliedDiscountInline(admin.TabularInline):
     model = models.AppliedDiscount

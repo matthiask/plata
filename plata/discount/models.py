@@ -9,7 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 
 import plata
 from plata.fields import CurrencyField
-from plata.product.models import Category, Product, ProductVariation, ProductPrice
+from plata.product.models import Category, Product, ProductVariation
 from plata.shop.processors import ProcessorBase
 from plata.utils import JSONFieldDescriptor
 
@@ -31,7 +31,7 @@ class DiscountBase(models.Model):
             }),
         ('exclude_sale', {
             'title': _('Exclude sale prices'),
-            'price_query': lambda **values: Q(is_sale=False),
+            'orderitem_query': lambda **values: Q(is_sale=False),
             }),
         ('products', {
             'title': _('Explicitly define discountable products'),
@@ -71,15 +71,17 @@ class DiscountBase(models.Model):
         return self.name
 
     def eligible_products(self, queryset=None, items=None):
+        shop = plata.shop_instance()
+
         if not queryset:
-            queryset = plata.shop_instance().product_model._default_manager.all()
+            queryset = shop.product_model._default_manager.all()
 
         variations = ProductVariation.objects.all()
-        prices = ProductPrice.objects.all()
+        orderitems = shop.orderitem_model.objects.all()
 
         if items:
             variations = variations.filter(id__in=[item.variation_id for item in items])
-            prices = prices.filter(id__in=[item.product_price_id for item in items])
+            orderitems = orderitems.filter(id__in=[item.id for item in items])
 
         for key, parameters in self.config.items():
             parameters = dict((str(k), v) for k, v in parameters.items())
@@ -88,10 +90,10 @@ class DiscountBase(models.Model):
 
             if 'variation_query' in cfg:
                 variations = variations.filter(cfg['variation_query'](**parameters))
-            if 'price_query' in cfg:
-                prices = prices.filter(cfg['price_query'](**parameters))
+            if 'orderitem_query' in cfg:
+                orderitems = orderitems.filter(cfg['orderitem_query'](**parameters))
 
-        return queryset.filter(id__in=variations.values('product_id')).filter(id__in=prices.values('product_id'))
+        return queryset.filter(id__in=variations.values('product_id')).filter(id__in=orderitems.values('id'))
 
     def apply(self, order, items, **kwargs):
         if not items:
@@ -113,7 +115,7 @@ class DiscountBase(models.Model):
 
         if tax_included:
             # TODO how should this value be calculated in the presence of multiple tax rates?
-            tax_rate = items[0].product_price.tax_class.rate
+            tax_rate = items[0].tax_class.rate
             discount = self.value / (1 + tax_rate/100)
         else:
             discount = self.value
