@@ -152,6 +152,10 @@ class ViewTest(PlataTest):
             'contact-shipping_same_as_billing': True,
             'contact-email': 'something@example.com',
             'contact-currency': 'CHF',
+            }), '/discounts/')
+
+        self.assertRedirects(self.client.post('/discounts/', {
+            'proceed': 'True',
             }), '/confirmation/')
 
         self.assertEqual(self.client.post('/confirmation/', {}).status_code, 200)
