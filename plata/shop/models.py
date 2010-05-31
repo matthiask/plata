@@ -359,13 +359,8 @@ class OrderPayment(models.Model):
         verbose_name_plural = _('order payments')
 
     def __unicode__(self):
-        if self.authorized:
-            return u'Authorized payment of %s %.2f for %s' % (
-                self.currency,
-                self.amount,
-                self.order,
-                )
-        return u'Not authorized payment of %s %.2f for %s' % (
+        return u'%s of %s %.2f for %s' % (
+            self.authorized and u'Authorized' or u'Not authorized',
             self.currency,
             self.amount,
             self.order,
