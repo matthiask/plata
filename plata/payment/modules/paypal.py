@@ -1,7 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
 import urllib
-import urllib2
 import sys
 
 from django.conf import settings
@@ -64,6 +63,7 @@ class PaymentProcessor(ProcessorBase):
     @method_decorator(csrf_exempt)
     @method_decorator(require_POST)
     def ipn(self, request):
+        request.encoding = 'windows-1252'
         PAYPAL = settings.PAYPAL
 
         if PAYPAL['LIVE']:
@@ -83,16 +83,11 @@ class PaymentProcessor(ProcessorBase):
                 sys.stderr.write(repr(parameters).encode('utf-8'))
                 sys.stderr.flush()
 
-                parameters['cmd']='_notify-validate'
+                postparams = {'cmd': '_notify-validate'}
+                for k, v in parameters.iteritems():
+                    postparams[k] = v.encode('windows-1252')
+                status = urllib.urlopen(PP_URL, urllib.urlencode(postparams)).read()
 
-                #parameters = dict([(k, v.encode(parameters['charset'])) for k, v in parameters.items()])
-
-                params = urllib.urlencode(parameters) #.decode(parameters['charset'])
-                req = urllib2.Request(PP_URL, params)
-                req.add_header("Content-type", "application/x-www-form-urlencoded")
-                sys.stderr.write('stage 3');sys.stderr.flush()
-                response = urllib2.urlopen(req)
-                status = response.read()
                 sys.stderr.write('STATUS %r' % status)
                 if not status == "VERIFIED":
                     #print "The request could not be verified, check for fraud." + str(status)
