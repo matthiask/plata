@@ -1,3 +1,10 @@
+..taxes_and_discounts:
+
+===================
+Taxes and Discounts
+===================
+
+
 If discounts are applied before taxes, things are kept simple: Tax
 calculation can be performed on the discounted subtotal of line
 items and of whole orders.

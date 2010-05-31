@@ -1,0 +1,25 @@
+.. _index:
+
+===========================================
+Plata - the lean and mean Django-based Shop
+===========================================
+
+
+Contents
+========
+
+.. toctree::
+   :maxdepth: 2
+   :numbered:
+
+   overview
+   installation
+   taxes_and_discounts
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
