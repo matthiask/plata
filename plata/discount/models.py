@@ -71,7 +71,6 @@ class DiscountBase(models.Model):
         return self.name
 
     def eligible_products(self, order, items, products=None):
-
         if not products:
             shop = plata.shop_instance()
             products = shop.product_model._default_manager.all()
@@ -91,7 +90,7 @@ class DiscountBase(models.Model):
             if 'orderitem_query' in cfg:
                 orderitems = orderitems.filter(cfg['orderitem_query'](**parameters))
 
-        return products.filter(id__in=variations.values('product_id')).filter(id__in=orderitems.values('id'))
+        return products.filter(id__in=variations.values('product_id')).filter(id__in=orderitems.values('variation__product__id'))
 
     def apply(self, order, items, **kwargs):
         if not items:
