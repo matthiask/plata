@@ -1,0 +1,5 @@
+include LICENSE
+recursive-include plata/locale *.po
+recursive-include plata/locale *.mo
+recursive-include plata/shop/templates *.html
+recursive-include plata/shop/templates *.txt
