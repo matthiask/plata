@@ -33,6 +33,7 @@ class Shop(object):
         return patterns('',
             url(r'^cart/$', self.cart, name='plata_shop_cart'),
             url(r'^checkout/$', self.checkout, name='plata_shop_checkout'),
+            url(r'^discounts/$', self.discounts, name='plata_shop_discounts'),
             url(r'^confirmation/$', self.confirmation, name='plata_shop_confirmation'),
 
             url(r'^order/success/$', self.order_success, name='plata_order_success'),
@@ -290,7 +291,7 @@ class Shop(object):
                 if order.status < self.order_model.CHECKOUT:
                     order.update_status(self.order_model.CHECKOUT, 'Checkout completed')
 
-                return redirect('plata_shop_confirmation')
+                return redirect('plata_shop_discounts')
         else:
             c_form = ContactForm(instance=order.contact, prefix='contact')
             o_form = OrderForm(instance=order, prefix='order')
@@ -303,6 +304,59 @@ class Shop(object):
 
     def render_checkout(self, request, context):
         return render_to_response('plata/shop_checkout.html',
+            self.get_context(request, context))
+
+    def discounts(self, request):
+        order = self.order_from_request(request, create=False)
+
+        if not order:
+            return HttpResponseRedirect(reverse('plata_shop_cart') + '?empty=1')
+
+
+        class DiscountForm(forms.Form):
+            code = forms.CharField(label=_('code'), max_length=30, required=False)
+
+            def __init__(self, *args, **kwargs):
+                self.order = kwargs.pop('order')
+                super(DiscountForm, self).__init__(*args, **kwargs)
+
+            def clean_code(self):
+                code = self.cleaned_data.get('code')
+                if not code:
+                    return self.cleaned_data
+
+                from plata.discount.models import Discount
+                try:
+                    discount = Discount.objects.get(code=code)
+                except Discount.DoesNotExist:
+                    raise forms.ValidationError(_('This code does not validate'))
+
+                discount.validate(self.order)
+                self.cleaned_data['discount'] = discount
+                return code
+
+        if request.method == 'POST':
+            form = DiscountForm(request.POST, order=order)
+
+            if form.is_valid():
+                if 'discount' in form.cleaned_data:
+                    order.add_discount(form.cleaned_data['discount'])
+
+                if 'proceed' in request.POST:
+                    return redirect('plata_shop_confirmation')
+                return HttpResponseRedirect('.')
+        else:
+            form = DiscountForm(order=order)
+
+        order.recalculate_total()
+
+        return self.render_discounts(request, {
+            'order': order,
+            'form': form,
+            })
+
+    def render_discounts(self, request, context):
+        return render_to_response('plata/shop_discounts.html',
             self.get_context(request, context))
 
     def confirmation(self, request):
