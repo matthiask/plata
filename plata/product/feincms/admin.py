@@ -4,13 +4,14 @@ from django.utils.translation import ugettext_lazy as _
 from feincms.admin.item_editor import ItemEditor
 
 from plata.product.admin import ProductVariationInline,\
-    ProductPriceInline, ProductImageInline
+    ProductPriceInline, ProductImageInline, ProductForm
 from plata.product.models import Product
 from . import models
 
 
 class ProductAdmin(ItemEditor):
-    show_on_top = ('is_active', 'name', 'slug')
+    form = ProductForm
+    show_on_top = ('is_active', 'name', 'slug', 'sku')
     inlines = [ProductVariationInline, ProductPriceInline, ProductImageInline]
     list_display = ('is_active', 'name', 'sku', 'ordering')
     list_display_links = ('name',)

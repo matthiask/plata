@@ -16,6 +16,10 @@ class ProductImageInline(admin.TabularInline):
     extra = 0
 
 
+class ProductForm(forms.ModelForm):
+    sku = forms.CharField(label=_('SKU'), max_length=100, required=False)
+
+
 class ProductVariationFormSet(BaseInlineFormSet):
     def clean(self):
         super(ProductVariationFormSet, self).clean()
@@ -112,6 +116,7 @@ admin.site.register(models.OptionGroup,
 
 admin.site.register(models.Product,
     filter_horizontal=('categories',),
+    form=ProductForm,
     inlines=[ProductVariationInline, ProductPriceInline, ProductImageInline],
     list_display=('is_active', 'name', 'sku', 'ordering'),
     list_display_links=('name',),
