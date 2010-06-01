@@ -175,9 +175,11 @@ class Product(models.Model):
 
                 instance = qset.get()
             except ProductVariation.DoesNotExist:
+                parts = [self.sku]
+                parts.extend(o.value for o in variation)
                 instance = self.variations.create(
                     is_active=self.is_active,
-                    sku=self.sku + '-' + u'-'.join(v.value for v in variation),
+                    sku=u'-'.join(parts),
                     )
                 instance.options = variation
             except ProductVariation.MultipleObjectsReturned:
