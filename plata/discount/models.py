@@ -1,6 +1,7 @@
 from datetime import date, datetime
 
 from django import forms
+from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import get_callable
 from django.db import models
@@ -39,7 +40,12 @@ class DiscountBase(models.Model):
                 ('products', forms.ModelMultipleChoiceField(
                     Product.objects.all(),
                     label=_('products'),
-                    required=True)),
+                    required=True,
+                    widget=FilteredSelectMultiple(
+                        verbose_name=_('products'),
+                        is_stacked=False,
+                        ),
+                    )),
                 ],
             'variation_query': lambda products: Q(product__in=products),
             }),
@@ -49,7 +55,12 @@ class DiscountBase(models.Model):
                 ('categories', forms.ModelMultipleChoiceField(
                     Category.objects.all(),
                     label=_('categories'),
-                    required=True)),
+                    required=True,
+                    widget=FilteredSelectMultiple(
+                        verbose_name=_('categories'),
+                        is_stacked=False,
+                        ),
+                    )),
                 ],
             'variation_query': lambda categories: Q(product__categories__in=categories),
             }),
