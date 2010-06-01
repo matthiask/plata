@@ -43,13 +43,15 @@ class DiscountAdminForm(forms.ModelForm):
         request = _discount_admin_state[currentThread()]
         request._plata_discount_config_fieldsets = []
 
-        if self.instance.pk:
-            selected = self.instance.config.keys()
-        elif hasattr(self.data, 'getlist'):
-            selected = self.data.getlist('config_options') or ('all',)
-        else:
-            selected = ('all',)
+        try:
+            selected = self.data.getlist('config_options')
+        except AttributeError:
+            if self.instance.pk:
+                selected = self.instance.config.keys()
+            else:
+                selected = None
 
+        selected = selected or ('all',)
         self.fields['config_options'].initial = selected
 
         for s in selected:
