@@ -29,5 +29,5 @@ class Producer(models.Model):
         return self.name
 
 
-Product.add_to_class('producer', models.ForeignKey(Producer, blank=True, null=True,
+Product.add_to_class('producer', models.ForeignKey(Producer,
     related_name='products', verbose_name=_('producer')))
