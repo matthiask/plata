@@ -69,6 +69,13 @@ class AdminTest(PlataTest):
             'options-1-ordering': 20,
             })
 
+        self.client.post('/admin/product/producer/add/', {
+            'is_active': True,
+            'name': 'Producer',
+            'slug': 'producer',
+            'ordering': 0,
+            })
+
         product_data = {
             'description': '',
             'images-INITIAL_FORMS': '0',
@@ -80,6 +87,7 @@ class AdminTest(PlataTest):
             'ordering': '100',
             'sku': '324wregft5re',
             'option_groups': [1,2],
+            'producer': 1,
 
             'prices-0-id': '',
             'prices-0-product': '',

@@ -105,6 +105,7 @@ INSTALLED_APPS = (
     'plata.payment',
     'plata.product',
     'plata.product.feincms',
+    'plata.product.producer',
     'plata.product.stock',
     'plata.shop',
 
