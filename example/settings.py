@@ -110,6 +110,7 @@ INSTALLED_APPS = (
     'plata.shop',
 
     'feincms',
+    'feincms.module.medialibrary',
     'example',
 )
 
