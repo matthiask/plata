@@ -9,6 +9,10 @@ from django.utils.translation import ugettext_lazy as _
 from . import models
 
 
+# Internal state tracking helper for config fields
+_discount_admin_state = {}
+
+
 def jsonize(v):
     if isinstance(v, dict):
         return dict((i1, jsonize(i2)) for i1, i2 in v.items())
@@ -20,9 +24,6 @@ def jsonize(v):
 
 
 class DiscountAdminForm(forms.ModelForm):
-    # Internal state tracking helper for config fields
-    _state = {}
-
     class Meta:
         widgets = {
             'config_json': forms.Textarea(attrs={'rows': 3}),
@@ -39,8 +40,7 @@ class DiscountAdminForm(forms.ModelForm):
             help_text=_('Save and continue editing to configure options.'),
             )
 
-        request = self._state[currentThread()]
-        request._plata_discount_form = self
+        request = _discount_admin_state[currentThread()]
         request._plata_discount_config_fieldsets = []
 
         if self.instance.pk:
@@ -98,9 +98,8 @@ class DiscountAdmin(admin.ModelAdmin):
     list_filter = ('type',)
 
     def get_form(self, request, obj=None, **kwargs):
-        form = super(DiscountAdmin, self).get_form(request, obj, **kwargs)
-        form._state[currentThread()] = request
-        return form
+        _discount_admin_state[currentThread()] = request
+        return super(DiscountAdmin, self).get_form(request, obj, **kwargs)
 
     def get_fieldsets(self, request, obj=None):
         fieldsets = super(DiscountAdmin, self).get_fieldsets(request, obj)
@@ -111,8 +110,7 @@ class DiscountAdmin(admin.ModelAdmin):
             }))
 
         fieldsets.extend(request._plata_discount_config_fieldsets)
-        del request._plata_discount_form._state[currentThread()]
-        del request._plata_discount_form
+        del _discount_admin_state[currentThread()]
 
         return fieldsets
 
