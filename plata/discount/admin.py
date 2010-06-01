@@ -1,3 +1,5 @@
+from threading import currentThread
+
 from django import forms
 from django.contrib import admin
 from django.db.models import Model
@@ -18,6 +20,9 @@ def jsonize(v):
 
 
 class DiscountAdminForm(forms.ModelForm):
+    # Internal state tracking helper for config fields
+    _state = {}
+
     class Meta:
         widgets = {
             'config_json': forms.Textarea(attrs={'rows': 3}),
@@ -34,29 +39,34 @@ class DiscountAdminForm(forms.ModelForm):
             help_text=_('Save and continue editing to configure options.'),
             )
 
-        self.instance.config_fieldsets = []
+        request = self._state[currentThread()]
+        request._plata_discount_form = self
+        request._plata_discount_config_fieldsets = []
 
         if self.instance.pk:
             selected = self.instance.config.keys()
-            self.fields['config_options'].initial = selected
-
-            for s in selected:
-                cfg = dict(self._meta.model.CONFIG_OPTIONS)[s]
-
-                fieldset = [
-                    _('Discount configuration: %s') % cfg.get('title', s),
-                    {'fields': []},
-                    ]
-
-                for k, f in cfg.get('form_fields', []):
-                    self.fields['%s_%s' % (s, k)] = f
-                    if k in self.instance.config[s]:
-                        f.initial = self.instance.config[s].get(k)
-                    fieldset[1]['fields'].append('%s_%s' % (s, k))
-
-                self.instance.config_fieldsets.append(fieldset)
+        elif hasattr(self.data, 'getlist'):
+            selected = self.data.getlist('config_options') or ('all',)
         else:
-            self.fields['config_options'].initial = ('all',)
+            selected = ('all',)
+
+        self.fields['config_options'].initial = selected
+
+        for s in selected:
+            cfg = dict(self._meta.model.CONFIG_OPTIONS)[s]
+
+            fieldset = [
+                _('Discount configuration: %s') % cfg.get('title', s),
+                {'fields': []},
+                ]
+
+            for k, f in cfg.get('form_fields', []):
+                self.fields['%s_%s' % (s, k)] = f
+                if k in self.instance.config.get(s, {}):
+                    f.initial = self.instance.config[s].get(k)
+                fieldset[1]['fields'].append('%s_%s' % (s, k))
+
+            request._plata_discount_config_fieldsets.append(fieldset)
 
     def clean(self):
         data = self.cleaned_data
@@ -87,6 +97,11 @@ class DiscountAdmin(admin.ModelAdmin):
     list_display = ('name', 'type', 'code', 'value')
     list_filter = ('type',)
 
+    def get_form(self, request, obj=None, **kwargs):
+        form = super(DiscountAdmin, self).get_form(request, obj, **kwargs)
+        form._state[currentThread()] = request
+        return form
+
     def get_fieldsets(self, request, obj=None):
         fieldsets = super(DiscountAdmin, self).get_fieldsets(request, obj)
         fieldsets[0][1]['fields'].remove('config_json')
@@ -95,8 +110,9 @@ class DiscountAdmin(admin.ModelAdmin):
             'fields': ('config_json', 'config_options'),
             }))
 
-        if obj:
-            fieldsets.extend(obj.config_fieldsets)
+        fieldsets.extend(request._plata_discount_config_fieldsets)
+        del request._plata_discount_form._state[currentThread()]
+        del request._plata_discount_form
 
         return fieldsets
 
