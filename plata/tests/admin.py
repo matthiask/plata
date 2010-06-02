@@ -238,14 +238,12 @@ class AdminTest(PlataTest):
 
         discount_data['config_options'] = ('products',)
         discount_data['code'] += '-'
-        self.client.post('/admin/discount/discount/add/', discount_data)
-        discount_data['config_json'] = Discount.objects.get(pk=3).config_json
 
         # Does not redirect (invalid configuration)
-        self.assertEqual(self.client.post('/admin/discount/discount/3/', discount_data).status_code, 200)
+        self.assertEqual(self.client.post('/admin/discount/discount/add/', discount_data).status_code, 200)
 
         discount_data['products_products'] = ('1',)
-        self.assertRedirects(self.client.post('/admin/discount/discount/3/', discount_data),
+        self.assertRedirects(self.client.post('/admin/discount/discount/add/', discount_data),
             '/admin/discount/discount/')
 
         discount_data = model_to_dict(Discount.objects.get(pk=3))
