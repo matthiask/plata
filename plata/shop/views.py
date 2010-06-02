@@ -3,6 +3,7 @@ from decimal import Decimal
 from django import forms
 from django.contrib import messages
 from django.core.urlresolvers import get_callable, reverse
+from django.db.models import ObjectDoesNotExist
 from django.forms.models import inlineformset_factory, modelform_factory
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render_to_response
@@ -135,11 +136,10 @@ class Shop(object):
         OrderItemForm = self.order_modify_item_form(request, product)
 
         if request.method == 'POST':
-            form = OrderItemForm(request.POST)
+            order = self.order_from_request(request, create=True)
+            form = OrderItemForm(request.POST, order=order)
 
             if form.is_valid():
-                order = self.order_from_request(request, create=True)
-
                 order.modify_item(
                     form.cleaned_data.get('variation'),
                     form.cleaned_data.get('quantity'),
@@ -164,6 +164,9 @@ class Shop(object):
             quantity = forms.IntegerField(label=_('quantity'), initial=1)
 
             def __init__(self, *args, **kwargs):
+                if 'order' in kwargs:
+                    self.order = kwargs.pop('order')
+
                 super(Form, self).__init__(*args, **kwargs)
                 for group in product.option_groups.all():
                     self.fields['option_%s' % group.id] = forms.ModelChoiceField(
@@ -182,6 +185,11 @@ class Shop(object):
                         variations = variations.filter(options=self.cleaned_data.get('option_%s' % group.id))
 
                     data['variation'] = variations.get()
+
+                try:
+                    data['price'] = product.get_price(currency=self.order.currency)
+                except ObjectDoesNotExist:
+                    raise forms.ValidationError(_('Price could not be determined.'))
 
                 return data
         return Form
