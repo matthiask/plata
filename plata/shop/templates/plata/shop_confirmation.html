@@ -7,49 +7,7 @@
 {% block content %}
 <h1>{% trans "Order summary" %}</h1>
 
-<h2>{% trans "Billing address" %}</h2>
-{{ order.billing_company }}<br />
-{{ order.billing_first_name }} {{ order.billing_last_name }}<br />
-{{ order.billing_address|linebreaksbr }}<br />
-{{ order.billing_country }}-{{ order.billing_zip_code }} {{ order.billing_city }}<br />
-
-<h2>{% trans "Shipping address" %}</h2>
-{{ order.shipping_company }}<br />
-{{ order.shipping_first_name }} {{ order.shipping_last_name }}<br />
-{{ order.shipping_address|linebreaksbr }}<br />
-{{ order.shipping_country }}-{{ order.shipping_zip_code }} {{ order.shipping_city }}<br />
-
-<h2>{% trans "Order items" %}</h2>
-<table border="1">
-{% for item in order.items.all %}
-<tr>
-    <td>{{ item.variation }}</td>
-    <td>{{ item.quantity }} * {{ item.currency }} {{ item.unit_price|floatformat:2 }}</td>
-    <td>{{ item.currency }} {{ item.discounted_subtotal|floatformat:2 }}</td>
-</tr>
-{% endfor %}
-</table>
-
-<h2>{% trans "Total" %}</h2>
-<table>
-<tr>
-    <th>{% trans "subtotal"|capfirst %}</th>
-    <td>{{ order.currency }} {{ order.subtotal|floatformat:2 }}</td>
-</tr>
-<tr>
-    <th>{% trans "discount"|capfirst %}</th>
-    <td>{{ order.currency }} {{ order.discount|floatformat:2 }}</td>
-</tr>
-<tr>
-    <th>{% trans "tax"|capfirst %}</th>
-    <td>{{ order.currency }} {{ order.tax|floatformat:2 }}</td>
-</tr>
-<tr>
-    <th>{% trans "total"|capfirst %}</th>
-    <td>{{ order.currency }} {{ order.total|floatformat:2 }}</td>
-</tr>
-</table>
-
+{% include "plata/_order_overview.html" %}
 
 <form method="post" action=".">{% csrf_token %}
 <h2>{% trans "Payment and order confirmation" %}</h2>
