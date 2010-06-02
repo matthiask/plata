@@ -4,13 +4,14 @@ from django.conf.urls.defaults import *
 from django.contrib import admin
 from django.shortcuts import redirect
 
+from plata.product.feincms.models import CMSProduct
 from plata.shop.views import Shop
 from plata.shop.models import Product, Contact, Order, Discount
 
 
 admin.autodiscover()
 
-shop = Shop(Product, Contact, Order, Discount)
+shop = Shop(CMSProduct, Contact, Order, Discount)
 
 
 urlpatterns = patterns('',
