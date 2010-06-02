@@ -393,5 +393,6 @@ class AppliedDiscount(DiscountBase):
                                                       # table.
 
     class Meta:
+        ordering = ['type', 'name']
         verbose_name = _('applied discount')
         verbose_name_plural = _('applied discounts')
