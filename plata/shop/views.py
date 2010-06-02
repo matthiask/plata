@@ -15,11 +15,11 @@ from django.utils.translation import ugettext as _
 import plata
 
 
-def cart_not_empty(order, shop, request, **kwargs):
+def cart_not_empty(order, **kwargs):
     if not order or not order.items.count():
         return HttpResponseRedirect(reverse('plata_shop_cart') + '?empty=1')
 
-def order_confirmed(order, shop, request, **kwargs):
+def order_confirmed(order, **kwargs):
     if order and order.is_confirmed():
         if order.is_paid():
             return redirect('plata_order_already_paid')
@@ -32,7 +32,7 @@ def checkout_process_decorator(*checks):
             order = self.order_from_request(request, create=False)
 
             for check in checks:
-                r = check(order, self, request)
+                r = check(order=order, shop=self, request=request)
                 if r: return r
 
             return fn(self, request, order=order, *args, **kwargs)
