@@ -245,21 +245,29 @@ class Shop(object):
 
             if formset.is_valid():
                 changed = False
-                for form in formset.forms:
-                    if formset.can_delete and formset._should_delete_form(form):
-                        order.modify_item(form.instance.variation,
-                            absolute=0,
-                            recalculate=False)
-                        changed = True
-                    elif form.has_changed():
-                        order.modify_item(form.instance.variation,
-                            absolute=form.cleaned_data['quantity'],
-                            recalculate=False)
-                        changed = True
 
-                if changed:
-                    order.recalculate_total()
-                    messages.success(request, _('The cart has been updated.'))
+                try:
+                    for form in formset.forms:
+                        if formset.can_delete and formset._should_delete_form(form):
+                            order.modify_item(form.instance.variation,
+                                absolute=0,
+                                recalculate=False)
+                            changed = True
+                        elif form.has_changed():
+                            order.modify_item(form.instance.variation,
+                                absolute=form.cleaned_data['quantity'],
+                                recalculate=False)
+                            changed = True
+
+                    if changed:
+                        order.recalculate_total()
+                        messages.success(request, _('The cart has been updated.'))
+
+                except ValidationError, e:
+                    if e.code == 'order_sealed':
+                        [messages.error(request, msg) for msg in e.messages]
+                    else:
+                        raise
 
                 if 'checkout' in request.POST:
                     return redirect('plata_shop_checkout')
