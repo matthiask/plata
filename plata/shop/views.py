@@ -15,14 +15,17 @@ from django.utils.translation import ugettext as _
 import plata
 
 
-def cart_not_empty(order, **kwargs):
+def cart_not_empty(order, request, **kwargs):
     if not order or not order.items.count():
+        messages.warning(request, _('Cart is empty.'))
         return HttpResponseRedirect(reverse('plata_shop_cart') + '?empty=1')
 
-def order_confirmed(order, **kwargs):
+def order_confirmed(order, request, **kwargs):
     if order and order.is_confirmed():
         if order.is_paid():
             return redirect('plata_order_already_paid')
+        messages.warning(request,
+            _('You have already confirmed this order earlier, but it is not fully paid for yet.'))
         return HttpResponseRedirect(reverse('plata_shop_confirmation') + '?confirmed=1')
 
 
@@ -435,6 +438,8 @@ class Shop(object):
         return self.render_confirmation(request, {
             'order': order,
             'form': form,
+            'confirmed': request.GET.get('confirmed', False), # Whether the order had
+                                                              # already been confirmed
             })
 
     def render_confirmation(self, request, context):
