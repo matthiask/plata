@@ -30,6 +30,7 @@ class ViewTest(PlataTest):
     def test_01_cart_empty(self):
         self.assertContains(self.client.get('/cart/'), 'Cart is empty')
         self.assertRedirects(self.client.get('/checkout/'), '/cart/?empty=1')
+        self.assertRedirects(self.client.get('/discounts/'), '/cart/?empty=1')
         self.assertRedirects(self.client.get('/confirmation/'), '/cart/?empty=1')
 
     def test_02_authenticated_user_has_contact(self):
