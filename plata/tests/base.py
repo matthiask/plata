@@ -89,6 +89,8 @@ class PlataTest(TestCase):
     def create_product(self):
         tax_class, tax_class_germany, tax_class_something = self.create_tax_classes()
 
+        Product = plata.shop_instance().product_model
+
         product = Product.objects.create(
             name='Test Product 1',
             slug='prod%s' % random.random(),
