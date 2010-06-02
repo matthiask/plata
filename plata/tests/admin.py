@@ -26,6 +26,12 @@ class AdminTest(PlataTest):
         u.is_superuser = True
         u.save()
 
+        shop = plata.shop_instance()
+        self.product_admin_url = '/admin/%s/%s/' % (
+            shop.product_model._meta.app_label,
+            shop.product_model._meta.module_name,
+            )
+
     def login(self):
         self.client.login(username='admin', password='password')
 
@@ -108,12 +114,16 @@ class AdminTest(PlataTest):
             'rawcontent-MAX_NUM_FORMS': '',
             'rawcontent-TOTAL_FORMS': '0',
 
+            'mediafilecontent-INITIAL_FORMS': '0',
+            'mediafilecontent-MAX_NUM_FORMS': '',
+            'mediafilecontent-TOTAL_FORMS': '0',
+
             'variations-INITIAL_FORMS': '0',
             'variations-MAX_NUM_FORMS': '',
             'variations-TOTAL_FORMS': '0',
             }
 
-        self.client.post('/admin/product/product/add/', product_data)
+        self.client.post(self.product_admin_url + 'add/', product_data)
         self.assertEqual(Product.objects.count(), 1)
         self.assertEqual(ProductVariation.objects.count(), 4)
         self.assertEqual(ProductPrice.objects.count(), 1)
@@ -122,8 +132,8 @@ class AdminTest(PlataTest):
 
         product_data['slug'] += '-'
         product_data['sku'] += '-'
-        self.client.post('/admin/product/product/add/', product_data)
-        self.client.post('/admin/product/product/add/', product_data)
+        self.client.post(self.product_admin_url + 'add/', product_data)
+        self.client.post(self.product_admin_url + 'add/', product_data)
         self.assertEqual(Product.objects.count(), 2)
         self.assertEqual(ProductVariation.objects.count(), 8)
         self.assertEqual(ProductPrice.objects.count(), 2)
@@ -168,8 +178,8 @@ class AdminTest(PlataTest):
             'variations-TOTAL_FORMS': '4',
             })
 
-        self.assertRedirects(self.client.post('/admin/product/product/2/', product_data),
-            '/admin/product/product/')
+        self.assertRedirects(self.client.post(self.product_admin_url + '2/', product_data),
+            self.product_admin_url)
 
         product_data.update({
             'variations-0-sku': '324wregft5re-0',
@@ -178,11 +188,11 @@ class AdminTest(PlataTest):
             'variations-3-sku': '324wregft5re-3',
             })
 
-        self.assertRedirects(self.client.post('/admin/product/product/2/', product_data),
-            '/admin/product/product/')
+        self.assertRedirects(self.client.post(self.product_admin_url + '2/', product_data),
+            self.product_admin_url)
 
         product_data['variations-0-options'] = [1, 4]
-        self.assertContains(self.client.post('/admin/product/product/2/', product_data),
+        self.assertContains(self.client.post(self.product_admin_url + '2/', product_data),
             'Combination of options already encountered')
         product_data['variations-0-options'] = [1, 3]
 
@@ -192,13 +202,13 @@ class AdminTest(PlataTest):
 
         self.assertEqual(p.option_groups.count(), 1)
 
-        self.assertContains(self.client.post('/admin/product/product/2/', product_data),
+        self.assertContains(self.client.post(self.product_admin_url + '2/', product_data),
             'Please select options from the following groups')
 
         product_data['variations-0-options'] = [1, 2]
-        self.assertContains(self.client.post('/admin/product/product/2/', product_data),
+        self.assertContains(self.client.post(self.product_admin_url + '2/', product_data),
             'Please select options from the following groups')
-        self.assertContains(self.client.post('/admin/product/product/2/', product_data),
+        self.assertContains(self.client.post(self.product_admin_url + '2/', product_data),
             'Only one option per group allowed')
 
         discount_data = {
