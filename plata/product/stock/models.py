@@ -111,6 +111,10 @@ class StockTransaction(models.Model):
     objects = StockTransactionManager()
 
     def save(self, *args, **kwargs):
+        if not self.period_id:
+            self.period = Period.objects.create(name='Automatically created',
+                notes='Automatically created because no period existed yet.')
+
         super(StockTransaction, self).save(*args, **kwargs)
         self.product.save()
 
