@@ -109,6 +109,8 @@ INSTALLED_APPS = (
     'plata.product.stock',
     'plata.shop',
 
+    'cldr_countries',
+
     'feincms',
     'feincms.module.medialibrary',
     'example',
