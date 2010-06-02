@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from django import forms
 from django.contrib import messages
+from django.core.exceptions import ValidationError
 from django.core.urlresolvers import get_callable, reverse
 from django.db.models import ObjectDoesNotExist
 from django.forms.models import inlineformset_factory, modelform_factory
@@ -140,13 +141,20 @@ class Shop(object):
             form = OrderItemForm(request.POST, order=order)
 
             if form.is_valid():
-                order.modify_item(
-                    form.cleaned_data.get('variation'),
-                    form.cleaned_data.get('quantity'),
-                    )
+                try:
+                    order.modify_item(
+                        form.cleaned_data.get('variation'),
+                        form.cleaned_data.get('quantity'),
+                        )
+                    messages.success(request, _('The cart has been updated.'))
+                except ValidationError, e:
+                    if e.code == 'order_sealed':
+                        [messages.error(request, msg) for msg in e.messages]
+                    else:
+                        raise
+
                 order.recalculate_total()
 
-                messages.success(request, 'Successfully updated cart.')
                 return HttpResponseRedirect('.')
         else:
             form = OrderItemForm()
