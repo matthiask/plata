@@ -10,6 +10,7 @@ def product_list(request):
     return list_detail.object_list(request,
         queryset=shop.product_model.objects.active(),
         paginate_by=9,
+        template_name='product/product_list.html',
         )
 
 
