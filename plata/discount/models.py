@@ -177,6 +177,8 @@ class Discount(DiscountBase):
         if self.valid_until and today > self.valid_until:
             messages.append(_('Discount is expired.'))
 
+        # TODO allowed_uses check
+
         if messages:
             raise ValidationError(messages)
 
