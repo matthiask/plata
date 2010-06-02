@@ -1,4 +1,5 @@
 from decimal import Decimal
+from functools import wraps
 
 from django import forms
 from django.contrib import messages
@@ -12,6 +13,31 @@ from django.template import RequestContext
 from django.utils.translation import ugettext as _
 
 import plata
+
+
+def cart_not_empty(order, shop, request, **kwargs):
+    if not order or not order.items.count():
+        return HttpResponseRedirect(reverse('plata_shop_cart') + '?empty=1')
+
+def order_confirmed(order, shop, request, **kwargs):
+    if order and order.is_confirmed():
+        if order.is_paid():
+            return redirect('plata_order_already_paid')
+        return HttpResponseRedirect(reverse('plata_shop_confirmation') + '?confirmed=1')
+
+
+def checkout_process_decorator(*checks):
+    def _dec(fn):
+        def _fn(self, request, *args, **kwargs):
+            order = self.order_from_request(request, create=False)
+
+            for check in checks:
+                r = check(order, self, request)
+                if r: return r
+
+            return fn(self, request, order=order, *args, **kwargs)
+        return wraps(fn)(_fn)
+    return _dec
 
 
 class Shop(object):
@@ -202,9 +228,8 @@ class Shop(object):
                 return data
         return Form
 
-    def cart(self, request):
-        order = self.order_from_request(request, create=False)
-
+    @checkout_process_decorator(order_confirmed)
+    def cart(self, request, order):
         if not order:
             return self.render_cart_empty(request, {})
 
@@ -286,12 +311,8 @@ class Shop(object):
     def checkout_order_form(self, request, order):
         return modelform_factory(self.order_model, fields=('notes',))
 
-    def checkout(self, request):
-        order = self.order_from_request(request, create=False)
-
-        if not order:
-            return HttpResponseRedirect(reverse('plata_shop_cart') + '?empty=1')
-
+    @checkout_process_decorator(cart_not_empty, order_confirmed)
+    def checkout(self, request, order):
         ContactForm = self.checkout_contact_form(request, order)
         OrderForm = self.checkout_order_form(request, order)
 
@@ -349,12 +370,8 @@ class Shop(object):
             self._discount_form_cache = DiscountForm
         return self._discount_form_cache
 
-    def discounts(self, request):
-        order = self.order_from_request(request, create=False)
-
-        if not order:
-            return HttpResponseRedirect(reverse('plata_shop_cart') + '?empty=1')
-
+    @checkout_process_decorator(cart_not_empty, order_confirmed)
+    def discounts(self, request, order):
         DiscountForm = self.discount_form(request, order)
 
         if request.method == 'POST':
@@ -381,12 +398,8 @@ class Shop(object):
         return render_to_response('plata/shop_discounts.html',
             self.get_context(request, context))
 
-    def confirmation(self, request):
-        order = self.order_from_request(request, create=False)
-
-        if not order:
-            return HttpResponseRedirect(reverse('plata_shop_cart') + '?empty=1')
-
+    @checkout_process_decorator(cart_not_empty)
+    def confirmation(self, request, order):
         order.recalculate_total()
         payment_modules = self.get_payment_modules()
         payment_module_choices = [(m.__module__, m.name) for m in payment_modules]

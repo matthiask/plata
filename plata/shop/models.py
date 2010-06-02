@@ -114,6 +114,9 @@ class Order(BillingShippingAddress):
         return self.balance_remaining <= 0
     is_paid.boolean = True
 
+    def is_confirmed(self):
+        return self.status >= self.CONFIRMED
+
     def validate(self):
         """
         A few self-checks. These should never fail under normal circumstances.
