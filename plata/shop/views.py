@@ -10,6 +10,7 @@ from django.forms.models import inlineformset_factory, modelform_factory
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
+from django.utils.text import capfirst
 from django.utils.translation import ugettext as _
 
 import plata
@@ -503,7 +504,7 @@ class Shop(object):
         pdf.next_frame()
 
         pdf.p(u'%s: %s' % (
-            _('Order date'),
+            capfirst(_('order date')),
             order.confirmed and order.confirmed.strftime('%d.%m.%Y') or _('Not confirmed yet'),
             ))
         pdf.spacer(3*mm)
@@ -512,10 +513,10 @@ class Shop(object):
         pdf.hr()
 
         pdf.table([(
-                'Product',
-                'Quantity',
-                'Unit price',
-                'Line item price',
+                capfirst(_('product')),
+                capfirst(_('quantity')),
+                capfirst(_('unit price')),
+                capfirst(_('line item price')),
             )]+[
             (
                 unicode(item.variation),
@@ -527,20 +528,20 @@ class Shop(object):
 
         summary_table = [
             ('', ''),
-            ('Subtotal', u'%.2f' % order.subtotal),
+            (capfirst(_('subtotal')), u'%.2f' % order.subtotal),
             ]
 
         if order.discount:
-            summary_table.append(('Discount', u'%.2f' % order.discount))
+            summary_table.append((capfirst(_('discount')), u'%.2f' % order.discount))
 
         if order.shipping:
-            summary_table.append(('Shipping', u'%.2f' % order.shipping))
+            summary_table.append((capfirst(_('shipping')), u'%.2f' % order.shipping))
 
         pdf.table(summary_table, (12*cm, 4.4*cm), pdf.style.table)
 
         pdf.spacer(1*mm)
         pdf.table([
-            ('Total %s' % order.currency, u'%.2f' % order.total),
+            (u'%s %s' % (capfirst(_('total')), order.currency), u'%.2f' % order.total),
             ], (12*cm, 4.4*cm), pdf.style.tableHead)
 
         pdf.generate()
