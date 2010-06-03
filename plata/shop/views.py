@@ -98,6 +98,18 @@ class Shop(object):
             if key in request.session:
                 del request.session[key]
 
+    def set_order_on_request(self, request, order):
+        if order:
+            request.session['shop_order'] = order.pk
+        elif 'shop_order' in request.session:
+            del request.session['shop_order']
+
+    def set_contact_on_request(self, request, contact):
+        if contact:
+            request.session['shop_contact'] = contact.pk
+        elif 'shop_contact' in request.session:
+            del request.session['shop_contact']
+
     def order_from_request(self, request, create=False):
         try:
             return self.order_model.objects.get(pk=request.session.get('shop_order'))
@@ -448,9 +460,7 @@ class Shop(object):
 
     def order_success(self, request):
         order = self.order_from_request(request)
-
-        if 'shop_order' in request.session:
-            del request.session['shop_order']
+        self.set_order_on_request(request, order=None)
 
         return render_to_response('plata/shop_order_success.html',
             self.get_context(request, {
@@ -467,6 +477,7 @@ class Shop(object):
 
     def order_already_paid(self, request):
         order = self.order_from_request(request)
+        self.set_order_on_request(request, order=None)
 
         return render_to_response('plata/shop_order_already_paid.html',
             self.get_context(request, {
