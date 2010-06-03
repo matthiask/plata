@@ -48,6 +48,10 @@ class Category(models.Model):
             return u'%s - %s' % (self.parent, self.name)
         return self.name
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('plata_category_detail', (), {'object_id': self.pk})
+
 
 class OptionGroup(models.Model):
     name = models.CharField(_('name'), max_length=100)
