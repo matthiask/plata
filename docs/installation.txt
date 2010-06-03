@@ -24,12 +24,14 @@ which you can download using the Git_ version control system::
 
     $ git clone git://github.com/matthiask/plata.git
 
-In addition, you will need FeinCMS_ with its dependencies and PDFDocument_.
+In addition, you will need FeinCMS_ with its dependencies, PDFDocument_
+and cldr_countries_.
 
 .. _Django: http://www.djangoproject.com/
 .. _Git: http://git-scm.com/
 .. _FeinCMS: http://www.feinheit.ch/labs/feincms-django-cms/
 .. _PDFDocument: http://github.com/matthiask/pdfdocument
+.. _cldr_countries: http://github.com/matthiask/cldr_countries
 
 
 Configuration
@@ -49,5 +51,6 @@ There isn't much left to do apart from adding a set of applications to
         'plata.product.feincms', # Not strictly necessary
         'plata.product.stock', # Currently necessary, but this might change
         'plata.shop',
+        'cldr_countries', # Necessary if you want translated country names
         ...
         )
