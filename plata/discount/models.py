@@ -1,4 +1,6 @@
 from datetime import date, datetime
+import random
+import string
 
 from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
@@ -150,8 +152,16 @@ class DiscountBase(models.Model):
             item._line_item_discount += item.discounted_subtotal_excl_tax * factor
 
 
+# Nearly all letters and digits, excluding those which can be easily confounded
+RANDOM_CODE_CHARACTERS = '23456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'
+
+def generate_random_code():
+    return u''.join(random.sample(RANDOM_CODE_CHARACTERS, 10))
+
+
 class Discount(DiscountBase):
-    code = models.CharField(_('code'), max_length=30, unique=True)
+    code = models.CharField(_('code'), max_length=30, unique=True,
+        default=generate_random_code)
 
     is_active = models.BooleanField(_('is active'), default=True)
     valid_from = models.DateField(_('valid from'), default=date.today)
