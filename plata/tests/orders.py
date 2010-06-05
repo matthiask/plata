@@ -368,7 +368,7 @@ class OrderTest(PlataTest):
             ))
         order.recalculate_total()
 
-        self.assertAlmostEqual(order.total, Decimal('239.70') / 5 * 4 - 20)
+        self.assertAlmostEqual(order.total, (Decimal('239.70') - 20) / 5 * 4)
 
     def test_12_order4567_test(self):
         order = self.create_order()
