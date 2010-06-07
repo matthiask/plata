@@ -116,7 +116,7 @@ class Shop(object):
                     contact=contact,
                     currency=contact.currency,
                     )
-                request.session['shop_order'] = order.pk
+                self.set_order_on_request(request, order)
                 return order
 
         return None
@@ -131,7 +131,7 @@ class Shop(object):
         if request.user.is_authenticated():
             try:
                 contact = self.contact_model.objects.get(contactuser__user=request.user)
-                request.session['shop_contact'] = contact.pk
+                self.set_contact_on_request(request, contact)
                 return contact
             except (self.contact_model.DoesNotExist, self.contact_model.MultipleObjectsReturned):
                 pass
@@ -156,7 +156,7 @@ class Shop(object):
                     contact=contact,
                     user=request.user)
 
-            request.session['shop_contact'] = contact.pk
+            self.set_contact_on_request(request, contact)
             return contact
 
         return None
