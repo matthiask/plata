@@ -184,6 +184,21 @@ class ViewTest(PlataTest):
             'payment_method': 'plata.payment.modules.postfinance',
             }), 'SHASign')
 
+        # Should not modify order anymore
+        self.assertRedirects(self.client.post(p2.get_absolute_url(), {
+            'quantity': 42,
+            }), p2.get_absolute_url())
+        self.assertRedirects(self.client.post('/cart/', {
+            'items-INITIAL_FORMS': 1,
+            'items-TOTAL_FORMS': 1,
+            'items-MAX_NUM_FORMS': 1,
+
+            'items-0-id': i2.id,
+            'items-0-quantity': 43,
+            'items-0-DELETE': False,
+            }), '/confirmation/?confirmed=1')
+        self.assertTrue(Order.objects.all()[0].items.get(variation__product=p2).quantity != 42)
+
         self.assertRedirects(self.client.post('/confirmation/', {
             'payment_method': 'plata.payment.modules.cod',
             }), '/order/success/')
