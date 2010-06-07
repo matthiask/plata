@@ -272,3 +272,5 @@ class ViewTest(PlataTest):
         assert order.is_paid()
 
         self.assertEqual(StockTransaction.objects.count(), 3)
+
+        self.assertRedirects(self.client.get('/checkout/'), '/order/already_paid/')
