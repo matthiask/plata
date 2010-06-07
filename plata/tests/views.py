@@ -184,6 +184,10 @@ class ViewTest(PlataTest):
             'payment_method': 'plata.payment.modules.postfinance',
             }), 'SHASign')
 
+        self.assertContains(self.client.post('/confirmation/', {
+            'payment_method': 'plata.payment.modules.paypal',
+            }), 'cgi-bin/webscr')
+
         # Should not modify order anymore
         self.assertRedirects(self.client.post(p2.get_absolute_url(), {
             'quantity': 42,
