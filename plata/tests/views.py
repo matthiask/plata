@@ -273,4 +273,12 @@ class ViewTest(PlataTest):
 
         self.assertEqual(StockTransaction.objects.count(), 3)
 
+        # Manipulate paid amount
+        order.paid -= 10
+        order.save()
+        self.assertRedirects(self.client.get('/cart/'), '/confirmation/?confirmed=1')
+
+        # Revert manipulation
+        order.paid += 10
+        order.save()
         self.assertRedirects(self.client.get('/checkout/'), '/order/already_paid/')
