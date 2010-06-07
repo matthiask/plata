@@ -220,6 +220,9 @@ class ViewTest(PlataTest):
         self.assertEqual(Order.objects.count(), 1)
         self.assertEqual(order.contact, contact)
 
+        shop.set_contact_on_request(request, contact=None)
+        self.assertEqual(shop.contact_from_request(request, create=False), None)
+
     def test_06_postfinance_ipn(self):
         shop = plata.shop_instance()
         request = get_request()
