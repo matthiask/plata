@@ -644,3 +644,7 @@ class OrderTest(PlataTest):
         # Exact values after usage of different tax rates in same order
         self.assertAlmostEqual(order.total, Decimal('548.84'))
         self.assertAlmostEqual(order.discount, Decimal('50.00'))
+
+    def test_19_product_methods(self):
+        product = self.create_product()
+        self.assertEqual(product.main_image, None)
