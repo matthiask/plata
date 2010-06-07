@@ -641,6 +641,6 @@ class OrderTest(PlataTest):
         order.add_discount(discount)
         order.recalculate_total()
 
-        # Exact values after usage of different tax rates in same order
+        # Exact values after usage of different tax rates in same order
         self.assertAlmostEqual(order.total, Decimal('548.84'))
         self.assertAlmostEqual(order.discount, Decimal('50.00'))
