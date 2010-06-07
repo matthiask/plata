@@ -94,11 +94,6 @@ class Shop(object):
     def default_currency(self, request):
         return 'CHF'
 
-    def clear_session(self, request):
-        for key in ('shop_contact', 'shop_order'):
-            if key in request.session:
-                del request.session[key]
-
     def set_order_on_request(self, request, order):
         if order:
             request.session['shop_order'] = order.pk
