@@ -25,7 +25,7 @@ class TaxClass(models.Model):
         return self.name
 
 
-class CategoryManager(models.Model):
+class CategoryManager(models.Manager):
     def public(self):
         return self.filter(is_active=True, is_internal=False)
 
