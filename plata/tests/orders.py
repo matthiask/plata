@@ -368,7 +368,7 @@ class OrderTest(PlataTest):
             ))
         order.recalculate_total()
 
-        self.assertAlmostEqual(order.total, Decimal('239.70') / 5 * 4 - 20)
+        self.assertAlmostEqual(order.total, (Decimal('239.70') - 20) / 5 * 4)
 
     def test_12_order4567_test(self):
         order = self.create_order()
@@ -613,3 +613,38 @@ class OrderTest(PlataTest):
         self.assertEqual(transaction.type, StockTransaction.INITIAL)
         self.assertEqual(transaction.change, 9)
         self.assertEqual(transaction.period.name, 'Something')
+
+    def test_18_amount_discount_incl_tax(self):
+        p1 = self.create_product()
+        p2 = self.create_product()
+
+        price = p1.get_price(currency='ASDF')
+        price.tax_class = self.tax_class_germany
+        price.save()
+
+        order = self.create_order()
+        order.currency = 'ASDF'
+        order.save()
+
+        normal1 = order.modify_item(p1, 3)
+        normal2 = order.modify_item(p2, 5)
+
+        order.recalculate_total()
+        self.assertAlmostEqual(order.total, Decimal('598.84'))
+
+        discount = Discount.objects.create(
+            type=Discount.AMOUNT_INCL_TAX,
+            code='asdf',
+            name='Amount discount',
+            value=Decimal('50.00'),
+            is_active=True)
+        order.add_discount(discount)
+        order.recalculate_total()
+
+        # Exact values after usage of different tax rates in same order
+        self.assertAlmostEqual(order.total, Decimal('548.84'))
+        self.assertAlmostEqual(order.discount, Decimal('50.00'))
+
+    def test_19_product_methods(self):
+        product = self.create_product()
+        self.assertEqual(product.main_image, None)

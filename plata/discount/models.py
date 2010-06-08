@@ -1,4 +1,7 @@
 from datetime import date, datetime
+from decimal import Decimal
+import random
+import string
 
 from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
@@ -123,8 +126,14 @@ class DiscountBase(models.Model):
         eligible_items = [item for item in items if item.variation.product_id in eligible_products]
 
         if tax_included:
-            # TODO how should this value be calculated in the presence of multiple tax rates?
-            tax_rate = items[0].tax_class.rate
+            # calculate mean order item tax rate (only relevant if there are products
+            # with different tax rates in the order)
+            dividend = divisor = Decimal('0.0000000000')
+            for item in items:
+                dividend += item.tax_class.rate * item.discounted_subtotal_excl_tax
+                divisor += item.discounted_subtotal_excl_tax
+
+            tax_rate = dividend / divisor
             discount = self.value / (1 + tax_rate/100)
         else:
             discount = self.value
@@ -150,8 +159,16 @@ class DiscountBase(models.Model):
             item._line_item_discount += item.discounted_subtotal_excl_tax * factor
 
 
+# Nearly all letters and digits, excluding those which can be easily confounded
+RANDOM_CODE_CHARACTERS = '23456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'
+
+def generate_random_code():
+    return u''.join(random.sample(RANDOM_CODE_CHARACTERS, 10))
+
+
 class Discount(DiscountBase):
-    code = models.CharField(_('code'), max_length=30, unique=True)
+    code = models.CharField(_('code'), max_length=30, unique=True,
+        default=generate_random_code)
 
     is_active = models.BooleanField(_('is active'), default=True)
     valid_from = models.DateField(_('valid from'), default=date.today)

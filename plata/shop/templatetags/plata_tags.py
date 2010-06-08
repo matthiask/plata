@@ -84,25 +84,3 @@ class FormErrorsNode(template.Node):
             'formsets': formset_list,
             'errors': True,
             })
-
-
-@register.filter
-def has(obj, var):
-    return var in obj
-
-
-@register.filter(name='getattr')
-def _getattr(obj, name):
-    try:
-        return obj[name]
-    except (TypeError, KeyError):
-        try:
-            return getattr(obj, name)
-        except (TypeError, AttributeError):
-            return None
-
-"""
-@register.filter
-def currency(value):
-    return mark_safe(_currency(value, thousands_separator='&lsquo;'))
-"""
