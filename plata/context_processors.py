@@ -1,5 +1,5 @@
 import plata
-
+from plata.product.models import Category
 
 def plata_context(request):
     shop = plata.shop_instance()
@@ -8,4 +8,6 @@ def plata_context(request):
         'shop': shop,
         'order': shop.order_from_request(request, create=False),
         'contact': shop.contact_from_request(request, create=False),
+        'categories' : Category.objects.filter(is_active__exact=True, is_internal__exact=False),
         }}
+
