@@ -25,6 +25,11 @@ class TaxClass(models.Model):
         return self.name
 
 
+class CategoryManager(models.Model):
+    def public(self):
+        return self.filter(is_active=True, is_internal=False)
+
+
 class Category(models.Model):
     is_active = models.BooleanField(_('is active'), default=True)
     is_internal = models.BooleanField(_('is internal'), default=False,
@@ -42,6 +47,8 @@ class Category(models.Model):
         ordering = ['ordering', 'name']
         verbose_name = _('category')
         verbose_name_plural = _('categories')
+
+    objects = CategoryManager()
 
     def __unicode__(self):
         if self.parent_id:
