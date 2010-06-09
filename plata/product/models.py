@@ -44,10 +44,11 @@ class Category(models.Model):
     description = models.TextField(_('description'), blank=True)
 
     parent = models.ForeignKey('self', blank=True, null=True,
+        limit_choices_to={'parent__isnull': True},
         related_name='children', verbose_name=_('parent'))
 
     class Meta:
-        ordering = ['ordering', 'name']
+        ordering = ['parent__ordering', 'parent__name', 'ordering', 'name']
         verbose_name = _('category')
         verbose_name_plural = _('categories')
 
