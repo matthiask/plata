@@ -179,8 +179,8 @@ class Product(models.Model):
         return prices
 
     def in_sale(self, currency):
-        prices = self.get_prices()
-        if 'currency' in prices and prices[currency]['sale']:
+        prices = dict(self.get_prices())
+        if currency in prices and prices[currency]['sale']:
             return True
         return False
 
