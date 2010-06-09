@@ -10,7 +10,8 @@ from plata.product.models import Category
 class ProductList(models.Model):
     only_featured = models.BooleanField(_('featured only'))
     only_sale = models.BooleanField(_('sales only'))
-    categories = models.ManyToManyField(Category, blank=True, null=True)
+    categories = models.ManyToManyField(Category, blank=True, null=True,
+        verbose_name=_('categories'))
 
     class Meta:
         abstract = True
