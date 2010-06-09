@@ -178,6 +178,12 @@ class Product(models.Model):
         cache.set(key, prices)
         return prices
 
+    def in_sale(self, currency):
+        prices = self.get_prices()
+        if 'currency' in prices and prices[currency]['sale']:
+            return True
+        return False
+
     def create_variations(self):
         variations = itertools_product(*[group.options.all() for group in self.option_groups.all()])
 
