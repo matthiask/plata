@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.db import models
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
@@ -12,6 +13,8 @@ class ProductList(models.Model):
     only_sale = models.BooleanField(_('sales only'))
     categories = models.ManyToManyField(Category, blank=True, null=True,
         verbose_name=_('categories'))
+    paginate_by = models.PositiveIntegerField(_('paginate by'), default=0,
+        help_text=_('Set to 0 to disable pagination.'))
 
     class Meta:
         abstract = True
@@ -32,6 +35,23 @@ class ProductList(models.Model):
         if self.only_sale:
             products = [p for p in products if p.in_sale('CHF')]
 
-        return render_to_string('product/product_list.html', {
-            'object_list': products,
-            }, context_instance=context)
+        my_ctx = {'object_list': products}
+
+        if self.paginate_by:
+            paginator = Paginator(products, self.paginate_by)
+
+            try:
+                page = int(request.GET.get('page'))
+            except (TypeError, ValueError):
+                page = 1
+
+            try:
+                products = paginator.page(page)
+            except (EmptyPage, InvalidPage):
+                products = paginator.page(paginator.num_pages)
+
+            my_ctx['page'] = products
+            my_ctx['object_list'] = products.object_list
+
+        return render_to_string('product/product_list.html', my_ctx,
+            context_instance=context)
