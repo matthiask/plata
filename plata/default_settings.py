@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.conf import settings
 
 # Are prices shown with tax included or not?
@@ -17,3 +19,8 @@ PLATA_PAYMENT_MODULES = getattr(settings, 'PLATA_PAYMENT_MODULES', [
     'plata.payment.modules.postfinance.PaymentProcessor',
     'plata.payment.modules.paypal.PaymentProcessor',
     ])
+
+PLATA_SHIPPING_FIXEDAMOUNT = getattr(settings, 'PLATA_SHIPPING_FIXEDAMOUNT', {
+    'cost': Decimal('8.00'),
+    'tax': Decimal('7.6'),
+    })

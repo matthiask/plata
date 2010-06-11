@@ -85,9 +85,8 @@ class ZeroShippingProcessor(ProcessorBase):
 
 class FixedAmountShippingProcessor(ProcessorBase):
     def process(self, order, items):
-        # TODO make these values configurable?
-        tax = Decimal('7.6')
-        cost = Decimal('8.00')
+        cost = plata.settings.PLATA_SHIPPING_FIXEDAMOUNT['cost']
+        tax = plata.settings.PLATA_SHIPPING_FIXEDAMOUNT['tax']
 
         order.shipping_cost, __ = self.split_cost(cost, tax)
         order.shipping_discount = min(order.discount_remaining, order.shipping_cost)
