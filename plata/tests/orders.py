@@ -648,3 +648,31 @@ class OrderTest(PlataTest):
     def test_19_product_methods(self):
         product = self.create_product()
         self.assertEqual(product.main_image, None)
+
+    def test_20_shipping_discount(self):
+        order_processors = plata.settings.PLATA_ORDER_PROCESSORS[:]
+        plata.settings.PLATA_ORDER_PROCESSORS[-2] = 'plata.shop.processors.FixedAmountShippingProcessor'
+
+        p1 = self.create_product()
+        p2 = self.create_product()
+        order = self.create_order()
+        normal1 = order.modify_item(p1, 3, recalculate=False)
+        normal2 = order.modify_item(p2, 5)
+
+        self.assertAlmostEqual(order.total, Decimal('639.20') + 8)
+
+        discount = Discount.objects.create(
+            type=Discount.AMOUNT_INCL_TAX,
+            code='d2',
+            name='d2',
+            value=Decimal('640.00'),
+            is_active=True)
+
+        order.add_discount(discount)
+        self.assertAlmostEqual(order.total, Decimal('7.20'))
+
+        discount.value = Decimal('650.00')
+        order.add_discount(discount)
+        self.assertAlmostEqual(order.total, Decimal('0.00'))
+
+        plata.settings.PLATA_ORDER_PROCESSORS = order_processors[:]

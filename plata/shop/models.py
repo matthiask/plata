@@ -196,13 +196,14 @@ class Order(BillingShippingAddress):
     def add_discount(self, discount, recalculate=True):
         discount.validate(self)
 
-        instance, created = self.applied_discounts.get_or_create(code=discount.code,
-            defaults={
-                'type': discount.type,
-                'name': discount.name,
-                'value': discount.value,
-                'config_json': discount.config_json,
-            })
+        self.applied_discounts.filter(code=discount.code).delete()
+        instance = self.applied_discounts.create(
+            code=discount.code,
+            type=discount.type,
+            name=discount.name,
+            value=discount.value,
+            config_json=discount.config_json,
+            )
 
         if recalculate:
             self.recalculate_total()

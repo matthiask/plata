@@ -24,8 +24,8 @@ class ProcessorBase(object):
         self.processor = processor
 
     def split_cost(self, cost_incl_tax, tax_rate):
-        tax = cost_incl_tax * tax_rate / 100
-        return cost_incl_tax - tax, tax
+        cost_excl_tax = cost_incl_tax / (1 + tax_rate / 100)
+        return cost_excl_tax, cost_incl_tax - cost_excl_tax
 
     def set_processor_value(self, group, key, value):
         self.processor.state.setdefault(group, {})[key] = value
@@ -85,17 +85,13 @@ class ZeroShippingProcessor(ProcessorBase):
 
 class FixedAmountShippingProcessor(ProcessorBase):
     def process(self, order, items):
+        # TODO make these values configurable?
         tax = Decimal('7.6')
         cost = Decimal('8.00')
 
-        order.shipping_cost, tax = self.split_cost(cost, tax)
-
-        discount_remaining = order.discount_remaining
-
-        if discount_remaining:
-            order.shipping_discount = min(discount_remaining, order.shipping_cost)
-
-        order.shipping_tax = tax * (order.shipping_cost - order.shipping_discount or 0)
+        order.shipping_cost, __ = self.split_cost(cost, tax)
+        order.shipping_discount = min(order.discount_remaining, order.shipping_cost)
+        order.shipping_tax = tax / 100 * (order.shipping_cost - order.shipping_discount)
 
         self.set_processor_value('total', 'shipping',
             order.shipping_cost - order.shipping_discount + order.shipping_tax)
