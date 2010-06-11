@@ -304,3 +304,46 @@ class ViewTest(PlataTest):
         order.paid += 10
         order.save()
         self.assertRedirects(self.client.get('/checkout/'), '/order/already_paid/')
+
+    def test_07_paypal_ipn(self):
+        from plata.payment.modules import paypal
+        def mock_urlopen(*args, **kwargs):
+            import StringIO
+            s = StringIO.StringIO('VERIFIED')
+            return s
+        paypal.urllib.urlopen = mock_urlopen
+
+        shop = plata.shop_instance()
+        request = get_request()
+
+        product = self.create_product()
+        self.client.post(product.get_absolute_url(), {
+            'quantity': 5,
+            })
+
+        Period.objects.create(name='Test period')
+
+        response = self.client.post('/confirmation/', {
+            'payment_method': 'plata.payment.modules.paypal',
+            })
+        self.assertContains(response, 'sandbox')
+
+        self.assertEqual(StockTransaction.objects.count(), 1)
+        self.assertEqual(Order.objects.count(), 1)
+        self.assertEqual(OrderPayment.objects.count(), 1)
+
+        paypal_ipn_data = {
+            'txn_id': 123456789,
+            'invoice': 'Order-1-1',
+            'mc_currency': 'CHF',
+            'mc_gross': 1234,
+            'payment_status': 'Completed',
+            }
+
+        self.assertContains(self.client.post('/payment/paypal/ipn/',
+            paypal_ipn_data), 'Ok')
+
+        order = Order.objects.get(pk=1)
+        assert order.is_paid()
+
+        self.assertEqual(StockTransaction.objects.count(), 1)
