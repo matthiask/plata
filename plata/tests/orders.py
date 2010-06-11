@@ -519,7 +519,7 @@ class OrderTest(PlataTest):
         self.assertAlmostEqual(order.subtotal, Decimal('79.90'))
         self.assertAlmostEqual(order.discount, Decimal('79.90'))
         self.assertAlmostEqual(order.total, 0)
-        self.assertAlmostEqual(order.discount_remaining, Decimal('20.10'))
+        self.assertAlmostEqual(order.discount_remaining, Decimal('20.10') / Decimal('1.076'))
 
     def test_16_payment(self):
         order = self.create_order()

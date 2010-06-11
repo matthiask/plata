@@ -211,17 +211,8 @@ class Order(BillingShippingAddress):
 
     @property
     def discount_remaining(self):
-        discounts_excl = sum((d.value for d in self.applied_discounts.filter(
-            type=DiscountBase.AMOUNT_EXCL_TAX)), 0)
-        discounts_incl = sum((d.value for d in self.applied_discounts.filter(
-            type=DiscountBase.AMOUNT_INCL_TAX)), 0)
-
-        # TODO remove hardcoded tax rate
-        remaining = (discounts_excl * Decimal('1.076') + discounts_incl) - self.discount
-
-        if remaining > 0:
-            return remaining
-        return Decimal('0.00')
+        # Remaining discount amount excl. tax
+        return sum((d.remaining for d in self.applied_discounts.all()), Decimal('0.00'))
 
     def update_status(self, status, notes):
         if status >= Order.CHECKOUT:
@@ -395,6 +386,9 @@ class AppliedDiscount(DiscountBase):
                                                       # to Discount.code, but we do not
                                                       # want deletions to cascade to this
                                                       # table.
+    remaining = models.DecimalField(_('remaining'),
+        max_digits=18, decimal_places=10, default=0,
+        help_text=_('Discount amount excl. tax remaining after discount has been applied.'))
 
     class Meta:
         ordering = ['type', 'name']

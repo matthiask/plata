@@ -145,8 +145,10 @@ class DiscountBase(models.Model):
         items_subtotal = sum([item.discounted_subtotal_excl_tax for item in eligible_items], 0)
 
         # Don't allow bigger discounts than the items subtotal
-        # TODO shipping discounts
-        discount = min(discount, items_subtotal)
+        if discount > items_subtotal:
+            self.remaining = discount - items_subtotal
+            self.save()
+            discount = items_subtotal
 
         for item in eligible_items:
             item._line_item_discount += item.discounted_subtotal_excl_tax / items_subtotal * discount
