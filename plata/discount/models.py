@@ -86,6 +86,11 @@ class DiscountBase(models.Model):
         return self.name
 
     def eligible_products(self, order, items, products=None):
+        """
+        Return a list of products which are eligible for discounting using
+        the discount configuration.
+        """
+
         if not products:
             shop = plata.shop_instance()
             products = shop.product_model._default_manager.all()
@@ -122,14 +127,13 @@ class DiscountBase(models.Model):
 
     def apply_amount_discount(self, order, items, tax_included):
         eligible_products = self.eligible_products(order, items).values_list('id', flat=True)
-
         eligible_items = [item for item in items if item.variation.product_id in eligible_products]
 
         if tax_included:
             # calculate mean order item tax rate (only relevant if there are products
             # with different tax rates in the order)
             dividend = divisor = Decimal('0.0000000000')
-            for item in items:
+            for item in eligible_items:
                 dividend += item.tax_class.rate * item.discounted_subtotal_excl_tax
                 divisor += item.discounted_subtotal_excl_tax
 
@@ -140,9 +144,9 @@ class DiscountBase(models.Model):
 
         items_subtotal = sum([item.discounted_subtotal_excl_tax for item in eligible_items], 0)
 
-        if items_subtotal < discount:
-            remaining = discount - items_subtotal
-            discount = items_subtotal
+        # Don't allow bigger discounts than the items subtotal
+        # TODO shipping discounts
+        discount = min(discount, items_subtotal)
 
         for item in eligible_items:
             item._line_item_discount += item.discounted_subtotal_excl_tax / items_subtotal * discount

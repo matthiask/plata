@@ -17,11 +17,13 @@ import plata
 
 
 def cart_not_empty(order, request, **kwargs):
+    # Redirect to cart if later in checkout process and cart empty
     if not order or not order.items.count():
         messages.warning(request, _('Cart is empty.'))
         return HttpResponseRedirect(reverse('plata_shop_cart') + '?empty=1')
 
 def order_confirmed(order, request, **kwargs):
+    # Redirect to confirmation or already paid view if the order is already confirmed
     if order and order.is_confirmed():
         if order.is_paid():
             return redirect('plata_order_already_paid')
@@ -45,6 +47,17 @@ def checkout_process_decorator(*checks):
 
 
 class Shop(object):
+    """
+    Plata's view and shop processing logic is contained inside this class.
+
+    Shop needs a few model classes with relations between them:
+
+    - Product class with variations, option groups, options and prices
+    - Contact model with a ContactUser class linking to Django's auth.user
+    - Order model with order items and an applied discount model
+    - Discount model
+    """
+
     def __init__(self, product_model, contact_model, order_model, discount_model):
         self.product_model = product_model
         self.contact_model = contact_model
@@ -52,6 +65,8 @@ class Shop(object):
         self.orderitem_model = self.order_model.items.related.model
         self.discount_model = discount_model
 
+        # Globally register the instance so that it can be accessed from
+        # everywhere using plata.shop_instance()
         plata.register(self)
 
     @property
@@ -83,15 +98,13 @@ class Shop(object):
 
     def get_payment_urls(self):
         from django.conf.urls.defaults import patterns, url, include
-
         urls = [url(r'', include(module.urls)) for module in self.get_payment_modules()]
-
         return patterns('', *urls)
 
     def get_payment_modules(self):
         return [get_callable(module)(self) for module in plata.settings.PLATA_PAYMENT_MODULES]
 
-    def default_currency(self, request):
+    def default_currency(self, request=None):
         return 'CHF'
 
     def set_order_on_request(self, request, order):
@@ -129,11 +142,13 @@ class Shop(object):
             pass
 
         if request.user.is_authenticated():
+            # Try finding a contact which is already linked with the currently
+            # authenticated user
             try:
                 contact = self.contact_model.objects.get(contactuser__user=request.user)
                 self.set_contact_on_request(request, contact)
                 return contact
-            except (self.contact_model.DoesNotExist, self.contact_model.MultipleObjectsReturned):
+            except self.contact_model.DoesNotExist:
                 pass
 
         if create:
@@ -162,7 +177,7 @@ class Shop(object):
         return None
 
     def get_context(self, request, context):
-        instance = RequestContext(request) #, self.get_extra_context(request))
+        instance = RequestContext(request)
         instance.update(context)
         return instance
 
@@ -224,12 +239,19 @@ class Shop(object):
                 options = [data.get('option_%s' % group.id) for group in product.option_groups.all()]
 
                 if all(options):
+                    # If we do not have values for all options, the form will not
+                    # validate anyway.
+
                     variations = product.variations.all()
 
                     for group in product.option_groups.all():
                         variations = variations.filter(options=self.cleaned_data.get('option_%s' % group.id))
 
-                    data['variation'] = variations.get()
+                    try:
+                        data['variation'] = variations.get()
+                    except ObjectDoesNotExist:
+                        # TODO: This is quite a serious error
+                        raise forms.ValidationError(_('The requested product does not exist.'))
 
                 try:
                     data['price'] = product.get_price(currency=self.order.currency)
@@ -256,6 +278,9 @@ class Shop(object):
 
             if formset.is_valid():
                 changed = False
+
+                # We cannot directly save the formset, because the additional
+                # checks in modify_item must be performed.
 
                 try:
                     for form in formset.forms:
@@ -377,8 +402,9 @@ class Shop(object):
                     if not code:
                         return self.cleaned_data
 
+                    shop = plata.shop_instance()
+
                     try:
-                        shop = plata.shop_instance()
                         discount = shop.discount_model.objects.get(code=code)
                     except shop.discount_model.DoesNotExist:
                         raise forms.ValidationError(_('This code does not validate'))

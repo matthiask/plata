@@ -149,6 +149,10 @@ class PaymentProcessor(ProcessorBase):
             except ValueError:
                 return HttpResponseForbidden('Malformed order ID')
 
+            # Try fetching the order and order payment objects
+            # TODO should we really fail here when the order object is missing?
+            # We create a new order payment object in case the old one
+            # cannot be found.
             order = get_object_or_404(self.shop.order_model, pk=order_id)
             try:
                 payment = order.payments.get(pk=payment_id)

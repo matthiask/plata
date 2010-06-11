@@ -9,7 +9,6 @@ from . import models
 class ProductPriceInline(admin.TabularInline):
     model = models.ProductPrice
     extra = 0
-    can_delete = False
 
 class ProductImageInline(admin.TabularInline):
     model = models.ProductImage
@@ -24,6 +23,9 @@ class ProductVariationFormSet(BaseInlineFormSet):
     def clean(self):
         super(ProductVariationFormSet, self).clean()
 
+        # This method ensures two things:
+        # 1. No combination of options occurs twice
+        # 2. SKUs are filled out and unique
         variations = set()
         skus = set()
 

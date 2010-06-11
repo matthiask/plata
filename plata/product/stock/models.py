@@ -4,7 +4,6 @@ from django.db import models
 from django.db.models import Sum, signals
 from django.utils.translation import ugettext_lazy as _, ugettext
 
-# TODO do not hardcode imports
 from plata.product.models import ProductVariation
 from plata.shop.models import Order, OrderPayment
 
@@ -36,7 +35,7 @@ class Period(models.Model):
 
 class StockTransactionManager(models.Manager):
     def open_new_period(self, name=None):
-        period = Period.objects.create(name=name or 'New period')
+        period = Period.objects.create(name=name or ugettext('New period'))
 
         for p in ProductVariation.objects.all():
             p.stock_transactions.create(
@@ -47,9 +46,14 @@ class StockTransactionManager(models.Manager):
                 )
 
     def items_in_stock(self, product):
-        return self.filter(period=Period.objects.current(), product=product).aggregate(items=Sum('change')).get('items') or 0
+        return self.filter(
+            period=Period.objects.current(),
+            product=product,
+            ).aggregate(items=Sum('change')).get('items') or 0
 
     def bulk_create(self, order, type, negative=False, **kwargs):
+        # Set negative to True for sales, lendings etc.
+
         factor = negative and -1 or 1
 
         for item in order.items.all():

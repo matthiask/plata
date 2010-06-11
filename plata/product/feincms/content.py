@@ -33,6 +33,7 @@ class ProductList(models.Model):
             products = products.filter(categories__in=categories)
 
         if self.only_sale:
+            # TODO remove hardcoded currency
             products = [p for p in products if p.in_sale('CHF')]
 
         my_ctx = {'object_list': products}

@@ -67,6 +67,10 @@ class Contact(BillingShippingAddress):
 
 
 class ContactUser(models.Model):
+    # This model is used to relate a contact to a user. A nullable foreign key on
+    # Contact won't do it, because databases treat nullable and unique fields in
+    # differing ways: Some of them would only allow one Contact without an User.
+
     contact = models.OneToOneField(Contact, primary_key=True, verbose_name=_('contact'),
         related_name='contactuser')
     user = models.OneToOneField(User, verbose_name=_('user'),

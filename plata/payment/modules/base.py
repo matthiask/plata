@@ -18,6 +18,9 @@ class ProcessorBase(object):
         return self.get_urls()
 
     def get_urls(self):
+        # Please note that these patterns are added with global scope;
+        # You should define URLs which do not clash with other parts
+        # of the site yourself.
         from django.conf.urls.defaults import patterns, url
         return patterns('')
 

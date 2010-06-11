@@ -142,7 +142,8 @@ class Product(models.Model):
                 self._main_image = None
         return self._main_image
 
-    def get_price(self, **kwargs):
+    def get_price(self, currency=None, **kwargs):
+        kwargs['currency'] = currency or plata.shop_instance().default_currency()
         return self.prices.active().filter(**kwargs).latest()
 
     def get_prices(self):
@@ -153,11 +154,10 @@ class Product(models.Model):
         if cache.has_key(key):
             return cache.get(key)
 
-        # TODO determine currencies differently
-        currencies = ('CHF', 'EUR', 'USD')
+        from plata.fields import CURRENCIES
 
         prices = []
-        for currency in currencies:
+        for currency in CURRENCIES:
             try:
                 normal, sale = self.prices.active().filter(currency=currency).latest(), None
             except self.prices.model.DoesNotExist:
