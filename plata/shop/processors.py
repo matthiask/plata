@@ -75,24 +75,30 @@ class ItemSummationProcessor(ProcessorBase):
             order.items_subtotal - order.items_discount + order.items_tax)
 
 
-class ShippingProcessor(ProcessorBase):
+class ZeroShippingProcessor(ProcessorBase):
     def process(self, order, items):
-        order.shipping_tax = 0
+        order.shipping_cost = order.shipping_discount = order.shipping_tax = 0
 
-        subtotal = 0
+        # Not strictly necessary
+        self.set_processor_value('total', 'shipping', 0)
 
-        if order.shipping_cost:
-            subtotal += order.shipping_cost
-        if order.shipping_discount:
-            subtotal -= order.shipping_discount
 
-        subtotal = max(subtotal, 0)
+class FixedAmountShippingProcessor(ProcessorBase):
+    def process(self, order, items):
+        tax = Decimal('7.6')
+        cost = Decimal('8.00')
 
-        # TODO move this into shipping processor
-        order.shipping_tax = subtotal * Decimal('0.076')
+        order.shipping_cost, tax = self.split_cost(cost, tax)
+
+        discount_remaining = order.discount_remaining
+
+        if discount_remaining:
+            order.shipping_discount = min(discount_remaining, order.shipping_cost)
+
+        order.shipping_tax = tax * (order.shipping_cost - order.shipping_discount or 0)
 
         self.set_processor_value('total', 'shipping',
-            subtotal + order.shipping_tax)
+            order.shipping_cost - order.shipping_discount + order.shipping_tax)
 
 
 class OrderSummationProcessor(ProcessorBase):
