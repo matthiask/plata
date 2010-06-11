@@ -306,8 +306,22 @@ class ViewTest(PlataTest):
         self.assertRedirects(self.client.get('/checkout/'), '/order/already_paid/')
 
     def test_07_paypal_ipn(self):
+        paypal_ipn_data = {
+            'txn_id': '123456789',
+            'invoice': 'Order-1-1',
+            'mc_currency': 'CHF',
+            'mc_gross': '1234',
+            'payment_status': 'Completed',
+            }
+
         from plata.payment.modules import paypal
+        import cgi
         def mock_urlopen(*args, **kwargs):
+            qs = cgi.parse_qs(args[1])
+            assert qs['cmd'][0] == '_notify-validate'
+            for k, v in paypal_ipn_data.iteritems():
+                assert qs[k][0] == v
+
             import StringIO
             s = StringIO.StringIO('VERIFIED')
             return s
@@ -331,14 +345,6 @@ class ViewTest(PlataTest):
         self.assertEqual(StockTransaction.objects.count(), 1)
         self.assertEqual(Order.objects.count(), 1)
         self.assertEqual(OrderPayment.objects.count(), 1)
-
-        paypal_ipn_data = {
-            'txn_id': 123456789,
-            'invoice': 'Order-1-1',
-            'mc_currency': 'CHF',
-            'mc_gross': 1234,
-            'payment_status': 'Completed',
-            }
 
         self.assertContains(self.client.post('/payment/paypal/ipn/',
             paypal_ipn_data), 'Ok')
