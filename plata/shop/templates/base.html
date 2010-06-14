@@ -102,6 +102,7 @@ div.pagination ul li a {
             {% if plata.order.id %}
             <a href="{% url plata_reporting_order_pdf plata.order.id %}">PDF</a>
             {% endif %}
+            <a href="{% url plata_reporting_product_xls %}">Products</a>
         </td>
     </tr>
 </table>

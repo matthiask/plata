@@ -1,10 +1,12 @@
 from datetime import date
 import xlwt
 
+from django.db.models import Sum
 from django.utils.text import capfirst
 from django.utils.translation import ugettext as _
 
 from plata.product.models import ProductVariation
+from plata.product.stock.models import Period, StockTransaction
 
 
 class Style(object):
@@ -81,14 +83,42 @@ def product_xls():
     row += 2
     s.write(row, 0, capfirst(_('product')), style=style.bold)
     s.write(row, 1, capfirst(_('items in stock')), style=style.bold)
+
+    col = 10
+    for type_id, type_name in StockTransaction.TYPE_CHOICES:
+        s.write(row, col, unicode(type_name))
+        col += 1
+
     row += 2
 
     s.col(0).width = 10000
     s.col(1).width = 2000
+    s.col(2).width = 300
+    s.col(3).width = 300
+    s.col(4).width = 300
+    s.col(5).width = 300
+    s.col(6).width = 300
+    s.col(7).width = 300
+    s.col(8).width = 300
+    s.col(9).width = 300
+
+    _transactions = StockTransaction.objects.filter(
+        period=Period.objects.current()).values('product', 'type').annotate(Sum('change'))
+
+    transactions = {}
+    for t in _transactions:
+        transactions.setdefault(t['product'], {})[t['type']] = t['change__sum']
 
     for product in ProductVariation.objects.all().select_related():
         s.write(row, 0, unicode(product))
         s.write(row, 1, product.items_in_stock)
+
+        col = 10
+        for type_id, type_name in StockTransaction.TYPE_CHOICES:
+            if product.id in transactions:
+                s.write(row, col, transactions[product.id].get(type_id, ''))
+            col += 1
+
         row += 1
 
     return workbook
