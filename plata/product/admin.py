@@ -85,6 +85,7 @@ class ProductVariationForm(forms.ModelForm):
         if options_errors:
             self._errors['options'] = self.error_class(options_errors)
 
+        self.instance._regenerate_cache(options=options)
         return self.cleaned_data
 
 

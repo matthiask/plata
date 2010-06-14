@@ -216,6 +216,8 @@ class ProductVariation(models.Model):
     items_in_stock = models.IntegerField(_('items in stock'), default=0)
     options = models.ManyToManyField(Option, related_name='products',
         blank=True, null=True, verbose_name=_('options'))
+    options_name_cache = models.CharField(_('options name cache'), max_length=100,
+        blank=True, editable=False)
     ordering = models.PositiveIntegerField(_('ordering'), default=0)
 
     class Meta:
@@ -224,15 +226,18 @@ class ProductVariation(models.Model):
         verbose_name_plural = _('product variations')
 
     def __unicode__(self):
-        options = u', '.join(unicode(o) for o in self.options.all())
-
-        if options:
-            return u'%s (%s)' % (self.product, options)
-
+        if self.options_name_cache:
+            return u'%s (%s)' % (self.product, self.options_name_cache)
         return u'%s' % self.product
 
     def get_absolute_url(self):
         return self.product.get_absolute_url()
+
+    def _regenerate_cache(self, options=None):
+        if not options:
+            options = self.options.all()
+
+        self.options_name_cache = u', '.join(unicode(o) for o in options)
 
 
 class ProductPriceManager(models.Manager):
