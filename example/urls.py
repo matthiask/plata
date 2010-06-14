@@ -24,6 +24,8 @@ urlpatterns = patterns('',
     url(r'^products/(?P<object_id>\d+)/$', 'example.views.product_detail',
         name='plata_product_detail'),
 
+    url(r'^reporting/', include('plata.reporting.urls')),
+
     (r'^media/sys/feincms/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': os.path.join(os.path.dirname(os.path.dirname(__file__)), 'feincms/media/feincms/')}),
 

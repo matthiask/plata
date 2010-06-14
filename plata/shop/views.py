@@ -73,7 +73,7 @@ class Shop(object):
         return self.get_urls()
 
     def get_urls(self):
-        return self.get_shop_urls() + self.get_admin_urls() + self.get_payment_urls()
+        return self.get_shop_urls() + self.get_payment_urls()
 
     def get_shop_urls(self):
         from django.conf.urls.defaults import patterns, url
@@ -504,17 +504,3 @@ class Shop(object):
             self.get_context(request, {
                 'order': order,
                 }))
-
-    def admin_pdf(self, request, order_id):
-        order = get_object_or_404(self.order_model, pk=order_id)
-
-        order.shipping_cost = 8 / Decimal('1.076')
-        order.shipping_discount = 0
-        order.recalculate_total(save=False)
-
-        from pdfdocument.utils import pdf_response
-        from plata.reporting.order import order_pdf
-
-        pdf, response = pdf_response('order-%09d' % order.id)
-        order_pdf(pdf, order)
-        return response
