@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import get_object_or_404
 
 from pdfdocument.utils import pdf_response
@@ -8,6 +9,7 @@ import plata
 import plata.reporting.order
 
 
+@staff_member_required
 def order_pdf(request, order_id):
     order = get_object_or_404(plata.shop_instance().order_model, pk=order_id)
 
