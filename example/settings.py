@@ -135,11 +135,4 @@ PAYPAL = {
 # PLATA settings
 
 TEST_RUNNER = 'example.test_utils.test_runner_with_coverage'
-COVERAGE_MODULES = [
-    'plata',
-    'plata.contact',
-    'plata.payment',
-    'plata.product',
-    'plata.shop',
-    'plata.views',
-]
+COVERAGE_MODULES = ['plata']
