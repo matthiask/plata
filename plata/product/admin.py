@@ -31,7 +31,7 @@ class ProductVariationFormSet(BaseInlineFormSet):
 
         for form in self.forms:
             if self.can_delete and self._should_delete_form(form):
-                if form.instance.pk and form.instance.orderitem_set.count():
+                if form.instance.pk and form.instance.can_delete():
                     raise forms.ValidationError(
                         _('Cannot delete variation which has already been used in an order.'))
 
