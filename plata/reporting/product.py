@@ -82,7 +82,8 @@ def product_xls():
 
     row += 2
     s.write(row, 0, capfirst(_('product')), style=style.bold)
-    s.write(row, 1, capfirst(_('items in stock')), style=style.bold)
+    s.write(row, 1, _('SKU'), style=style.bold)
+    s.write(row, 2, capfirst(_('stock')), style=style.bold)
 
     col = 10
     for type_id, type_name in StockTransaction.TYPE_CHOICES:
@@ -92,8 +93,8 @@ def product_xls():
     row += 2
 
     s.col(0).width = 10000
-    s.col(1).width = 2000
-    s.col(2).width = 300
+    s.col(1).width = 3000
+    s.col(2).width = 2000
     s.col(3).width = 300
     s.col(4).width = 300
     s.col(5).width = 300
@@ -111,7 +112,8 @@ def product_xls():
 
     for product in ProductVariation.objects.all().select_related():
         s.write(row, 0, unicode(product))
-        s.write(row, 1, product.items_in_stock)
+        s.write(row, 1, product.sku)
+        s.write(row, 2, product.items_in_stock)
 
         col = 10
         for type_id, type_name in StockTransaction.TYPE_CHOICES:
