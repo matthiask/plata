@@ -30,8 +30,12 @@ class ProductVariationFormSet(BaseInlineFormSet):
         skus = set()
 
         for form in self.forms:
-            if self.can_delete and self._should_delete_form(form) or \
-                    (not form.instance.pk and not form.has_changed()) or \
+            if self.can_delete and self._should_delete_form(form):
+                if form.instance.pk and form.instance.orderitem_set.count():
+                    raise forms.ValidationError(
+                        _('Cannot delete variation which has already been used in an order.'))
+
+            if (not form.instance.pk and not form.has_changed()) or \
                     (not form.is_valid()):
                 # Skip forms which will not end up as instances or aren't valid yet
                 continue
@@ -94,7 +98,6 @@ class ProductVariationInline(admin.TabularInline):
     form = ProductVariationForm
     formset = ProductVariationFormSet
     extra = 0
-    can_delete = False
 
 class OptionInline(admin.TabularInline):
     model = models.Option
