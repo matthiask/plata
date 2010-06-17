@@ -1,0 +1,37 @@
+.. settings:
+
+========
+Settings
+========
+
+.. module:: plata.default_settings
+
+
+* ``PLATA_PRICE_INCLUDES_TAX``:
+
+  Determines whether prices are shown with tax included by default. This
+  setting does not influence internal calculations in any way.
+
+  Defaults to ``True``
+
+
+* ``PLATA_ORDER_PROCESSORS``:
+
+  The list of order processors which are used to calculate line totals,
+  taxes, shipping cost and order totals.
+
+  The classes can be added directly or as a dotted python path. All
+  classes should extend :class:`~plata.shop.processors.ProcessorBase`.
+
+
+* ``PLATA_PAYMENT_MODULES``:
+
+  The list of payment modules which can be used to pay the order.
+
+
+* ``PLATA_SHIPPING_FIXEDAMOUNT``:
+
+  If you use :class:`~plata.shop.processors.FixedAmountShippingProcessor`,
+  you should fill in the cost incl. tax and tax rate here.
+
+  Defaults to ``{'cost': Decimal('8.00'), 'tax': Decimal('7.6')}``
