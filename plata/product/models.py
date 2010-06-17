@@ -239,6 +239,9 @@ class ProductVariation(models.Model):
 
         self.options_name_cache = u', '.join(unicode(o) for o in options)
 
+    def can_delete(self):
+        return self.orderitem_set.count() == 0
+
 
 class ProductPriceManager(models.Manager):
     def active(self):

@@ -303,9 +303,6 @@ class OrderItem(models.Model):
         else:
             return self.discounted_subtotal_excl_tax
 
-    def can_delete(self):
-        return self.orderitem_set.count() == 0
-
 
 class OrderStatus(models.Model):
     order = models.ForeignKey(Order, related_name='statuses')
