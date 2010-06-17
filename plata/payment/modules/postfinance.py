@@ -182,7 +182,7 @@ class PaymentProcessor(ProcessorBase):
                 self.create_transactions(order, _('sale'),
                     type=StockTransaction.SALE, negative=True, payment=payment)
 
-            order = Order.objects.get(pk=order.id)
+            order = order.reload()
             if order.is_paid():
                 self.order_completed(order)
 

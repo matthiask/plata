@@ -227,6 +227,9 @@ class Order(BillingShippingAddress):
             notes=notes)
         instance.save()
 
+    def reload(self):
+        return self.__class__._default_manager.get(pk=self.id)
+
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items')
