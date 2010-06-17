@@ -94,6 +94,7 @@ class AdminTest(PlataTest):
             'sku': '324wregft5re',
             'option_groups': [1,2],
             'producer': 1,
+	    'create_variations': True,
 
             'prices-0-id': '',
             'prices-0-product': '',
