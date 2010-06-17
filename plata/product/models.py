@@ -234,7 +234,7 @@ class ProductVariation(models.Model):
         return self.product.get_absolute_url()
 
     def _regenerate_cache(self, options=None):
-        if not options:
+        if options is None:
             options = self.options.all()
 
         self.options_name_cache = u', '.join(unicode(o) for o in options)
