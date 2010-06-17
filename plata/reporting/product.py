@@ -87,7 +87,7 @@ def product_xls():
 
     col = 10
     for type_id, type_name in StockTransaction.TYPE_CHOICES:
-        s.write(row, col, unicode(type_name))
+        s.write(row, col, unicode(type_name), style=style.bold)
         col += 1
 
     row += 2
