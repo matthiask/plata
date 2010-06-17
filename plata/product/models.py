@@ -214,7 +214,7 @@ class ProductVariation(models.Model):
     is_active = models.BooleanField(_('is active'), default=True)
     sku = models.CharField(_('SKU'), max_length=100, unique=True)
     items_in_stock = models.IntegerField(_('items in stock'), default=0)
-    options = models.ManyToManyField(Option, related_name='products',
+    options = models.ManyToManyField(Option, related_name='variations',
         blank=True, null=True, verbose_name=_('options'))
     options_name_cache = models.CharField(_('options name cache'), max_length=100,
         blank=True, editable=False)

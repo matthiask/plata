@@ -229,7 +229,7 @@ class Shop(object):
                 super(Form, self).__init__(*args, **kwargs)
                 for group in product.option_groups.all():
                     self.fields['option_%s' % group.id] = forms.ModelChoiceField(
-                        queryset=group.options.all(),
+                        queryset=group.options.filter(variations__product=product),
                         label=group.name)
 
             def clean(self):
