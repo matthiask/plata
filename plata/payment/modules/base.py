@@ -35,3 +35,7 @@ class ProcessorBase(object):
                 'payment_module': self.name,
                 },
             **kwargs)
+
+    def order_completed(self, order):
+        if order.status < order.COMPLETED:
+            order.update_status(order.COMPLETED, 'Order has been fully paid')

@@ -133,6 +133,9 @@ class PaymentProcessor(ProcessorBase):
                 payment.save()
                 sys.stderr.write('stage 9');sys.stderr.flush()
 
+                order = Order.objects.get(pk=order.id)
+                if order.is_paid():
+                    self.order_completed(order)
 
                 return HttpResponse("Ok")
 

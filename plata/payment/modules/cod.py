@@ -13,6 +13,7 @@ class PaymentProcessor(ProcessorBase):
 
     def process_order_confirmed(self, request, order):
         if order.is_paid():
+            self.order_completed(order)
             return redirect('plata_order_already_paid')
 
         payment = order.payments.create(
@@ -24,5 +25,6 @@ class PaymentProcessor(ProcessorBase):
 
         self.create_transactions(order, _('sale'),
             type=StockTransaction.SALE, negative=True, payment=payment)
+        self.order_completed(order)
 
         return redirect('plata_order_success')

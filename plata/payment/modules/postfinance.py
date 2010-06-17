@@ -182,6 +182,10 @@ class PaymentProcessor(ProcessorBase):
                 self.create_transactions(order, _('sale'),
                     type=StockTransaction.SALE, negative=True, payment=payment)
 
+            order = Order.objects.get(pk=order.id)
+            if order.is_paid():
+                self.order_completed(order)
+
             return HttpResponse('OK')
         except Exception, e:
             import sys
