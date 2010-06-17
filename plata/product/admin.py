@@ -80,8 +80,13 @@ class ProductVariationForm(forms.ModelForm):
         if len(groups_on_variation) != len(set(groups_on_variation)):
             options_errors.append(_('Only one option per group allowed.'))
         if groups_on_product != set(groups_on_variation):
-            options_errors.append(_('Please select options from the following groups: %s') %\
-                u', '.join(unicode(g) for g in groups_on_product_objects))
+            if len(groups_on_product_objects):
+                options_errors.append(_('Please select options from the following groups: %s') %\
+                    u', '.join(unicode(g) for g in groups_on_product_objects))
+            else:
+                options_errors.append(
+                    _('You need to select the following groups before this variation can be created: %s') %\
+                    u', '.join(unicode(g) for g in models.OptionGroup.objects.filter(id__in=groups_on_variation)))
 
         if options_errors:
             self._errors['options'] = self.error_class(options_errors)
