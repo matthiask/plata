@@ -133,6 +133,14 @@ class PaymentProcessor(ProcessorBase):
                 payment.save()
                 sys.stderr.write('stage 9');sys.stderr.flush()
 
+                self.create_transactions(order, _('payment process reservation release'),
+                    type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
+                    negative=False, payment=payment)
+
+                if payment.authorized:
+                    self.create_transactions(order, _('sale'),
+                        type=StockTransaction.SALE, negative=True, payment=payment)
+
                 order = Order.objects.get(pk=order.id)
                 if order.is_paid():
                     self.order_completed(order)
