@@ -19,6 +19,11 @@ class ProductForm(forms.ModelForm):
     sku = forms.CharField(label=_('SKU'), max_length=100, required=False)
     create_variations = forms.BooleanField(label=_('Create all variations'), required=False)
 
+    def save(self, *args, **kwargs):
+        instance = super(ProductForm, self).save(*args, **kwargs)
+        instance._cleaned_data = self.cleaned_data
+        return instance
+
 
 class ProductVariationFormSet(BaseInlineFormSet):
     def clean(self):
@@ -72,7 +77,7 @@ class ProductVariationForm(forms.ModelForm):
 
     def clean(self):
         options = self.cleaned_data.get('options', [])
-        groups_on_product_objects = self.instance.product.option_groups.all()
+        groups_on_product_objects = self.cleaned_data['product']._cleaned_data['option_groups']
         groups_on_product = set(g.id for g in groups_on_product_objects)
         groups_on_variation = [o.group_id for o in options]
         options_errors = []

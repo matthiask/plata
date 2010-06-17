@@ -94,7 +94,7 @@ class AdminTest(PlataTest):
             'sku': '324wregft5re',
             'option_groups': [1,2],
             'producer': 1,
-	    'create_variations': True,
+            'create_variations': True,
 
             'prices-0-id': '',
             'prices-0-product': '',
@@ -202,6 +202,11 @@ class AdminTest(PlataTest):
         p.option_groups.remove(options[1])
 
         self.assertEqual(p.option_groups.count(), 1)
+
+        # The change at DB level does not have much influence anymore,
+        # because we fetch the option groups from the form, not from
+        # the database.
+        product_data['option_groups'] = [1]
 
         self.assertContains(self.client.post(self.product_admin_url + '2/', product_data),
             'Please select options from the following groups')
