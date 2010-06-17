@@ -45,11 +45,16 @@ class StockTransactionManager(models.Manager):
                 notes=ugettext('New period'),
                 )
 
-    def items_in_stock(self, product):
-        return self.filter(
+    def items_in_stock(self, product, update=False):
+        count = self.filter(
             period=Period.objects.current(),
             product=product,
             ).aggregate(items=Sum('change')).get('items') or 0
+
+        if update:
+            ProductVariation.objects.filter(id=product).update(
+                items_in_stock=count)
+        return count
 
     def bulk_create(self, order, type, negative=False, **kwargs):
         # Set negative to True for sales, lendings etc.
@@ -120,13 +125,9 @@ class StockTransaction(models.Model):
                 notes='Automatically created because no period existed yet.')
 
         super(StockTransaction, self).save(*args, **kwargs)
-        self.product.save()
 
 
-def product_pre_save_handler(sender, instance, **kwargs):
-    if not instance.pk:
-        instance.items_in_stock = 0
-        return
-
-    instance.items_in_stock = StockTransaction.objects.items_in_stock(instance)
-signals.pre_save.connect(product_pre_save_handler, sender=ProductVariation)
+def update_items_in_stock(instance, **kwargs):
+    StockTransaction.objects.items_in_stock(instance.product_id, update=True)
+signals.post_delete.connect(update_items_in_stock, sender=StockTransaction)
+signals.post_save.connect(update_items_in_stock, sender=StockTransaction)
