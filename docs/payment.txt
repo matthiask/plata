@@ -1,0 +1,57 @@
+.. _payment:
+
+===============
+Payment support
+===============
+
+Plata supports the following means of payment:
+
+* :ref:`payment_cod`
+* :ref:`payment_paypal`
+* :ref:`payment_postfinance`
+
+
+.. _payment_cod:
+
+Cash on delivery
+================
+
+This payment module does not need any configuration. It simply creates
+an order payment with the order total as amount and confirms the order.
+
+
+.. _payment_paypal:
+
+Paypal
+======
+
+The Paypal payment module needs two configuration values::
+
+    PAYPAL = {
+        'LIVE': False, # Use sandbox or live payment interface?
+        'BUSINESS': 'paypal@example.com',
+        }
+
+The default IPN URL is ``payment/paypal/ipn/``; the base path is defined
+by where you added  ``shop.urls``.
+
+
+.. _payment_postfinance:
+
+Postfinance
+===========
+
+The Postfinance payment module requires the following configuration values::
+
+    POSTFINANCE = {
+        'LIVE': False,
+        'PSPID': 'exampleShopID',
+        'SHA1_IN': '<shared secret>',
+        'SHA1_OUT': '<shared secret>',
+        }
+
+This module implements payments using SHA-1 hash validation with the simpler
+SHA-1 IN hashing algorithm.
+
+The default server to server notification URL is ``payment/postfinance/ipn/``;
+the base path is defined by where you added ``shop.urls``.
