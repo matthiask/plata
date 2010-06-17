@@ -206,7 +206,7 @@ class ViewTest(PlataTest):
         self.assertRedirects(self.client.post('/confirmation/', {
             'payment_method': 'plata.payment.modules.cod',
             }), '/order/success/')
-        self.assertEqual(Order.objects.get(pk=order.id).status, Order.CONFIRMED)
+        self.assertEqual(Order.objects.get(pk=order.id).status, Order.COMPLETED)
 
         self.assertRedirects(self.client.post('/confirmation/', {
             'payment_method': 'plata.payment.modules.cod',
@@ -358,4 +358,4 @@ class ViewTest(PlataTest):
         order = Order.objects.get(pk=1)
         assert order.is_paid()
 
-        self.assertEqual(StockTransaction.objects.count(), 1)
+        self.assertEqual(StockTransaction.objects.count(), 3)
