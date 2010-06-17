@@ -116,10 +116,19 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ('name', 'description')
 
     def save_formset(self, request, form, formset, change):
-        if isinstance(formset, ProductVariationFormSet):
+        variations = isinstance(formset, ProductVariationFormSet)
+
+        formset.save()
+
+        if variations:
             if form.cleaned_data.get('create_variations'):
                 form.instance.create_variations()
-        formset.save()
+            elif form.instance.pk and\
+                    not form.instance.option_groups.count() and\
+                    not form.instance.variations.count():
+                # No options selected, no variations yet: Create the single
+                # variation which is needed
+                form.instance.create_variations()
 
 
 admin.site.register(models.TaxClass,
