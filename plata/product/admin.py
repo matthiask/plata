@@ -17,6 +17,7 @@ class ProductImageInline(admin.TabularInline):
 
 class ProductForm(forms.ModelForm):
     sku = forms.CharField(label=_('SKU'), max_length=100, required=False)
+    create_variations = forms.BooleanField(label=_('Create all variations'), required=False)
 
 
 class ProductVariationFormSet(BaseInlineFormSet):
@@ -65,10 +66,6 @@ class ProductVariationFormSet(BaseInlineFormSet):
                 form.instance.sku = sku
             skus.add(form.instance.sku)
 
-    def save(self):
-        super(ProductVariationFormSet, self).save()
-        self.instance.create_variations()
-
 
 class ProductVariationForm(forms.ModelForm):
     sku = forms.CharField(label=_('SKU'), max_length=100, required=False)
@@ -102,6 +99,24 @@ class ProductVariationInline(admin.TabularInline):
 class OptionInline(admin.TabularInline):
     model = models.Option
 
+
+class ProductAdmin(admin.ModelAdmin):
+    filter_horizontal = ('categories',)
+    form = ProductForm
+    inlines = [ProductVariationInline, ProductPriceInline, ProductImageInline]
+    list_display = ('is_active', 'name', 'sku', 'ordering')
+    list_display_links = ('name',)
+    list_filter = ('is_active',)
+    prepopulated_fields = {'slug': ('name',), 'sku': ('name',)}
+    search_fields = ('name', 'description')
+
+    def save_formset(self, request, form, formset, change):
+        if isinstance(formset, ProductVariationFormSet):
+            if form.cleaned_data.get('create_variations'):
+                form.instance.create_variations()
+        formset.save()
+
+
 admin.site.register(models.TaxClass,
     list_display=('name', 'rate', 'priority'),
     )
@@ -119,16 +134,7 @@ admin.site.register(models.OptionGroup,
     list_display=('name',),
     )
 
-admin.site.register(models.Product,
-    filter_horizontal=('categories',),
-    form=ProductForm,
-    inlines=[ProductVariationInline, ProductPriceInline, ProductImageInline],
-    list_display=('is_active', 'name', 'sku', 'ordering'),
-    list_display_links=('name',),
-    list_filter=('is_active',),
-    prepopulated_fields={'slug': ('name',), 'sku': ('name',)},
-    search_fields=('name', 'description'),
-    )
+admin.site.register(models.Product, ProductAdmin)
 
 
 class ReadonlyModelAdmin(admin.ModelAdmin):
