@@ -13,11 +13,6 @@ class ProductAdmin(ProductAdmin, ItemEditor):
     form = ProductForm
     show_on_top = ('is_active', 'name', 'slug', 'sku')
     inlines = [ProductVariationInline, ProductPriceInline, ProductImageInline]
-    list_display = ('is_active', 'name', 'sku', 'ordering')
-    list_display_links = ('name',)
-    list_filter = ('is_active',)
-    filter_horizontal = ('categories', 'option_groups')
-    prepopulated_fields = {'slug': ('name',)}
 
 
 admin.site.unregister(Product)

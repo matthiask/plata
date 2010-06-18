@@ -111,12 +111,12 @@ class OptionInline(admin.TabularInline):
 
 
 class ProductAdmin(admin.ModelAdmin):
-    filter_horizontal = ('categories',)
+    filter_horizontal = ('categories', 'option_groups')
     form = ProductForm
     inlines = [ProductVariationInline, ProductPriceInline, ProductImageInline]
-    list_display = ('is_active', 'name', 'sku', 'ordering')
+    list_display = ('is_active', 'is_featured', 'name', 'sku', 'ordering')
     list_display_links = ('name',)
-    list_filter = ('is_active',)
+    list_filter = ('is_active', 'is_featured', 'categories')
     prepopulated_fields = {'slug': ('name',), 'sku': ('name',)}
     search_fields = ('name', 'description')
 
