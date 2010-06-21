@@ -10,7 +10,7 @@ from django.forms.models import inlineformset_factory, modelform_factory
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _, ungettext
 
 import plata
 
@@ -223,8 +223,7 @@ class Shop(object):
             quantity = forms.IntegerField(label=_('quantity'), initial=1)
 
             def __init__(self, *args, **kwargs):
-                if 'order' in kwargs:
-                    self.order = kwargs.pop('order')
+                self.order = kwargs.pop('order', None)
 
                 super(Form, self).__init__(*args, **kwargs)
                 for group in product.option_groups.all():
@@ -251,6 +250,26 @@ class Shop(object):
                     except ObjectDoesNotExist:
                         # TODO: This is quite a serious error
                         raise forms.ValidationError(_('The requested product does not exist.'))
+
+                quantity = new_quantity = data.get('quantity')
+                variation = data.get('variation')
+
+                if quantity and variation:
+                    if self.order:
+                        try:
+                            orderitem = self.order.items.get(variation=variation)
+                            old_quantity = orderitem.quantity
+                            new_quantity += orderitem.quantity
+                        except ObjectDoesNotExist:
+                            old_quantity = 0
+
+                    if new_quantity > variation.items_in_stock:
+                        self._errors['quantity'] = self.error_class([
+                            _('Only %(stock)s items for %(variation)s available; you already have %(quantity)s in your order.') % {
+                                'stock': variation.items_in_stock,
+                                'variation': variation,
+                                'quantity': old_quantity,
+                                }])
 
                 try:
                     data['price'] = product.get_price(currency=self.order.currency)
