@@ -16,6 +16,9 @@
 
     {% for formset in formsets %}
     {% for form in formset.forms %}
+        {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
         {% for field in form %}
             {% if field.errors %}
                 <li id="error_{{ field.name }}"><span>{{ field.label }}:</span> {{ field.errors }}</li>
