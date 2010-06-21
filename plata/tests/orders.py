@@ -40,6 +40,8 @@ class OrderTest(PlataTest):
         self.assertAlmostEqual(prices['CHF']['sale'].unit_price, Decimal('79.90'))
         self.assertAlmostEqual(prices['EUR']['normal'].unit_price, Decimal('49.90'))
         self.assertEqual(prices['EUR']['sale'], None)
+        self.assertTrue(product.in_sale('CHF'))
+        self.assertFalse(product.in_sale('EUR'))
 
         order.modify_item(product, 5)
         order.modify_item(product, -4)
