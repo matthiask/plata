@@ -258,7 +258,7 @@ class Shop(object):
                     try:
                         data['variation'] = variations.get()
                     except ObjectDoesNotExist:
-                        # TODO: This is quite a serious error
+                        # TODO: This is quite a serious error. Send a mail?
                         raise forms.ValidationError(_('The requested product does not exist.'))
 
                 quantity = new_quantity = data.get('quantity')
