@@ -149,10 +149,7 @@ class PaymentProcessor(ProcessorBase):
 
         except Exception, e:
             import traceback
-            sys.stderr.write(unicode(e))
-            sys.stderr.flush()
             traceback.print_exc(100, sys.stderr)
-            sys.stderr.flush()
 
         sys.stderr.write('aaaraaaaaaaaaaaaaaaaaa')
         sys.stderr.flush()
