@@ -1,6 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
 from hashlib import sha1
+import sys, traceback
 
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseForbidden,\
@@ -188,7 +189,7 @@ class PaymentProcessor(ProcessorBase):
 
             return HttpResponse('OK')
         except Exception, e:
-            import sys
-            sys.stderr.write(unicode(e))
+            sys.stderr.flush('PLATA POSTFINANCE EXCEPTION\n%s\n' % unicode(e))
+            traceback.print_exc(100, sys.stderr)
             sys.stderr.flush()
-            return HttpResponseServerError()
+            raise

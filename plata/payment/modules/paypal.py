@@ -1,7 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
 import urllib
-import sys
+import sys, traceback
 
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseForbidden,\
@@ -148,10 +148,7 @@ class PaymentProcessor(ProcessorBase):
                 return HttpResponse("Ok")
 
         except Exception, e:
-            import traceback
+            sys.stderr.flush('PLATA PAYPAL EXCEPTION\n%s\n' % unicode(e))
             traceback.print_exc(100, sys.stderr)
-
-        sys.stderr.write('aaaraaaaaaaaaaaaaaaaaa')
-        sys.stderr.flush()
-
-        return HttpResponseServerError()
+            sys.stderr.flush()
+            raise
