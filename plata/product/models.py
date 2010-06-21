@@ -202,8 +202,6 @@ class Product(models.Model):
                     sku=u'-'.join(parts),
                     )
                 instance.options = variation
-            except ProductVariation.MultipleObjectsReturned:
-                raise Exception('DAMN!')
 
             instance.ordering = idx
             instance.save()
