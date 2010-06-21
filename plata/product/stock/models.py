@@ -119,6 +119,12 @@ class StockTransaction(models.Model):
 
     objects = StockTransactionManager()
 
+    def __unicode__(self):
+        return u'%s %s of %s' % (
+            self.change,
+            self.get_type_display(),
+            self.product)
+
     def save(self, *args, **kwargs):
         if not self.period_id:
             self.period = Period.objects.create(name='Automatically created',
