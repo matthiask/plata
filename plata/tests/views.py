@@ -262,6 +262,10 @@ class ViewTest(PlataTest):
             })
 
         Period.objects.create(name='Test period')
+        product.variations.get().stock_transactions.create(type=StockTransaction.PURCHASE, change=10)
+        self.client.post(product.get_absolute_url(), {
+            'quantity': 5,
+            })
 
         response = self.client.post('/confirmation/', {
             'payment_method': 'plata.payment.modules.postfinance',
@@ -269,7 +273,7 @@ class ViewTest(PlataTest):
         self.assertContains(response, 'SHASign')
         self.assertContains(response, '721735bc3876094bb7e5ff075de8411d85494a66')
 
-        self.assertEqual(StockTransaction.objects.count(), 1)
+        self.assertEqual(StockTransaction.objects.count(), 2)
         self.assertEqual(Order.objects.count(), 1)
         self.assertEqual(OrderPayment.objects.count(), 1)
 
@@ -303,7 +307,7 @@ class ViewTest(PlataTest):
         order = Order.objects.get(pk=1)
         assert order.is_paid()
 
-        self.assertEqual(StockTransaction.objects.count(), 3)
+        self.assertEqual(StockTransaction.objects.count(), 4)
 
         # Manipulate paid amount
         order.paid -= 10
@@ -341,6 +345,7 @@ class ViewTest(PlataTest):
         request = get_request()
 
         product = self.create_product()
+        product.variations.get().stock_transactions.create(type=StockTransaction.PURCHASE, change=10)
         self.client.post(product.get_absolute_url(), {
             'quantity': 5,
             })
@@ -352,7 +357,7 @@ class ViewTest(PlataTest):
             })
         self.assertContains(response, 'sandbox')
 
-        self.assertEqual(StockTransaction.objects.count(), 1)
+        self.assertEqual(StockTransaction.objects.count(), 2)
         self.assertEqual(Order.objects.count(), 1)
         self.assertEqual(OrderPayment.objects.count(), 1)
 
@@ -362,4 +367,4 @@ class ViewTest(PlataTest):
         order = Order.objects.get(pk=1)
         assert order.is_paid()
 
-        self.assertEqual(StockTransaction.objects.count(), 3)
+        self.assertEqual(StockTransaction.objects.count(), 4)
