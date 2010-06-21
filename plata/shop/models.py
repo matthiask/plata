@@ -118,15 +118,31 @@ class Order(BillingShippingAddress):
     def is_confirmed(self):
         return self.status >= self.CONFIRMED
 
-    def validate(self):
+    def validate(self, currency=True, stock=False, all=False):
         """
         A few self-checks. These should never fail under normal circumstances.
+
+        currency:
+            Test for multiple currencies in order
+
+        stock:
+            Test whether stock is available for all selected items
+
+        all:
+            Run all self-tests
         """
 
-        currencies = set(self.items.values_list('currency', flat=True))
-        if currencies and (len(currencies) > 1 or self.currency not in currencies):
-            raise ValidationError(_('Order contains more than one currency.'),
-                code='multiple_currency')
+        if currency or all:
+            currencies = set(self.items.values_list('currency', flat=True))
+            if currencies and (len(currencies) > 1 or self.currency not in currencies):
+                raise ValidationError(_('Order contains more than one currency.'),
+                    code='multiple_currency')
+
+        if stock or all:
+            for item in self.items.all().select_related('variation'):
+                if item.quantity > item.variation.items_in_stock:
+                    raise ValidationError(_('Not enough stock available for %s.') % item.variation,
+                        code='insufficient_stock')
 
     def modify_item(self, product, relative=None, absolute=None, recalculate=True, **kwargs):
         """

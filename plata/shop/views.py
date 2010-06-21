@@ -30,6 +30,16 @@ def order_confirmed(order, request, **kwargs):
             _('You have already confirmed this order earlier, but it is not fully paid for yet.'))
         return HttpResponseRedirect(reverse('plata_shop_confirmation') + '?confirmed=1')
 
+def insufficient_stock(order, request, **kwargs):
+    if request.method != 'GET':
+        return
+
+    try:
+        order.validate(stock=True)
+    except ValidationError, e:
+        if e.code == 'insufficient_stock':
+            return HttpResponseRedirect(reverse('plata_shop_cart') + '?insufficient_stock=1')
+        raise
 
 def checkout_process_decorator(*checks):
     def _dec(fn):
@@ -373,7 +383,7 @@ class Shop(object):
     def checkout_order_form(self, request, order):
         return modelform_factory(self.order_model, fields=('notes',))
 
-    @checkout_process_decorator(cart_not_empty, order_confirmed)
+    @checkout_process_decorator(cart_not_empty, order_confirmed, insufficient_stock)
     def checkout(self, request, order):
         ContactForm = self.checkout_contact_form(request, order)
         OrderForm = self.checkout_order_form(request, order)
@@ -433,7 +443,7 @@ class Shop(object):
             self._discount_form_cache = DiscountForm
         return self._discount_form_cache
 
-    @checkout_process_decorator(cart_not_empty, order_confirmed)
+    @checkout_process_decorator(cart_not_empty, order_confirmed, insufficient_stock)
     def discounts(self, request, order):
         DiscountForm = self.discount_form(request, order)
 
@@ -461,7 +471,7 @@ class Shop(object):
         return render_to_response('plata/shop_discounts.html',
             self.get_context(request, context))
 
-    @checkout_process_decorator(cart_not_empty)
+    @checkout_process_decorator(cart_not_empty, insufficient_stock)
     def confirmation(self, request, order):
         order.recalculate_total()
         payment_modules = self.get_payment_modules()
@@ -470,14 +480,21 @@ class Shop(object):
 
         class Form(forms.Form):
             def __init__(self, *args, **kwargs):
+                self.order = kwargs.pop('order')
+
                 super(Form, self).__init__(*args, **kwargs)
                 self.fields['payment_method'] = forms.ChoiceField(
                     label=_('Payment method'),
                     choices=[('', '----------')]+payment_module_choices,
                     )
 
+            def clean(self):
+                data = super(Form, self).clean()
+                order.validate(all=True)
+                return data
+
         if request.method == 'POST':
-            form = Form(request.POST)
+            form = Form(request.POST, order=order)
 
             if form.is_valid():
                 order.update_status(self.order_model.CONFIRMED, 'Confirmation given')
@@ -485,7 +502,7 @@ class Shop(object):
                 payment_module = payment_module_dict[form.cleaned_data['payment_method']]
                 return payment_module.process_order_confirmed(request, order)
         else:
-            form = Form()
+            form = Form(order=order)
 
         return self.render_confirmation(request, {
             'order': order,
