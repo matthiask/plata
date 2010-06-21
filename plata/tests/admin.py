@@ -281,3 +281,51 @@ class AdminTest(PlataTest):
             '/admin/discount/discount/')
 
         self.assertEqual(Discount.objects.get(pk=3).config['products']['products'], [2])
+
+        product_data = {
+            'description': '',
+            'images-INITIAL_FORMS': '0',
+            'images-MAX_NUM_FORMS': '',
+            'images-TOTAL_FORMS': '0',
+            'is_active': 'on',
+            'name': 'Product 4',
+            'slug': '324wregftjkh5re',
+            'ordering': '100',
+            'sku': '324wregft5rekjh',
+            'producer': 1,
+            'create_variations': False,
+
+            'prices-0-id': '',
+            'prices-0-product': '',
+
+            'prices-0-_unit_price': '79.90',
+            'prices-0-currency': 'CHF',
+            'prices-0-is_active': 'on',
+            'prices-0-tax_class': '1',
+            'prices-0-tax_included': 'on',
+            'prices-0-valid_from': '2010-05-19',
+            'prices-0-valid_until': '',
+
+            'prices-INITIAL_FORMS': '0',
+            'prices-MAX_NUM_FORMS': '',
+            'prices-TOTAL_FORMS': '1',
+
+            'rawcontent-INITIAL_FORMS': '0',
+            'rawcontent-MAX_NUM_FORMS': '',
+            'rawcontent-TOTAL_FORMS': '0',
+
+            'mediafilecontent-INITIAL_FORMS': '0',
+            'mediafilecontent-MAX_NUM_FORMS': '',
+            'mediafilecontent-TOTAL_FORMS': '0',
+
+            'variations-INITIAL_FORMS': '0',
+            'variations-MAX_NUM_FORMS': '',
+            'variations-TOTAL_FORMS': '0',
+            }
+
+        # Test automatic creation of one product variation in the absence of options
+        self.assertRedirects(
+            self.client.post(self.product_admin_url + 'add/', product_data),
+            self.product_admin_url)
+        p = Product.objects.get(pk=3)
+        self.assertEqual(p.variations.count(), 1)
