@@ -60,6 +60,12 @@ class ViewTest(PlataTest):
         self.assertEqual(Order.objects.count(), 0)
         p1 = self.create_product()
         p2 = self.create_product()
+        p2.name = 'Test Product 2'
+        p2.save()
+
+        p1.variations.get().stock_transactions.create(type=StockTransaction.PURCHASE, change=100)
+        p2.variations.get().stock_transactions.create(type=StockTransaction.PURCHASE, change=100)
+        self.assertEqual(ProductVariation.objects.filter(items_in_stock=0).count(), 0)
 
         self.assertContains(self.client.get(p1.get_absolute_url()),
             p1.name)
@@ -177,8 +183,6 @@ class ViewTest(PlataTest):
 
         self.assertEqual(self.client.post('/confirmation/', {}).status_code, 200)
         self.assertEqual(Order.objects.get(pk=order.id).status, Order.CHECKOUT)
-
-        Period.objects.create(name='Test period')
 
         self.assertContains(self.client.post('/confirmation/', {
             'payment_method': 'plata.payment.modules.postfinance',
