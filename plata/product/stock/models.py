@@ -1,7 +1,7 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.db import models
-from django.db.models import Sum, signals
+from django.db.models import Sum, Q, signals
 from django.utils.translation import ugettext_lazy as _, ugettext
 
 from plata.product.models import ProductVariation
@@ -45,11 +45,20 @@ class StockTransactionManager(models.Manager):
                 notes=ugettext('New period'),
                 )
 
+    def _expired(self):
+        # 15 minutes expiration time for payment process reservations
+        reservation_expiration = datetime.now() - timedelta(minutes=15)
+
+        return Q(type=self.model.PAYMENT_PROCESS_RESERVATION) & Q(created__lt=reservation_expiration)
+
+    def stock(self):
+        return self.filter(period=Period.objects.current()).filter(~self._expired())
+
+    def expired(self):
+        return self.filter(period=Period.objects.current()).filter(self._expired())
+
     def items_in_stock(self, product, update=False):
-        count = self.filter(
-            period=Period.objects.current(),
-            product=product,
-            ).aggregate(items=Sum('change')).get('items') or 0
+        count = self.stock().filter(product=product).aggregate(items=Sum('change')).get('items') or 0
 
         if update:
             ProductVariation.objects.filter(id=product).update(
