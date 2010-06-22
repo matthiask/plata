@@ -346,9 +346,29 @@ class OrderStatus(models.Model):
         self.order.save()
 
 
+class OrderPaymentManager(models.Manager):
+    def pending(self):
+        return self.filter(status=self.model.PENDING)
+
+    def authorized(self):
+        return self.filter(authorized__isnull=False)
+
+
 class OrderPayment(models.Model):
+    PENDING = 10
+    PROCESSED = 20
+    AUTHORIZED = 30
+
+    STATUS_CHOICES = (
+        (PENDING, _('pending')),
+        (PROCESSED, _('processed')),
+        (AUTHORIZED, _('authorized')),
+        )
+
     order = models.ForeignKey(Order, verbose_name=_('order'), related_name='payments')
     timestamp = models.DateTimeField(_('timestamp'), default=datetime.now)
+    status = models.PositiveIntegerField(_('status'), choices=STATUS_CHOICES,
+        default=PENDING)
 
     currency = CurrencyField()
     amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2)
@@ -372,6 +392,8 @@ class OrderPayment(models.Model):
         ordering = ('-timestamp',)
         verbose_name = _('order payment')
         verbose_name_plural = _('order payments')
+
+    objects = OrderPaymentManager()
 
     def __unicode__(self):
         return u'%s of %s %.2f for %s' % (
