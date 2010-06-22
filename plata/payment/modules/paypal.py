@@ -15,6 +15,7 @@ from django.views.decorators.http import require_POST
 
 from plata.payment.modules.base import ProcessorBase
 from plata.product.stock.models import StockTransaction
+from plata.shop.models import OrderPayment
 
 
 csrf_exempt_m = method_decorator(csrf_exempt)
@@ -37,11 +38,7 @@ class PaymentProcessor(ProcessorBase):
             # TODO maybe create stock transactions?
             return redirect('plata_order_already_paid')
 
-        payment = order.payments.create(
-            currency=order.currency,
-            amount=order.balance_remaining,
-            payment_module=u'%s' % self.name,
-            )
+        payment = self.create_pending_payment(order)
 
         self.create_transactions(order, _('payment process reservation'),
             type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
@@ -120,22 +117,19 @@ class PaymentProcessor(ProcessorBase):
                         )
 
                 sys.stderr.write('stage 7');sys.stderr.flush()
+                payment.status = OrderPayment.PROCESSED
                 payment.currency = currency
                 payment.amount = Decimal(amount)
                 payment.data = request.POST.copy()
                 payment.transaction_id = reference
                 #payment.payment_method = BRAND
                 #payment.notes = STATUS_DICT.get(STATUS)
+
                 if parameters['payment_status'] == 'Completed':
                     payment.authorized = datetime.now()
+                    payment.status = OrderPayment.AUTHORIZED
 
-                sys.stderr.write('stage 8');sys.stderr.flush()
                 payment.save()
-                sys.stderr.write('stage 9');sys.stderr.flush()
-
-                self.create_transactions(order, _('payment process reservation release'),
-                    type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
-                    negative=False, payment=payment)
 
                 if payment.authorized:
                     self.create_transactions(order, _('sale'),

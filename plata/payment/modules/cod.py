@@ -6,6 +6,7 @@ from django.utils.translation import ugettext as _
 
 from plata.payment.modules.base import ProcessorBase
 from plata.product.stock.models import StockTransaction
+from plata.shop.models import OrderPayment
 
 
 class PaymentProcessor(ProcessorBase):
@@ -16,12 +17,11 @@ class PaymentProcessor(ProcessorBase):
             self.order_completed(order)
             return redirect('plata_order_already_paid')
 
-        payment = order.payments.create(
-            currency=order.currency,
-            amount=order.balance_remaining,
-            payment_module=u'%s' % self.name,
-            authorized=datetime.now(),
-            )
+        payment = self.create_pending_payment(order)
+
+        payment.status = OrderPayment.AUTHORIZED
+        payment.authorized = datetime.now()
+        payment.save()
 
         self.create_transactions(order, _('sale'),
             type=StockTransaction.SALE, negative=True, payment=payment)

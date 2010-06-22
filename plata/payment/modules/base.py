@@ -27,6 +27,18 @@ class ProcessorBase(object):
     def process_order_confirmed(self, request, order):
         raise NotImplementedError
 
+    def clear_pending_payments(self, order):
+        order.payments.pending().delete()
+        order.stock_transactions.filter(type=StockTransaction.PAYMENT_PROCESS_RESERVATION).delete()
+
+    def create_pending_payment(self, order):
+        self.clear_pending_payments(order)
+        return order.payments.create(
+            currency=order.currency,
+            amount=order.balance_remaining,
+            payment_module=u'%s' % self.name,
+            )
+
     def create_transactions(self, order, stage, **kwargs):
         StockTransaction.objects.bulk_create(order,
             notes=_('%(stage)s: %(order)s processed by %(payment_module)s') % {
@@ -39,3 +51,4 @@ class ProcessorBase(object):
     def order_completed(self, order):
         if order.status < order.COMPLETED:
             order.update_status(order.COMPLETED, 'Order has been fully paid')
+        self.clear_pending_payments(order)

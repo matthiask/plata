@@ -307,7 +307,7 @@ class ViewTest(PlataTest):
         order = Order.objects.get(pk=1)
         assert order.is_paid()
 
-        self.assertEqual(StockTransaction.objects.count(), 4)
+        self.assertEqual(StockTransaction.objects.count(), 2)
 
         # Manipulate paid amount
         order.paid -= 10
@@ -367,4 +367,4 @@ class ViewTest(PlataTest):
         order = Order.objects.get(pk=1)
         assert order.is_paid()
 
-        self.assertEqual(StockTransaction.objects.count(), 4)
+        self.assertEqual(StockTransaction.objects.count(), 2)

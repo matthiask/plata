@@ -15,6 +15,7 @@ from django.views.decorators.http import require_POST
 
 from plata.payment.modules.base import ProcessorBase
 from plata.product.stock.models import StockTransaction
+from plata.shop.models import OrderPayment
 
 
 # Copied from http://e-payment.postfinance.ch/ncol/paymentinfos1.asp
@@ -73,12 +74,7 @@ class PaymentProcessor(ProcessorBase):
         if order.is_paid():
             return redirect('plata_order_already_paid')
 
-        payment = order.payments.create(
-            currency=order.currency,
-            amount=order.balance_remaining,
-            payment_module=u'%s' % self.name,
-            )
-
+        payment = self.create_pending_payment(order)
         self.create_transactions(order, _('payment process reservation'),
             type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
             negative=True, payment=payment)
@@ -163,6 +159,7 @@ class PaymentProcessor(ProcessorBase):
                     payment_module=u'%s' % self.name,
                     )
 
+            payment.status = OrderPayment.PROCESSED
             payment.currency = currency
             payment.amount = Decimal(amount)
             payment.data = request.POST.copy()
@@ -172,12 +169,9 @@ class PaymentProcessor(ProcessorBase):
 
             if STATUS == '5':
                 payment.authorized = datetime.now()
+                payment.status = OrderPayment.AUTHORIZED
 
             payment.save()
-
-            self.create_transactions(order, _('payment process reservation release'),
-                type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
-                negative=False, payment=payment)
 
             if payment.authorized:
                 self.create_transactions(order, _('sale'),
