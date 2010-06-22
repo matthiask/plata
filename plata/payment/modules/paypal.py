@@ -8,17 +8,11 @@ from django.http import HttpResponse, HttpResponseForbidden,\
     HttpResponseServerError
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
-from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext as _
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST
 
 from plata.payment.modules.base import ProcessorBase
 from plata.product.stock.models import StockTransaction
 from plata.shop.models import OrderPayment
-
-
-csrf_exempt_m = method_decorator(csrf_exempt)
 
 
 class PaymentProcessor(ProcessorBase):
@@ -146,3 +140,4 @@ class PaymentProcessor(ProcessorBase):
             traceback.print_exc(100, sys.stderr)
             sys.stderr.flush()
             raise
+    ipn.csrf_exempt = True

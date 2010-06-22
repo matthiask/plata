@@ -101,8 +101,6 @@ class PaymentProcessor(ProcessorBase):
             'form_params': form_params,
             }, context_instance=RequestContext(request))
 
-    @method_decorator(csrf_exempt)
-    @method_decorator(require_POST)
     def ipn(self, request):
         POSTFINANCE = settings.POSTFINANCE
 
@@ -187,3 +185,4 @@ class PaymentProcessor(ProcessorBase):
             traceback.print_exc(100, sys.stderr)
             sys.stderr.flush()
             raise
+    ipn.csrf_exempt = True
