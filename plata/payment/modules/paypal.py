@@ -51,8 +51,6 @@ class PaymentProcessor(ProcessorBase):
             'business': PAYPAL['BUSINESS'],
             }, context_instance=RequestContext(request))
 
-    @method_decorator(csrf_exempt)
-    @method_decorator(require_POST)
     def ipn(self, request):
         request.encoding = 'windows-1252'
         PAYPAL = settings.PAYPAL
