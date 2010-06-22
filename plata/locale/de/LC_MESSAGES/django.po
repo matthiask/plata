@@ -742,7 +742,7 @@ msgstr "verarbeitet"
 
 #: shop/models.py:365 shop/models.py:382
 msgid "authorized"
-msgstr "Authorisiert"
+msgstr "authorisiert"
 
 #: shop/models.py:369
 msgid "timestamp"
