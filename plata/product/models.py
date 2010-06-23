@@ -98,6 +98,9 @@ class ProductManager(models.Manager):
     def active(self):
         return self.filter(is_active=True)
 
+    def featured(self):
+        return self.active().filter(is_featured=True)
+
 
 class Product(models.Model):
     is_active = models.BooleanField(_('is active'), default=True)
