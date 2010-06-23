@@ -415,7 +415,7 @@ class Shop(object):
         ContactForm = self.checkout_contact_form(request, order)
         OrderForm = self.checkout_order_form(request, order)
 
-        if request.method == 'POST':
+        if request.method == 'POST' and '_checkout' in request.POST:
             c_form = ContactForm(request.POST, prefix='contact', instance=order.contact)
             o_form = OrderForm(request.POST, prefix='order', instance=order)
 
