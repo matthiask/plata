@@ -157,7 +157,7 @@ class Shop(object):
             # Try finding a contact which is already linked with the currently
             # authenticated user
             try:
-                contact = self.contact_model.objects.get(contactuser__user=request.user)
+                contact = self.contact_from_user(request.user)
                 self.set_contact_on_request(request, contact)
                 return contact
             except self.contact_model.DoesNotExist:
@@ -187,6 +187,9 @@ class Shop(object):
             return contact
 
         return None
+
+    def contact_from_user(self, user):
+        return self.contact_model.objects.get(contactuser__user=user)
 
     def get_context(self, request, context):
         instance = RequestContext(request)
@@ -395,6 +398,13 @@ class Shop(object):
                 if loginform.is_valid():
                     user = loginform.get_user()
                     auth.login(request, user)
+
+                    try:
+                        order.contact = self.contact_from_user(user)
+                        order.save()
+                    except self.contact_model.DoesNotExist:
+                        pass
+
                     return HttpResponseRedirect('.')
             else:
                 loginform = AuthenticationForm(prefix='login')
