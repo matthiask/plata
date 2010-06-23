@@ -7,8 +7,24 @@
 {% block content %}
 <h1>{% trans "Checkout" %}</h1>
 
+{% if loginform %}
+    <form method="post" action=".">{% csrf_token %}
+    <input type="hidden" name="_login" value="1" />
+    {% form_errors loginform %}
+
+    <table>
+        {{ loginform }}
+    <tr>
+        <td></td>
+        <td><button type="submit">{% trans "Submit" %}</button></td>
+    </tr>
+    </table>
+    </form>
+{% endif %}
+
 <form method="post" action=".">
 {% csrf_token %}
+<input type="hidden" name="_checkout" value="1" />
 
 {% form_errors contactform orderform %}
 

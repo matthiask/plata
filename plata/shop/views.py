@@ -3,6 +3,9 @@ from functools import wraps
 
 from django import forms
 from django.contrib import messages
+from django.contrib import auth
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import get_callable, reverse
 from django.db.models import ObjectDoesNotExist
@@ -385,6 +388,20 @@ class Shop(object):
 
     @checkout_process_decorator(cart_not_empty, order_confirmed, insufficient_stock)
     def checkout(self, request, order):
+        if not request.user.is_authenticated():
+            if request.method == 'POST' and '_login' in request.POST:
+                loginform = AuthenticationForm(data=request.POST, prefix='login')
+
+                if loginform.is_valid():
+                    user = loginform.get_user()
+                    auth.login(request, user)
+                    return HttpResponseRedirect('.')
+            else:
+                loginform = AuthenticationForm(prefix='login')
+        else:
+            loginform = None
+
+
         ContactForm = self.checkout_contact_form(request, order)
         OrderForm = self.checkout_order_form(request, order)
 
@@ -408,6 +425,7 @@ class Shop(object):
 
         return self.render_checkout(request, {
             'order': order,
+            'loginform': loginform,
             'contactform': c_form,
             'orderform': o_form,
             })
