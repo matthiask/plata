@@ -627,3 +627,9 @@ class ViewTest(PlataTest):
         StockTransaction.objects.update(created=datetime.now()-timedelta(minutes=20))
         self.assertRedirects(self.client.post(p1.get_absolute_url(), {'quantity': 5}),
             p1.get_absolute_url())
+
+        order = Order.objects.all()[0]
+        order.validate(all=True)
+
+        StockTransaction.objects.update(created=datetime.now()-timedelta(minutes=10))
+        self.assertRaises(ValidationError, order.validate, all=True)
