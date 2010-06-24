@@ -388,7 +388,10 @@ class Shop(object):
                     contact = shop.contact_model(
                         user=user,
                         currency=self.instance.currency)
-                    contact.copy_address(self.instance)
+
+                    for k, v in data.items():
+                        if k.startswith('shipping_') or k.startswith('billing_'):
+                            setattr(contact, k, v)
                     contact.save()
                     self.instance.contact = contact
                 elif self.contact:

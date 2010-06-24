@@ -35,17 +35,6 @@ class BillingShippingAddress(models.Model):
     class Meta:
         abstract = True
 
-    def copy_address(self, instance=None):
-        instance = instance or self.instance
-
-        self.shipping_same_as_billing = instance.shipping_same_as_billing
-
-        for field in self.ADDRESS_FIELDS:
-            setattr(self, 'billing_%s' % field,
-                getattr(instance, 'billing_%s' % field))
-            setattr(self, 'shipping_%s' % field,
-                getattr(instance, 'shipping_%s' % field))
-
 
 class Contact(BillingShippingAddress):
     user = models.OneToOneField(User, verbose_name=_('user'),
