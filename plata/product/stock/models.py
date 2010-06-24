@@ -61,7 +61,7 @@ class StockTransactionManager(models.Manager):
         count = self.stock().filter(product=product).aggregate(items=Sum('change')).get('items') or 0
 
         if update:
-            ProductVariation.objects.filter(id=product).update(
+            ProductVariation.objects.filter(id=getattr(product, 'pk', product)).update(
                 items_in_stock=count)
         return count
 
