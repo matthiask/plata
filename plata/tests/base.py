@@ -87,7 +87,7 @@ class PlataTest(TestCase):
         return self.tax_class, self.tax_class_germany, self.tax_class_something
 
 
-    def create_product(self):
+    def create_product(self, stock=0):
         tax_class, tax_class_germany, tax_class_something = self.create_tax_classes()
 
         Product = plata.shop_instance().product_model
@@ -98,6 +98,12 @@ class PlataTest(TestCase):
             )
 
         product.create_variations()
+
+        if stock:
+            product.variations.get().stock_transactions.create(
+                type=StockTransaction.PURCHASE,
+                change=stock,
+                )
 
         # An old price in CHF which should not influence the rest of the tests
         product.prices.create(
