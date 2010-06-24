@@ -1,4 +1,5 @@
 import os
+import re
 
 from datetime import date, datetime
 from decimal import Decimal
@@ -43,6 +44,67 @@ class ViewTest(PlataTest):
         request = get_request(user=user)
 
         self.assertEqual(shop.contact_from_user(request.user), contact)
+
+    def test_03_product_detail(self):
+        p1 = self.create_product()
+        response = self.client.post(p1.get_absolute_url(), {
+            'quantity': 5,
+            })
+        self.assertTrue(re.search(r'Only \d+ items for .*available', response.content))
+
+        p1.variations.get().stock_transactions.create(type=StockTransaction.PURCHASE, change=100)
+        self.assertRedirects(self.client.post(p1.get_absolute_url(), {'quantity': 5}),
+            p1.get_absolute_url())
+
+        p1.variations.all().delete()
+        self.assertContains(self.client.post(p1.get_absolute_url(), {'quantity': 5}),
+            'The requested product does not exist.')
+
+        group = OptionGroup.objects.create(name='color')
+        group.options.create(name='red', value='red')
+        group.options.create(name='green', value='green')
+        group.options.create(name='blue', value='blue')
+        p1.option_groups.add(group)
+
+        group = OptionGroup.objects.create(name='size')
+        group.options.create(name='s', value='s')
+        group.options.create(name='m', value='m')
+        group.options.create(name='l', value='l')
+        p1.option_groups.add(group)
+
+        p1.create_variations()
+        self.assertEqual(p1.variations.count(), 9)
+
+        self.assertContains(self.client.post(p1.get_absolute_url(), {'quantity': 5}),
+            'This field is required', count=2)
+        self.assertContains(self.client.post(p1.get_absolute_url(), {
+            'quantity': 5,
+            'option_1': 1,
+            }), 'This field is required', count=1)
+
+        response = self.client.post(p1.get_absolute_url(), {
+            'quantity': 5,
+            'option_1': 1,
+            'option_2': 5,
+            })
+        self.assertTrue(re.search(r'Only \d+ items for .*available', response.content))
+
+        variation = p1.variations.filter(options__id=1).filter(options__id=5).get()
+        variation.stock_transactions.create(type=StockTransaction.PURCHASE, change=100)
+
+        self.assertRedirects(self.client.post(p1.get_absolute_url(), {
+            'quantity': 5,
+            'option_1': 1,
+            'option_2': 5,
+            }), p1.get_absolute_url())
+
+        p1.create_variations()
+        p1.prices.all().delete()
+        self.assertContains(self.client.post(p1.get_absolute_url(), {
+            'quantity': 5,
+            'option_1': 1,
+            'option_2': 5,
+            }), 'Price could not be determined', count=1)
 
     def test_04_shopping(self):
         self.assertEqual(Order.objects.count(), 0)
