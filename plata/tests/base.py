@@ -3,7 +3,7 @@ from decimal import Decimal
 import random
 
 from django.test import TestCase
-from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth.models import AnonymousUser, User
 
 import plata
 from plata.contact.models import Contact
@@ -57,6 +57,7 @@ class PlataTest(TestCase):
             billing_country=u'CH',
             shipping_same_as_billing=True,
             currency='CHF',
+            user=User.objects.create_user('hans', 'hans', 'hans'),
             )
 
     def create_order(self, contact=None):

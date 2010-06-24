@@ -38,12 +38,13 @@ class Order(BillingShippingAddress):
 
     created = models.DateTimeField(_('created'), default=datetime.now)
     confirmed = models.DateTimeField(_('confirmed'), blank=True, null=True)
-    contact = models.ForeignKey(Contact, verbose_name=_('contact'),
-        related_name='orders')
+    contact = models.ForeignKey(Contact, blank=True, null=True,
+        verbose_name=_('contact'), related_name='orders')
     status = models.PositiveIntegerField(_('status'), choices=STATUS_CHOICES,
         default=CART)
 
     #order_id = models.CharField(_('order ID'), max_length=20, unique=True)
+    email = models.EmailField(_('e-mail address'))
 
     currency = CurrencyField()
 

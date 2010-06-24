@@ -65,7 +65,7 @@ class Shop(object):
     Shop needs a few model classes with relations between them:
 
     - Product class with variations, option groups, options and prices
-    - Contact model with a ContactUser class linking to Django's auth.user
+    - Contact model linking to Django's auth.user
     - Order model with order items and an applied discount model
     - Discount model
     """
@@ -125,71 +125,31 @@ class Shop(object):
         elif 'shop_order' in request.session:
             del request.session['shop_order']
 
-    def set_contact_on_request(self, request, contact):
-        if contact:
-            request.session['shop_contact'] = contact.pk
-        elif 'shop_contact' in request.session:
-            del request.session['shop_contact']
-
     def order_from_request(self, request, create=False):
         try:
             return self.order_model.objects.get(pk=request.session.get('shop_order'))
         except (ValueError, self.order_model.DoesNotExist):
             if create:
-                contact = self.contact_from_request(request, create)
+                contact = self.contact_from_user(request.user)
+                currency = contact and contact.currency or self.default_currency(request)
+
                 order = self.order_model.objects.create(
                     contact=contact,
-                    currency=contact.currency,
+                    currency=currency,
                     )
                 self.set_order_on_request(request, order)
                 return order
 
         return None
 
-    def contact_from_request(self, request, create=False):
-        # TODO after login, a new contact might be available. what should be done then?
-        try:
-            return self.contact_model.objects.get(pk=request.session.get('shop_contact'))
-        except (ValueError, self.contact_model.DoesNotExist):
-            pass
-
-        if request.user.is_authenticated():
-            # Try finding a contact which is already linked with the currently
-            # authenticated user
-            try:
-                contact = self.contact_from_user(request.user)
-                self.set_contact_on_request(request, contact)
-                return contact
-            except self.contact_model.DoesNotExist:
-                pass
-
-        if create:
-            initial = {
-                'shipping_same_as_billing': True,
-                'currency': self.default_currency(request),
-                }
-
-            if request.user.is_authenticated():
-                initial.update({
-                    'billing_first_name': request.user.first_name,
-                    'billing_last_name': request.user.last_name,
-                    'email': request.user.email,
-                })
-
-            contact = self.contact_model.objects.create(**initial)
-
-            if request.user.is_authenticated():
-                self.contact_model.contactuser.related.model.objects.create(
-                    contact=contact,
-                    user=request.user)
-
-            self.set_contact_on_request(request, contact)
-            return contact
-
-        return None
-
     def contact_from_user(self, user):
-        return self.contact_model.objects.get(contactuser__user=user)
+        if not user.is_authenticated():
+            return None
+
+        try:
+            return self.contact_model.objects.get(user=user)
+        except self.contact_model.DoesNotExist:
+            return None
 
     def get_context(self, request, context):
         instance = RequestContext(request)
@@ -362,32 +322,78 @@ class Shop(object):
         return render_to_response('plata/shop_cart.html',
             self.get_context(request, context))
 
-    def checkout_contact_form(self, request, order):
-        if not hasattr(self, '_checkout_contact_form_cache'):
-            REQUIRED_ADDRESS_FIELDS = self.order_model.ADDRESS_FIELDS[:]
-            REQUIRED_ADDRESS_FIELDS.remove('company')
-
-            class ContactForm(forms.ModelForm):
-                class Meta:
-                    model = self.contact_model
-                    exclude = ('user', 'created', 'notes', 'currency')
-
-                def clean(self):
-                    if not self.cleaned_data.get('shipping_same_as_billing'):
-                        for f in REQUIRED_ADDRESS_FIELDS:
-                            field = 'shipping_%s' % f
-                            if not self.cleaned_data.get(field):
-                                self._errors[field] = self.error_class([
-                                    _('This field is required.')])
-                    return self.cleaned_data
-
-            for f in REQUIRED_ADDRESS_FIELDS:
-                ContactForm.base_fields['billing_%s' % f].required = True
-            self._checkout_contact_form_cache = ContactForm
-        return self._checkout_contact_form_cache
-
     def checkout_order_form(self, request, order):
-        return modelform_factory(self.order_model, fields=('notes',))
+        REQUIRED_ADDRESS_FIELDS = self.order_model.ADDRESS_FIELDS[:]
+        REQUIRED_ADDRESS_FIELDS.remove('company')
+
+        class OrderForm(forms.ModelForm):
+            class Meta:
+                fields = ['notes', 'email', 'shipping_same_as_billing']
+                fields.extend('billing_%s' % f for f in self.order_model.ADDRESS_FIELDS)
+                fields.extend('shipping_%s' % f for f in self.order_model.ADDRESS_FIELDS)
+                model = self.order_model
+
+            def __init__(self, *args, **kwargs):
+                self.request = kwargs.pop('request')
+                self.contact = kwargs.pop('contact')
+
+                super(OrderForm, self).__init__(*args, **kwargs)
+
+                if not self.contact:
+                    self.fields['create_account'] = forms.BooleanField(
+                        label=_('create account'),
+                        required=False, initial=True)
+
+            def clean(self):
+                data = self.cleaned_data
+
+                if not data.get('shipping_same_as_billing'):
+                    for f in REQUIRED_ADDRESS_FIELDS:
+                        field = 'shipping_%s' % f
+                        if not data.get(field):
+                            self._errors[field] = self.error_class([
+                                _('This field is required.')])
+
+                email = data.get('email')
+                create_account = data.get('create_account')
+
+                if email:
+                    try:
+                        user = User.objects.get(email=email)
+
+                        if user != self.request.user:
+                            if self.request.user.is_authenticated():
+                                self._errors['email'] = self.error_class([
+                                    _('This e-mail address belongs to a different account.')])
+                            else:
+                                self._errors['email'] = self.error_class([
+                                    _('This e-mail address might belong to you, but we cannot know for sure because you are not authenticated yet.')])
+
+                            # Clear e-mail address so that further processing is aborted
+                            email = None
+                    except User.DoesNotExist:
+                        # Everything is well, the e-mail address isn't occupied yet
+                        pass
+
+                if email and create_account and not self.contact and not self._errors:
+                    if not self.request.user.is_authenticated():
+                        # TODO send registration mail / create registration profile
+                        user = User.objects.create_user(email, email, 'password')
+                        user = auth.authenticate(username=email, password='password')
+                        auth.login(self.request, user)
+                    else:
+                        user = self.request.user
+
+                    shop = plata.shop_instance()
+                    contact = shop.contact_model(
+                        user=user,
+                        currency=self.instance.currency)
+                    contact.copy_address(self.instance)
+                    contact.save()
+
+                return data
+
+        return OrderForm
 
     @checkout_process_decorator(cart_not_empty, order_confirmed, insufficient_stock)
     def checkout(self, request, order):
@@ -411,33 +417,28 @@ class Shop(object):
         else:
             loginform = None
 
-
-        ContactForm = self.checkout_contact_form(request, order)
         OrderForm = self.checkout_order_form(request, order)
+        contact = self.contact_from_user(request.user)
 
         if request.method == 'POST' and '_checkout' in request.POST:
-            c_form = ContactForm(request.POST, prefix='contact', instance=order.contact)
-            o_form = OrderForm(request.POST, prefix='order', instance=order)
+            orderform = OrderForm(request.POST, prefix='order', instance=order,
+                request=request, contact=contact)
 
-            if c_form.is_valid() and o_form.is_valid():
-                c_form.save()
-                order = o_form.save()
-                order.copy_address()
-                order.save()
+            if orderform.is_valid():
+                order = orderform.save()
 
                 if order.status < self.order_model.CHECKOUT:
                     order.update_status(self.order_model.CHECKOUT, 'Checkout completed')
 
                 return redirect('plata_shop_discounts')
         else:
-            c_form = ContactForm(instance=order.contact, prefix='contact')
-            o_form = OrderForm(instance=order, prefix='order')
+            orderform = OrderForm(instance=order, prefix='order',
+                request=request, contact=contact)
 
         return self.render_checkout(request, {
             'order': order,
             'loginform': loginform,
-            'contactform': c_form,
-            'orderform': o_form,
+            'orderform': orderform,
             })
 
     def render_checkout(self, request, context):

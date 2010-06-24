@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 
 import plata
-from plata.contact.models import Contact, ContactUser
+from plata.contact.models import Contact
 from plata.discount.models import Discount
 from plata.product.models import TaxClass, Product, ProductVariation,\
     ProductPrice, OptionGroup, Option
@@ -37,24 +37,12 @@ class ViewTest(PlataTest):
         user = User.objects.create_user('test', 'test@example.com', 'testing')
         self.client.login(username='test', password='testing')
 
-        contact = Contact.objects.create(email=user.email)
-        ContactUser.objects.create(contact=contact, user=user)
+        contact = Contact.objects.create(user=user)
         shop = plata.shop_instance()
 
         request = get_request(user=user)
 
-        self.assertEqual(shop.contact_from_request(request), contact)
-
-    def test_03_authenticated_user_has_no_contact(self):
-        user = User.objects.create_user('test', 'test@example.com', 'testing')
-        self.client.login(username='test', password='testing')
-        shop = plata.shop_instance()
-
-        self.assertEqual(Contact.objects.count(), 0)
-        contact = shop.contact_from_request(get_request(user=user), create=True)
-
-        self.assertEqual(user.email, contact.email)
-        self.assertEqual(Contact.objects.count(), 1)
+        self.assertEqual(shop.contact_from_user(request.user), contact)
 
     def test_04_shopping(self):
         self.assertEqual(Order.objects.count(), 0)
@@ -137,29 +125,31 @@ class ViewTest(PlataTest):
         self.assertEqual(order.items.count(), 1)
 
         self.assertEqual(self.client.post('/checkout/', {
-            'contact-billing_company': u'BigCorp',
-            'contact-billing_first_name': u'Hans',
-            'contact-billing_last_name': u'Muster',
-            'contact-billing_address': u'Musterstrasse 42',
-            'contact-billing_zip_code': u'8042',
-            'contact-billing_city': u'Beispielstadt',
-            'contact-billing_country': u'CH',
-            #'contact-shipping_same_as_billing': True, # billing information is missing...
-            'contact-email': 'something@example.com',
-            'contact-currency': 'CHF',
+            '_checkout': 1,
+            'order-billing_company': u'BigCorp',
+            'order-billing_first_name': u'Hans',
+            'order-billing_last_name': u'Muster',
+            'order-billing_address': u'Musterstrasse 42',
+            'order-billing_zip_code': u'8042',
+            'order-billing_city': u'Beispielstadt',
+            'order-billing_country': u'CH',
+            #'order-shipping_same_as_billing': True, # billing information is missing...
+            'order-email': 'something@example.com',
+            'order-currency': 'CHF',
             }).status_code, 200) # ... therefore view does not redirect
 
         self.assertRedirects(self.client.post('/checkout/', {
-            'contact-billing_company': u'BigCorp',
-            'contact-billing_first_name': u'Hans',
-            'contact-billing_last_name': u'Muster',
-            'contact-billing_address': u'Musterstrasse 42',
-            'contact-billing_zip_code': u'8042',
-            'contact-billing_city': u'Beispielstadt',
-            'contact-billing_country': u'CH',
-            'contact-shipping_same_as_billing': True,
-            'contact-email': 'something@example.com',
-            'contact-currency': 'CHF',
+            '_checkout': 1,
+            'order-billing_company': u'BigCorp',
+            'order-billing_first_name': u'Hans',
+            'order-billing_last_name': u'Muster',
+            'order-billing_address': u'Musterstrasse 42',
+            'order-billing_zip_code': u'8042',
+            'order-billing_city': u'Beispielstadt',
+            'order-billing_country': u'CH',
+            'order-shipping_same_as_billing': True,
+            'order-email': 'something@example.com',
+            'order-currency': 'CHF',
             }), '/discounts/')
 
         self.assertContains(self.client.post('/discounts/', {
@@ -233,24 +223,12 @@ class ViewTest(PlataTest):
         shop = plata.shop_instance()
         request = get_request()
 
-        contact = shop.contact_from_request(request)
-        self.assertEqual(contact, None)
-
-        contact = shop.contact_from_request(request, create=True)
-        self.assertNotEqual(contact, None)
-
-        contact = shop.contact_from_request(request, create=True)
-        self.assertEqual(Contact.objects.count(), 1)
-
         order = shop.order_from_request(request)
         self.assertEqual(order, None)
 
         order = shop.order_from_request(request, create=True)
         self.assertEqual(Order.objects.count(), 1)
-        self.assertEqual(order.contact, contact)
-
-        shop.set_contact_on_request(request, contact=None)
-        self.assertEqual(shop.contact_from_request(request, create=False), None)
+        self.assertEqual(order.contact, None)
 
     def test_06_postfinance_ipn(self):
         shop = plata.shop_instance()

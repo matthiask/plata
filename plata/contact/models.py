@@ -14,12 +14,15 @@ class BillingShippingAddress(models.Model):
         'zip_code', 'city', 'country']
 
     billing_company = models.CharField(_('company'), max_length=100, blank=True)
-    billing_first_name = models.CharField(_('first name'), max_length=100, blank=True)
-    billing_last_name = models.CharField(_('last name'), max_length=100, blank=True)
-    billing_address = models.TextField(_('address'), blank=True)
-    billing_zip_code = models.CharField(_('ZIP code'), max_length=50, blank=True)
-    billing_city = models.CharField(_('city'), max_length=100, blank=True)
-    billing_country = CountryField(blank=True)
+    billing_first_name = models.CharField(_('first name'), max_length=100)
+    billing_last_name = models.CharField(_('last name'), max_length=100)
+    billing_address = models.TextField(_('address'))
+    billing_zip_code = models.CharField(_('ZIP code'), max_length=50)
+    billing_city = models.CharField(_('city'), max_length=100)
+    billing_country = CountryField()
+
+    shipping_same_as_billing = models.BooleanField(_('shipping address equals billing address'),
+        default=True)
 
     shipping_company = models.CharField(_('company'), max_length=100, blank=True)
     shipping_first_name = models.CharField(_('first name'), max_length=100, blank=True)
@@ -32,25 +35,24 @@ class BillingShippingAddress(models.Model):
     class Meta:
         abstract = True
 
-    def copy_address(self, contact=None):
-        contact = contact or self.contact
+    def copy_address(self, instance=None):
+        instance = instance or self.instance
 
-        shipping_prefix = contact.shipping_same_as_billing and 'billing' or 'shipping'
+        self.shipping_same_as_billing = instance.shipping_same_as_billing
 
         for field in self.ADDRESS_FIELDS:
             setattr(self, 'billing_%s' % field,
-                getattr(contact, 'billing_%s' % field))
+                getattr(instance, 'billing_%s' % field))
             setattr(self, 'shipping_%s' % field,
-                getattr(contact, '%s_%s' % (shipping_prefix, field)))
+                getattr(instance, 'shipping_%s' % field))
 
 
 class Contact(BillingShippingAddress):
-    email = models.EmailField(_('e-mail address'))
+    user = models.OneToOneField(User, verbose_name=_('user'),
+        related_name='contactuser')
+
     dob = models.DateField(_('date of birth'), blank=True, null=True)
     created = models.DateTimeField(_('created'), default=datetime.now)
-
-    shipping_same_as_billing = models.BooleanField(_('shipping address equals billing address'),
-        default=True)
 
     currency = CurrencyField(help_text=_('Preferred currency.'))
     notes = models.TextField(_('notes'), blank=True)
@@ -60,25 +62,4 @@ class Contact(BillingShippingAddress):
         verbose_name_plural = _('contacts')
 
     def __unicode__(self):
-        if not self.billing_first_name and not self.billing_last_name:
-            return self.email
-
-        return u'%s %s' % (self.billing_first_name, self.billing_last_name)
-
-
-class ContactUser(models.Model):
-    # This model is used to relate a contact to a user. A nullable foreign key on
-    # Contact won't do it, because databases treat nullable and unique fields in
-    # differing ways: Some of them would only allow one Contact without an User.
-
-    contact = models.OneToOneField(Contact, primary_key=True, verbose_name=_('contact'),
-        related_name='contactuser')
-    user = models.OneToOneField(User, verbose_name=_('user'),
-        related_name='contactuser')
-
-    class Meta:
-        verbose_name = _('contact user')
-        verbose_name_plural = _('contact users')
-
-    def __unicode__(self):
-        return u'%s - %s' % (self.contact, self.user)
+        return unicode(self.user)
