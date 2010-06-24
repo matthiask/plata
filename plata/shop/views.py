@@ -426,9 +426,23 @@ class Shop(object):
         OrderForm = self.checkout_order_form(request, order)
         contact = self.contact_from_user(request.user)
 
+        initial = {}
+        if contact:
+            initial['shipping_same_as_billing'] = contact.shipping_same_as_billing
+            for f in contact.ADDRESS_FIELDS:
+                initial['billing_%s' % f] = getattr(contact, 'billing_%s' % f)
+                initial['shipping_%s' % f] = getattr(contact, 'shipping_%s' % f)
+
+        orderform_kwargs = {
+            'prefix': 'order',
+            'instance': order,
+            'request': request,
+            'contact': contact,
+            'initial': initial,
+            }
+
         if request.method == 'POST' and '_checkout' in request.POST:
-            orderform = OrderForm(request.POST, prefix='order', instance=order,
-                request=request, contact=contact)
+            orderform = OrderForm(request.POST, **orderform_kwargs)
 
             if orderform.is_valid():
                 order = orderform.save()
@@ -438,8 +452,7 @@ class Shop(object):
 
                 return redirect('plata_shop_discounts')
         else:
-            orderform = OrderForm(instance=order, prefix='order',
-                request=request, contact=contact)
+            orderform = OrderForm(**orderform_kwargs)
 
         return self.render_checkout(request, {
             'order': order,
