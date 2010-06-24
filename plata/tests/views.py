@@ -602,3 +602,12 @@ class ViewTest(PlataTest):
         # Order should be assigned to contact
         self.assertEqual(Order.objects.count(), 1)
         self.assertEqual(contact.orders.count(), 1)
+
+    def test_12_insufficient_stock(self):
+        p1 = self.create_product(stock=10)
+        self.client.post(p1.get_absolute_url(), {'quantity': 9})
+
+        p1.variations.get().stock_transactions.create(type=StockTransaction.SALE, change=-5)
+
+        self.assertRedirects(self.client.get('/checkout/'),
+            '/cart/?insufficient_stock=1')
