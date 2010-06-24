@@ -415,3 +415,186 @@ class ViewTest(PlataTest):
         assert order.is_paid()
 
         self.assertEqual(StockTransaction.objects.count(), 2)
+
+    def test_08_checkout_preexisting_user(self):
+        User.objects.create_user('else', 'else@example.com', 'test')
+
+        user = User.objects.create_user('test', 'test@example.com', 'test')
+        self.client.login(username='test', password='test')
+
+        p1 = self.create_product(stock=100)
+        self.client.post(p1.get_absolute_url(), {'quantity': 5})
+
+        response = self.client.get('/checkout/')
+        self.assertContains(response, 'Checkout')
+        self.assertNotContains(response, 'login-username')
+
+        checkout_data = {
+            '_checkout': 1,
+            'order-billing_company': u'BigCorp',
+            'order-billing_first_name': u'Hans',
+            'order-billing_last_name': u'Muster',
+            'order-billing_address': u'Musterstrasse 42',
+            'order-billing_zip_code': u'8042',
+            'order-billing_city': u'Beispielstadt',
+            'order-billing_country': u'CH',
+            'order-shipping_same_as_billing': True,
+            'order-email': 'else@example.com',
+            'order-currency': 'CHF',
+            'order-create_account': True,
+            }
+
+        self.assertContains(self.client.post('/checkout/', checkout_data),
+            'This e-mail address belongs to a different account')
+
+        checkout_data['order-email'] = 'something@example.com'
+        self.assertRedirects(self.client.post('/checkout/', checkout_data),
+            '/discounts/')
+
+        # There should be exactly one contact object now
+        contact = Contact.objects.get()
+        self.assertEqual(contact.orders.count(), 1)
+        self.assertEqual(contact.billing_city, 'Beispielstadt')
+
+        # User e-mail address is unchanged
+        self.assertEqual(contact.user.email, 'test@example.com')
+
+    def test_09_checkout_create_user(self):
+        User.objects.create_user('else', 'else@example.com', 'test')
+
+        p1 = self.create_product(stock=100)
+        self.client.post(p1.get_absolute_url(), {'quantity': 5})
+
+        response = self.client.get('/checkout/')
+        self.assertContains(response, 'Checkout')
+        self.assertContains(response, 'login-username')
+
+        checkout_data = {
+            '_checkout': 1,
+            'order-billing_company': u'BigCorp',
+            'order-billing_first_name': u'Hans',
+            'order-billing_last_name': u'Muster',
+            'order-billing_address': u'Musterstrasse 42',
+            'order-billing_zip_code': u'8042',
+            'order-billing_city': u'Beispielstadt',
+            'order-billing_country': u'CH',
+            'order-shipping_same_as_billing': True,
+            'order-email': 'else@example.com',
+            'order-currency': 'CHF',
+            'order-create_account': True,
+            }
+
+        self.assertContains(self.client.post('/checkout/', checkout_data),
+            'This e-mail address might belong to you, but we cannot know for sure because you are not authenticated yet')
+
+        checkout_data['order-email'] = 'something@example.com'
+        self.assertRedirects(self.client.post('/checkout/', checkout_data),
+            '/discounts/')
+
+        # There should be exactly one contact object now
+        contact = Contact.objects.get()
+        self.assertEqual(contact.orders.count(), 1)
+        self.assertEqual(contact.billing_city, 'Beispielstadt')
+
+        self.assertEqual(contact.user.email, 'something@example.com')
+
+        # New order
+        self.client.post(p1.get_absolute_url(), {'quantity': 5})
+        response = self.client.get('/checkout/')
+
+        self.assertContains(response, 'value="something@example.com"')
+        self.assertContains(response, 'value="Beispielstadt"')
+
+    def test_10_login_in_checkout_preexisting_contact(self):
+        Contact.objects.create(
+            user=User.objects.create_user('else@example.com', 'else@example.com', 'test'),
+            currency='CHF',
+            billing_first_name='Hans',
+            billing_last_name='Muster',
+            )
+
+        p1 = self.create_product(stock=100)
+        self.client.post(p1.get_absolute_url(), {'quantity': 5})
+
+        response = self.client.get('/checkout/')
+        self.assertContains(response, 'Checkout')
+        self.assertContains(response, 'login-username')
+
+        self.assertRedirects(self.client.post('/checkout/', {
+            '_login': 1,
+            'login-username': 'else@example.com',
+            'login-password': 'test',
+            }), '/checkout/')
+
+        # Test that the order is still active after logging in
+        response = self.client.get('/checkout/')
+        self.assertContains(response, 'value="else@example.com"')
+        self.assertContains(response, 'value="Muster"')
+
+        checkout_data = {
+            '_checkout': 1,
+            'order-billing_company': u'BigCorp',
+            'order-billing_first_name': u'Fritz',
+            'order-billing_last_name': u'Muster',
+            'order-billing_address': u'Musterstrasse 42',
+            'order-billing_zip_code': u'8042',
+            'order-billing_city': u'Beispielstadt',
+            'order-billing_country': u'CH',
+            'order-shipping_same_as_billing': True,
+            'order-email': 'else@example.com',
+            'order-currency': 'CHF',
+            'order-create_account': True,
+            }
+
+        self.assertRedirects(self.client.post('/checkout/', checkout_data),
+            '/discounts/')
+
+        contact = Contact.objects.get()
+        # First name should not be overwritten from checkout processing
+        self.assertEqual(contact.billing_first_name, 'Hans')
+
+        # Order should be assigned to contact
+        self.assertEqual(Order.objects.count(), 1)
+        self.assertEqual(contact.orders.count(), 1)
+
+    def test_11_login_in_checkout_create_contact(self):
+        User.objects.create_user('else@example.com', 'else@example.com', 'test')
+
+        p1 = self.create_product(stock=100)
+        self.client.post(p1.get_absolute_url(), {'quantity': 5})
+
+        response = self.client.get('/checkout/')
+        self.assertContains(response, 'Checkout')
+        self.assertContains(response, 'login-username')
+
+        self.assertRedirects(self.client.post('/checkout/', {
+            '_login': 1,
+            'login-username': 'else@example.com',
+            'login-password': 'test',
+            }), '/checkout/')
+
+        checkout_data = {
+            '_checkout': 1,
+            'order-billing_company': u'BigCorp',
+            'order-billing_first_name': u'Fritz',
+            'order-billing_last_name': u'Muster',
+            'order-billing_address': u'Musterstrasse 42',
+            'order-billing_zip_code': u'8042',
+            'order-billing_city': u'Beispielstadt',
+            'order-billing_country': u'CH',
+            'order-shipping_same_as_billing': True,
+            'order-email': 'else@example.com',
+            'order-currency': 'CHF',
+            'order-create_account': True,
+            }
+
+        # If order wasn't active after logging in anymore, this would not work
+        self.assertRedirects(self.client.post('/checkout/', checkout_data),
+            '/discounts/')
+
+        contact = Contact.objects.get()
+        self.assertEqual(contact.billing_first_name, 'Fritz')
+
+        # Order should be assigned to contact
+        self.assertEqual(Order.objects.count(), 1)
+        self.assertEqual(contact.orders.count(), 1)
