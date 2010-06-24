@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-06-22 11:58+0200\n"
+"POT-Creation-Date: 2010-06-24 18:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,91 +22,79 @@ msgstr ""
 msgid "currency"
 msgstr "Währung"
 
-#: contact/admin.py:15 shop/admin.py:22
+#: contact/admin.py:10 shop/admin.py:22
 #: shop/templates/plata/_order_overview.html:3
-#: shop/templates/plata/shop_checkout.html:17
+#: shop/templates/plata/shop_checkout.html:33
 msgid "Billing address"
 msgstr "Rechungsadresse"
 
-#: contact/admin.py:18 shop/admin.py:25
+#: contact/admin.py:13 shop/admin.py:25
 #: shop/templates/plata/_order_overview.html:9
-#: shop/templates/plata/shop_checkout.html:30
+#: shop/templates/plata/shop_checkout.html:50
 msgid "Shipping address"
 msgstr "Lieferungsadresse"
 
-#: contact/admin.py:22 shop/admin.py:31
+#: contact/admin.py:17 shop/admin.py:32
 msgid "Additional fields"
 msgstr "Zusätzliche Felder"
 
-#: contact/models.py:16 contact/models.py:24
+#: contact/models.py:16 contact/models.py:27
 msgid "company"
 msgstr "Firma"
 
-#: contact/models.py:17 contact/models.py:25
+#: contact/models.py:17 contact/models.py:28
 msgid "first name"
 msgstr "Vorname"
 
-#: contact/models.py:18 contact/models.py:26
+#: contact/models.py:18 contact/models.py:29
 msgid "last name"
 msgstr "Nachname"
 
-#: contact/models.py:19 contact/models.py:27
+#: contact/models.py:19 contact/models.py:30
 msgid "address"
 msgstr "Adresse"
 
-#: contact/models.py:20 contact/models.py:28
+#: contact/models.py:20 contact/models.py:31
 msgid "ZIP code"
 msgstr "PLZ"
 
-#: contact/models.py:21 contact/models.py:29
+#: contact/models.py:21 contact/models.py:32
 msgid "city"
 msgstr "Ort"
 
-#: contact/models.py:48
-msgid "e-mail address"
-msgstr "E-Mail-Adresse"
-
-#: contact/models.py:49
-msgid "date of birth"
-msgstr "Geburtsdatum"
-
-#: contact/models.py:50 product/stock/models.py:111 shop/models.py:39
-#: shop/models.py:328
-msgid "created"
-msgstr "Erstellt"
-
-#: contact/models.py:52
+#: contact/models.py:24
 msgid "shipping address equals billing address"
 msgstr "Lieferadresse gleich wie Rechnungsadresse"
 
-#: contact/models.py:55
-msgid "Preferred currency."
-msgstr "Bevorzugte Währung."
-
-#: contact/models.py:56 product/stock/models.py:21 product/stock/models.py:122
-#: shop/admin.py:54 shop/models.py:73 shop/models.py:330 shop/models.py:385
-msgid "notes"
-msgstr "Bemerkungen"
-
-#: contact/models.py:59 contact/models.py:74 shop/models.py:41
-msgid "contact"
-msgstr "Kontakt"
-
-#: contact/models.py:60
-msgid "contacts"
-msgstr "Kontakte"
-
-#: contact/models.py:76
+#: contact/models.py:40
 msgid "user"
 msgstr "Benutzer"
 
-#: contact/models.py:80
-msgid "contact user"
-msgstr "Kontakt-Benutzer"
+#: contact/models.py:43
+msgid "date of birth"
+msgstr "Geburtsdatum"
 
-#: contact/models.py:81
-msgid "contact users"
-msgstr "Kontakt-Benutzer"
+#: contact/models.py:44 product/stock/models.py:115 shop/models.py:39
+#: shop/models.py:329
+msgid "created"
+msgstr "Erstellt"
+
+#: contact/models.py:46
+msgid "Preferred currency."
+msgstr "Bevorzugte Währung."
+
+#: contact/models.py:47 product/stock/models.py:21 product/stock/models.py:126
+#: shop/admin.py:55 shop/models.py:74 shop/models.py:331 shop/models.py:386
+msgid "notes"
+msgstr "Bemerkungen"
+
+#: contact/models.py:50 shop/models.py:42
+msgid "contact"
+msgstr "Kontakt"
+
+#: contact/models.py:51
+msgid "contacts"
+msgstr "Kontakte"
 
 #: discount/admin.py:46
 msgid "Configuration options"
@@ -149,7 +137,7 @@ msgstr "Ausverkaufspreise ausschliessen"
 msgid "Explicitly define discountable products"
 msgstr "Rabattberechtigte Produkte explizit definieren"
 
-#: discount/models.py:45 discount/models.py:48 product/models.py:120
+#: discount/models.py:45 discount/models.py:48 product/models.py:123
 #: product/feincms/models.py:12 reporting/product.py:73
 #: reporting/product.py:78
 msgid "products"
@@ -160,17 +148,17 @@ msgid "Only products from selected categories"
 msgstr "Nur Produkte aus gewählten Kategorien"
 
 #: discount/models.py:60 discount/models.py:63 product/models.py:53
-#: product/models.py:111 product/feincms/content.py:15
+#: product/models.py:114 product/feincms/content.py:15
 msgid "categories"
 msgstr "Kategorien"
 
 #: discount/models.py:72 product/models.py:14 product/models.py:41
-#: product/models.py:68 product/models.py:81 product/models.py:105
+#: product/models.py:68 product/models.py:81 product/models.py:108
 #: product/producer/models.py:17 product/stock/models.py:20
 msgid "name"
 msgstr "Name"
 
-#: discount/models.py:75 product/stock/models.py:114
+#: discount/models.py:75 product/stock/models.py:118
 msgid "type"
 msgstr "Typ"
 
@@ -188,20 +176,20 @@ msgstr ""
 "Wenn Sie dieses Feld direkt bearbeiten, werden alle Änderungen weiter unten "
 "ignoriert."
 
-#: discount/models.py:176 shop/models.py:427 shop/views.py:422
+#: discount/models.py:176 shop/models.py:428 shop/views.py:468
 msgid "code"
 msgstr "Code"
 
-#: discount/models.py:179 product/models.py:37 product/models.py:103
-#: product/models.py:212 product/models.py:262 product/producer/models.py:16
+#: discount/models.py:179 product/models.py:37 product/models.py:106
+#: product/models.py:215 product/models.py:272 product/producer/models.py:16
 msgid "is active"
 msgstr "ist aktiv"
 
-#: discount/models.py:180 product/models.py:263
+#: discount/models.py:180 product/models.py:273
 msgid "valid from"
 msgstr "gültig von"
 
-#: discount/models.py:181 product/models.py:264
+#: discount/models.py:181 product/models.py:274
 msgid "valid until"
 msgstr "gültig bis"
 
@@ -220,7 +208,7 @@ msgstr ""
 msgid "number of times already used"
 msgstr "Anzahl schon durchgeführte Verwendungen"
 
-#: discount/models.py:189 reporting/order.py:45 shop/models.py:268
+#: discount/models.py:189 reporting/order.py:45 shop/models.py:269
 #: shop/templates/plata/_order_overview.html:51
 msgid "discount"
 msgstr "Rabatt"
@@ -250,26 +238,26 @@ msgstr "%(stage)s: %(order)s bearbeitet von %(payment_module)s"
 msgid "Cash on delivery"
 msgstr "Bezahlung bei Empfang der Ware"
 
-#: payment/modules/cod.py:26 payment/modules/paypal.py:135
-#: payment/modules/postfinance.py:177 product/stock/models.py:101
+#: payment/modules/cod.py:26 payment/modules/paypal.py:127
+#: payment/modules/postfinance.py:172 product/stock/models.py:105
 msgid "sale"
 msgstr "Verkauf"
 
-#: payment/modules/paypal.py:25
+#: payment/modules/paypal.py:19
 msgid "Paypal"
 msgstr "Paypal"
 
-#: payment/modules/paypal.py:43 payment/modules/postfinance.py:78
-#: product/stock/models.py:106
+#: payment/modules/paypal.py:37 payment/modules/postfinance.py:75
+#: product/stock/models.py:110
 msgid "payment process reservation"
 msgstr "Reservation während Zahlungsprozess"
 
-#: payment/modules/postfinance.py:62
+#: payment/modules/postfinance.py:59
 msgid "Postfinance"
 msgstr "Postfinance"
 
-#: product/admin.py:19 product/admin.py:76 product/models.py:108
-#: product/models.py:213 reporting/product.py:85
+#: product/admin.py:19 product/admin.py:76 product/models.py:111
+#: product/models.py:216 reporting/product.py:85
 msgid "SKU"
 msgstr "Artikelnummer"
 
@@ -318,7 +306,7 @@ msgstr "Priorität"
 msgid "Used to order the tax classes in the administration interface."
 msgstr "Verwendet, um die Steuerklassen zu sortieren."
 
-#: product/models.py:21 product/models.py:260 shop/models.py:262
+#: product/models.py:21 product/models.py:270 shop/models.py:263
 msgid "tax class"
 msgstr "Steuerklasse"
 
@@ -336,16 +324,16 @@ msgstr ""
 "Nur verwendet, um Produkte intern zu organisieren, z.B. für die "
 "Rabattberechnung."
 
-#: product/models.py:42 product/models.py:106 product/producer/models.py:18
+#: product/models.py:42 product/models.py:109 product/producer/models.py:18
 msgid "slug"
 msgstr "Slug"
 
-#: product/models.py:43 product/models.py:83 product/models.py:107
-#: product/models.py:219 product/models.py:309 product/producer/models.py:19
+#: product/models.py:43 product/models.py:83 product/models.py:110
+#: product/models.py:222 product/models.py:319 product/producer/models.py:19
 msgid "ordering"
 msgstr "Sortierung"
 
-#: product/models.py:44 product/models.py:113 product/producer/models.py:20
+#: product/models.py:44 product/models.py:116 product/producer/models.py:20
 msgid "description"
 msgstr "Beschreibung"
 
@@ -361,7 +349,7 @@ msgstr "Kategorie"
 msgid "option group"
 msgstr "Optionsgruppe"
 
-#: product/models.py:72 product/models.py:115
+#: product/models.py:72 product/models.py:118
 msgid "option groups"
 msgstr "Optionsgruppen"
 
@@ -369,54 +357,54 @@ msgstr "Optionsgruppen"
 msgid "option"
 msgstr "Option"
 
-#: product/models.py:88 product/models.py:216
+#: product/models.py:88 product/models.py:219
 msgid "options"
 msgstr "Optionen"
 
-#: product/models.py:104
+#: product/models.py:107
 msgid "is featured"
 msgstr "Sonderartikel"
 
-#: product/models.py:119 product/models.py:253 product/models.py:305
+#: product/models.py:122 product/models.py:263 product/models.py:315
 #: product/feincms/models.py:11 reporting/order.py:26 reporting/product.py:84
 #: shop/templates/plata/shop_cart.html:18
 msgid "product"
 msgstr "Produkt"
 
-#: product/models.py:214
+#: product/models.py:217
 msgid "items in stock"
 msgstr "Lagerbestand"
 
-#: product/models.py:217
+#: product/models.py:220
 msgid "options name cache"
 msgstr "Optionsnamen-Cachec"
 
-#: product/models.py:223 product/stock/models.py:113 shop/models.py:252
+#: product/models.py:226 product/stock/models.py:117 shop/models.py:253
 msgid "product variation"
 msgstr "Produktvariation"
 
-#: product/models.py:224
+#: product/models.py:227
 msgid "product variations"
 msgstr "Produktvariationen"
 
-#: product/models.py:256 reporting/order.py:28 shop/models.py:257
+#: product/models.py:266 reporting/order.py:28 shop/models.py:258
 #: shop/templates/plata/shop_cart.html:19
 msgid "unit price"
 msgstr "Einheitspreis"
 
-#: product/models.py:257
+#: product/models.py:267
 msgid "tax included"
 msgstr "MwSt enthalten"
 
-#: product/models.py:258
+#: product/models.py:268
 msgid "Is tax included in given unit price?"
 msgstr "Ist die MwSt im angegebenen Einheitspreis enthalten?"
 
-#: product/models.py:266 shop/models.py:263
+#: product/models.py:276 shop/models.py:264
 msgid "is sale"
 msgstr "ist im Ausverkauf"
 
-#: product/models.py:267
+#: product/models.py:277
 msgid ""
 "Set this if this price is a sale price. Whether the sale is temporary or not "
 "does not matter."
@@ -424,23 +412,23 @@ msgstr ""
 "Aktivieren falls Preis ein Ausverkaufspreis ist. Ob der Ausverkauf temporär "
 "ist oder nicht spielt keine Rolle."
 
-#: product/models.py:272
+#: product/models.py:282
 msgid "product price"
 msgstr "Produktpreis"
 
-#: product/models.py:273
+#: product/models.py:283
 msgid "product prices"
 msgstr "Produktpreise"
 
-#: product/models.py:307
+#: product/models.py:317
 msgid "image"
 msgstr "Bild"
 
-#: product/models.py:313
+#: product/models.py:323
 msgid "product image"
 msgstr "Produktbild"
 
-#: product/models.py:314
+#: product/models.py:324
 msgid "product images"
 msgstr "Produktbilder"
 
@@ -500,7 +488,7 @@ msgstr "interne Verwendung"
 msgid "start"
 msgstr "Beginn"
 
-#: product/stock/models.py:27 product/stock/models.py:110
+#: product/stock/models.py:27 product/stock/models.py:114
 msgid "period"
 msgstr "Periode"
 
@@ -512,56 +500,56 @@ msgstr "Perioden"
 msgid "New period"
 msgstr "Neue Periode"
 
-#: product/stock/models.py:98
+#: product/stock/models.py:102
 msgid "initial amount"
 msgstr "Anfangsbestand"
 
-#: product/stock/models.py:99
+#: product/stock/models.py:103
 msgid "correction"
 msgstr "Korrektur"
 
-#: product/stock/models.py:100
+#: product/stock/models.py:104
 msgid "purchase"
 msgstr "Kauf"
 
-#: product/stock/models.py:102
+#: product/stock/models.py:106
 msgid "returns"
 msgstr "Retouren"
 
-#: product/stock/models.py:103
+#: product/stock/models.py:107
 msgid "reservation"
 msgstr "Reservation"
 
-#: product/stock/models.py:104
+#: product/stock/models.py:108
 msgid "incoming"
 msgstr "Eingang"
 
-#: product/stock/models.py:105
+#: product/stock/models.py:109
 msgid "outgoing"
 msgstr "Abgang"
 
-#: product/stock/models.py:115
+#: product/stock/models.py:119
 msgid "change"
 msgstr "Änderung"
 
-#: product/stock/models.py:116
+#: product/stock/models.py:120
 msgid "Use negative numbers for sales, lendings and other outgoings."
 msgstr "Negative Werte für Verkäufe, Ausleihen und andere Abgänge verwenden."
 
-#: product/stock/models.py:118 shop/models.py:76 shop/models.py:368
-#: shop/models.py:426
+#: product/stock/models.py:122 shop/models.py:77 shop/models.py:369
+#: shop/models.py:427
 msgid "order"
 msgstr "Bestellung"
 
-#: product/stock/models.py:120 shop/models.py:393
+#: product/stock/models.py:124 shop/models.py:394
 msgid "order payment"
 msgstr "Bezahlung"
 
-#: product/stock/models.py:126
+#: product/stock/models.py:130
 msgid "stock transaction"
 msgstr "Lagerbestands-Transaktion"
 
-#: product/stock/models.py:127
+#: product/stock/models.py:131
 msgid "stock transactions"
 msgstr "Lagerbestands-Transaktionen"
 
@@ -573,17 +561,17 @@ msgstr "Bestelldatum"
 msgid "Not confirmed yet"
 msgstr "Noch nicht bestätigt"
 
-#: reporting/order.py:27 shop/models.py:254 shop/views.py:233
+#: reporting/order.py:27 shop/models.py:255 shop/views.py:199
 #: shop/templates/plata/shop_cart.html:20
 msgid "quantity"
 msgstr "Menge"
 
-#: reporting/order.py:29 shop/models.py:265
+#: reporting/order.py:29 shop/models.py:266
 #: shop/templates/plata/shop_cart.html:21
 msgid "line item price"
 msgstr "Einzelpostenpreis"
 
-#: reporting/order.py:41 shop/models.py:50
+#: reporting/order.py:41 shop/models.py:51
 #: shop/templates/plata/_order_overview.html:47
 msgid "subtotal"
 msgstr "Zwischensumme"
@@ -592,7 +580,7 @@ msgstr "Zwischensumme"
 msgid "shipping"
 msgstr "Lieferung"
 
-#: reporting/order.py:54 shop/models.py:66
+#: reporting/order.py:54 shop/models.py:67
 #: shop/templates/plata/_order_overview.html:59
 msgid "total"
 msgstr "Total"
@@ -606,15 +594,15 @@ msgstr "Bericht vom %s"
 msgid "stock"
 msgstr "Lager"
 
-#: shop/admin.py:28 shop/templates/plata/_order_overview.html:15
+#: shop/admin.py:29 shop/templates/plata/_order_overview.html:15
 msgid "Order items"
 msgstr "Bestellte Einzelposten"
 
-#: shop/admin.py:29
+#: shop/admin.py:30
 msgid "Shipping"
 msgstr "Lieferung"
 
-#: shop/admin.py:30 shop/templates/plata/_order_overview.html:44
+#: shop/admin.py:31 shop/templates/plata/_order_overview.html:44
 msgid "Total"
 msgstr "Total"
 
@@ -638,181 +626,185 @@ msgstr "Bestellung wurde abgeschlossen"
 msgid "confirmed"
 msgstr "bestätigt"
 
-#: shop/models.py:43 shop/models.py:329 shop/models.py:370
+#: shop/models.py:43 shop/models.py:330 shop/models.py:371
 msgid "status"
 msgstr "Status"
 
-#: shop/models.py:52
+#: shop/models.py:47
+msgid "e-mail address"
+msgstr "E-Mail-Adresse"
+
+#: shop/models.py:53
 msgid "items discount"
 msgstr "Rabatt auf bestellte Einzelposten"
 
-#: shop/models.py:54
+#: shop/models.py:55
 msgid "items tax"
 msgstr "Steuer auf bestellte Einzelposten"
 
-#: shop/models.py:57
+#: shop/models.py:58
 msgid "shipping method"
 msgstr "Liefermethode"
 
-#: shop/models.py:59
+#: shop/models.py:60
 msgid "shipping cost"
 msgstr "Lieferungskosten"
 
-#: shop/models.py:61
+#: shop/models.py:62
 msgid "shipping discount"
 msgstr "Rabatt auf Lieferung"
 
-#: shop/models.py:63
+#: shop/models.py:64
 msgid "shipping tax"
 msgstr "MwSt auf Lieferung"
 
-#: shop/models.py:69
+#: shop/models.py:70
 msgid "paid"
 msgstr "Bezahlt"
 
-#: shop/models.py:71
+#: shop/models.py:72
 msgid "This much has been paid already."
 msgstr "Soviel wurde schon bezahlt."
 
-#: shop/models.py:77
+#: shop/models.py:78
 msgid "orders"
 msgstr "Bestellungen"
 
-#: shop/models.py:138
+#: shop/models.py:139
 msgid "Order contains more than one currency."
 msgstr "Die Bestellung enthält mehr als eine Währung"
 
-#: shop/models.py:144
+#: shop/models.py:145
 #, python-format
 msgid "Not enough stock available for %s."
 msgstr "Nicht genug Lagerbestand für %s."
 
-#: shop/models.py:157
+#: shop/models.py:158
 msgid "Cannot modify order once it has been confirmed."
 msgstr "Kann bestätigte Bestellung nicht mehr verändern."
 
-#: shop/models.py:237
+#: shop/models.py:238
 msgid "Cannot proceed to checkout without order items."
 msgstr ""
 "Kann Bestellprozess nicht starten, wenn keine Einzelposten gewählt wurden."
 
-#: shop/models.py:259
+#: shop/models.py:260
 msgid "Unit price excl. tax"
 msgstr "Einheitspreis ohne MwSt"
 
-#: shop/models.py:260
+#: shop/models.py:261
 msgid "unit tax"
 msgstr "Steuer pro Einheit"
 
-#: shop/models.py:267
+#: shop/models.py:268
 msgid "Line item price excl. tax"
 msgstr "Einzelpostenpreis ohne MwSt"
 
-#: shop/models.py:271
+#: shop/models.py:272
 msgid "Discount excl. tax"
 msgstr "Rabatt exkl. MwSt"
 
-#: shop/models.py:273
+#: shop/models.py:274
 msgid "line item tax"
 msgstr "Steuer auf Einzelposten"
 
-#: shop/models.py:279
+#: shop/models.py:280
 msgid "order item"
 msgstr "Einzelposten"
 
-#: shop/models.py:280
+#: shop/models.py:281
 msgid "order items"
 msgstr "Einzelposten"
 
-#: shop/models.py:335
+#: shop/models.py:336
 msgid "order status"
 msgstr "Bestellstatus"
 
-#: shop/models.py:336
+#: shop/models.py:337
 msgid "order statuses"
 msgstr "Bestellstatusse"
 
-#: shop/models.py:363
+#: shop/models.py:364
 msgid "pending"
 msgstr "hängig"
 
-#: shop/models.py:364
+#: shop/models.py:365
 msgid "processed"
 msgstr "verarbeitet"
 
-#: shop/models.py:365 shop/models.py:382
+#: shop/models.py:366 shop/models.py:383
 msgid "authorized"
 msgstr "authorisiert"
 
-#: shop/models.py:369
+#: shop/models.py:370
 msgid "timestamp"
 msgstr "Zeitstempel"
 
-#: shop/models.py:374
+#: shop/models.py:375
 msgid "amount"
 msgstr "Betrag"
 
-#: shop/models.py:375
+#: shop/models.py:376
 msgid "payment module"
 msgstr "Bezahlungsmodul"
 
-#: shop/models.py:376
+#: shop/models.py:377
 msgid "For example 'Cash on delivery', 'PayPal', ..."
 msgstr "Z.B. 'Rechnung', 'PayPal', ..."
 
-#: shop/models.py:377
+#: shop/models.py:378
 msgid "payment method"
 msgstr "Bezahlungsmethode"
 
-#: shop/models.py:378
+#: shop/models.py:379
 msgid "For example 'MasterCard', 'VISA' or some other card."
 msgstr "Z.B. 'MasterCard', 'VISA' oder irgendeine andere Karte."
 
-#: shop/models.py:379
+#: shop/models.py:380
 msgid "transaction ID"
 msgstr "Transaktions-Nr."
 
-#: shop/models.py:380
+#: shop/models.py:381
 msgid "Unique ID identifying this payment in the foreign system."
 msgstr "Eindeutige Identifikationsnr. dieser Bezahlung beim Zahlungsanbieter."
 
-#: shop/models.py:383
+#: shop/models.py:384
 msgid "Point in time when payment has been authorized."
 msgstr "Zeitpunkt wann diese Bezahlung authorisiert wurde."
 
-#: shop/models.py:387
+#: shop/models.py:388
 msgid "data"
 msgstr "Daten"
 
-#: shop/models.py:388
+#: shop/models.py:389
 msgid "JSON-encoded additional data about the order payment."
 msgstr "JSON-encodierte zusätzliche Angaben über die Bezahlung."
 
-#: shop/models.py:394
+#: shop/models.py:395
 msgid "order payments"
 msgstr "Bezahlungen"
 
-#: shop/models.py:431
+#: shop/models.py:432
 msgid "remaining"
 msgstr "Restbetrag"
 
-#: shop/models.py:433
+#: shop/models.py:434
 msgid "Discount amount excl. tax remaining after discount has been applied."
 msgstr "Rabattbetrag exkl. MwSt nachdem Rabatt angewendet wurde."
 
-#: shop/models.py:437
+#: shop/models.py:438
 msgid "applied discount"
 msgstr "Angewendeter Rabatt"
 
-#: shop/models.py:438
+#: shop/models.py:439
 msgid "applied discounts"
 msgstr "Angewendete Rabatte"
 
-#: shop/views.py:21
+#: shop/views.py:24
 msgid "Cart is empty."
 msgstr "Warenkorb ist leer."
 
-#: shop/views.py:30
+#: shop/views.py:33
 msgid ""
 "You have already confirmed this order earlier, but it is not fully paid for "
 "yet."
@@ -820,15 +812,15 @@ msgstr ""
 "Sie haben diese Bestellung bereits früher bestätigt, aber sie ist noch nicht "
 "vollständig bezahlt."
 
-#: shop/views.py:210 shop/views.py:328
+#: shop/views.py:176 shop/views.py:294
 msgid "The cart has been updated."
 msgstr "Der Warenkorb wurde aktualisiert."
 
-#: shop/views.py:262
+#: shop/views.py:228
 msgid "The requested product does not exist."
 msgstr "Das verlange Produkt existiert nicht."
 
-#: shop/views.py:278
+#: shop/views.py:244
 #, python-format
 msgid ""
 "Only %(stock)s items for %(variation)s available; you already have %"
@@ -837,19 +829,39 @@ msgstr ""
 "Nur %(stock)s Produkte von %(variation)s verfügbar; Sie haben schon %"
 "(quantity)s in Ihrer Bestellung."
 
-#: shop/views.py:287
+#: shop/views.py:253
 msgid "Price could not be determined."
 msgstr "Preis konnte nicht bestimmt werden."
 
-#: shop/views.py:375
+#: shop/views.py:344
+msgid "create account"
+msgstr "Konto erstellen"
+
+#: shop/views.py:355
 msgid "This field is required."
 msgstr "Dieses Feld ist zwingend erforderlich."
 
-#: shop/views.py:438
+#: shop/views.py:367
+msgid "This e-mail address belongs to a different account."
+msgstr "Diese E-Mail-Adresse gehört zu einem anderen Konto."
+
+#: shop/views.py:370
+msgid ""
+"This e-mail address might belong to you, but we cannot know for sure because "
+"you are not authenticated yet."
+msgstr ""
+"Diese E-Mail-Adresse könnte Ihnen gehören. Sie müssen sich aber zuerst "
+"anmelden, damit wir dies wissen können."
+
+#: shop/views.py:484
 msgid "This code does not validate"
 msgstr "Dieser Code ist ungültig"
 
-#: shop/views.py:487
+#: shop/views.py:529
+msgid "I accept the terms and conditions."
+msgstr "Ich akzeptiere die Allgemeinen Geschäftsbedingungen."
+
+#: shop/views.py:537
 msgid "Payment method"
 msgstr "Bezahlungsmethode"
 
@@ -861,39 +873,39 @@ msgstr "Bitte korrigieren Sie die folgenden Fehler:"
 msgid "show all"
 msgstr "Alle anzeigen"
 
-#: shop/templates/base.html:62
+#: shop/templates/base.html:86
 msgid "Home"
 msgstr "Startseite"
 
-#: shop/templates/base.html:63 shop/templates/product/product_detail.html:5
+#: shop/templates/base.html:87 shop/templates/product/product_detail.html:5
 #: shop/templates/product/product_list.html:5
 #: shop/templates/product/product_list.html:8
 msgid "Products"
 msgstr "Produkte"
 
-#: shop/templates/base.html:64 shop/templates/plata/shop_cart.html:5
+#: shop/templates/base.html:88 shop/templates/plata/shop_cart.html:5
 #: shop/templates/plata/shop_cart.html:11
 #: shop/templates/plata/shop_order_payment_failure.html:11
 msgid "Cart"
 msgstr "Warenkorb"
 
-#: shop/templates/base.html:81
+#: shop/templates/base.html:105
 msgid "Go to cart"
 msgstr "Zum Warenkorb"
 
-#: shop/templates/base.html:83
+#: shop/templates/base.html:107
 msgid "That's what we know about you:"
 msgstr "Folgendes wissen wir über Dich:"
 
-#: shop/templates/base.html:86
+#: shop/templates/base.html:110
 msgid "User"
 msgstr "Benutzer"
 
-#: shop/templates/base.html:90
+#: shop/templates/base.html:114
 msgid "Contact"
 msgstr "Kontakt"
 
-#: shop/templates/base.html:94
+#: shop/templates/base.html:118
 msgid "Order"
 msgstr "Bestellung"
 
@@ -948,13 +960,14 @@ msgstr "Sichern"
 msgid "Checkout"
 msgstr "Zur Kasse"
 
-#: shop/templates/plata/shop_checkout.html:47
-msgid "Notes"
-msgstr "Bemerkungen"
-
-#: shop/templates/plata/shop_checkout.html:52
+#: shop/templates/plata/shop_checkout.html:19
+#: shop/templates/plata/shop_checkout.html:72
 msgid "Submit"
 msgstr "Abschicken"
+
+#: shop/templates/plata/shop_checkout.html:67
+msgid "Notes"
+msgstr "Bemerkungen"
 
 #: shop/templates/plata/shop_confirmation.html:5
 #: shop/templates/plata/shop_confirmation.html:8
@@ -967,7 +980,7 @@ msgstr "Bestellungs-Übersicht"
 msgid "Payment and order confirmation"
 msgstr "Bezahlung und Bestellbestätigung"
 
-#: shop/templates/plata/shop_confirmation.html:20
+#: shop/templates/plata/shop_confirmation.html:21
 msgid "Proceed to payment"
 msgstr "Weiter zur Bezahlung"
 
@@ -1007,6 +1020,3 @@ msgstr "Bestellung erfolgreich"
 #: shop/templates/product/product_detail.html:22
 msgid "Add to cart"
 msgstr "Zum Warenkorb hinzufügen"
-
-#~ msgid "payment process reservation release"
-#~ msgstr "Aufhebung der Reservation während Zahlungsprozess"
