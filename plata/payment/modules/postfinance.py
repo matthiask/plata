@@ -167,12 +167,12 @@ class PaymentProcessor(ProcessorBase):
                 payment.status = OrderPayment.AUTHORIZED
 
             payment.save()
+            order = order.reload()
 
             if payment.authorized:
                 self.create_transactions(order, _('sale'),
                     type=StockTransaction.SALE, negative=True, payment=payment)
 
-            order = order.reload()
             if order.is_paid():
                 self.order_completed(order)
 
