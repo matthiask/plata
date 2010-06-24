@@ -400,8 +400,6 @@ class ViewTest(PlataTest):
             'quantity': 5,
             })
 
-        Period.objects.create(name='Test period')
-
         response = self.client.post('/confirmation/', {
             'terms_and_conditions': True,
             'payment_method': 'plata.payment.modules.paypal',
