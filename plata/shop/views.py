@@ -390,6 +390,9 @@ class Shop(object):
                         currency=self.instance.currency)
                     contact.copy_address(self.instance)
                     contact.save()
+                    self.instance.contact = contact
+                elif self.contact:
+                    self.instance.contact = self.contact
 
                 return data
 
