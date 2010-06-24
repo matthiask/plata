@@ -1,7 +1,7 @@
 import os
 import re
 
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from decimal import Decimal
 
 from django.conf import settings
@@ -609,3 +609,21 @@ class ViewTest(PlataTest):
 
         self.assertRedirects(self.client.get('/checkout/'),
             '/cart/?insufficient_stock=1')
+
+    def test_13_expired_reservation(self):
+        p1 = self.create_product(stock=10)
+
+        p1.variations.get().stock_transactions.create(
+            type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
+            change=-7)
+
+        response = self.client.post(p1.get_absolute_url(), {'quantity': 5})
+        self.assertTrue(re.search(r'Only \d+ items for .* available', response.content))
+
+        StockTransaction.objects.update(created=datetime.now()-timedelta(minutes=10))
+        response = self.client.post(p1.get_absolute_url(), {'quantity': 5})
+        self.assertTrue(re.search(r'Only \d+ items for .* available', response.content))
+
+        StockTransaction.objects.update(created=datetime.now()-timedelta(minutes=20))
+        self.assertRedirects(self.client.post(p1.get_absolute_url(), {'quantity': 5}),
+            p1.get_absolute_url())
