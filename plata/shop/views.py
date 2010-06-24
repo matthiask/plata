@@ -428,6 +428,7 @@ class Shop(object):
 
         initial = {}
         if contact:
+            initial['email'] = contact.user.email
             initial['shipping_same_as_billing'] = contact.shipping_same_as_billing
             for f in contact.ADDRESS_FIELDS:
                 initial['billing_%s' % f] = getattr(contact, 'billing_%s' % f)
