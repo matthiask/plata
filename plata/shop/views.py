@@ -411,11 +411,8 @@ class Shop(object):
                     user = loginform.get_user()
                     auth.login(request, user)
 
-                    try:
-                        order.contact = self.contact_from_user(user)
-                        order.save()
-                    except self.contact_model.DoesNotExist:
-                        pass
+                    order.contact = self.contact_from_user(user)
+                    order.save()
 
                     return HttpResponseRedirect('.')
             else:
