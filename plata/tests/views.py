@@ -69,7 +69,11 @@ class ViewTest(PlataTest):
         group = OptionGroup.objects.create(name='size')
         group.options.create(name='s', value='s')
         group.options.create(name='m', value='m')
-        group.options.create(name='l', value='l')
+
+        option = group.options.create(name='l', value='l')
+
+        self.assertEqual(unicode(option), 'l')
+        self.assertEqual(option.full_name(), 'size - l')
         p1.option_groups.add(group)
 
         p1.create_variations()

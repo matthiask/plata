@@ -74,6 +74,18 @@ class OrderTest(PlataTest):
         # Switch tax handling back
         plata.settings.PLATA_PRICE_INCLUDES_TAX = True
 
+        product.prices.filter(currency='CHF', is_sale=False).delete()
+        prices = dict(product.get_prices())
+        self.assertAlmostEqual(prices['CHF']['normal'].unit_price, Decimal('99.90'))
+        self.assertAlmostEqual(prices['CHF']['sale'].unit_price, Decimal('79.90'))
+
+        from django.core.cache import cache
+        cache.delete('product-prices-%s' % product.pk)
+
+        prices = dict(product.get_prices())
+        self.assertEqual(prices['CHF']['normal'], None)
+        self.assertAlmostEqual(prices['CHF']['sale'].unit_price, Decimal('79.90'))
+
     def test_02_eur_order(self):
         product = self.create_product()
         order = self.create_order()
@@ -294,6 +306,8 @@ class OrderTest(PlataTest):
         c = Category.objects.create(
             name='category',
             slug='category',
+            is_active=True,
+            is_internal=True,
             )
         p2.categories.add(c)
 
@@ -320,6 +334,10 @@ class OrderTest(PlataTest):
         self.assertEqual(1,
             len([item for item in order.items.all() if item._line_item_discount]))
 
+        self.assertEqual(Category.objects.active().count(), 1)
+        self.assertEqual(Category.objects.public().count(), 0)
+        self.assertEqual(unicode(Category.objects.create(
+            name='blaa', slug='blaa', parent=c)), 'category - blaa')
 
     def test_10_discount_validation(self):
         order = self.create_order()
