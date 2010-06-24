@@ -57,8 +57,12 @@ class StockTransactionManager(models.Manager):
     def expired(self):
         return self.filter(period=Period.objects.current()).filter(self._expired())
 
-    def items_in_stock(self, product, update=False):
-        count = self.stock().filter(product=product).aggregate(items=Sum('change')).get('items') or 0
+    def items_in_stock(self, product, update=False, query=None):
+        queryset = self.stock().filter(product=product)
+        if query:
+            queryset.filter(query)
+
+        count = queryset.aggregate(items=Sum('change')).get('items') or 0
 
         if update:
             ProductVariation.objects.filter(id=getattr(product, 'pk', product)).update(

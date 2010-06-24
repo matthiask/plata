@@ -243,9 +243,12 @@ class ProductVariation(models.Model):
     def can_delete(self):
         return self.orderitem_set.count() == 0
 
-    def recalculate_items_in_stock(self):
-        self.items_in_stock = self.stock_transactions.items_in_stock(self, update=True)
-        return self.items_in_stock
+    def available(self, exclude_order=None):
+        if exclude_order:
+            return self.stock_transactions.items_in_stock(self,
+                query=Q(order__isnull=True) | ~Q(order=exclude_order))
+        else:
+            return self.stock_transactions.items_in_stock(self, update=True)
 
 
 class ProductPriceManager(models.Manager):
