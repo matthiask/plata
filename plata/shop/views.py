@@ -508,6 +508,10 @@ class Shop(object):
         payment_module_dict = dict((m.__module__, m) for m in payment_modules)
 
         class Form(forms.Form):
+            terms_and_conditions = forms.BooleanField(
+                label=_('I accept the terms and conditions.'),
+                required=True)
+
             def __init__(self, *args, **kwargs):
                 self.order = kwargs.pop('order')
 
