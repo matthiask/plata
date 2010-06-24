@@ -243,6 +243,10 @@ class ProductVariation(models.Model):
     def can_delete(self):
         return self.orderitem_set.count() == 0
 
+    def recalculate_items_in_stock(self):
+        self.items_in_stock = self.stock_transactions.items_in_stock(self, update=True)
+        return self.items_in_stock
+
 
 class ProductPriceManager(models.Manager):
     def active(self):

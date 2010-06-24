@@ -141,7 +141,7 @@ class Order(BillingShippingAddress):
 
         if stock or all:
             for item in self.items.all().select_related('variation'):
-                if item.quantity > item.variation.items_in_stock:
+                if item.quantity > item.variation.recalculate_items_in_stock():
                     raise ValidationError(_('Not enough stock available for %s.') % item.variation,
                         code='insufficient_stock')
 
