@@ -12,6 +12,15 @@ class BaseHandler(object):
         signals.order_completed.connect(instance.on_order_completed)
         return instance
 
+    def on_contact_created(self, sender, **kwargs):
+        pass
+
+    def on_order_confirmed(self, sender, **kwargs):
+        pass
+
+    def on_order_completed(self, sender, **kwargs):
+        pass
+
 
 class ConsoleHandler(BaseHandler):
     def __init__(self, stream):
@@ -26,3 +35,32 @@ class ConsoleHandler(BaseHandler):
     def on_order_completed(self, sender, **kwargs):
         print >>self.stream, 'Order completed: %s, payment %s' % (
             kwargs.get('order'), kwargs.get('payment'))
+
+
+class EmailHandler(BaseHandler):
+    def on_contact_created(self, sender, **kwargs):
+        contact = kwargs.get('contact')
+        if not contact:
+            return
+
+        message = EmailMessage(
+            subject='Account created',
+            body='Your account has been created.',
+            to=[contact.user.email],
+            )
+        message.send()
+
+    def on_order_confirmed(self, sender, **kwargs):
+        pass
+
+    def on_order_completed(self, sender, **kwargs):
+        order = kwargs.get('order')
+        if not order:
+            return
+
+        message = EmailMessage(
+            subject='Order completed',
+            body='Your order has been successfully paid.',
+            to=[order.email],
+            )
+        message.send()
