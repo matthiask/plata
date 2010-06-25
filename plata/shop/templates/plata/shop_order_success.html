@@ -8,4 +8,6 @@
 <h1>{% trans "Order successful" %}</h1>
 
 <a href="/pdf/{{ order.id }}/">PDF</a>
+
+<a href="{% reverse plata_order_new %}">{% trans "Create new order" %}</a>
 {% endblock %}

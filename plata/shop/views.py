@@ -98,6 +98,7 @@ class Shop(object):
 
             url(r'^order/success/$', self.order_success, name='plata_order_success'),
             url(r'^order/payment_failure/$', self.order_payment_failure, name='plata_order_payment_failure'),
+            url(r'^order/new/$', self.order_new, name='plata_order_new'),
 
             url(r'^order/already_paid/$', self.order_already_paid, name='plata_order_already_paid'),
             )
@@ -559,7 +560,6 @@ class Shop(object):
 
     def order_success(self, request):
         order = self.order_from_request(request)
-        self.set_order_on_request(request, order=None)
 
         return render_to_response('plata/shop_order_success.html',
             self.get_context(request, {
@@ -576,9 +576,17 @@ class Shop(object):
 
     def order_already_paid(self, request):
         order = self.order_from_request(request)
-        self.set_order_on_request(request, order=None)
 
         return render_to_response('plata/shop_order_already_paid.html',
             self.get_context(request, {
                 'order': order,
                 }))
+
+    def order_new(self, request):
+        self.set_order_on_request(request, order=None)
+
+        next = request.GET.get('next')
+        if next:
+            return HttpResponseRedirect(next)
+
+        return HttpResponseRedirect('/')
