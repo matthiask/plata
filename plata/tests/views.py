@@ -274,6 +274,13 @@ class ViewTest(PlataTest):
             }), '/order/success/')
         self.assertEqual(Order.objects.get(pk=order.id).status, Order.COMPLETED)
 
+        # Clear order
+        self.assertRedirects(self.client.get('/order/new/?next=%s' % p1.get_absolute_url()),
+            p1.get_absolute_url())
+        # Can call URL several times without change in behavior
+        self.assertRedirects(self.client.get('/order/new/'), '/',
+            target_status_code=302)
+
         self.assertRedirects(self.client.post('/confirmation/', {
             'terms_and_conditions': True,
             'payment_method': 'plata.payment.modules.cod',
