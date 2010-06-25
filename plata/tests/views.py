@@ -336,6 +336,9 @@ class ViewTest(PlataTest):
         self.assertEqual(Order.objects.count(), 1)
         self.assertEqual(OrderPayment.objects.count(), 1)
 
+        self.assertContains(self.client.get('/order/success/'),
+            '<h1>Order has been confirmed.</h1>')
+
         self.assertContains(self.client.post('/payment/postfinance/ipn/', {
             }), 'Missing data', status_code=403)
 
@@ -373,10 +376,16 @@ class ViewTest(PlataTest):
         order.save()
         self.assertRedirects(self.client.get('/cart/'), '/confirmation/?confirmed=1')
 
+        self.assertContains(self.client.get('/order/success/'),
+            '<h1>Order has been partially paid.</h1>')
+
         # Revert manipulation
         order.paid += 10
         order.save()
         self.assertRedirects(self.client.get('/checkout/'), '/order/success/')
+
+        self.assertContains(self.client.get('/order/success/'),
+            '<h1>Order has been fully paid.</h1>')
 
     def test_07_paypal_ipn(self):
         paypal_ipn_data = {
