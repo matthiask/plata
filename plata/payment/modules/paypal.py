@@ -30,7 +30,7 @@ class PaymentProcessor(ProcessorBase):
 
         if order.is_paid():
             # TODO maybe create stock transactions?
-            return redirect('plata_order_already_paid')
+            return redirect('plata_order_success')
 
         payment = self.create_pending_payment(order)
 

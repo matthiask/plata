@@ -28,7 +28,7 @@ def order_confirmed(order, request, **kwargs):
     # Redirect to confirmation or already paid view if the order is already confirmed
     if order and order.is_confirmed():
         if order.is_paid():
-            return redirect('plata_order_already_paid')
+            return redirect('plata_order_success')
         messages.warning(request,
             _('You have already confirmed this order earlier, but it is not fully paid for yet.'))
         return HttpResponseRedirect(reverse('plata_shop_confirmation') + '?confirmed=1')
@@ -99,8 +99,6 @@ class Shop(object):
             url(r'^order/success/$', self.order_success, name='plata_order_success'),
             url(r'^order/payment_failure/$', self.order_payment_failure, name='plata_order_payment_failure'),
             url(r'^order/new/$', self.order_new, name='plata_order_new'),
-
-            url(r'^order/already_paid/$', self.order_already_paid, name='plata_order_already_paid'),
             )
 
     def get_admin_urls(self):
@@ -570,14 +568,6 @@ class Shop(object):
         order = self.order_from_request(request)
 
         return render_to_response('plata/shop_order_payment_failure.html',
-            self.get_context(request, {
-                'order': order,
-                }))
-
-    def order_already_paid(self, request):
-        order = self.order_from_request(request)
-
-        return render_to_response('plata/shop_order_already_paid.html',
             self.get_context(request, {
                 'order': order,
                 }))

@@ -69,7 +69,7 @@ class PaymentProcessor(ProcessorBase):
         POSTFINANCE = settings.POSTFINANCE
 
         if order.is_paid():
-            return redirect('plata_order_already_paid')
+            return redirect('plata_order_success')
 
         payment = self.create_pending_payment(order)
         self.create_transactions(order, _('payment process reservation'),

@@ -15,7 +15,7 @@ class PaymentProcessor(ProcessorBase):
     def process_order_confirmed(self, request, order):
         if order.is_paid():
             self.order_completed(order)
-            return redirect('plata_order_already_paid')
+            return redirect('plata_order_success')
 
         payment = self.create_pending_payment(order)
 

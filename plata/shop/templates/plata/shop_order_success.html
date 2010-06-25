@@ -7,6 +7,18 @@
 {% block content %}
 <h1>{% trans "Order successful" %}</h1>
 
+{% if order.is_paid %}
+    {% trans "Order has been fully paid." %}
+{% else %}
+    {% if order.paid %}
+        {% trans "Order has been partially paid." %}
+    {% else %}
+        {% trans "Order hasn't been paid." %}
+    {% endif %}
+{% endif %}
+
+{% include "plata/_order_overview.html" %}
+
 <a href="/pdf/{{ order.id }}/">PDF</a>
 
 <a href="{% reverse plata_order_new %}">{% trans "Create new order" %}</a>

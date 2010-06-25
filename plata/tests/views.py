@@ -369,7 +369,7 @@ class ViewTest(PlataTest):
         # Revert manipulation
         order.paid += 10
         order.save()
-        self.assertRedirects(self.client.get('/checkout/'), '/order/already_paid/')
+        self.assertRedirects(self.client.get('/checkout/'), '/order/success/')
 
     def test_07_paypal_ipn(self):
         paypal_ipn_data = {
