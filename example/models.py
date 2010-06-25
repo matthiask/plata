@@ -28,3 +28,8 @@ CMSProduct.create_content_type(MediaFileContent, POSITION_CHOICES=(
     ('default', _('default')),
     ))
 CMSProduct.create_content_type(RawContent)
+
+
+import sys
+from plata.reporting.notifications import ConsoleHandler
+handler = ConsoleHandler.register(stream=sys.stderr)
