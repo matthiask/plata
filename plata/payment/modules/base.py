@@ -49,8 +49,8 @@ class ProcessorBase(object):
                 },
             **kwargs)
 
-    def order_completed(self, order):
+    def order_completed(self, order, payment=None):
         if order.status < order.COMPLETED:
             order.update_status(order.COMPLETED, 'Order has been fully paid')
-            signals.order_completed.send(sender=self, order=order)
+            signals.order_completed.send(sender=self, order=order, payment=payment)
         self.clear_pending_payments(order)

@@ -174,7 +174,7 @@ class PaymentProcessor(ProcessorBase):
                     type=StockTransaction.SALE, negative=True, payment=payment)
 
             if order.is_paid():
-                self.order_completed(order)
+                self.order_completed(order, payment=payment)
 
             return HttpResponse('OK')
         except Exception, e:
