@@ -18,7 +18,5 @@
 
 {% include "plata/_order_overview.html" %}
 
-<a href="/pdf/{{ order.id }}/">PDF</a>
-
 <a href="{% url plata_order_new %}">{% trans "Create new order" %}</a>
 {% endblock %}
