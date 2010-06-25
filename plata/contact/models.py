@@ -35,6 +35,16 @@ class BillingShippingAddress(models.Model):
     class Meta:
         abstract = True
 
+    def addresses(self):
+        billing = dict((f, getattr(self, 'billing_%s' % f)) for f in self.ADDRESS_FIELDS)
+
+        if self.shipping_same_as_billing:
+            shipping = billing
+        else:
+            shipping = dict((f, getattr(self, 'shipping_%s' % f)) for f in self.ADDRESS_FIELDS)
+
+        return {'billing': billing, 'shipping': shipping}
+
 
 class Contact(BillingShippingAddress):
     user = models.OneToOneField(User, verbose_name=_('user'),

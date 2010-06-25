@@ -1,16 +1,17 @@
 {% load i18n %}
-
+{% with order.addresses as addresses %}
 <h2>{% trans "Billing address" %}</h2>
-{{ order.billing_company }}<br />
-{{ order.billing_first_name }} {{ order.billing_last_name }}<br />
-{{ order.billing_address|linebreaksbr }}<br />
-{{ order.billing_country }}-{{ order.billing_zip_code }} {{ order.billing_city }}<br />
+{{ addresses.billing.company }}<br />
+{{ addresses.billing.first_name }} {{ addresses.billing.last_name }}<br />
+{{ addresses.billing.address|linebreaksbr }}<br />
+{{ addresses.billing.country }}-{{ addresses.billing.zip_code }} {{ addresses.billing.city }}<br />
 
 <h2>{% trans "Shipping address" %}</h2>
-{{ order.shipping_company }}<br />
-{{ order.shipping_first_name }} {{ order.shipping_last_name }}<br />
-{{ order.shipping_address|linebreaksbr }}<br />
-{{ order.shipping_country }}-{{ order.shipping_zip_code }} {{ order.shipping_city }}<br />
+{{ addresses.shipping.company }}<br />
+{{ addresses.shipping.first_name }} {{ addresses.shipping.last_name }}<br />
+{{ addresses.shipping.address|linebreaksbr }}<br />
+{{ addresses.shipping.country }}-{{ addresses.shipping.zip_code }} {{ addresses.shipping.city }}<br />
+{% endwith %}
 
 <h2>{% trans "Order items" %}</h2>
 <table border="1">
