@@ -265,6 +265,9 @@ class ViewTest(PlataTest):
             }), '/confirmation/?confirmed=1')
         self.assertTrue(Order.objects.all()[0].items.get(variation__product=p2).quantity != 42)
 
+        # Test this view works at all
+        self.client.get('/order/payment_failure/')
+
         self.assertRedirects(self.client.post('/confirmation/', {
             'terms_and_conditions': True,
             'payment_method': 'plata.payment.modules.cod',
@@ -280,7 +283,6 @@ class ViewTest(PlataTest):
             'terms_and_conditions': True,
             'payment_method': 'plata.payment.modules.paypal',
             }), '/cart/?empty=1')
-
 
         user = User.objects.create_superuser('admin', 'admin@example.com', 'password')
 
