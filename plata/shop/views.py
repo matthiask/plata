@@ -559,6 +559,9 @@ class Shop(object):
     def order_success(self, request):
         order = self.order_from_request(request)
 
+        if not order:
+            return self.order_new(request)
+
         return render_to_response('plata/shop_order_success.html',
             self.get_context(request, {
                 'order': order,

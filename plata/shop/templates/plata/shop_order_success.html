@@ -11,8 +11,9 @@
     {% if order.paid %}
         <h1>{% trans "Order has been partially paid." %}</h1>
     {% else %}
-        <h1>{% trans "Order hasn't been paid." %}</h1>
+        <h1>{% trans "Order has been confirmed." %}</h1>
     {% endif %}
+    <p>{% trans "As soon as we receive a confirmation from the payment provider, you'll be sent a confirmation e-mail." %}</p>
 {% endif %}
 
 {% include "plata/_order_overview.html" %}
