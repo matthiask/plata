@@ -19,6 +19,27 @@ from plata.tests.base import PlataTest, get_request
 
 
 class OrderTest(PlataTest):
+    def test_00_test(self):
+        def raise_validationerror():
+            raise ValidationError('test', code='test')
+
+        def raise_notimplementederror():
+            raise NotImplementedError
+
+        self.assertRaisesWithCode(ValidationError, raise_validationerror, code='test')
+
+        self.assertRaises(ValidationError,
+            lambda: self.assertRaisesWithCode(ValidationError,
+                raise_validationerror, code='something'))
+
+        self.assertRaises(NotImplementedError,
+            lambda: self.assertRaisesWithCode(ValidationError,
+                raise_notimplementederror, code='something'))
+
+        self.assertRaises(Exception,
+            lambda: self.assertRaisesWithCode(ValidationError,
+                lambda: None, code='something'))
+
     def test_01_basic_order(self):
         product = self.create_product()
         order = self.create_order()
