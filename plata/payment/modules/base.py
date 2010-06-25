@@ -5,6 +5,7 @@ from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 
 from plata.product.stock.models import StockTransaction
+from plata.shop import signals
 
 
 class ProcessorBase(object):
@@ -51,4 +52,5 @@ class ProcessorBase(object):
     def order_completed(self, order):
         if order.status < order.COMPLETED:
             order.update_status(order.COMPLETED, 'Order has been fully paid')
+            signals.order_completed.send(sender=self, order=order)
         self.clear_pending_payments(order)

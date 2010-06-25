@@ -16,6 +16,7 @@ from django.template import RequestContext
 from django.utils.translation import ugettext as _, ungettext
 
 import plata
+from plata.shop import signals
 
 
 def cart_not_empty(order, request, **kwargs):
@@ -385,6 +386,9 @@ class Shop(object):
                             setattr(contact, k, v)
                     contact.save()
                     self.instance.contact = contact
+
+                    signals.contact_created.send(sender=self, user=user,
+                        contact=contact, request=self.request)
                 elif self.contact:
                     self.instance.contact = self.contact
 
@@ -539,7 +543,7 @@ class Shop(object):
 
             if form.is_valid():
                 order.update_status(self.order_model.CONFIRMED, 'Confirmation given')
-
+                signals.order_confirmed.send(sender=self, order=order, request=request)
                 payment_module = payment_module_dict[form.cleaned_data['payment_method']]
                 return payment_module.process_order_confirmed(request, order)
         else:
