@@ -388,7 +388,7 @@ class Shop(object):
                     self.instance.contact = contact
 
                     signals.contact_created.send(sender=self, user=user,
-                        contact=contact, request=self.request)
+                        contact=contact)
                 elif self.contact:
                     self.instance.contact = self.contact
 
@@ -543,7 +543,7 @@ class Shop(object):
 
             if form.is_valid():
                 order.update_status(self.order_model.CONFIRMED, 'Confirmation given')
-                signals.order_confirmed.send(sender=self, order=order, request=request)
+                signals.order_confirmed.send(sender=self, order=order)
                 payment_module = payment_module_dict[form.cleaned_data['payment_method']]
                 return payment_module.process_order_confirmed(request, order)
         else:
