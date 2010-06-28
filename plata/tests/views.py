@@ -179,6 +179,7 @@ class ViewTest(PlataTest):
             })
         self.assertEqual(order.items.count(), 2)
 
+        self.assertEqual(Order.objects.get().status, Order.CART)
         self.assertRedirects(self.client.post('/cart/', {
             'checkout': True,
 
@@ -194,6 +195,9 @@ class ViewTest(PlataTest):
             'items-1-quantity': 5,
             }), '/checkout/')
         self.assertEqual(order.items.count(), 1)
+
+        self.client.get('/checkout/')
+        self.assertEqual(Order.objects.get().status, Order.CHECKOUT)
 
         self.assertEqual(self.client.post('/checkout/', {
             '_checkout': 1,
