@@ -416,6 +416,9 @@ class Shop(object):
         else:
             loginform = None
 
+        if order.status < self.order_model.CHECKOUT:
+            order.update_status(self.order_model.CHECKOUT, 'Checkout process started')
+
         OrderForm = self.checkout_order_form(request, order)
         contact = self.contact_from_user(request.user)
 
@@ -440,9 +443,6 @@ class Shop(object):
 
             if orderform.is_valid():
                 order = orderform.save()
-
-                if order.status < self.order_model.CHECKOUT:
-                    order.update_status(self.order_model.CHECKOUT, 'Checkout completed')
 
                 return redirect('plata_shop_discounts')
         else:
