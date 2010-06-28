@@ -6,6 +6,7 @@ from decimal import Decimal
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core import mail
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
@@ -268,10 +269,12 @@ class ViewTest(PlataTest):
         # Test this view works at all
         self.client.get('/order/payment_failure/')
 
+        self.assertEqual(len(mail.outbox), 0)
         self.assertRedirects(self.client.post('/confirmation/', {
             'terms_and_conditions': True,
             'payment_method': 'plata.payment.modules.cod',
             }), '/order/success/')
+        self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(Order.objects.get(pk=order.id).status, Order.COMPLETED)
 
         # Clear order
@@ -467,9 +470,11 @@ class ViewTest(PlataTest):
         self.assertContains(self.client.post('/checkout/', checkout_data),
             'This e-mail address belongs to a different account')
 
+        self.assertEqual(len(mail.outbox), 0)
         checkout_data['order-email'] = 'something@example.com'
         self.assertRedirects(self.client.post('/checkout/', checkout_data),
             '/discounts/')
+        self.assertEqual(len(mail.outbox), 1)
 
         # There should be exactly one contact object now
         contact = Contact.objects.get()
@@ -507,9 +512,11 @@ class ViewTest(PlataTest):
         self.assertContains(self.client.post('/checkout/', checkout_data),
             'This e-mail address might belong to you, but we cannot know for sure because you are not authenticated yet')
 
+        self.assertEqual(len(mail.outbox), 0)
         checkout_data['order-email'] = 'something@example.com'
         self.assertRedirects(self.client.post('/checkout/', checkout_data),
             '/discounts/')
+        self.assertEqual(len(mail.outbox), 1)
 
         # There should be exactly one contact object now
         contact = Contact.objects.get()
@@ -566,8 +573,10 @@ class ViewTest(PlataTest):
             'order-create_account': True,
             }
 
+        self.assertEqual(len(mail.outbox), 0)
         self.assertRedirects(self.client.post('/checkout/', checkout_data),
             '/discounts/')
+        self.assertEqual(len(mail.outbox), 0)
 
         contact = Contact.objects.get()
         # First name should not be overwritten from checkout processing

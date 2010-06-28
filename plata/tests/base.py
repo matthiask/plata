@@ -11,7 +11,11 @@ from plata.contact.models import Contact
 from plata.product.models import TaxClass, Product, ProductVariation,\
     ProductPrice, OptionGroup, Option
 from plata.product.stock.models import Period, StockTransaction
+from plata.reporting.notifications import EmailHandler
 from plata.shop.models import Order, OrderStatus, OrderPayment
+
+
+handler = EmailHandler.register()
 
 
 class Empty(object):
