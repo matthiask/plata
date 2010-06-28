@@ -187,6 +187,7 @@ class OrderTest(PlataTest):
             code='order_sealed')
 
         self.assertEqual(order.status, Order.CONFIRMED)
+        self.assertEqual(Order.objects.get().status, Order.CONFIRMED)
 
     def test_06_order_percentage_discount(self):
         """Test a simple percentage discount"""
