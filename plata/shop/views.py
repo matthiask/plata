@@ -302,6 +302,7 @@ class Shop(object):
             'orderitemformset': formset,
             'empty': request.GET.get('empty', False), # Whether the cart is empty.
                                                       # Flag gets set by checkout view.
+            'insufficient_stock': request.GET.get('insufficient_stock', False),
             })
 
     def render_cart_empty(self, request, context):

@@ -10,6 +10,10 @@
 {% else %}
 <h1>{% trans "Cart" %}</h1>
 
+{% if insufficient_stock %}
+    <h2>{% trans "Insufficient stock" %}</h2>
+{% endif %}
+
 <form method="post" action=".">{% csrf_token %}{{ orderitemformset.management_form }}
 
 {% form_errors orderitemformset %}
