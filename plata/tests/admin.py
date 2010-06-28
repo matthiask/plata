@@ -36,6 +36,7 @@ class AdminTest(PlataTest):
         self.client.login(username='admin', password='password')
 
     def test_01_products(self):
+        """Test whether the administration interface is well behaved"""
         self.login()
 
         tax_class = TaxClass.objects.create(

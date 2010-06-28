@@ -20,6 +20,7 @@ from plata.tests.base import PlataTest, get_request
 
 class OrderTest(PlataTest):
     def test_00_test(self):
+        """Test assertRaisesWithCode works as expected"""
         def raise_validationerror():
             raise ValidationError('test', code='test')
 
@@ -41,6 +42,7 @@ class OrderTest(PlataTest):
                 lambda: None, code='something'))
 
     def test_01_basic_order(self):
+        """Test basic order and product properties"""
         product = self.create_product()
         order = self.create_order()
 
@@ -108,6 +110,7 @@ class OrderTest(PlataTest):
         self.assertAlmostEqual(prices['CHF']['sale'].unit_price, Decimal('79.90'))
 
     def test_02_eur_order(self):
+        """Test basic order in EUR works as expected"""
         product = self.create_product()
         order = self.create_order()
 
@@ -120,9 +123,7 @@ class OrderTest(PlataTest):
         self.assertEqual(item.currency, order.currency)
 
     def test_03_mixed_currencies(self):
-        """
-        Create an invalid order
-        """
+        """Test orders with mixed currencies are rejected during validation"""
 
         p1 = self.create_product()
         p2 = self.create_product()
@@ -144,6 +145,7 @@ class OrderTest(PlataTest):
         order.validate()
 
     def test_04_order_modify_item(self):
+        """Test Order.modify_item method is well behaving"""
         p1 = self.create_product()
         p2 = self.create_product()
         order = self.create_order()
@@ -163,6 +165,7 @@ class OrderTest(PlataTest):
         self.assertEqual(item.quantity, 33)
 
     def test_05_order_status(self):
+        """Test order status modification"""
         order = self.create_order()
 
         self.assertRaisesWithCode(ValidationError, lambda: order.update_status(
@@ -186,6 +189,7 @@ class OrderTest(PlataTest):
         self.assertEqual(order.status, Order.CONFIRMED)
 
     def test_06_order_percentage_discount(self):
+        """Test a simple percentage discount"""
         order = self.create_order()
         p1 = self.create_product()
         p2 = self.create_product()
@@ -233,6 +237,7 @@ class OrderTest(PlataTest):
         plata.settings.PLATA_PRICE_INCLUDES_TAX = True
 
     def test_07_order_amount_discount(self):
+        """Test a simple amount discount"""
         order = self.create_order()
         p1 = self.create_product()
         p2 = self.create_product()
@@ -289,6 +294,7 @@ class OrderTest(PlataTest):
         plata.settings.PLATA_PRICE_INCLUDES_TAX = True
 
     def test_08_order_payment(self):
+        """Test basic order payment model behavior"""
         order = self.create_order()
         product = self.create_product()
 
@@ -319,6 +325,7 @@ class OrderTest(PlataTest):
         self.assertEqual(order.payments.all()[0].data['anything'], 42)
 
     def test_09_selective_discount(self):
+        """Test applying discounts with product restriction"""
         p1 = self.create_product()
         p2 = self.create_product()
         p2.name = 'Discountable'
@@ -361,6 +368,7 @@ class OrderTest(PlataTest):
             name='blaa', slug='blaa', parent=c)), 'category - blaa')
 
     def test_10_discount_validation(self):
+        """Test discount validity periods"""
         order = self.create_order()
         d = Discount(
             is_active=False,
@@ -382,6 +390,7 @@ class OrderTest(PlataTest):
             self.assertEqual(len(e.messages), 2)
 
     def test_11_multiple_discounts(self):
+        """Test behavior of orders with more than one discount"""
         order = self.create_order()
         product = self.create_product()
         order.modify_item(product, 3)
@@ -412,6 +421,7 @@ class OrderTest(PlataTest):
         self.assertAlmostEqual(order.total, (Decimal('239.70') - 20) / 5 * 4)
 
     def test_12_order4567_test(self):
+        """Reproduce order ID 4567 of a deployed satchmo shop installation"""
         order = self.create_order()
 
         p1 = self.create_product()
@@ -463,6 +473,7 @@ class OrderTest(PlataTest):
         # TODO add 8.00 shipping
 
     def test_13_order4206_test(self):
+        """Reproduce order ID 4206 of a deployed satchmo shop installation"""
         order = self.create_order()
 
         p1 = self.create_product()
@@ -512,6 +523,7 @@ class OrderTest(PlataTest):
         # TODO add 8.00 shipping
 
     def test_14_invoice2009_0170_0002_test(self):
+        """Reproduce invoide of a deployed metronom installation"""
         order = self.create_order()
 
         p = self.create_product()
@@ -544,6 +556,7 @@ class OrderTest(PlataTest):
         plata.settings.PLATA_PRICE_INCLUDES_TAX = True
 
     def test_15_remaining_discount(self):
+        """Test determination of remaining discount amount"""
         order = self.create_order()
         product = self.create_product()
 
@@ -563,6 +576,7 @@ class OrderTest(PlataTest):
         self.assertAlmostEqual(order.discount_remaining, Decimal('20.10') / Decimal('1.076'))
 
     def test_16_payment(self):
+        """Test order with payments and discounts"""
         order = self.create_order()
         product = self.create_product()
 
@@ -598,6 +612,7 @@ class OrderTest(PlataTest):
         self.assertAlmostEqual(order.balance_remaining, Decimal('100.00'))
 
     def test_17_stocktransactions(self):
+        """Simple stock transaction test"""
         order = self.create_order()
         product = self.create_product()
         variation = product.variations.get()
@@ -656,6 +671,7 @@ class OrderTest(PlataTest):
         self.assertEqual(transaction.period.name, 'Something')
 
     def test_18_amount_discount_incl_tax(self):
+        """Test discount amounts specified with tax included"""
         p1 = self.create_product()
         p2 = self.create_product()
 
@@ -687,10 +703,12 @@ class OrderTest(PlataTest):
         self.assertAlmostEqual(order.discount, Decimal('50.00'))
 
     def test_19_product_methods(self):
+        """Test product helper methods"""
         product = self.create_product()
         self.assertEqual(product.main_image, None)
 
     def test_20_shipping_discount(self):
+        """Test applying discounts to shipping too"""
         order_processors = plata.settings.PLATA_ORDER_PROCESSORS[:]
         plata.settings.PLATA_ORDER_PROCESSORS[-2] = 'plata.shop.processors.FixedAmountShippingProcessor'
 

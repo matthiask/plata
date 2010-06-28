@@ -30,12 +30,14 @@ class ViewTest(PlataTest):
         settings.TEMPLATE_DIRS = self.ORIG_TEMPLATE_DIRS
 
     def test_01_cart_empty(self):
+        """Test cart is empty redirects work properly"""
         self.assertContains(self.client.get('/cart/'), 'Cart is empty')
         self.assertRedirects(self.client.get('/checkout/'), '/cart/?empty=1')
         self.assertRedirects(self.client.get('/discounts/'), '/cart/?empty=1')
         self.assertRedirects(self.client.get('/confirmation/'), '/cart/?empty=1')
 
     def test_02_authenticated_user_has_contact(self):
+        """Test shop.contact_from_user works correctly"""
         user = User.objects.create_user('test', 'test@example.com', 'testing')
         self.client.login(username='test', password='testing')
 
@@ -47,6 +49,7 @@ class ViewTest(PlataTest):
         self.assertEqual(shop.contact_from_user(request.user), contact)
 
     def test_03_product_detail(self):
+        """Test product detail view and cart handling methods"""
         p1 = self.create_product()
         response = self.client.post(p1.get_absolute_url(), {
             'quantity': 5,
@@ -112,6 +115,7 @@ class ViewTest(PlataTest):
             }), 'Price could not be determined', count=1)
 
     def test_04_shopping(self):
+        """Test shopping, checkout and order PDF generation in one go"""
         self.assertEqual(Order.objects.count(), 0)
         p1 = self.create_product()
         p2 = self.create_product()
@@ -303,6 +307,7 @@ class ViewTest(PlataTest):
             'application/vnd.ms-excel')
 
     def test_05_creation(self):
+        """Test creation of orders through the shop object"""
         shop = plata.shop_instance()
         request = get_request()
 
@@ -314,6 +319,7 @@ class ViewTest(PlataTest):
         self.assertEqual(order.contact, None)
 
     def test_06_postfinance_ipn(self):
+        """Test Postfinance server-to-server request handling"""
         shop = plata.shop_instance()
         request = get_request()
 
@@ -391,6 +397,7 @@ class ViewTest(PlataTest):
             '<h1>Order has been fully paid.</h1>')
 
     def test_07_paypal_ipn(self):
+        """Test PayPal Instant Payment Notification handler"""
         paypal_ipn_data = {
             'txn_id': '123456789',
             'invoice': 'Order-1-1',
@@ -440,6 +447,7 @@ class ViewTest(PlataTest):
         self.assertEqual(StockTransaction.objects.count(), 2)
 
     def test_08_checkout_preexisting_user(self):
+        """Test checkout behavior using already existing user without contact"""
         User.objects.create_user('else', 'else@example.com', 'test')
 
         user = User.objects.create_user('test', 'test@example.com', 'test')
@@ -485,6 +493,7 @@ class ViewTest(PlataTest):
         self.assertEqual(contact.user.email, 'test@example.com')
 
     def test_09_checkout_create_user(self):
+        """Test checkout behavior without existing user or contact"""
         User.objects.create_user('else', 'else@example.com', 'test')
 
         p1 = self.create_product(stock=100)
@@ -533,6 +542,7 @@ class ViewTest(PlataTest):
         self.assertContains(response, 'value="Beispielstadt"')
 
     def test_10_login_in_checkout_preexisting_contact(self):
+        """Test checkout behavior using already existing contact and user"""
         Contact.objects.create(
             user=User.objects.create_user('else@example.com', 'else@example.com', 'test'),
             currency='CHF',
@@ -587,6 +597,7 @@ class ViewTest(PlataTest):
         self.assertEqual(contact.orders.count(), 1)
 
     def test_11_login_in_checkout_create_contact(self):
+        """Test checkout using already existing user, but no contact"""
         User.objects.create_user('else@example.com', 'else@example.com', 'test')
 
         p1 = self.create_product(stock=100)
@@ -629,6 +640,7 @@ class ViewTest(PlataTest):
         self.assertEqual(contact.orders.count(), 1)
 
     def test_12_insufficient_stock(self):
+        """Test insufficient stock handling in checkout process"""
         p1 = self.create_product(stock=10)
         self.client.post(p1.get_absolute_url(), {'quantity': 9})
 
@@ -638,6 +650,7 @@ class ViewTest(PlataTest):
             '/cart/?insufficient_stock=1')
 
     def test_13_expired_reservation(self):
+        """Test payment process reservation expiration"""
         p1 = self.create_product(stock=10)
 
         p1.variations.get().stock_transactions.create(
