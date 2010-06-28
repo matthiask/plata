@@ -279,7 +279,7 @@ class ViewTest(PlataTest):
             'payment_method': 'plata.payment.modules.cod',
             }), '/order/success/')
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(Order.objects.get(pk=order.id).status, Order.COMPLETED)
+        self.assertEqual(Order.objects.get(pk=order.id).status, Order.PAID)
 
         # Clear order
         self.assertRedirects(self.client.get('/order/new/?next=%s' % p1.get_absolute_url()),
