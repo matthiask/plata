@@ -69,6 +69,7 @@ class ProcessorBase(object):
                     type=self.shop.discount_model.AMOUNT_EXCL_TAX,
                     value=order.discount_remaining,
                     config_json=getattr(discount, 'config_json', '{"all": {}}'),
+                    allowed_uses=1,
                     )
 
             signals.order_completed.send(**signal_kwargs)

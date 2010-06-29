@@ -679,6 +679,7 @@ class ViewTest(PlataTest):
         self.assertRaises(ValidationError, order.validate, all=True)
 
     def test_14_remaining_discount(self):
+        """Test that a new discount is created when there is an amount remaining"""
         p1 = self.create_product(stock=10)
         self.client.post(p1.get_absolute_url(), {'quantity': 5})
 
@@ -707,3 +708,23 @@ class ViewTest(PlataTest):
         self.assertAlmostEqual(
             discount.value - sum(item.subtotal for item in order.items.all()),
             new_discount.value * (1 + self.tax_class.rate / 100))
+
+        self.client.get('/order/new/')
+
+        self.client.post(p1.get_absolute_url(), {'quantity': 1})
+        self.assertRedirects(self.client.post('/discounts/', {
+            'code': new_discount.code,
+            'proceed': 'True',
+            }), '/confirmation/')
+
+        self.assertRedirects(self.client.post('/confirmation/', {
+            'terms_and_conditions': True,
+            'payment_method': 'plata.payment.modules.cod',
+            }), '/order/success/')
+
+        self.client.get('/order/new/')
+        self.client.post(p1.get_absolute_url(), {'quantity': 1})
+        self.assertContains(self.client.post('/discounts/', {
+            'code': new_discount.code,
+            'proceed': 'True',
+            }), 'Allowed uses for this discount has already been reached.')

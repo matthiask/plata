@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import Sum
+from django.db.models import ObjectDoesNotExist, Sum
 from django.forms.formsets import all_valid
 from django.forms.models import modelform_factory, inlineformset_factory
 from django.http import HttpResponseRedirect
@@ -213,7 +213,13 @@ class Order(BillingShippingAddress):
     def add_discount(self, discount, recalculate=True):
         discount.validate(self)
 
-        self.applied_discounts.filter(code=discount.code).delete()
+        try:
+            self.applied_discounts.get(code=discount.code).delete()
+        except ObjectDoesNotExist:
+            # Don't increment used count when discount has already been applied
+            discount.used += 1
+            discount.save()
+
         instance = self.applied_discounts.create(
             code=discount.code,
             type=discount.type,
