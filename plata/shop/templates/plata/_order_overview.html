@@ -1,16 +1,10 @@
 {% load i18n %}
 {% with order.addresses as addresses %}
 <h2>{% trans "Billing address" %}</h2>
-{{ addresses.billing.company }}<br />
-{{ addresses.billing.first_name }} {{ addresses.billing.last_name }}<br />
-{{ addresses.billing.address|linebreaksbr }}<br />
-{{ addresses.billing.country }}-{{ addresses.billing.zip_code }} {{ addresses.billing.city }}<br />
+{% with addresses.billing as address %}{% include "plata/_address.html" %}{% endwith %}
 
 <h2>{% trans "Shipping address" %}</h2>
-{{ addresses.shipping.company }}<br />
-{{ addresses.shipping.first_name }} {{ addresses.shipping.last_name }}<br />
-{{ addresses.shipping.address|linebreaksbr }}<br />
-{{ addresses.shipping.country }}-{{ addresses.shipping.zip_code }} {{ addresses.shipping.city }}<br />
+{% with addresses.shipping as address %}{% include "plata/_address.html" %}{% endwith %}
 {% endwith %}
 
 <h2>{% trans "Order items" %}</h2>
