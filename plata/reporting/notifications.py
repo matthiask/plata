@@ -7,9 +7,16 @@ class BaseHandler(object):
     @classmethod
     def register(cls, **kwargs):
         instance = cls(**kwargs)
-        signals.contact_created.connect(instance.on_contact_created)
-        signals.order_confirmed.connect(instance.on_order_confirmed)
-        signals.order_completed.connect(instance.on_order_completed)
+
+        dispatch_uid = kwargs.get('dispatch_uid', cls.__name__)
+
+        signals.contact_created.connect(instance.on_contact_created,
+            dispatch_uid=dispatch_uid)
+        signals.order_confirmed.connect(instance.on_order_confirmed,
+            dispatch_uid=dispatch_uid)
+        signals.order_completed.connect(instance.on_order_completed,
+            dispatch_uid=dispatch_uid)
+
         return instance
 
     def on_contact_created(self, sender, **kwargs):
