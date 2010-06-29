@@ -73,7 +73,7 @@ class DiscountBase(models.Model):
 
     # TODO currency handling. Maybe split type/value into amount, tax, currency, percentage?
     type = models.PositiveIntegerField(_('type'), choices=TYPE_CHOICES)
-    value = models.DecimalField(_('value'), max_digits=10, decimal_places=2)
+    value = models.DecimalField(_('value'), max_digits=18, decimal_places=10)
 
     config_json = models.TextField(_('configuration'), blank=True,
         help_text=_('If you edit this field directly, changes below will be ignored.'))

@@ -673,3 +673,33 @@ class ViewTest(PlataTest):
 
         StockTransaction.objects.update(created=datetime.now()-timedelta(minutes=10))
         self.assertRaises(ValidationError, order.validate, all=True)
+
+    def test_14_remaining_discount(self):
+        p1 = self.create_product(stock=10)
+        self.client.post(p1.get_absolute_url(), {'quantity': 5})
+
+        discount = Discount.objects.create(
+            name='Testname',
+            type=Discount.AMOUNT_INCL_TAX,
+            value=1000,
+            config_json='{"all":{}}',
+            )
+
+        self.assertRedirects(self.client.post('/discounts/', {
+            'code': discount.code,
+            'proceed': 'True',
+            }), '/confirmation/')
+
+        self.assertRedirects(self.client.post('/confirmation/', {
+            'terms_and_conditions': True,
+            'payment_method': 'plata.payment.modules.cod',
+            }), '/order/success/')
+
+        self.assertEqual(Discount.objects.count(), 2)
+
+        order = Order.objects.get()
+        new_discount = Discount.objects.exclude(code=discount.code).get()
+
+        self.assertAlmostEqual(
+            discount.value - sum(item.subtotal for item in order.items.all()),
+            new_discount.value * (1 + self.tax_class.rate / 100))

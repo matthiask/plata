@@ -40,8 +40,10 @@ class ConsoleHandler(BaseHandler):
         print >>self.stream, 'Order confirmed: %s' % kwargs.get('order')
 
     def on_order_completed(self, sender, **kwargs):
-        print >>self.stream, 'Order completed: %s, payment %s' % (
-            kwargs.get('order'), kwargs.get('payment'))
+        print >>self.stream, 'Order completed: %s, payment %s, new discount %s' % (
+            kwargs.get('order'),
+            kwargs.get('payment'),
+            kwargs.get('remaining_discount'))
 
 
 class EmailHandler(BaseHandler):
