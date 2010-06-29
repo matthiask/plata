@@ -15,9 +15,10 @@ class OrderStatusInline(admin.TabularInline):
     model = models.OrderStatus
     extra = 1
 
-admin.site.register(models.Order,
-    date_hierarchy='created',
-    fieldsets=(
+
+class OrderAdmin(admin.ModelAdmin):
+    date_hierarchy = 'created'
+    fieldsets = (
         (None, {'fields': ('created', 'confirmed', 'contact', 'status')}),
         (_('Billing address'), {'fields': ('billing_company', 'billing_first_name',
             'billing_last_name', 'billing_address', 'billing_zip_code',
@@ -30,15 +31,29 @@ admin.site.register(models.Order,
         (_('Shipping'), {'fields': ('shipping_cost', 'shipping_discount', 'shipping_tax')}),
         (_('Total'), {'fields': ('currency', 'total', 'paid')}),
         (_('Additional fields'), {'fields': ('notes',)}),
-        ),
-    inlines=[OrderItemInline, AppliedDiscountInline, OrderStatusInline],
-    list_display=('__unicode__', 'created', 'contact', 'status', 'total', 'balance_remaining', 'is_paid'),
-    list_filter=('status',),
-    raw_id_fields=('contact',),
-    search_fields=tuple('billing_%s' % s for s in models.Order.ADDRESS_FIELDS)\
+        )
+    inlines = [OrderItemInline, AppliedDiscountInline, OrderStatusInline]
+    list_display = ('__unicode__', 'created', 'contact', 'status', 'total',
+        'balance_remaining', 'is_paid', 'admin_order_pdf')
+    list_filter = ('status',)
+    raw_id_fields = ('contact',)
+    search_fields = tuple('billing_%s' % s for s in models.Order.ADDRESS_FIELDS)\
         +tuple('shipping_%s' % s for s in models.Order.ADDRESS_FIELDS)\
-        +('total', 'notes'),
-    )
+        +('total', 'notes')
+
+    def admin_order_pdf(self, instance):
+        from django.core.urlresolvers import reverse
+        return u'<a href="%(url)s">%(title)s</a>' % {
+            'url': reverse('plata_reporting_order_pdf',
+                args=(),
+                kwargs={'order_id': instance.id}
+                ),
+            'title': _('PDF'),
+            }
+    admin_order_pdf.allow_tags = True
+    admin_order_pdf.short_description = _('Order PDF')
+
+admin.site.register(models.Order, OrderAdmin)
 
 
 class OrderPaymentAdmin(admin.ModelAdmin):
