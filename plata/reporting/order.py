@@ -13,7 +13,9 @@ def order_pdf(pdf, order):
     pdf.init_letter(page_fn=create_stationery_fn(
         get_callable(plata.settings.PLATA_REPORTING_STATIONERY)()))
 
-    pdf.address_head(u'FEINHEIT GmbH - Molkenstrasse 21 - CH-8004 Z\374rich')
+    if plata.settings.PLATA_REPORTING_ADDRESSLINE:
+        pdf.address_head(plata.settings.PLATA_REPORTING_ADDRESSLINE)
+
     pdf.address(order, 'billing_')
     pdf.next_frame()
 
