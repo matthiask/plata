@@ -1,3 +1,4 @@
+from django.core.urlresolvers import get_callable
 from django.utils.text import capfirst
 from django.utils.translation import ugettext as _
 
@@ -5,9 +6,12 @@ from pdfdocument.document import PDFDocument, cm, mm
 from pdfdocument.elements import create_stationery_fn, ExampleStationery
 from pdfdocument.utils import pdf_response
 
+import plata
+
 
 def order_pdf(pdf, order):
-    pdf.init_letter(page_fn=create_stationery_fn(ExampleStationery()))
+    pdf.init_letter(page_fn=create_stationery_fn(
+        get_callable(plata.settings.PLATA_REPORTING_STATIONERY)()))
 
     pdf.address_head(u'FEINHEIT GmbH - Molkenstrasse 21 - CH-8004 Z\374rich')
     pdf.address(order, 'billing_')

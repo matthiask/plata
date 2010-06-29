@@ -24,3 +24,6 @@ PLATA_SHIPPING_FIXEDAMOUNT = getattr(settings, 'PLATA_SHIPPING_FIXEDAMOUNT', {
     'cost': Decimal('8.00'),
     'tax': Decimal('7.6'),
     })
+
+PLATA_REPORTING_STATIONERY = getattr(settings, 'PLATA_REPORTING_STATIONERY',
+    'pdfdocument.elements.ExampleStationery')
