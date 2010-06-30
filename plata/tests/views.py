@@ -32,9 +32,9 @@ class ViewTest(PlataTest):
     def test_01_cart_empty(self):
         """Test cart is empty redirects work properly"""
         self.assertContains(self.client.get('/cart/'), 'Cart is empty')
-        self.assertRedirects(self.client.get('/checkout/'), '/cart/?empty=1')
-        self.assertRedirects(self.client.get('/discounts/'), '/cart/?empty=1')
-        self.assertRedirects(self.client.get('/confirmation/'), '/cart/?empty=1')
+        self.assertRedirects(self.client.get('/checkout/'), '/cart/')
+        self.assertRedirects(self.client.get('/discounts/'), '/cart/')
+        self.assertRedirects(self.client.get('/confirmation/'), '/cart/')
 
     def test_02_authenticated_user_has_contact(self):
         """Test shop.contact_from_user works correctly"""
@@ -292,15 +292,16 @@ class ViewTest(PlataTest):
         self.assertRedirects(self.client.get('/order/new/'), '/',
             target_status_code=302)
 
+        # Cart is empty
         self.assertRedirects(self.client.post('/confirmation/', {
             'terms_and_conditions': True,
             'payment_method': 'plata.payment.modules.cod',
-            }), '/cart/?empty=1')
+            }), '/cart/')
 
         self.assertRedirects(self.client.post('/confirmation/', {
             'terms_and_conditions': True,
             'payment_method': 'plata.payment.modules.paypal',
-            }), '/cart/?empty=1')
+            }), '/cart/')
 
         user = User.objects.create_superuser('admin', 'admin@example.com', 'password')
 
@@ -650,8 +651,12 @@ class ViewTest(PlataTest):
 
         p1.variations.get().stock_transactions.create(type=StockTransaction.SALE, change=-5)
 
-        self.assertRedirects(self.client.get('/checkout/'),
-            '/cart/?insufficient_stock=1')
+        response = self.client.get('/checkout/')
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], 'http://testserver/cart/')
+
+        self.assertContains(self.client.get('/cart/'),
+            'Not enough stock available for')
 
     def test_13_expired_reservation(self):
         """Test payment process reservation expiration"""

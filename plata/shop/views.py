@@ -22,7 +22,7 @@ def cart_not_empty(order, request, **kwargs):
     # Redirect to cart if later in checkout process and cart empty
     if not order or not order.items.count():
         messages.warning(request, _('Cart is empty.'))
-        return HttpResponseRedirect(reverse('plata_shop_cart') + '?empty=1')
+        return HttpResponseRedirect(reverse('plata_shop_cart'))
 
 def order_confirmed(order, request, **kwargs):
     # Redirect to confirmation or already paid view if the order is already confirmed
@@ -256,7 +256,7 @@ class Shop(object):
 
     @checkout_process_decorator(order_confirmed)
     def cart(self, request, order):
-        if not order:
+        if not order or not order.items.count():
             return self.render_cart_empty(request, {})
 
         OrderItemFormset = inlineformset_factory(
@@ -299,8 +299,6 @@ class Shop(object):
         return self.render_cart(request, {
             'order': order,
             'orderitemformset': formset,
-            'empty': request.GET.get('empty', False), # Whether the cart is empty.
-                                                      # Flag gets set by checkout view.
             })
 
     def render_cart_empty(self, request, context):
