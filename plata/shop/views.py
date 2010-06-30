@@ -2,8 +2,7 @@ from decimal import Decimal
 from functools import wraps
 
 from django import forms
-from django.contrib import messages
-from django.contrib import auth
+from django.contrib import auth, messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -41,9 +40,9 @@ def insufficient_stock(order, request, **kwargs):
     try:
         order.validate(order.VALIDATE_CART)
     except ValidationError, e:
-        if e.code == 'insufficient_stock':
-            return HttpResponseRedirect(reverse('plata_shop_cart') + '?insufficient_stock=1')
-        raise
+        for message in e.messages:
+            messages.error(request, message)
+        return HttpResponseRedirect(reverse('plata_shop_cart'))
 
 def checkout_process_decorator(*checks):
     def _dec(fn):
@@ -302,7 +301,6 @@ class Shop(object):
             'orderitemformset': formset,
             'empty': request.GET.get('empty', False), # Whether the cart is empty.
                                                       # Flag gets set by checkout view.
-            'insufficient_stock': request.GET.get('insufficient_stock', False),
             })
 
     def render_cart_empty(self, request, context):
