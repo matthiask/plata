@@ -673,10 +673,10 @@ class ViewTest(PlataTest):
             p1.get_absolute_url())
 
         order = Order.objects.all()[0]
-        order.validate(all=True)
+        order.validate(order.VALIDATE_ALL)
 
         StockTransaction.objects.update(created=datetime.now()-timedelta(minutes=10))
-        self.assertRaises(ValidationError, order.validate, all=True)
+        self.assertRaises(ValidationError, order.validate, order.VALIDATE_ALL)
 
     def test_14_remaining_discount(self):
         """Test that a new discount is created when there is an amount remaining"""

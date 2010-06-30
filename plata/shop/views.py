@@ -39,7 +39,7 @@ def insufficient_stock(order, request, **kwargs):
         return
 
     try:
-        order.validate(stock=True)
+        order.validate(order.VALIDATE_CART)
     except ValidationError, e:
         if e.code == 'insufficient_stock':
             return HttpResponseRedirect(reverse('plata_shop_cart') + '?insufficient_stock=1')
@@ -536,7 +536,7 @@ class Shop(object):
 
             def clean(self):
                 data = super(Form, self).clean()
-                order.validate(all=True)
+                order.validate(order.VALIDATE_ALL)
                 return data
 
         if request.method == 'POST':

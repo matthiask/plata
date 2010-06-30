@@ -137,12 +137,12 @@ class OrderTest(PlataTest):
             code='multiple_currency')
 
         # Validation should still fail
-        self.assertRaisesWithCode(ValidationError, lambda: order.validate(),
+        self.assertRaisesWithCode(ValidationError, lambda: order.validate(order.VALIDATE_BASE),
             code='multiple_currency')
 
         order.currency = 'CHF'
         # Order should validate now
-        order.validate()
+        order.validate(order.VALIDATE_BASE)
 
     def test_04_order_modify_item(self):
         """Test Order.modify_item method is well behaving"""

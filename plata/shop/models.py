@@ -119,31 +119,22 @@ class Order(BillingShippingAddress):
     def is_confirmed(self):
         return self.status >= self.CONFIRMED
 
-    def validate(self, currency=True, stock=False, all=False):
-        """
-        A few self-checks. These should never fail under normal circumstances.
 
-        currency:
-            Test for multiple currencies in order
+    VALIDATE_BASE = 10
+    VALIDATE_CART = 20
+    VALIDATE_CHECKOUT = 30
+    VALIDATE_ALL = 100
 
-        stock:
-            Test whether stock is available for all selected items
+    VALIDATORS = {}
 
-        all:
-            Run all self-tests
-        """
+    @classmethod
+    def register_validator(cls, validator, group):
+        cls.VALIDATORS.setdefault(group, []).append(validator)
 
-        if currency or all:
-            currencies = set(self.items.values_list('currency', flat=True))
-            if currencies and (len(currencies) > 1 or self.currency not in currencies):
-                raise ValidationError(_('Order contains more than one currency.'),
-                    code='multiple_currency')
-
-        if stock or all:
-            for item in self.items.all().select_related('variation'):
-                if item.quantity > item.variation.available(exclude_order=self):
-                    raise ValidationError(_('Not enough stock available for %s.') % item.variation,
-                        code='insufficient_stock')
+    def validate(self, group):
+        for g in sorted(g for g in self.VALIDATORS.keys() if g<=group):
+            for validator in self.VALIDATORS[g]:
+                validator(self)
 
     def modify_item(self, product, relative=None, absolute=None, recalculate=True, **kwargs):
         """
@@ -202,7 +193,7 @@ class Order(BillingShippingAddress):
                 item = self.items.get(pk=item.pk)
 
         try:
-            self.validate()
+            self.validate(self.VALIDATE_BASE)
         except ValidationError:
             if item.pk:
                 item.delete()
@@ -252,6 +243,24 @@ class Order(BillingShippingAddress):
 
     def reload(self):
         return self.__class__._default_manager.get(pk=self.id)
+
+
+def validate_order_currencies(order):
+    currencies = set(order.items.values_list('currency', flat=True))
+    if currencies and (len(currencies) > 1 or order.currency not in currencies):
+        raise ValidationError(_('Order contains more than one currency.'),
+            code='multiple_currency')
+
+
+def validate_order_stock_available(order):
+    for item in order.items.all().select_related('variation'):
+        if item.quantity > item.variation.available(exclude_order=order):
+            raise ValidationError(_('Not enough stock available for %s.') % item.variation,
+                code='insufficient_stock')
+
+
+Order.register_validator(validate_order_currencies, Order.VALIDATE_BASE)
+Order.register_validator(validate_order_stock_available, Order.VALIDATE_CART)
 
 
 class OrderItem(models.Model):
