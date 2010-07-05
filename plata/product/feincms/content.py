@@ -59,7 +59,7 @@ class ProductList(models.Model):
             # TODO remove hardcoded currency
             products = [p for p in products if p.in_sale('CHF')]
 
-        my_ctx = {'object_list': products}
+        my_ctx = {'content': self, 'object_list': products}
 
         if self.paginate_by:
             paginator = Paginator(products, self.paginate_by)
