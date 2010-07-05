@@ -311,7 +311,7 @@ class Shop(object):
         return render_to_response('plata/shop_cart.html',
             self.get_context(request, context))
 
-    def checkout_order_form(self, request, order):
+    def checkout_form(self, request, order):
         REQUIRED_ADDRESS_FIELDS = self.order_model.ADDRESS_FIELDS[:]
         REQUIRED_ADDRESS_FIELDS.remove('company')
 
@@ -415,7 +415,7 @@ class Shop(object):
         if order.status < self.order_model.CHECKOUT:
             order.update_status(self.order_model.CHECKOUT, 'Checkout process started')
 
-        OrderForm = self.checkout_order_form(request, order)
+        OrderForm = self.checkout_form(request, order)
         contact = self.contact_from_user(request.user)
 
         initial = {}
