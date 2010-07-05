@@ -264,7 +264,7 @@ msgstr "Postfinance"
 #: product/admin.py:19 product/admin.py:76 product/models.py:111
 #: product/models.py:216 reporting/product.py:85
 msgid "SKU"
-msgstr "Artikelnummer"
+msgstr "Artikel-Nr."
 
 #: product/admin.py:20
 msgid "Create all variations"

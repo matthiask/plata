@@ -29,18 +29,22 @@ def order_pdf(pdf, order):
     pdf.hr()
 
     pdf.table([(
+            _('SKU'),
             capfirst(_('product')),
             capfirst(_('quantity')),
             capfirst(_('unit price')),
             capfirst(_('line item price')),
         )]+[
         (
+            item.variation.sku,
             unicode(item.variation),
             item.quantity,
             u'%.2f' % item.unit_price,
             u'%.2f' % item.discounted_subtotal,
         ) for item in order.items.all()],
-        (8*cm, 1*cm, 3*cm, 4.4*cm), pdf.style.tableHead)
+        (2*cm, 6*cm, 1*cm, 3*cm, 4.4*cm), pdf.style.tableHead+(
+            ('ALIGN', (1, 0), (1, -1), 'LEFT'),
+            ))
 
     summary_table = [
         ('', ''),
