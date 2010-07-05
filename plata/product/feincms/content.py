@@ -8,6 +8,29 @@ import plata
 from plata.product.models import Category
 
 
+class CategoryList(models.Model):
+    subcategories_of = models.ForeignKey(Category, blank=True, null=True,
+        verbose_name=_('subcategories of'),
+        limit_choices_to={'parent__isnull': True},
+        help_text=_('Only top-level categories are shown if left empty.'),
+        )
+
+    class Meta:
+        abstract = True
+        verbose_name = _('category list')
+        verbose_name_plural = _('category lists')
+
+    def render(self, request, context, **kwargs):
+        categories = Category.objects.public()
+        if self.subcategories_of:
+            categories = categories.filter(parent=self.subcategories_of)
+
+        return render_to_string('product/category_list.html', {
+            'content': self,
+            'object_list': categories,
+        }, context_instance=context)
+
+
 class ProductList(models.Model):
     only_featured = models.BooleanField(_('featured only'))
     only_sale = models.BooleanField(_('sales only'))
