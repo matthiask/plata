@@ -16,7 +16,7 @@ def featured_products_for_categories(category_list, variable_name='featured_prod
 
     for category in category_list:
         try:
-            setattr(category, variable_name, category.products.featured()[0])
+            setattr(category, variable_name, category.products.active().order_by('-is_featured')[0])
         except IndexError:
             pass
 
