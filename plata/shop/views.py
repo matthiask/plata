@@ -455,31 +455,29 @@ class Shop(object):
             self.get_context(request, context))
 
     def discount_form(self, request, order):
-        if not hasattr(self, '_discount_form_cache'):
-            class DiscountForm(forms.Form):
-                code = forms.CharField(label=_('code'), max_length=30, required=False)
+        class DiscountForm(forms.Form):
+            code = forms.CharField(label=_('code'), max_length=30, required=False)
 
-                def __init__(self, *args, **kwargs):
-                    self.order = kwargs.pop('order')
-                    super(DiscountForm, self).__init__(*args, **kwargs)
+            def __init__(self, *args, **kwargs):
+                self.order = kwargs.pop('order')
+                super(DiscountForm, self).__init__(*args, **kwargs)
 
-                def clean_code(self):
-                    code = self.cleaned_data.get('code')
-                    if not code:
-                        return self.cleaned_data
+            def clean_code(self):
+                code = self.cleaned_data.get('code')
+                if not code:
+                    return self.cleaned_data
 
-                    shop = plata.shop_instance()
+                shop = plata.shop_instance()
 
-                    try:
-                        discount = shop.discount_model.objects.get(code=code)
-                    except shop.discount_model.DoesNotExist:
-                        raise forms.ValidationError(_('This code does not validate'))
+                try:
+                    discount = shop.discount_model.objects.get(code=code)
+                except shop.discount_model.DoesNotExist:
+                    raise forms.ValidationError(_('This code does not validate'))
 
-                    discount.validate(self.order)
-                    self.cleaned_data['discount'] = discount
-                    return code
-            self._discount_form_cache = DiscountForm
-        return self._discount_form_cache
+                discount.validate(self.order)
+                self.cleaned_data['discount'] = discount
+                return code
+        return DiscountForm
 
     @checkout_process_decorator(cart_not_empty, order_confirmed, insufficient_stock)
     def discounts(self, request, order):
