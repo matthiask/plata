@@ -1,3 +1,3 @@
 from admin import AdminTest
-from orders import OrderTest
+from models import ModelTest
 from views import ViewTest

@@ -18,7 +18,7 @@ from plata.shop.models import Order, OrderStatus, OrderPayment
 from plata.tests.base import PlataTest, get_request
 
 
-class OrderTest(PlataTest):
+class ModelTest(PlataTest):
     def test_00_test(self):
         """Test assertRaisesWithCode works as expected"""
         def raise_validationerror():
@@ -737,7 +737,8 @@ class OrderTest(PlataTest):
 
         plata.settings.PLATA_ORDER_PROCESSORS = order_processors[:]
 
-    def test_21_template_tags(self):
+    def test_21_product_template_tags(self):
+        """Test the product template tag library"""
         from plata.shop.templatetags import plata_product_tags
         product = self.create_product()
         product.categories.create(
