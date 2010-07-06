@@ -12,12 +12,13 @@ def featured_products_for_categories(category_list, variable_name='featured_prod
     {% featured_products_for_categories category_list "variable_name" %}
     """
 
+    product_qset = plata.shop_instance().product_model.objects.active()
     category_list = list(category_list)
 
     for category in category_list:
         try:
-            setattr(category, variable_name, category.products.active().order_by(
-                '-is_featured', 'ordering', 'name')[0])
+            setattr(category, variable_name, product_qset.filter(
+                categories=category).order_by('-is_featured', 'ordering', 'name')[0])
         except IndexError:
             pass
 

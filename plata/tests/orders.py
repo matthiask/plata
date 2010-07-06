@@ -736,3 +736,22 @@ class OrderTest(PlataTest):
         self.assertAlmostEqual(order.total, Decimal('0.00'))
 
         plata.settings.PLATA_ORDER_PROCESSORS = order_processors[:]
+
+    def test_21_template_tags(self):
+        from plata.shop.templatetags import plata_product_tags
+        product = self.create_product()
+        product.categories.create(
+            name='Category',
+            slug='category',
+            ordering=5,
+            )
+
+        Category.objects.create(name='Category 2', slug='category-2')
+
+        c = Category.objects.all()
+        plata_product_tags.featured_products_for_categories(c)
+
+        self.assertEqual(Category.objects.count(), 2)
+        self.assertEqual(product.categories.count(), 1)
+        self.assertEqual(c[1].featured_product, product)
+        self.assertFalse(hasattr(c[0], 'featured_product'))
