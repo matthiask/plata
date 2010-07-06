@@ -14,6 +14,17 @@
 {% feincms_render_region object.cmsproduct "main" request %}
 {% endif %}
 
+<div class="prices">
+    {% for currency, prices in object.get_prices %}
+        {% if prices.sale %}
+            {% if prices.normal %}<span style="text-decoration: line-through;">{{ prices.normal }}</span>{% endif %}
+            <strong>{{ prices.sale }}</strong><br />
+        {% else %}
+            <strong>{{ prices.normal }}</strong><br />
+        {% endif %}
+    {% endfor %}
+</div>
+
 <form method="post" action=".">
 {% csrf_token %}
 <table>
