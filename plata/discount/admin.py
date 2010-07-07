@@ -3,7 +3,6 @@ from threading import local
 from django import forms
 from django.contrib import admin
 from django.db.models import Model
-from django.utils import simplejson
 from django.utils.translation import ugettext_lazy as _
 
 from . import models
@@ -106,7 +105,8 @@ class DiscountAdminForm(forms.ModelForm):
 
             config_options[s] = option_item
 
-        data['config_json'] = simplejson.dumps(jsonize(config_options))
+        self.instance.config = jsonize(config_options)
+        data['config_json'] = self.instance.config_json
         return data
 
 

@@ -1,7 +1,13 @@
 from decimal import Decimal
+import simplejson
 
 from django.core.serializers.json import DjangoJSONEncoder
-from django.utils import simplejson
+
+
+try:
+    simplejson.dumps([42], use_decimal=True)
+except TypeError:
+    raise Exception('simplejson>=2.1 with support for use_decimal required.')
 
 
 class JSONFieldDescriptor(object):
@@ -13,11 +19,12 @@ class JSONFieldDescriptor(object):
         if not hasattr(obj, cache_field):
             try:
                 setattr(obj, cache_field, simplejson.loads(getattr(obj, self.field),
-                    parse_float=Decimal))
+                    use_decimal=True))
             except (TypeError, ValueError):
                 setattr(obj, cache_field, {})
         return getattr(obj, cache_field)
 
     def __set__(self, obj, value):
         setattr(obj, '_cached_jsonfield_%s' % self.field, value)
-        setattr(obj, self.field, simplejson.dumps(value, cls=DjangoJSONEncoder))
+        setattr(obj, self.field, simplejson.dumps(value, use_decimal=True,
+            cls=DjangoJSONEncoder))
