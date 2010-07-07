@@ -32,11 +32,6 @@ def jsonize(v):
 
 
 class DiscountAdminForm(forms.ModelForm):
-    class Meta:
-        widgets = {
-            'config_json': forms.Textarea(attrs={'rows': 3}),
-            }
-
     def __init__(self, *args, **kwargs):
         super(DiscountAdminForm, self).__init__(*args, **kwargs)
 
@@ -119,8 +114,12 @@ class DiscountAdmin(admin.ModelAdmin):
         fieldsets = super(DiscountAdmin, self).get_fieldsets(request, obj)
         fieldsets[0][1]['fields'].remove('config_json')
 
+        fieldsets.append((_('Raw configuration'), {
+            'fields': ('config_json',),
+            'classes': ('collapse',),
+            }))
         fieldsets.append((_('Configuration'), {
-            'fields': ('config_json', 'config_options'),
+            'fields': ('config_options',),
             }))
 
         fieldsets.extend(_discount_admin_state._plata_discount_config_fieldsets)
