@@ -1,4 +1,4 @@
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 
 from django.core.urlresolvers import get_callable
 
@@ -62,7 +62,7 @@ class TaxProcessor(ProcessorBase):
     def process(self, order, items):
         for item in items:
             taxable = item._line_item_price - (item._line_item_discount or 0)
-            item._line_item_tax = taxable * item.tax_class.rate/100
+            item._line_item_tax = (taxable * item.tax_class.rate/100).quantize(Decimal('0.0000000000'))
             item.save()
 
 
@@ -106,7 +106,9 @@ class OrderSummationProcessor(ProcessorBase):
         payments of 0.01 units.
         """
 
-        order.total = sum(
+        total = sum(
             self.get_processor_value('total').values(),
             Decimal('0.00'),
-            ).quantize(Decimal('0.00'))
+            )
+
+        order.total = total.quantize(Decimal('0.00'), rounding=ROUND_HALF_UP)

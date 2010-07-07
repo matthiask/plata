@@ -756,3 +756,47 @@ class ModelTest(PlataTest):
         self.assertEqual(product.categories.count(), 1)
         self.assertEqual(c[1].featured_product, product)
         self.assertFalse(hasattr(c[0], 'featured_product'))
+
+    def test_22_tax_rounding(self):
+        """Test tax rounding behavior"""
+
+        p1 = self.create_product(stock=10)
+        order = self.create_order()
+
+        p1.prices.all().delete()
+        p1.prices.create(
+            _unit_price=Decimal('84.005'),
+            tax_included=True,
+            currency=order.currency,
+            tax_class=self.tax_class_germany,
+            )
+
+        order.modify_item(p1, absolute=1)
+
+        self.assertEqual(order.total, Decimal('84.01'))
+
+
+        p1.prices.all().delete()
+        p1.prices.create(
+            _unit_price=Decimal('84.0049999999'),
+            tax_included=True,
+            currency=order.currency,
+            tax_class=self.tax_class_germany,
+            )
+
+        order.modify_item(p1, absolute=1)
+
+        self.assertEqual(order.total, Decimal('84.00'))
+
+
+        p1.prices.all().delete()
+        p1.prices.create(
+            _unit_price=Decimal('84.0050000001'),
+            tax_included=True,
+            currency=order.currency,
+            tax_class=self.tax_class_germany,
+            )
+
+        order.modify_item(p1, absolute=1)
+
+        self.assertEqual(order.total, Decimal('84.01'))
