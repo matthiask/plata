@@ -24,6 +24,8 @@ class ProcessorBase(object):
         self.processor = processor
 
     def split_cost(self, cost_incl_tax, tax_rate):
+        cost_incl_tax, tax_rate = Decimal(cost_incl_tax), Decimal(tax_rate)
+
         cost_excl_tax = cost_incl_tax / (1 + tax_rate / 100)
         return cost_excl_tax, cost_incl_tax - cost_excl_tax
 
