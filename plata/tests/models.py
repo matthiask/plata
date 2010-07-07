@@ -688,7 +688,9 @@ class ModelTest(PlataTest):
         normal2 = order.modify_item(p2, 5)
 
         order.recalculate_total()
-        self.assertAlmostEqual(order.total, Decimal('598.84'))
+        #self.assertAlmostEqual(order.total, Decimal('598.84'))
+        # We use ROUND_HALF_UP now
+        self.assertAlmostEqual(order.total, Decimal('598.85'))
 
         discount = Discount.objects.create(
             type=Discount.AMOUNT_INCL_TAX,
@@ -700,7 +702,9 @@ class ModelTest(PlataTest):
         order.recalculate_total()
 
         # Exact values after usage of different tax rates in same order
-        self.assertAlmostEqual(order.total, Decimal('548.84'))
+        #self.assertAlmostEqual(order.total, Decimal('548.84'))
+        # We use ROUND_HALF_UP now
+        self.assertAlmostEqual(order.total, Decimal('548.85'))
         self.assertAlmostEqual(order.discount, Decimal('50.00'))
 
     def test_19_product_methods(self):
