@@ -42,12 +42,12 @@ class ProcessorBase(object):
 
 class InitializeOrderProcessor(ProcessorBase):
     def process(self, order, items):
-        order.items_subtotal = order.items_tax = order.items_discount = 0
+        order.items_subtotal = order.items_tax = order.items_discount = Decimal('0.00')
 
         for item in items:
             # Recalculate item stuff
             item._line_item_price = item.quantity * item._unit_price
-            item._line_item_discount = 0
+            item._line_item_discount = Decimal('0.00')
 
 
 class DiscountProcessor(ProcessorBase):
