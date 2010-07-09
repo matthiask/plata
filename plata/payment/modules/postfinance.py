@@ -1,6 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
 from hashlib import sha1
+import locale
 import sys, traceback
 
 from django.conf import settings
@@ -8,7 +9,7 @@ from django.http import HttpResponse, HttpResponseForbidden,\
     HttpResponseServerError
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _, get_language, to_locale
 
 from plata.payment.modules.base import ProcessorBase
 from plata.product.stock.models import StockTransaction
@@ -96,6 +97,7 @@ class PaymentProcessor(ProcessorBase):
             'order': order,
             'HTTP_HOST': request.META.get('HTTP_HOST'),
             'form_params': form_params,
+            'locale': locale.normalize(to_locale(get_language())).split('.')[0],
             }, context_instance=RequestContext(request))
 
     def ipn(self, request):

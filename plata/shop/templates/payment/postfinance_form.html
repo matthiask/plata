@@ -12,7 +12,7 @@
 <input type="hidden" name="orderID" value="{{ form_params.orderID }}" />
 <input type="hidden" name="amount" value="{{ form_params.amount }}" />
 <input type="hidden" name="currency" value="{{ form_params.currency }}" />
-<input type="hidden" name="language" value="{{ LANGUAGE_CODE }}" />
+<input type="hidden" name="language" value="{{ locale }}" />
 <input type="hidden" name="SHASign" value="{{ form_params.SHASign }}" />
 <input type="hidden" name="CN" value="{{ order.billing_first_name }} {{ order.billing_last_name }}" />
 <input type="hidden" name="EMAIL" value="{{ order.contact.email }}" />
