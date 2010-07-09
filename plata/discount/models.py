@@ -29,6 +29,8 @@ class DiscountBase(models.Model):
         (PERCENTAGE, _('percentage')),
         )
 
+    # You can add and remove options at will, except for 'all': This option
+    # must always be available, and it cannot have any form fields
     CONFIG_OPTIONS = [
         ('all', {
             'title': _('All products'),
