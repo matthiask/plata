@@ -1,4 +1,5 @@
 from datetime import datetime
+import logging
 
 from django.http import HttpResponse
 from django.shortcuts import redirect
@@ -6,6 +7,9 @@ from django.utils.translation import ugettext_lazy as _
 
 from plata.product.stock.models import StockTransaction
 from plata.shop import signals
+
+
+logger = logging.getLogger('plata.payment')
 
 
 class ProcessorBase(object):
@@ -29,11 +33,13 @@ class ProcessorBase(object):
         raise NotImplementedError
 
     def clear_pending_payments(self, order):
+        logger.info('Clearing pending payments on %s' % order)
         order.payments.pending().delete()
         order.stock_transactions.filter(type=StockTransaction.PAYMENT_PROCESS_RESERVATION).delete()
 
     def create_pending_payment(self, order):
         self.clear_pending_payments(order)
+        logger.info('Creating pending payment on %s' % order)
         return order.payments.create(
             currency=order.currency,
             amount=order.balance_remaining,
@@ -51,11 +57,15 @@ class ProcessorBase(object):
 
     def order_completed(self, order, payment=None):
         if order.status < order.PAID:
+            logger.info('Order %s has been completely paid for using %s' % (
+                order, self.name))
             order.update_status(order.PAID, 'Order has been fully paid')
 
             signal_kwargs = dict(sender=self, order=order, payment=payment)
 
             if order.discount_remaining:
+                logger.info('Creating discount for remaining amount %s on order %s' % (
+                    order.discount_remaining, order))
                 discount_model = self.shop.discount_model
                 try:
                     discount = order.applied_discounts.filter(

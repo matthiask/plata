@@ -2,6 +2,10 @@ VERSION = (0, 0, 1)
 __version__ = '.'.join(map(str, VERSION))
 
 
+import logging
+logger = logging.getLogger('plata')
+
+
 # Do not use Django settings at module level as recommended
 from django.utils.functional import LazyObject
 
@@ -21,6 +25,8 @@ settings = LazySettings()
 
 _shop_instance = None
 def register(instance):
+    logger.debug('Registering shop instance: %s' % instance)
+
     global _shop_instance
     _shop_instance = instance
 

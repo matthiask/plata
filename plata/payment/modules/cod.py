@@ -1,4 +1,5 @@
 from datetime import datetime
+import logging
 
 from django.http import HttpResponse
 from django.shortcuts import redirect
@@ -9,6 +10,9 @@ from plata.product.stock.models import StockTransaction
 from plata.shop.models import OrderPayment
 
 
+logger = logging.getLogger('plata.payment.cod')
+
+
 class PaymentProcessor(ProcessorBase):
     name = _('Cash on delivery')
 
@@ -16,6 +20,8 @@ class PaymentProcessor(ProcessorBase):
         if order.is_paid():
             self.order_completed(order)
             return redirect('plata_order_success')
+
+        logger.info('Processing order %s using COD' % order)
 
         payment = self.create_pending_payment(order)
 

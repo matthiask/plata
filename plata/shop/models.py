@@ -1,5 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
+import logging
 
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -22,6 +23,8 @@ from plata.product.models import Product, ProductVariation, TaxClass
 from plata.shop import processors
 from plata.utils import JSONFieldDescriptor
 
+
+logger = logging.getLogger('plata.shop.order')
 
 class Order(BillingShippingAddress):
     CART = 10
@@ -101,6 +104,7 @@ class Order(BillingShippingAddress):
         if plata.settings.PLATA_PRICE_INCLUDES_TAX:
             return self.shipping_cost - self.shipping_discount + self.shipping_tax
         else:
+            logger.error('Shipping calculation with PLATA_PRICE_INCLUDES_TAX=False is not implemented yet')
             raise NotImplementedError
 
     @property
@@ -155,7 +159,12 @@ class Order(BillingShippingAddress):
             product, variation = product, product.variations.get(**kwargs)
 
         # TODO handle missing price instead of failing up the stack
-        price = product.get_price(currency=self.currency)
+        try:
+            price = product.get_price(currency=self.currency)
+        except ObjectDoesNotExist:
+            logger.error('No price could be found for %s with currency %s' % (
+                product, self.currency))
+            raise
 
         try:
             item = self.items.get(variation=variation)
@@ -234,6 +243,8 @@ class Order(BillingShippingAddress):
             if not self.items.count():
                 raise ValidationError(_('Cannot proceed to checkout without order items.'),
                     code='order_empty')
+
+        logger.info('Promoting %s to status %s' % (self, status))
 
         instance = OrderStatus(
             order=self,

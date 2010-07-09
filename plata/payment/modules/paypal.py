@@ -1,5 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
+import logging
 import urllib
 import sys, traceback
 
@@ -13,6 +14,9 @@ from django.utils.translation import ugettext as _
 from plata.payment.modules.base import ProcessorBase
 from plata.product.stock.models import StockTransaction
 from plata.shop.models import OrderPayment
+
+
+logger = logging.getLogger('plata.payment.paypal')
 
 
 class PaymentProcessor(ProcessorBase):
@@ -32,8 +36,9 @@ class PaymentProcessor(ProcessorBase):
             # TODO maybe create stock transactions?
             return redirect('plata_order_success')
 
-        payment = self.create_pending_payment(order)
+        logger.info('Processing order %s using Paypal' % order)
 
+        payment = self.create_pending_payment(order)
         self.create_transactions(order, _('payment process reservation'),
             type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
             negative=True, payment=payment)
@@ -62,44 +67,42 @@ class PaymentProcessor(ProcessorBase):
 
         parameters = None
 
-        sys.stderr.write('stage 1');sys.stderr.flush()
-
         try:
             parameters = request.POST.copy()
-            sys.stderr.write('stage 2');sys.stderr.flush()
+            parameters_repr = repr(parameters).encode('utf-8')
 
             if parameters:
-                sys.stderr.write(repr(parameters).encode('utf-8'))
-                sys.stderr.flush()
+                logger.info('IPN: Processing request data %s' % parameters_repr)
 
                 postparams = {'cmd': '_notify-validate'}
                 for k, v in parameters.iteritems():
                     postparams[k] = v.encode('windows-1252')
                 status = urllib.urlopen(PP_URL, urllib.urlencode(postparams)).read()
 
-                sys.stderr.write('STATUS %r' % status)
                 if not status == "VERIFIED":
-                    #print "The request could not be verified, check for fraud." + str(status)
+                    logger.error('IPN: Received status %s, could not verify parameters %s' % (
+                        status, parameters_repr))
                     parameters = None
 
-            sys.stderr.write('stage 4');sys.stderr.flush()
-
             if parameters:
+                logger.info('IPN: Verified request %s' % parameters_repr)
                 reference = parameters['txn_id']
                 invoice_id = parameters['invoice']
                 currency = parameters['mc_currency']
                 amount = parameters['mc_gross']
 
-                sys.stderr.write('stage 5');sys.stderr.flush()
-
                 try:
                     order, order_id, payment_id = invoice_id.split('-')
                 except ValueError:
+                    logger.error('IPN: Error getting order for %s' % invoice_id)
                     return HttpResponseForbidden('Malformed order ID')
 
-                sys.stderr.write('stage 6');sys.stderr.flush()
+                try:
+                    order = self.shop.order_model.objects.get(pk=order_id)
+                except self.shop.order_model.DoesNotExist:
+                    logger.error('IPN: Order %s does not exist' % order_id)
+                    return HttpResponseForbidden('Order %s does not exist' % order_id)
 
-                order = get_object_or_404(self.shop.order_model, pk=order_id)
                 try:
                     payment = order.payments.get(pk=payment_id)
                 except order.payments.model.DoesNotExist:
@@ -108,14 +111,11 @@ class PaymentProcessor(ProcessorBase):
                         payment_module=u'%s' % self.name,
                         )
 
-                sys.stderr.write('stage 7');sys.stderr.flush()
                 payment.status = OrderPayment.PROCESSED
                 payment.currency = currency
                 payment.amount = Decimal(amount)
                 payment.data = request.POST.copy()
                 payment.transaction_id = reference
-                #payment.payment_method = BRAND
-                #payment.notes = STATUS_DICT.get(STATUS)
 
                 if parameters['payment_status'] == 'Completed':
                     payment.authorized = datetime.now()
@@ -123,6 +123,8 @@ class PaymentProcessor(ProcessorBase):
 
                 payment.save()
                 order = order.reload()
+
+                logger.info('IPN: Successfully processed IPN request for %s' % order)
 
                 if payment.authorized:
                     self.create_transactions(order, _('sale'),
@@ -134,8 +136,6 @@ class PaymentProcessor(ProcessorBase):
                 return HttpResponse("Ok")
 
         except Exception, e:
-            sys.stderr.flush('PLATA PAYPAL EXCEPTION\n%s\n' % unicode(e))
-            traceback.print_exc(100, sys.stderr)
-            sys.stderr.flush()
+            logger.error('IPN: Processing failure %s' % unicode(e))
             raise
     ipn.csrf_exempt = True

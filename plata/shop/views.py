@@ -1,5 +1,6 @@
 from decimal import Decimal
 from functools import wraps
+import logging
 
 from django import forms
 from django.contrib import auth, messages
@@ -16,6 +17,9 @@ from django.utils.translation import ugettext as _, ungettext
 
 import plata
 from plata.shop import signals
+
+
+logger = logging.getLogger('plata.shop.views')
 
 
 def cart_not_empty(order, request, **kwargs):
@@ -223,7 +227,8 @@ class Shop(object):
                     try:
                         data['variation'] = variations.get()
                     except ObjectDoesNotExist:
-                        # TODO: This is quite a serious error. Send a mail?
+                        logger.warn('Product variation of %s with options %s does not exist' % (
+                            product, options))
                         raise forms.ValidationError(_('The requested product does not exist.'))
 
                 quantity = new_quantity = data.get('quantity')
@@ -572,6 +577,8 @@ class Shop(object):
 
     def order_payment_failure(self, request):
         order = self.order_from_request(request)
+
+        logger.warn('Order payment failure for %s' % order)
 
         return render_to_response('plata/shop_order_payment_failure.html',
             self.get_context(request, {

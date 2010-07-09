@@ -136,3 +136,10 @@ PAYPAL = {
 
 TEST_RUNNER = 'example.test_utils.test_runner_with_coverage'
 COVERAGE_MODULES = ['plata']
+
+import logging, sys
+logging.basicConfig(
+    filename='plata.log',
+    format='%(asctime)s %(levelname)s:%(name)s:%(message)s',
+    level=logging.DEBUG,
+    )

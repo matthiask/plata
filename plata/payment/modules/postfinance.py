@@ -2,6 +2,7 @@ from datetime import datetime
 from decimal import Decimal
 from hashlib import sha1
 import locale
+import logging
 import sys, traceback
 
 from django.conf import settings
@@ -14,6 +15,9 @@ from django.utils.translation import ugettext as _, get_language, to_locale
 from plata.payment.modules.base import ProcessorBase
 from plata.product.stock.models import StockTransaction
 from plata.shop.models import OrderPayment
+
+
+logger = logging.getLogger('plata.payment.postfinance')
 
 
 # Copied from http://e-payment.postfinance.ch/ncol/paymentinfos1.asp
@@ -72,6 +76,8 @@ class PaymentProcessor(ProcessorBase):
         if order.is_paid():
             return redirect('plata_order_success')
 
+        logger.info('Processing order %s using Postfinance' % order)
+
         payment = self.create_pending_payment(order)
         self.create_transactions(order, _('payment process reservation'),
             type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
@@ -104,6 +110,9 @@ class PaymentProcessor(ProcessorBase):
         POSTFINANCE = settings.POSTFINANCE
 
         try:
+            parameters_repr = repr(request.POST.copy()).encode('utf-8')
+            logger.info('IPN: Processing request data %s' % parameters_repr)
+
             try:
                 orderID = request.POST['orderID']
                 currency = request.POST['currency']
@@ -117,6 +126,7 @@ class PaymentProcessor(ProcessorBase):
                 BRAND = request.POST['BRAND']
                 SHASIGN = request.POST['SHASIGN']
             except KeyError:
+                logger.error('IPN: Missing data in %s' % parameters_repr)
                 return HttpResponseForbidden('Missing data')
 
             sha1_source = u''.join((
@@ -136,18 +146,24 @@ class PaymentProcessor(ProcessorBase):
             sha1_out = sha1(sha1_source).hexdigest()
 
             if sha1_out.lower() != SHASIGN.lower():
+                logger.error('IPN: Invalid hash in %s' % parameters_repr)
                 return HttpResponseForbidden('Hash did not validate')
 
             try:
                 order, order_id, payment_id = orderID.split('-')
             except ValueError:
+                logger.error('IPN: Error getting order for %s' % orderID)
                 return HttpResponseForbidden('Malformed order ID')
 
             # Try fetching the order and order payment objects
-            # TODO should we really fail here when the order object is missing?
             # We create a new order payment object in case the old one
             # cannot be found.
-            order = get_object_or_404(self.shop.order_model, pk=order_id)
+            try:
+                order = self.shop.order_model.objects.get(pk=order_id)
+            except self.shop.order_model.DoesNotExist:
+                logger.error('IPN: Order %s does not exist' % order_id)
+                return HttpResponseForbidden('Order %s does not exist' % order_id)
+
             try:
                 payment = order.payments.get(pk=payment_id)
             except order.payments.model.DoesNotExist:
@@ -171,6 +187,8 @@ class PaymentProcessor(ProcessorBase):
             payment.save()
             order = order.reload()
 
+            logger.info('IPN: Successfully processed IPN request for %s' % order)
+
             if payment.authorized:
                 self.create_transactions(order, _('sale'),
                     type=StockTransaction.SALE, negative=True, payment=payment)
@@ -180,8 +198,6 @@ class PaymentProcessor(ProcessorBase):
 
             return HttpResponse('OK')
         except Exception, e:
-            sys.stderr.flush('PLATA POSTFINANCE EXCEPTION\n%s\n' % unicode(e))
-            traceback.print_exc(100, sys.stderr)
-            sys.stderr.flush()
+            logger.error('IPN: Processing failure %s' % unicode(e))
             raise
     ipn.csrf_exempt = True
