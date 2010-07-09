@@ -507,14 +507,8 @@ class Shop(object):
         return render_to_response('plata/shop_discounts.html',
             self.get_context(request, context))
 
-    @checkout_process_decorator(cart_not_empty, insufficient_stock)
-    def confirmation(self, request, order):
-        order.recalculate_total()
-        payment_modules = self.get_payment_modules()
-        payment_module_choices = [(m.__module__, m.name) for m in payment_modules]
-        payment_module_dict = dict((m.__module__, m) for m in payment_modules)
-
-        class Form(forms.Form):
+    def confirmation_form(self, request, order):
+        class ConfirmationForm(forms.Form):
             terms_and_conditions = forms.BooleanField(
                 label=_('I accept the terms and conditions.'),
                 required=True)
@@ -522,19 +516,29 @@ class Shop(object):
             def __init__(self, *args, **kwargs):
                 self.order = kwargs.pop('order')
 
-                super(Form, self).__init__(*args, **kwargs)
+                super(ConfirmationForm, self).__init__(*args, **kwargs)
+                payment_module_choices = [(m.__module__, m.name) for m in \
+                    plata.shop_instance().get_payment_modules()]
                 self.fields['payment_method'] = forms.ChoiceField(
                     label=_('Payment method'),
                     choices=[('', '----------')]+payment_module_choices,
                     )
 
             def clean(self):
-                data = super(Form, self).clean()
+                data = super(ConfirmationForm, self).clean()
                 order.validate(order.VALIDATE_ALL)
                 return data
+        return ConfirmationForm
+
+    @checkout_process_decorator(cart_not_empty, insufficient_stock)
+    def confirmation(self, request, order):
+        order.recalculate_total()
+        payment_module_dict = dict((m.__module__, m) for m in self.get_payment_modules())
+
+        ConfirmationForm = self.confirmation_form(request, order)
 
         if request.method == 'POST':
-            form = Form(request.POST, order=order)
+            form = ConfirmationForm(request.POST, order=order)
 
             if form.is_valid():
                 order.update_status(self.order_model.CONFIRMED, 'Confirmation given')
@@ -542,7 +546,7 @@ class Shop(object):
                 payment_module = payment_module_dict[form.cleaned_data['payment_method']]
                 return payment_module.process_order_confirmed(request, order)
         else:
-            form = Form(order=order)
+            form = ConfirmationForm(order=order)
 
         return self.render_confirmation(request, {
             'order': order,
