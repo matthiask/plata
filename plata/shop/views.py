@@ -454,7 +454,7 @@ class Shop(object):
         return render_to_response('plata/shop_checkout.html',
             self.get_context(request, context))
 
-    def discount_form(self, request, order):
+    def discounts_form(self, request, order):
         class DiscountForm(forms.Form):
             code = forms.CharField(label=_('code'), max_length=30, required=False)
 
@@ -481,7 +481,7 @@ class Shop(object):
 
     @checkout_process_decorator(cart_not_empty, order_confirmed, insufficient_stock)
     def discounts(self, request, order):
-        DiscountForm = self.discount_form(request, order)
+        DiscountForm = self.discounts_form(request, order)
 
         if request.method == 'POST':
             form = DiscountForm(request.POST, order=order)
