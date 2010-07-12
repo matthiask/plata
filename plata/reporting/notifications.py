@@ -19,14 +19,9 @@ class BaseHandler(object):
 
         return instance
 
-    def on_contact_created(self, sender, **kwargs):
-        pass
-
-    def on_order_confirmed(self, sender, **kwargs):
-        pass
-
-    def on_order_completed(self, sender, **kwargs):
-        pass
+    def on_contact_created(self, sender, **kwargs): pass
+    def on_order_confirmed(self, sender, **kwargs): pass
+    def on_order_completed(self, sender, **kwargs): pass
 
 
 class ConsoleHandler(BaseHandler):
