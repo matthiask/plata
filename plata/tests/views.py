@@ -733,3 +733,8 @@ class ViewTest(PlataTest):
             'code': new_discount.code,
             'proceed': 'True',
             }), 'Allowed uses for this discount has already been reached.')
+
+        # Stock transactions must be created for orders which are paid from the start
+        # 10 purchase, -5 sale, -1 sale
+        self.assertEqual(StockTransaction.objects.count(), 3)
+        self.assertEqual(p1.variations.get().items_in_stock, 4)

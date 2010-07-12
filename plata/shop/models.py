@@ -122,6 +122,11 @@ class Order(BillingShippingAddress):
 
     def is_confirmed(self):
         return self.status >= self.CONFIRMED
+    is_confirmed.boolean = True
+
+    def is_completed(self):
+        return self.status >= self.COMPLETED
+    is_completed.boolean = True
 
 
     VALIDATE_BASE = 10

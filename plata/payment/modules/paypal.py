@@ -33,7 +33,15 @@ class PaymentProcessor(ProcessorBase):
         PAYPAL = settings.PAYPAL
 
         if order.is_paid():
-            # TODO maybe create stock transactions?
+            if not order.is_completed():
+                logger.info('Order %s is already completely paid' % order)
+
+                self.create_transactions(order, _('sale'),
+                    type=StockTransaction.SALE, negative=True)
+
+                if order.is_paid():
+                    self.order_completed(order)
+
             return redirect('plata_order_success')
 
         logger.info('Processing order %s using Paypal' % order)
