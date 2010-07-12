@@ -431,9 +431,8 @@ class OrderPayment(models.Model):
             )
 
     def _recalculate_paid(self):
-        paid = OrderPayment.objects.filter(
+        paid = OrderPayment.objects.authorized().filter(
             order=self.order_id,
-            authorized__isnull=False,
             ).aggregate(total=Sum('amount'))['total'] or 0
 
         Order.objects.filter(id=self.order_id).update(paid=paid)
