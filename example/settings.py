@@ -132,6 +132,8 @@ PAYPAL = {
     'LIVE': False,
     }
 
+PLATA_REPORTING_ADDRESSLINE = 'Example Corp. - 3. Example Street - 1234 Example'
+
 # PLATA settings
 
 TEST_RUNNER = 'example.test_utils.test_runner_with_coverage'
