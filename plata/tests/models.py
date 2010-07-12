@@ -87,12 +87,16 @@ class ModelTest(PlataTest):
         self.assertAlmostEqual(item.line_item_discount, 0)
         self.assertAlmostEqual(item.discounted_subtotal, item.discounted_subtotal_incl_tax)
 
+        self.assertAlmostEqual(order.shipping, Decimal('0.00'))
+
         # Switch around tax handling and re-test
         plata.settings.PLATA_PRICE_INCLUDES_TAX = False
 
         self.assertAlmostEqual(item.unit_price, item_price / tax_factor)
         self.assertAlmostEqual(item.line_item_discount, 0 / tax_factor)
         self.assertAlmostEqual(item.discounted_subtotal, item.discounted_subtotal_excl_tax)
+
+        self.assertRaises(NotImplementedError, lambda: order.shipping)
 
         # Switch tax handling back
         plata.settings.PLATA_PRICE_INCLUDES_TAX = True
