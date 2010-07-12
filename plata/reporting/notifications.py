@@ -43,9 +43,7 @@ class ConsoleHandler(BaseHandler):
 
 class EmailHandler(BaseHandler):
     def on_contact_created(self, sender, **kwargs):
-        contact = kwargs.get('contact')
-        if not contact:
-            return
+        contact = kwargs['contact']
 
         message = EmailMessage(
             subject='Account created',
@@ -55,9 +53,7 @@ class EmailHandler(BaseHandler):
         message.send()
 
     def on_order_completed(self, sender, **kwargs):
-        order = kwargs.get('order')
-        if not order:
-            return
+        order = kwargs['order']
 
         message = EmailMessage(
             subject='Order completed',
