@@ -113,6 +113,10 @@ class ModelTest(PlataTest):
         self.assertEqual(prices['CHF']['normal'], None)
         self.assertAlmostEqual(prices['CHF']['sale'].unit_price, Decimal('79.90'))
 
+        product.prices.all().delete()
+        self.assertRaises(ProductPrice.DoesNotExist, order.modify_item,
+            product, absolute=1)
+
     def test_02_eur_order(self):
         """Test basic order in EUR works as expected"""
         product = self.create_product()
