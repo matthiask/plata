@@ -54,9 +54,6 @@ class EmailHandler(BaseHandler):
             )
         message.send()
 
-    def on_order_confirmed(self, sender, **kwargs):
-        pass
-
     def on_order_completed(self, sender, **kwargs):
         order = kwargs.get('order')
         if not order:
