@@ -56,10 +56,10 @@ class ProcessorBase(object):
             **kwargs)
 
     def order_completed(self, order, payment=None):
-        if order.status < order.PAID:
+        if order.status < order.COMPLETED:
             logger.info('Order %s has been completely paid for using %s' % (
                 order, self.name))
-            order.update_status(order.PAID, 'Order has been fully paid')
+            order.update_status(order.COMPLETED, 'Order has been completed')
 
             signal_kwargs = dict(sender=self, order=order, payment=payment)
 

@@ -30,13 +30,13 @@ class Order(BillingShippingAddress):
     CART = 10
     CHECKOUT = 20
     CONFIRMED = 30
-    PAID = 40
+    COMPLETED = 40
 
     STATUS_CHOICES = (
         (CART, _('Is a cart')),
         (CHECKOUT, _('Checkout process started')),
         (CONFIRMED, _('Order has been confirmed')),
-        (PAID, _('Order has been completed')),
+        (COMPLETED, _('Order has been completed')),
         )
 
     created = models.DateTimeField(_('created'), default=datetime.now)
