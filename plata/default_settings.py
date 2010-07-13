@@ -28,3 +28,5 @@ PLATA_SHIPPING_FIXEDAMOUNT = getattr(settings, 'PLATA_SHIPPING_FIXEDAMOUNT', {
 PLATA_REPORTING_STATIONERY = getattr(settings, 'PLATA_REPORTING_STATIONERY',
     'pdfdocument.elements.ExampleStationery')
 PLATA_REPORTING_ADDRESSLINE = getattr(settings, 'PLATA_REPORTING_ADDRESSLINE', '')
+
+PLATA_ALWAYS_BCC = getattr(settings, 'PLATA_ALWAYS_BCC', [])

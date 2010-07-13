@@ -1,5 +1,10 @@
-from django.core.mail import EmailMessage
+import StringIO
 
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+
+import plata
+from plata.reporting.order import PDFDocument, order_pdf
 from plata.shop import signals
 
 
@@ -44,24 +49,29 @@ class ConsoleHandler(BaseHandler):
 class EmailHandler(BaseHandler):
     def on_contact_created(self, sender, **kwargs):
         contact = kwargs['contact']
-
-        msg = ''
-        if kwargs.get('password'):
-            msg = ' Password %s' % kwargs.get('password')
+        email = render_to_string('plata/notifications/contact_created.txt', kwargs).splitlines()
 
         message = EmailMessage(
-            subject='Account created',
-            body='Your account has been created.'+msg,
+            subject=email[0],
+            body=u'\n'.join(email[2:]),
             to=[contact.user.email],
+            bcc=plata.settings.PLATA_ALWAYS_BCC,
             )
         message.send()
 
     def on_order_completed(self, sender, **kwargs):
         order = kwargs['order']
+        email = render_to_string('plata/notifications/order_completed.txt', kwargs).splitlines()
+
+        content = StringIO.StringIO()
+        pdf = PDFDocument(content)
+        order_pdf(pdf, order)
 
         message = EmailMessage(
-            subject='Order completed',
-            body='Your order has been successfully paid.',
+            subject=email[0],
+            body=u'\n'.join(email[2:]),
             to=[order.email],
+            bcc=plata.settings.PLATA_ALWAYS_BCC,
             )
+        message.attach('order.pdf', content.getvalue(), 'application/pdf')
         message.send()

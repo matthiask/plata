@@ -1,0 +1,3 @@
+Order completed
+
+You have successfully confirmed your order.
