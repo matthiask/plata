@@ -29,10 +29,10 @@ class ConsoleHandler(BaseHandler):
         self.stream = stream
 
     def on_contact_created(self, sender, **kwargs):
-        print >>self.stream, 'Contact created: %s' % kwargs.get('contact')
+        print >>self.stream, 'Contact created: %(contact)s, password %(password)s' % kwargs
 
     def on_order_confirmed(self, sender, **kwargs):
-        print >>self.stream, 'Order confirmed: %s' % kwargs.get('order')
+        print >>self.stream, 'Order confirmed: %(order)s' % kwargs
 
     def on_order_completed(self, sender, **kwargs):
         print >>self.stream, 'Order completed: %s, payment %s, new discount %s' % (
@@ -45,9 +45,13 @@ class EmailHandler(BaseHandler):
     def on_contact_created(self, sender, **kwargs):
         contact = kwargs['contact']
 
+        msg = ''
+        if kwargs.get('password'):
+            msg = ' Password %s' % kwargs.get('password')
+
         message = EmailMessage(
             subject='Account created',
-            body='Your account has been created.',
+            body='Your account has been created.'+msg,
             to=[contact.user.email],
             )
         message.send()

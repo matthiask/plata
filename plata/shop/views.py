@@ -370,10 +370,12 @@ class Shop(object):
                         pass
 
                 if email and create_account and not self.contact and not self._errors:
+                    password = None
                     if not self.request.user.is_authenticated():
                         # TODO send registration mail / create registration profile
-                        user = User.objects.create_user(email, email, 'password')
-                        user = auth.authenticate(username=email, password='password')
+                        password = User.objects.make_random_password()
+                        user = User.objects.create_user(email, email, password)
+                        user = auth.authenticate(username=email, password=password)
                         auth.login(self.request, user)
                     else:
                         user = self.request.user
@@ -390,7 +392,7 @@ class Shop(object):
                     self.instance.contact = contact
 
                     signals.contact_created.send(sender=self, user=user,
-                        contact=contact)
+                        contact=contact, password=password)
                 elif self.contact:
                     self.instance.contact = self.contact
 
