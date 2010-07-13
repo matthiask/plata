@@ -32,7 +32,7 @@ msgstr "Rechungsadresse"
 #: shop/templates/plata/_order_overview.html:6
 #: shop/templates/plata/shop_checkout.html:50
 msgid "Shipping address"
-msgstr "Lieferungsadresse"
+msgstr "Lieferadresse"
 
 #: contact/admin.py:17 shop/admin.py:33
 msgid "Additional fields"
@@ -677,7 +677,7 @@ msgstr "Liefermethode"
 
 #: shop/models.py:60
 msgid "shipping cost"
-msgstr "Lieferungskosten"
+msgstr "Lieferkosten"
 
 #: shop/models.py:62
 msgid "shipping discount"
