@@ -109,8 +109,7 @@ class Order(BillingShippingAddress):
 
     @property
     def tax(self):
-        # TODO shipping tax?
-        return self.items_tax.quantize(Decimal('0.00'))
+        return (self.items_tax + self.shipping_tax).quantize(Decimal('0.00'))
 
     @property
     def balance_remaining(self):
