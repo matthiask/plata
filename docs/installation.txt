@@ -148,3 +148,27 @@ Next, you need to add the Shop's URLs to your URLconf::
         url(r'^products/(?P<object_id>\d+)/$', 'myapp.views.product_detail',
             name='plata_product_detail'),
     )
+
+
+Setting up logging
+------------------
+
+Plata uses Python's logging module for payment processing, warnings and
+otherwise potentially interesting status changes. The logging module is
+very versatile and sometimes difficult to configure, because of this an
+example configuration is provided here. Put the following lines into
+your ``settings.py``, adjusting the logfile path::
+
+    import logging, os
+    import logging.handlers
+
+    LOG_FILENAME = os.path.join(APP_BASEDIR, 'log', 'plata.log')
+
+    plata_logger = logging.getLogger('plata')
+    plata_logger.setLevel(logging.DEBUG)
+    plata_logging_handler = logging.handlers.RotatingFileHandler(LOG_FILENAME,
+        maxBytes=10*1024*1024, backupCount=15)
+    plata_logging_formatter = logging.Formatter('%(asctime)s %(levelname)s:%(name)s:%(message)s')
+    plata_logging_handler.setFormatter(plata_logging_formatter)
+    plata_logger.addHandler(plata_logging_handler)
+
