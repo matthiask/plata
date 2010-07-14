@@ -3,4 +3,4 @@ Account creation successful
 You have successfully created an account on our site!
 
 Your username: {{ contact.user.email }}
-{% if password %}Your password: {{ password }}
+{% if password %}Your password: {{ password }}{% endif %}
