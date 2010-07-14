@@ -19,6 +19,9 @@ class ProductForm(forms.ModelForm):
     sku = forms.CharField(label=_('SKU'), max_length=100, required=False)
     create_variations = forms.BooleanField(label=_('Create all variations'), required=False)
 
+    class Meta:
+        model = models.Product
+
     def save(self, *args, **kwargs):
         instance = super(ProductForm, self).save(*args, **kwargs)
         instance._cleaned_data = self.cleaned_data
