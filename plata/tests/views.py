@@ -106,6 +106,12 @@ class ViewTest(PlataTest):
             'option_2': 5,
             }), p1.get_absolute_url())
 
+        self.assertRedirects(self.client.post(p1.get_absolute_url(), {
+            'quantity': -5,
+            'option_1': 2,
+            'option_2': 5,
+            }), p1.get_absolute_url())
+
         p1.create_variations()
         p1.prices.all().delete()
         self.assertContains(self.client.post(p1.get_absolute_url(), {

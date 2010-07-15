@@ -194,8 +194,9 @@ class Order(BillingShippingAddress):
             item.save()
         else:
             # TODO: Should zero and negative values be handled the same way?
-            item.delete()
-            item.pk = None
+            if item.pk:
+                item.delete()
+                item.pk = None
 
         if recalculate:
             self.recalculate_total()
