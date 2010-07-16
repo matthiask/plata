@@ -1,6 +1,9 @@
-Account creation successful
+{{ site.name }}: Account creation successful
 
 You have successfully created an account on our site!
+Go to http://{{ site.domain }}/ and enter the following details:
 
 Your username: {{ contact.user.email }}
 {% if password %}Your password: {{ password }}{% endif %}
+
+Your {{ site.name }} team.

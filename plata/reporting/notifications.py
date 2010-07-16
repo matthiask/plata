@@ -1,5 +1,6 @@
 import StringIO
 
+from django.contrib.sites.models import Site
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
@@ -47,9 +48,17 @@ class ConsoleHandler(BaseHandler):
 
 
 class EmailHandler(BaseHandler):
+    def context(self, kwargs):
+        ctx = {
+            'site': Site.objects.get_current(),
+            }
+        ctx.update(kwargs)
+        return ctx
+
     def on_contact_created(self, sender, **kwargs):
         contact = kwargs['contact']
-        email = render_to_string('plata/notifications/contact_created.txt', kwargs).splitlines()
+        email = render_to_string('plata/notifications/contact_created.txt',
+            self.context(kwargs)).splitlines()
 
         message = EmailMessage(
             subject=email[0],
@@ -61,7 +70,8 @@ class EmailHandler(BaseHandler):
 
     def on_order_completed(self, sender, **kwargs):
         order = kwargs['order']
-        email = render_to_string('plata/notifications/order_completed.txt', kwargs).splitlines()
+        email = render_to_string('plata/notifications/order_completed.txt',
+            self.context(kwargs)).splitlines()
 
         content = StringIO.StringIO()
         pdf = PDFDocument(content)
