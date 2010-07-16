@@ -29,4 +29,7 @@ PLATA_REPORTING_STATIONERY = getattr(settings, 'PLATA_REPORTING_STATIONERY',
     'pdfdocument.elements.ExampleStationery')
 PLATA_REPORTING_ADDRESSLINE = getattr(settings, 'PLATA_REPORTING_ADDRESSLINE', '')
 
-PLATA_ALWAYS_BCC = getattr(settings, 'PLATA_ALWAYS_BCC', [])
+PLATA_ALWAYS_BCC = getattr(settings, 'PLATA_ALWAYS_BCC',
+    [email for name, email in settings.ADMINS])
+PLATA_ORDER_BCC = getattr(settings, 'PLATA_ORDER_BCC',
+    [email for name, email in settings.MANAGERS])
