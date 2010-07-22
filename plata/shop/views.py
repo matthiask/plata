@@ -105,12 +105,6 @@ class Shop(object):
             url(r'^order/new/$', self.order_new, name='plata_order_new'),
             )
 
-    def get_admin_urls(self):
-        from django.conf.urls.defaults import patterns, url
-        return patterns('',
-            url(r'^pdf/(?P<order_id>\d+)/$', self.admin_pdf, name='plata_admin_pdf'),
-            )
-
     def get_payment_urls(self):
         from django.conf.urls.defaults import patterns, url, include
         urls = [url(r'', include(module.urls)) for module in self.get_payment_modules()]
