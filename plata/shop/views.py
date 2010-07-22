@@ -243,13 +243,23 @@ class Shop(object):
                         except ObjectDoesNotExist:
                             old_quantity = 0
 
-                    if new_quantity > variation.available(exclude_order=self.order):
-                        self._errors['quantity'] = self.error_class([
-                            _('Only %(stock)s items for %(variation)s available; you already have %(quantity)s in your order.') % {
-                                'stock': variation.items_in_stock,
-                                'variation': variation,
-                                'quantity': old_quantity,
-                                }])
+                    dic = {
+                        'stock': variation.items_in_stock,
+                        'variation': variation,
+                        'quantity': old_quantity,
+                        }
+                    available = variation.available(exclude_order=self.order)
+
+                    if new_quantity > available:
+                        if not available:
+                            self._errors['quantity'] = self.error_class([
+                                _('No items of %(variation)s on stock.') % dic])
+                        elif old_quantity:
+                            self._errors['quantity'] = self.error_class([
+                                _('Only %(stock)s items for %(variation)s available; you already have %(quantity)s in your order.') % dic])
+                        else:
+                            self._errors['quantity'] = self.error_class([
+                                _('Only %(stock)s items for %(variation)s available.') % dic])
 
                 try:
                     data['price'] = product.get_price(currency=self.order.currency)

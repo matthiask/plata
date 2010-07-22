@@ -54,11 +54,24 @@ class ViewTest(PlataTest):
         response = self.client.post(p1.get_absolute_url(), {
             'quantity': 5,
             })
-        self.assertTrue(re.search(r'Only \d+ items for .*available', response.content))
+        self.assertTrue(re.search(r'No items of .* on stock', response.content))
 
         p1.variations.get().stock_transactions.create(type=StockTransaction.PURCHASE, change=100)
+
+        response = self.client.post(p1.get_absolute_url(), {
+            'quantity': 150,
+            })
+        self.assertTrue(re.search(r'Only \d+ items for .*available.', response.content))
+
         self.assertRedirects(self.client.post(p1.get_absolute_url(), {'quantity': 5}),
             p1.get_absolute_url())
+
+        response = self.client.post(p1.get_absolute_url(), {
+            'quantity': 150,
+            })
+        self.assertTrue(
+            re.search(r'Only 100 items for .*available; you already have 5 in your order.',
+                response.content))
 
         p1.variations.all().delete()
         self.assertContains(self.client.post(p1.get_absolute_url(), {'quantity': 5}),
@@ -95,7 +108,7 @@ class ViewTest(PlataTest):
             'option_1': 1,
             'option_2': 5,
             })
-        self.assertTrue(re.search(r'Only \d+ items for .*available', response.content))
+        self.assertTrue(re.search(r'No items of .* on stock', response.content))
 
         variation = p1.variations.filter(options__id=1).filter(options__id=5).get()
         variation.stock_transactions.create(type=StockTransaction.PURCHASE, change=100)
