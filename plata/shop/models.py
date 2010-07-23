@@ -92,12 +92,12 @@ class Order(BillingShippingAddress):
 
     @property
     def subtotal(self):
-        return sum(item.subtotal for item in self.items.all()).quantize(Decimal('0.00'))
+        return sum((item.subtotal for item in self.items.all()), Decimal('0.00')).quantize(Decimal('0.00'))
 
     @property
     def discount(self):
-        return (sum(item.subtotal for item in self.items.all()) -
-            sum(item.discounted_subtotal for item in self.items.all())).quantize(Decimal('0.00'))
+        return (sum((item.subtotal for item in self.items.all()), Decimal('0.00')) -
+            sum((item.discounted_subtotal for item in self.items.all()), Decimal('0.00'))).quantize(Decimal('0.00'))
 
     @property
     def shipping(self):
