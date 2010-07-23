@@ -9,7 +9,7 @@ from django.http import HttpResponse, HttpResponseForbidden,\
     HttpResponseServerError
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 from plata.payment.modules.base import ProcessorBase
 from plata.product.stock.models import StockTransaction
@@ -20,7 +20,8 @@ logger = logging.getLogger('plata.payment.paypal')
 
 
 class PaymentProcessor(ProcessorBase):
-    name = _('Paypal')
+    ident = 'paypal'
+    default_name = _('Paypal')
 
     def get_urls(self):
         from django.conf.urls.defaults import patterns, url

@@ -3,7 +3,7 @@ import logging
 
 from django.http import HttpResponse
 from django.shortcuts import redirect
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 
 from plata.payment.modules.base import ProcessorBase
 from plata.product.stock.models import StockTransaction
@@ -14,7 +14,8 @@ logger = logging.getLogger('plata.payment.cod')
 
 
 class PaymentProcessor(ProcessorBase):
-    name = _('Cash on delivery')
+    ident = 'cod'
+    default_name = _('Cash on delivery')
 
     def process_order_confirmed(self, request, order):
         if order.is_paid():

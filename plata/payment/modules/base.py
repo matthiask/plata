@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 
+import plata
 from plata.product.stock.models import StockTransaction
 from plata.shop import signals
 
@@ -13,10 +14,17 @@ logger = logging.getLogger('plata.payment')
 
 
 class ProcessorBase(object):
-    name = 'unnamed'
+    ident = 'unnamed'
+    default_name = 'unnamed'
 
     def __init__(self, shop):
         self.shop = shop
+
+    @property
+    def name(self):
+        return plata.settings.PLATA_PAYMENT_MODULE_NAMES.get(
+            self.ident,
+            self.default_name)
 
     @property
     def urls(self):

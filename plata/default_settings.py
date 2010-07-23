@@ -20,6 +20,8 @@ PLATA_PAYMENT_MODULES = getattr(settings, 'PLATA_PAYMENT_MODULES', [
     'plata.payment.modules.paypal.PaymentProcessor',
     ])
 
+PLATA_PAYMENT_MODULE_NAMES = getattr(settings, 'PLATA_PAYMENT_MODULE_NAMES', {})
+
 PLATA_SHIPPING_FIXEDAMOUNT = getattr(settings, 'PLATA_SHIPPING_FIXEDAMOUNT', {
     'cost': Decimal('8.00'),
     'tax': Decimal('7.6'),
