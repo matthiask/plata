@@ -64,5 +64,22 @@ def order_pdf(pdf, order):
         (u'%s %s' % (capfirst(_('total')), order.currency), u'%.2f' % order.total),
         ], (12*cm, 4.4*cm), pdf.style.tableHead)
 
+    pdf.spacer()
+    if order.is_paid:
+        try:
+            payment = order.payments.authorized()[0]
+        except IndexError:
+            payment = None
+
+        if payment:
+            pdf.p(_('Already paid for with %(payment_method)s (Transaction %(transaction)s).') % {
+                'payment_method': payment.payment_method,
+                'transaction': payment.transaction_id,
+                })
+        else:
+            pdf.p(_('Already paid for.'))
+    else:
+        pdf.p(_('Not paid yet.'))
+
     pdf.generate()
 
