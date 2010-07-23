@@ -25,7 +25,7 @@ def order_pdf(pdf, order):
         ))
     pdf.spacer(3*mm)
 
-    pdf.h1('Order %09d' % order.id)
+    pdf.h1(_('Order %09d') % order.id)
     pdf.hr()
 
     pdf.table([(
