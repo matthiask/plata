@@ -5,7 +5,7 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
 import plata
-from plata.reporting.order import PDFDocument, order_pdf
+from plata.reporting.order import PDFDocument, invoice_pdf, packing_slip_pdf
 from plata.shop import signals
 
 
@@ -75,7 +75,7 @@ class EmailHandler(BaseHandler):
 
         content = StringIO.StringIO()
         pdf = PDFDocument(content)
-        order_pdf(pdf, order)
+        invoice_pdf(pdf, order)
 
         message = EmailMessage(
             subject=email[0],
@@ -83,5 +83,19 @@ class EmailHandler(BaseHandler):
             to=[order.email],
             bcc=plata.settings.PLATA_ALWAYS_BCC + plata.settings.PLATA_ORDER_BCC,
             )
-        message.attach('order-%09d.pdf' % order.id, content.getvalue(), 'application/pdf')
+        message.attach('invoice-%09d.pdf' % order.id, content.getvalue(), 'application/pdf')
         message.send()
+
+        content = StringIO.StringIO()
+        pdf = PDFDocument(content)
+        packing_slip_pdf(pdf, order)
+
+        message = EmailMessage(
+            subject='packing slip',
+            body=u'',
+            to=plata.settings.PLATA_ORDER_BCC,
+            bcc=plata.settings.PLATA_ALWAYS_BCC,
+            )
+        message.attach('packing-slip-%09d.pdf' % order.id, content.getvalue(), 'application/pdf')
+        message.send()
+

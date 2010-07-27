@@ -23,9 +23,19 @@ def product_xls(request):
 
 
 @staff_member_required
-def order_pdf(request, order_id):
+def invoice_pdf(request, order_id):
     order = get_object_or_404(plata.shop_instance().order_model, pk=order_id)
 
-    pdf, response = pdf_response('order-%09d' % order.id)
-    plata.reporting.order.order_pdf(pdf, order)
+    pdf, response = pdf_response('invoice-%09d' % order.id)
+    plata.reporting.order.invoice_pdf(pdf, order)
     return response
+
+
+@staff_member_required
+def packing_slip_pdf(request, order_id):
+    order = get_object_or_404(plata.shop_instance().order_model, pk=order_id)
+
+    pdf, response = pdf_response('packing-slip-%09d' % order.id)
+    plata.reporting.order.packing_slip_pdf(pdf, order)
+    return response
+

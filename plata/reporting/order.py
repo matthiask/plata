@@ -9,7 +9,7 @@ from pdfdocument.utils import pdf_response
 import plata
 
 
-def order_pdf(pdf, order):
+def invoice_pdf(pdf, order):
     pdf.init_letter(page_fn=create_stationery_fn(
         get_callable(plata.settings.PLATA_REPORTING_STATIONERY)()))
 
@@ -80,6 +80,42 @@ def order_pdf(pdf, order):
             pdf.p(_('Already paid for.'))
     else:
         pdf.p(_('Not paid yet.'))
+
+    pdf.generate()
+
+
+def packing_slip_pdf(pdf, order):
+    pdf.init_letter(page_fn=create_stationery_fn(
+        get_callable(plata.settings.PLATA_REPORTING_STATIONERY)()))
+
+    if plata.settings.PLATA_REPORTING_ADDRESSLINE:
+        pdf.address_head(plata.settings.PLATA_REPORTING_ADDRESSLINE)
+
+    pdf.address(order, 'shipping_')
+    pdf.next_frame()
+
+    pdf.p(u'%s: %s' % (
+        capfirst(_('order date')),
+        order.confirmed and order.confirmed.strftime('%d.%m.%Y') or _('Not confirmed yet'),
+        ))
+    pdf.spacer(3*mm)
+
+    pdf.h1(_('Order %09d') % order.id)
+    pdf.hr()
+
+    pdf.table([(
+            _('SKU'),
+            capfirst(_('product')),
+            capfirst(_('quantity')),
+        )]+[
+        (
+            item.variation.sku,
+            unicode(item.variation),
+            item.quantity,
+        ) for item in order.items.all()],
+        (2*cm, 13.4*cm, 1*cm), pdf.style.tableHead+(
+            ('ALIGN', (1, 0), (1, -1), 'LEFT'),
+            ))
 
     pdf.generate()
 
