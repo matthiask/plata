@@ -83,5 +83,5 @@ class EmailHandler(BaseHandler):
             to=[order.email],
             bcc=plata.settings.PLATA_ALWAYS_BCC + plata.settings.PLATA_ORDER_BCC,
             )
-        message.attach('order.pdf', content.getvalue(), 'application/pdf')
+        message.attach('order-%09d.pdf' % order.id, content.getvalue(), 'application/pdf')
         message.send()
