@@ -68,6 +68,7 @@ class OptionGroup(models.Model):
     name = models.CharField(_('name'), max_length=100)
 
     class Meta:
+        ordering = ['id']
         verbose_name = _('option group')
         verbose_name_plural = _('option groups')
 
