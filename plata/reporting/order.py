@@ -91,7 +91,7 @@ def packing_slip_pdf(pdf, order):
     if plata.settings.PLATA_REPORTING_ADDRESSLINE:
         pdf.address_head(plata.settings.PLATA_REPORTING_ADDRESSLINE)
 
-    pdf.address(order, 'shipping_')
+    pdf.address(order.addresses()['shipping'])
     pdf.next_frame()
 
     pdf.p(u'%s: %s' % (
