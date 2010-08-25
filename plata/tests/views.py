@@ -325,7 +325,7 @@ class ViewTest(PlataTest):
         user = User.objects.create_superuser('admin', 'admin@example.com', 'password')
 
         self.client.login(username='admin', password='password')
-        self.assertEqual(self.client.get('/reporting/order_pdf/%s/' % order.id)['Content-Type'],
+        self.assertEqual(self.client.get('/reporting/invoice_pdf/%s/' % order.id)['Content-Type'],
             'application/pdf')
         self.assertEqual(self.client.get('/reporting/product_xls/')['Content-Type'],
             'application/vnd.ms-excel')

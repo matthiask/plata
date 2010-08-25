@@ -124,7 +124,7 @@ table td {
                 {% endfor %}
             </ul>
             {% if plata.order.id %}
-            <a href="{% url plata_reporting_order_pdf plata.order.id %}">PDF</a>
+            <a href="{% url plata_reporting_invoice_pdf plata.order.id %}">Invoice</a>
             {% endif %}
             <a href="{% url plata_reporting_product_xls %}">Products</a>
         </td>
