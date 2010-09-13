@@ -16,7 +16,6 @@ from django.template import RequestContext
 from django.utils.translation import ugettext as _, ungettext
 
 import plata
-from plata.fields import CURRENCIES
 from plata.shop import signals
 
 
@@ -78,7 +77,7 @@ class Shop(object):
     """
 
     def __init__(self, product_model, contact_model, order_model, discount_model,
-            default_currency=CURRENCIES[0]):
+            default_currency=None):
         self.product_model = product_model
         self.contact_model = contact_model
         self.order_model = order_model
@@ -119,7 +118,7 @@ class Shop(object):
         return [get_callable(module)(self) for module in plata.settings.PLATA_PAYMENT_MODULES]
 
     def default_currency(self, request=None):
-        return self._default_currency
+        return self._default_currency or plata.settings.CURRENCIES[0]
 
     def set_order_on_request(self, request, order):
         if order:

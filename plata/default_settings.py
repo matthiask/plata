@@ -35,3 +35,5 @@ PLATA_ALWAYS_BCC = getattr(settings, 'PLATA_ALWAYS_BCC',
     [email for name, email in settings.ADMINS])
 PLATA_ORDER_BCC = getattr(settings, 'PLATA_ORDER_BCC',
     [email for name, email in settings.MANAGERS])
+
+CURRENCIES = getattr(settings, 'CURRENCIES', ('CHF', 'EUR', 'USD'))

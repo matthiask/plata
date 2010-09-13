@@ -158,10 +158,8 @@ class Product(models.Model):
         if cache.has_key(key):
             return cache.get(key)
 
-        from plata.fields import CURRENCIES
-
         prices = []
-        for currency in CURRENCIES:
+        for currency in plata.settings.CURRENCIES:
             try:
                 normal, sale = self.prices.active().filter(currency=currency).latest(), None
             except self.prices.model.DoesNotExist:
