@@ -112,13 +112,13 @@ class AdminTest(PlataTest):
             'prices-MAX_NUM_FORMS': '',
             'prices-TOTAL_FORMS': '1',
 
-            'rawcontent-INITIAL_FORMS': '0',
-            'rawcontent-MAX_NUM_FORMS': '',
-            'rawcontent-TOTAL_FORMS': '0',
+            'rawcontent_set-INITIAL_FORMS': '0',
+            'rawcontent_set-MAX_NUM_FORMS': '',
+            'rawcontent_set-TOTAL_FORMS': '0',
 
-            'mediafilecontent-INITIAL_FORMS': '0',
-            'mediafilecontent-MAX_NUM_FORMS': '',
-            'mediafilecontent-TOTAL_FORMS': '0',
+            'mediafilecontent_set-INITIAL_FORMS': '0',
+            'mediafilecontent_set-MAX_NUM_FORMS': '',
+            'mediafilecontent_set-TOTAL_FORMS': '0',
 
             'variations-INITIAL_FORMS': '0',
             'variations-MAX_NUM_FORMS': '',
@@ -311,13 +311,13 @@ class AdminTest(PlataTest):
             'prices-MAX_NUM_FORMS': '',
             'prices-TOTAL_FORMS': '1',
 
-            'rawcontent-INITIAL_FORMS': '0',
-            'rawcontent-MAX_NUM_FORMS': '',
-            'rawcontent-TOTAL_FORMS': '0',
+            'rawcontent_set-INITIAL_FORMS': '0',
+            'rawcontent_set-MAX_NUM_FORMS': '',
+            'rawcontent_set-TOTAL_FORMS': '0',
 
-            'mediafilecontent-INITIAL_FORMS': '0',
-            'mediafilecontent-MAX_NUM_FORMS': '',
-            'mediafilecontent-TOTAL_FORMS': '0',
+            'mediafilecontent_set-INITIAL_FORMS': '0',
+            'mediafilecontent_set-MAX_NUM_FORMS': '',
+            'mediafilecontent_set-TOTAL_FORMS': '0',
 
             'variations-INITIAL_FORMS': '0',
             'variations-MAX_NUM_FORMS': '',
