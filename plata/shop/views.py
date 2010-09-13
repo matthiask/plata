@@ -380,7 +380,6 @@ class Shop(object):
                 if email and create_account and not self.contact and not self._errors:
                     password = None
                     if not self.request.user.is_authenticated():
-                        # TODO send registration mail / create registration profile
                         password = User.objects.make_random_password()
                         user = User.objects.create_user(email, email, password)
                         user = auth.authenticate(username=email, password=password)
