@@ -72,14 +72,18 @@ class Shop(object):
     - Contact model linking to Django's auth.user
     - Order model with order items and an applied discount model
     - Discount model
+    - Default currency for the shop (if you do not override default_currency
+      in your own Shop subclass)
     """
 
-    def __init__(self, product_model, contact_model, order_model, discount_model):
+    def __init__(self, product_model, contact_model, order_model, discount_model,
+            default_currency='CHF'):
         self.product_model = product_model
         self.contact_model = contact_model
         self.order_model = order_model
         self.orderitem_model = self.order_model.items.related.model
         self.discount_model = discount_model
+        self._default_currency = default_currency
 
         # Globally register the instance so that it can be accessed from
         # everywhere using plata.shop_instance()
@@ -114,7 +118,7 @@ class Shop(object):
         return [get_callable(module)(self) for module in plata.settings.PLATA_PAYMENT_MODULES]
 
     def default_currency(self, request=None):
-        return 'CHF'
+        return self._default_currency
 
     def set_order_on_request(self, request, order):
         if order:
