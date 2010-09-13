@@ -192,7 +192,6 @@ class Order(BillingShippingAddress):
         if item.quantity > 0:
             item.save()
         else:
-            # TODO: Should zero and negative values be handled the same way?
             if item.pk:
                 item.delete()
                 item.pk = None
