@@ -479,7 +479,6 @@ class ModelTest(PlataTest):
         self.assertAlmostEqual(order.total, 408)
         self.assertAlmostEqual(order.subtotal, 440)
         self.assertAlmostEqual(order.discount, 32)
-        # TODO add 8.00 shipping
 
     def test_13_order4206_test(self):
         """Reproduce order ID 4206 of a deployed satchmo shop installation"""
@@ -529,7 +528,6 @@ class ModelTest(PlataTest):
         self.assertAlmostEqual(order.total, Decimal('190.80'))
         self.assertAlmostEqual(order.subtotal, Decimal('210.80'))
         self.assertAlmostEqual(order.discount, 20)
-        # TODO add 8.00 shipping
 
     def test_14_invoice2009_0170_0002_test(self):
         """Reproduce invoide of a deployed metronom installation"""
