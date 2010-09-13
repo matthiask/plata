@@ -162,7 +162,6 @@ class Order(BillingShippingAddress):
         else:
             product, variation = product, product.variations.get(**kwargs)
 
-        # TODO handle missing price instead of failing up the stack
         try:
             price = product.get_price(currency=self.currency)
         except ObjectDoesNotExist:
