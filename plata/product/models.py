@@ -1,7 +1,7 @@
 from datetime import date, datetime
 
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, Count
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -101,6 +101,15 @@ class ProductManager(models.Manager):
 
     def featured(self):
         return self.active().filter(is_featured=True)
+
+    def bestsellers(self, queryset=None):
+        queryset = queryset or self
+        return queryset.annotate(sold=Count('variations__orderitem')).order_by('-sold')
+
+    def also_bought(self, product):
+        return self.bestsellers(
+            self.exclude(id=product.id).exclude(variations__orderitem__isnull=True
+                ).filter(variations__orderitem__order__items__variation__product=product))
 
 
 class Product(models.Model):
