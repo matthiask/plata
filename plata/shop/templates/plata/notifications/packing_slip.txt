@@ -1,6 +1,8 @@
-Order completed
+Order completed - packing slip
 
-You have successfully confirmed your order.
+The following order has been successfully completed:
+
+
 
 {% if remaining_discount %}
 You received a new discount code, because the discount you used for

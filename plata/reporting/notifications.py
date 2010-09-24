@@ -86,6 +86,9 @@ class EmailHandler(BaseHandler):
         message.attach('invoice-%09d.pdf' % order.id, content.getvalue(), 'application/pdf')
         message.send()
 
+        email = render_to_string('plata/notifications/packing_slip.txt',
+            self.context(kwargs)).splitlines()
+
         content = StringIO.StringIO()
         pdf = PDFDocument(content)
         packing_slip_pdf(pdf, order)
