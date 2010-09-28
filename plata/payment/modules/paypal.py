@@ -125,6 +125,7 @@ class PaymentProcessor(ProcessorBase):
                 payment.amount = Decimal(amount)
                 payment.data = request.POST.copy()
                 payment.transaction_id = reference
+                payment.payment_method = payment.payment_module
 
                 if parameters['payment_status'] == 'Completed':
                     payment.authorized = datetime.now()
