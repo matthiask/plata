@@ -18,5 +18,5 @@
 
 {% include "plata/_order_overview.html" %}
 
-<a href="{% url plata_order_new %}">{% trans "Create new order" %}</a>
+<button type="button" onclick="window.location.href='{% url plata_order_new %}'">{% trans "Create new order" %}</button>
 {% endblock %}
