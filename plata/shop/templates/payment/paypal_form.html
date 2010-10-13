@@ -49,7 +49,7 @@
     {# only U.S. abbreviations may be used here #}{% ifequal address.country.iso2_code|lower 'us' %}{% ifequal address.state|length 2 %}<input type="hidden" name="state" value="{{ address.state }}" />{% endifequal %}{% endifequal %}
     <input type="hidden" name="country" value="{{ order.billing_country }}" />
     <input type="hidden" name="zip" value="{{ order.billing_zip_code }}" />
-    <input type="hidden" name="email" value="{{ order.contact.email }}" />
+    <input type="hidden" name="email" value="{{ order.email }}" />
     <input type="hidden" name="address_override" value="0" />
 
     <input type="hidden" name="notify_url" value="http://{{ HTTP_HOST }}{% url plata_payment_paypal_ipn %}" />
