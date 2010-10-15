@@ -217,6 +217,15 @@ class Product(models.Model):
             instance.ordering = idx
             instance.save()
 
+    def items_in_stock(self):
+        items = {}
+
+        for variation in self.variations.all():
+            key = '_'.join(str(pk) for pk in variation.options.values_list('pk', flat=True))
+            items[key] = variation.items_in_stock
+
+        return items
+
 
 class ProductVariation(models.Model):
     product = models.ForeignKey(Product, related_name='variations')

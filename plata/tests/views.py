@@ -125,7 +125,14 @@ class ViewTest(PlataTest):
             'option_2': 5,
             }), p1.get_absolute_url())
 
-        p1.create_variations()
+        for variation in p1.variations.all():
+            variation.stock_transactions.create(type=StockTransaction.PURCHASE, change=10)
+
+        items_in_stock = p1.items_in_stock()
+        self.assertEqual(items_in_stock['3_5'], 10)
+        self.assertEqual(items_in_stock['1_5'], 110)
+        self.assertEqual(len(items_in_stock), 9)
+
         p1.prices.all().delete()
         self.assertContains(self.client.post(p1.get_absolute_url(), {
             'quantity': 5,
