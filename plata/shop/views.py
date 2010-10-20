@@ -360,10 +360,10 @@ class Shop(object):
                 create_account = data.get('create_account')
 
                 if email:
-                    try:
-                        user = User.objects.get(email=email)
+                    users = list(User.objects.filter(email=email))
 
-                        if user != self.request.user:
+                    if users:
+                        if self.request.user not in users:
                             if self.request.user.is_authenticated():
                                 self._errors['email'] = self.error_class([
                                     _('This e-mail address belongs to a different account.')])
@@ -373,9 +373,6 @@ class Shop(object):
 
                             # Clear e-mail address so that further processing is aborted
                             email = None
-                    except User.DoesNotExist:
-                        # Everything is well, the e-mail address isn't occupied yet
-                        pass
 
                 if email and create_account and not self.contact and not self._errors:
                     password = None
