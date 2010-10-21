@@ -57,6 +57,9 @@ def invoice_pdf(pdf, order):
     if order.shipping:
         summary_table.append((capfirst(_('shipping')), u'%.2f' % order.shipping))
 
+    if order.tax:
+        summary_table.append((u'%s 7.6%%' % capfirst(_('incl VAT')), u'%.2f' % order.tax))
+
     pdf.table(summary_table, (12*cm, 4.4*cm), pdf.style.table)
 
     pdf.spacer(1*mm)
