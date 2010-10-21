@@ -23,3 +23,21 @@ def featured_products_for_categories(category_list, variable_name='featured_prod
             pass
 
     return u''
+
+
+class BestsellersNode(template.Node):
+    def __init__(self, as_):
+        self.as_ = as_
+
+    def render(self, context):
+        shop = plata.shop_instance()
+
+        context[self.as_] = shop.product_model.objects.bestsellers()[:5]
+        return u''
+
+
+@register.tag
+def bestsellers(parser, token):
+    tag, xx, as_ = token.contents.split()
+
+    return BestsellersNode(as_)
