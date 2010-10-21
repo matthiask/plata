@@ -120,5 +120,11 @@ def packing_slip_pdf(pdf, order):
             ('ALIGN', (1, 0), (1, -1), 'LEFT'),
             ))
 
+    if order.notes:
+        pdf.spacer(10*mm)
+        pdf.p(capfirst(_('notes')), style=pdf.style.bold)
+        pdf.spacer(1*mm)
+        pdf.p(order.notes)
+
     pdf.generate()
 
