@@ -35,5 +35,7 @@ PLATA_ALWAYS_BCC = getattr(settings, 'PLATA_ALWAYS_BCC',
     [email for name, email in settings.ADMINS])
 PLATA_ORDER_BCC = getattr(settings, 'PLATA_ORDER_BCC',
     [email for name, email in settings.MANAGERS])
+# TODO rework this into a more generic notification configuration
+PLATA_SHIPPING_INFO = getattr(settings, 'PLATA_SHIPPING_INFO', PLATA_ORDER_BCC)
 
 CURRENCIES = getattr(settings, 'CURRENCIES', ('CHF', 'EUR', 'USD'))

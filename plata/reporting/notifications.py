@@ -96,8 +96,8 @@ class EmailHandler(BaseHandler):
         message = EmailMessage(
             subject='packing slip',
             body=u'',
-            to=plata.settings.PLATA_ORDER_BCC,
-            bcc=plata.settings.PLATA_ALWAYS_BCC,
+            to=plata.settings.PLATA_SHIPPING_INFO,
+            bcc=plata.settings.PLATA_ALWAYS_BCC + plata.settings.PLATA_ORDER_BCC,
             )
         message.attach('packing-slip-%09d.pdf' % order.id, content.getvalue(), 'application/pdf')
         message.send()
