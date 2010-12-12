@@ -108,6 +108,7 @@ class ProductVariationInline(admin.TabularInline):
     form = ProductVariationForm
     formset = ProductVariationFormSet
     extra = 0
+    readonly_fields = ('items_in_stock',)
 
 class OptionInline(admin.TabularInline):
     model = models.Option
