@@ -64,7 +64,7 @@ def invoice_pdf(pdf, order):
     total_title = u'%s %s' % (capfirst(_('total')), order.currency)
 
     if order.tax:
-        total_title = u'%s (%s 7.6%%  %s %.2f)' % (
+        total_title = u'%s (%s 8.0%%  %s %.2f)' % (
             total_title, capfirst(_('incl VAT')), order.currency, order.tax)
 
     pdf.table([
