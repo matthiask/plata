@@ -80,7 +80,10 @@ class ProductVariationForm(forms.ModelForm):
 
     def clean(self):
         options = self.cleaned_data.get('options', [])
-        groups_on_product_objects = self.cleaned_data['product']._cleaned_data['option_groups']
+        try:
+            groups_on_product_objects = self.cleaned_data['product']._cleaned_data['option_groups']
+        except AttributeError: # product form is not valid
+            groups_on_product_objects = []
         groups_on_product = set(g.id for g in groups_on_product_objects)
         groups_on_variation = [o.group_id for o in options]
         options_errors = []

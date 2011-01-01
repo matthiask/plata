@@ -134,8 +134,15 @@ class AdminTest(PlataTest):
 
         product_data['slug'] += '-'
         product_data['sku'] += '-'
-        self.client.post(self.product_admin_url + 'add/', product_data)
-        self.client.post(self.product_admin_url + 'add/', product_data)
+        self.assertEqual(
+            self.client.post(self.product_admin_url + 'add/', product_data).status_code,
+            302)
+
+        # Next post should not redirect (e.g. yield validation errors)
+        self.assertEqual(
+            self.client.post(self.product_admin_url + 'add/', product_data).status_code,
+            200)
+
         self.assertEqual(Product.objects.count(), 2)
         self.assertEqual(ProductVariation.objects.count(), 8)
         self.assertEqual(ProductPrice.objects.count(), 2)
