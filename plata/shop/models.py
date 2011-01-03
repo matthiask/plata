@@ -76,6 +76,10 @@ class Order(BillingShippingAddress):
 
     notes = models.TextField(_('notes'), blank=True)
 
+    data_json = models.TextField(_('data'), blank=True,
+        help_text=_('JSON-encoded additional data about the order payment.'))
+    data = JSONFieldDescriptor('data_json')
+
     class Meta:
         verbose_name = _('order')
         verbose_name_plural = _('orders')
@@ -307,6 +311,10 @@ class OrderItem(models.Model):
 
     _line_item_tax = models.DecimalField(_('line item tax'),
         max_digits=18, decimal_places=10, default=0)
+
+    data_json = models.TextField(_('data'), blank=True,
+        help_text=_('JSON-encoded additional data about the order payment.'))
+    data = JSONFieldDescriptor('data_json')
 
     class Meta:
         ordering = ('variation',)
