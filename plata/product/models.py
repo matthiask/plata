@@ -306,19 +306,19 @@ class ProductPrice(models.Model):
 
     @property
     def unit_tax(self):
-        return self.unit_price_excl_tax * (self.tax_class.rate/100)
+        return self.unit_price_excl_tax * (self.tax_rate/100)
 
     @property
     def unit_price_incl_tax(self):
         if self.tax_included:
             return self._unit_price
-        return self._unit_price * (1+self.tax_class.rate/100)
+        return self._unit_price * (1+self.tax_rate/100)
 
     @property
     def unit_price_excl_tax(self):
         if not self.tax_included:
             return self._unit_price
-        return self._unit_price / (1+self.tax_class.rate/100)
+        return self._unit_price / (1+self.tax_rate/100)
 
     @property
     def unit_price(self):

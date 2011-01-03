@@ -181,6 +181,7 @@ class Order(BillingShippingAddress):
 
         item._unit_price = price.unit_price_excl_tax
         item._unit_tax = price.unit_tax
+        item.tax_rate = price.tax_class.rate
         item.tax_class = price.tax_class
         item.is_sale = price.is_sale
 
@@ -289,7 +290,11 @@ class OrderItem(models.Model):
         help_text=_('Unit price excl. tax'))
     _unit_tax = models.DecimalField(_('unit tax'),
         max_digits=18, decimal_places=10)
-    tax_class = models.ForeignKey(TaxClass, verbose_name=_('tax class'))
+
+    tax_rate = models.DecimalField(_('tax rate'), max_digits=10, decimal_places=2)
+    tax_class = models.ForeignKey(TaxClass, verbose_name=_('tax class'),
+        blank=True, null=True, on_delete=models.SET_NULL)
+
     is_sale = models.BooleanField(_('is sale'))
 
     _line_item_price = models.DecimalField(_('line item price'),
@@ -324,7 +329,7 @@ class OrderItem(models.Model):
 
     @property
     def line_item_discount_incl_tax(self):
-        return self.line_item_discount_excl_tax * (1+self.tax_class.rate/100)
+        return self.line_item_discount_excl_tax * (1+self.tax_rate/100)
 
     @property
     def line_item_discount(self):

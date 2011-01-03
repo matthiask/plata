@@ -136,7 +136,7 @@ class DiscountBase(models.Model):
             # with different tax rates in the order)
             dividend = divisor = Decimal('0.00')
             for item in eligible_items:
-                dividend += item.tax_class.rate * item.discounted_subtotal_excl_tax
+                dividend += item.tax_rate * item.discounted_subtotal_excl_tax
                 divisor += item.discounted_subtotal_excl_tax
 
             tax_rate = dividend / divisor
