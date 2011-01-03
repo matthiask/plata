@@ -88,11 +88,14 @@ class Order(BillingShippingAddress):
         return u'Order #%d' % self.pk
 
     def recalculate_total(self, save=True):
+        items = self.items.all()
+
         processor = processors.OrderProcessor()
-        processor.process(self, list(self.items.all()))
+        processor.process(self, items)
 
         if save:
             self.save()
+            [item.save() for item in items]
 
     @property
     def subtotal(self):
