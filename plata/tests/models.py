@@ -1,11 +1,13 @@
 import os
-
 from datetime import date, datetime
 from decimal import Decimal
+import StringIO
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.test import TestCase
+
+from pdfdocument.document import PDFDocument
 
 import plata
 from plata.contact.models import Contact
@@ -13,6 +15,7 @@ from plata.discount.models import Discount
 from plata.product.models import TaxClass, Product, ProductVariation, Category,\
     ProductPrice, OptionGroup, Option
 from plata.product.stock.models import Period, StockTransaction
+import plata.reporting.order
 from plata.shop.models import Order, OrderStatus, OrderPayment
 
 from plata.tests.base import PlataTest, get_request
@@ -849,3 +852,9 @@ class ModelTest(PlataTest):
         self.assertAlmostEqual(tax_details[Decimal('7.6')]['total'], Decimal('407.50'))
 
         plata.settings.PLATA_ORDER_PROCESSORS = order_processors[:]
+
+    def test_24_uninitialized_order(self):
+        # This should not crash; generating a PDF exercises the methods
+        # and properties of the order
+        plata.reporting.order.invoice_pdf(PDFDocument(StringIO.StringIO()),
+            Order.objects.create())

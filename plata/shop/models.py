@@ -109,6 +109,9 @@ class Order(BillingShippingAddress):
     @property
     def shipping(self):
         if plata.settings.PLATA_PRICE_INCLUDES_TAX:
+            if self.shipping_cost is None:
+                return None
+
             return self.shipping_cost - self.shipping_discount + self.shipping_tax
         else:
             logger.error('Shipping calculation with PLATA_PRICE_INCLUDES_TAX=False is not implemented yet')
