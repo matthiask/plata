@@ -98,7 +98,7 @@ class PlataTest(TestCase):
 
         product = Product.objects.create(
             name='Test Product 1',
-            slug='prod%s' % random.random(),
+            slug='prod%s' % str(random.random())[2:7],
             )
 
         product.create_variations()
