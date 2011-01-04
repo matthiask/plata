@@ -810,3 +810,42 @@ class ModelTest(PlataTest):
         order.modify_item(p1, absolute=1)
 
         self.assertEqual(order.total, Decimal('84.01'))
+
+    def test_23_mixed_tax(self):
+        order_processors = plata.settings.PLATA_ORDER_PROCESSORS[:]
+        plata.settings.PLATA_ORDER_PROCESSORS[-2] = 'plata.shop.processors.FixedAmountShippingProcessor'
+
+        p1 = self.create_product(stock=10)
+        p2 = self.create_product(stock=10)
+
+        p2.name = 'Test 2'
+        p2.save()
+
+        p2.prices.all().delete()
+        p2.prices.create(
+            currency='CHF',
+            tax_class=self.tax_class_something,
+            _unit_price=Decimal('59.90'),
+            tax_included=True,
+            )
+
+        order = self.create_order()
+
+        order.modify_item(p1, 5)
+        order.modify_item(p2, 5)
+
+        self.assertEqual(order.items.count(), 2)
+        self.assertAlmostEqual(order.total, Decimal('707.00'))
+
+        tax_details = dict(order.data['tax_details'])
+
+        # Two tax rates
+        self.assertEqual(len(tax_details), 2)
+
+        self.assertAlmostEqual(tax_details[Decimal('12.5')]['tax_amount'], Decimal('33.28'), 2)
+        self.assertAlmostEqual(tax_details[Decimal('7.6')]['tax_amount'], Decimal('28.78'), 2)
+
+        # Shipping has to be added here too; otherwise it should be 399.50
+        self.assertAlmostEqual(tax_details[Decimal('7.6')]['total'], Decimal('407.50'))
+
+        plata.settings.PLATA_ORDER_PROCESSORS = order_processors[:]

@@ -29,6 +29,23 @@ class ProcessorBase(object):
         cost_excl_tax = cost_incl_tax / (1 + tax_rate / 100)
         return cost_excl_tax, cost_incl_tax - cost_excl_tax
 
+    def add_tax_details(self, tax_details, tax_rate, price, discount, tax_amount):
+        zero = Decimal('0.00')
+        discount = discount or zero
+
+        row = tax_details.setdefault(tax_rate, {
+            'prices': zero,
+            'discounts': zero,
+            'tax_rate': tax_rate,
+            'tax_amount': zero,
+            'total': zero,
+            })
+        row['prices'] += price
+        row['discounts'] += discount
+        row['tax_amount'] += tax_amount
+
+        row['total'] += price - discount + tax_amount
+
     def set_processor_value(self, group, key, value):
         self.processor.state.setdefault(group, {})[key] = value
 
@@ -54,15 +71,29 @@ class InitializeOrderProcessor(ProcessorBase):
 
 class DiscountProcessor(ProcessorBase):
     def process(self, order, items):
+        remaining = Decimal('0.00')
+
         for applied in order.applied_discounts.all():
             applied.apply(order, items)
+            remaining += applied.remaining
+
+        order.data.update({'discounts': {
+            'remaining': remaining,
+            }})
 
 
 class TaxProcessor(ProcessorBase):
     def process(self, order, items):
+        tax_details = {}
+
         for item in items:
             taxable = item._line_item_price - (item._line_item_discount or 0)
             item._line_item_tax = (taxable * item.tax_rate/100).quantize(Decimal('0.0000000000'))
+
+            self.add_tax_details(tax_details, item.tax_rate, item._line_item_price,
+                item._line_item_discount, item._line_item_tax)
+
+        order.data['tax_details'] = tax_details.items()
 
 
 class ItemSummationProcessor(ProcessorBase):
@@ -95,6 +126,11 @@ class FixedAmountShippingProcessor(ProcessorBase):
 
         self.set_processor_value('total', 'shipping',
             order.shipping_cost - order.shipping_discount + order.shipping_tax)
+
+        tax_details = dict(order.data.get('tax_details', []))
+        self.add_tax_details(tax_details, tax, order.shipping_cost,
+            order.shipping_discount, order.shipping_tax)
+        order.data['tax_details'] = tax_details.items()
 
 
 class OrderSummationProcessor(ProcessorBase):

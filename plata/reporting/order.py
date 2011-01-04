@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.core.urlresolvers import get_callable
 from django.utils.text import capfirst
 from django.utils.translation import ugettext as _
@@ -64,8 +66,20 @@ def invoice_pdf(pdf, order):
     total_title = u'%s %s' % (capfirst(_('total')), order.currency)
 
     if order.tax:
-        total_title = u'%s (%s 8.0%%  %s %.2f)' % (
-            total_title, capfirst(_('incl VAT')), order.currency, order.tax)
+        if 'tax_details' in order.data:
+            zero = Decimal('0.00')
+
+            pdf.table([(
+                u'',
+                u'%s %s' % (
+                    _('Incl. tax'),
+                    u'%.1f%%' % row['tax_rate'],
+                    ),
+                row['total'].quantize(zero),
+                row['tax_amount'].quantize(zero),
+                u'',
+                ) for rate, row in order.data['tax_details']],
+                (2*cm, 4*cm, 3*cm, 3*cm, 4.4*cm), pdf.style.table)
 
     pdf.table([
         (total_title, u'%.2f' % order.total),
