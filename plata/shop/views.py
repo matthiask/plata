@@ -128,7 +128,10 @@ class Shop(object):
 
     def order_from_request(self, request, create=False):
         try:
-            return self.order_model.objects.get(pk=request.session.get('shop_order'))
+            order_pk = request.session.get('shop_order')
+            if order_pk is None:
+                raise ValueError("no order in session")
+            return self.order_model.objects.get(pk=order_pk)
         except (ValueError, self.order_model.DoesNotExist):
             if create:
                 contact = self.contact_from_user(request.user)
