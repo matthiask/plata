@@ -303,7 +303,8 @@ class OrderItem(models.Model):
 
     tax_rate = models.DecimalField(_('tax rate'), max_digits=10, decimal_places=2)
     tax_class = models.ForeignKey(TaxClass, verbose_name=_('tax class'),
-        blank=True, null=True, on_delete=models.SET_NULL)
+        #blank=True, null=True, on_delete=models.SET_NULL)  # Only available in Django 1.3
+        blank=True, null=True)
 
     is_sale = models.BooleanField(_('is sale'))
 
