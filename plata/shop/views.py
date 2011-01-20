@@ -163,7 +163,8 @@ class Shop(object):
     def product_detail(self, request, product, context=None,
             template_name='product/product_detail.html',
             template_form_name='form',
-            template_object_name='object'):
+            template_object_name='object',
+            redirect_to='plata_shop_cart'):
 
         OrderItemForm = self.order_modify_item_form(request, product)
 
@@ -186,7 +187,7 @@ class Shop(object):
 
                 order.recalculate_total()
 
-                return HttpResponseRedirect('.')
+                return redirect(redirect_to)
         else:
             form = OrderItemForm()
 
