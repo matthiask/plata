@@ -64,7 +64,7 @@ class ViewTest(PlataTest):
         self.assertTrue(re.search(r'Only \d+ items for .*available.', response.content))
 
         self.assertRedirects(self.client.post(p1.get_absolute_url(), {'quantity': 5}),
-            p1.get_absolute_url())
+            '/cart/')
 
         response = self.client.post(p1.get_absolute_url(), {
             'quantity': 150,
@@ -117,13 +117,13 @@ class ViewTest(PlataTest):
             'quantity': 5,
             'option_1': 1,
             'option_2': 5,
-            }), p1.get_absolute_url())
+            }), '/cart/')
 
         self.assertRedirects(self.client.post(p1.get_absolute_url(), {
             'quantity': -5,
             'option_1': 2,
             'option_2': 5,
-            }), p1.get_absolute_url())
+            }), '/cart/')
 
         for variation in p1.variations.all():
             variation.stock_transactions.create(type=StockTransaction.PURCHASE, change=10)
@@ -285,10 +285,9 @@ class ViewTest(PlataTest):
             'payment_method': 'plata.payment.modules.paypal',
             }), 'cgi-bin/webscr')
 
-        # Should not modify order anymore
         self.assertRedirects(self.client.post(p2.get_absolute_url(), {
             'quantity': 42,
-            }), p2.get_absolute_url())
+            }), '/cart/', target_status_code=302)
         self.assertRedirects(self.client.post('/cart/', {
             'items-INITIAL_FORMS': 1,
             'items-TOTAL_FORMS': 1,
@@ -701,7 +700,7 @@ class ViewTest(PlataTest):
 
         StockTransaction.objects.update(created=datetime.now()-timedelta(minutes=20))
         self.assertRedirects(self.client.post(p1.get_absolute_url(), {'quantity': 5}),
-            p1.get_absolute_url())
+            '/cart/')
 
         order = Order.objects.all()[0]
         order.validate(order.VALIDATE_ALL)
