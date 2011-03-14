@@ -9,7 +9,7 @@ Contents
 ========
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :numbered:
 
    overview
@@ -18,6 +18,23 @@ Contents
    settings
    taxes_and_discounts
 
+
+API Documentation
+=================
+
+.. toctree::
+   :maxdepth: 3
+
+   api/core
+   api/products
+   api/discounts
+   api/shop
+   api/payment
+   api/views
+   api/contextprocessors
+   api/fields
+   api/utils
+   api/reporting
 
 Indices and tables
 ==================

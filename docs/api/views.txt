@@ -1,0 +1,6 @@
+Views
+=====
+
+.. automodule:: plata.shop.views
+   :members:
+   :noindex:

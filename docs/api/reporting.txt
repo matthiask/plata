@@ -1,0 +1,26 @@
+Reporting
+=========
+
+.. automodule:: plata.reporting
+   :members:
+   :noindex:
+
+.. automodule:: plata.reporting.notifications
+   :members:
+   :noindex:
+
+.. automodule:: plata.reporting.order
+   :members:
+   :noindex:
+
+.. automodule:: plata.reporting.product
+   :members:
+   :noindex:
+
+.. automodule:: plata.reporting.urls
+   :members:
+   :noindex:
+
+.. automodule:: plata.reporting.views
+   :members:
+   :noindex:

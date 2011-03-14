@@ -1,0 +1,6 @@
+Fields
+======
+
+.. automodule:: plata.fields
+   :members:
+   :noindex:

@@ -1,0 +1,27 @@
+Shop
+====
+
+.. automodule:: plata.shop.models
+   :members:
+   :noindex:
+
+
+.. automodule:: plata.shop.processors
+   :members:
+   :noindex:
+
+.. automodule:: plata.shop.templatetags.plata_product_tags
+   :members:
+   :noindex:
+
+.. automodule:: plata.shop.templatetags.plata_tags
+   :members:
+   :noindex:
+
+.. automodule:: plata.shop.signals
+   :members:
+   :noindex:
+
+.. automodule:: plata.shop.admin
+   :members:
+   :noindex:

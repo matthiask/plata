@@ -1,0 +1,18 @@
+Plata core
+==========
+
+
+General functions
+-----------------
+
+.. automodule:: plata
+   :members:
+   :noindex:
+
+
+Base models
+-----------
+
+.. automodule:: plata.models
+   :members:
+   :noindex:

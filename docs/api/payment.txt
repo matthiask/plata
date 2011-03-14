@@ -1,0 +1,23 @@
+Payment
+=======
+
+.. automodule:: plata.payment
+   :members:
+   :noindex:
+
+.. automodule:: plata.payment.modules.base
+   :members:
+   :noindex:
+
+.. automodule:: plata.payment.modules.cod
+   :members:
+   :noindex:
+
+.. automodule:: plata.payment.modules.paypal
+   :members:
+   :noindex:
+
+.. automodule:: plata.payment.modules.postfinance
+   :members:
+   :noindex:
+

@@ -1,0 +1,6 @@
+Context processors
+==================
+
+.. automodule:: plata.context_processors
+   :members:
+   :noindex:

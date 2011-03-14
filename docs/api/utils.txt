@@ -1,0 +1,6 @@
+Utilities
+=========
+
+.. automodule:: plata.utils
+   :members:
+   :noindex:

@@ -1,0 +1,6 @@
+Discounts
+=========
+
+.. automodule:: plata.discount.models
+   :members:
+   :noindex:

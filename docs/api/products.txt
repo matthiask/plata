@@ -1,0 +1,15 @@
+Products
+========
+
+.. automodule:: plata.product.models
+   :members:
+   :noindex:
+
+
+.. automodule:: plata.product.feincms.models
+   :members:
+   :noindex:
+
+.. automodule:: plata.product.producer.models
+   :members:
+   :noindex:

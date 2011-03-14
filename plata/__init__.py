@@ -31,6 +31,11 @@ def register(instance):
     _shop_instance = instance
 
 def shop_instance():
+    """
+    This method ensures that all views and URLs are properly loaded, and
+    returns the centrally instantiated ``:class:plata.shop.views.Shop`` object.
+    """
+
     # Load default URL patterns to ensure that the shop
     # object has been created
     from django.core.urlresolvers import get_resolver
