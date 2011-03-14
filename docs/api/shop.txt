@@ -6,9 +6,16 @@ Shop
    :noindex:
 
 
+Order processors
+----------------
+
 .. automodule:: plata.shop.processors
    :members:
    :noindex:
+
+
+Template tags
+-------------
 
 .. automodule:: plata.shop.templatetags.plata_product_tags
    :members:
@@ -18,9 +25,17 @@ Shop
    :members:
    :noindex:
 
+
+Signals
+-------
+
 .. automodule:: plata.shop.signals
    :members:
    :noindex:
+
+
+``django.contrib.admin`` support
+--------------------------------
 
 .. automodule:: plata.shop.admin
    :members:

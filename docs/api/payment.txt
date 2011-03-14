@@ -9,13 +9,25 @@ Payment
    :members:
    :noindex:
 
+
+Cash on delivery
+----------------
+
 .. automodule:: plata.payment.modules.cod
    :members:
    :noindex:
 
+
+PayPal support
+--------------
+
 .. automodule:: plata.payment.modules.paypal
    :members:
    :noindex:
+
+
+Postfinance support
+-------------------
 
 .. automodule:: plata.payment.modules.postfinance
    :members:

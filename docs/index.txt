@@ -10,7 +10,6 @@ Contents
 
 .. toctree::
    :maxdepth: 3
-   :numbered:
 
    overview
    installation
@@ -35,6 +34,7 @@ API Documentation
    api/fields
    api/utils
    api/reporting
+
 
 Indices and tables
 ==================
