@@ -6,6 +6,12 @@ import plata
 
 
 class OrderProcessor(object):
+    """
+    Order processor manager. The order processors defined in
+    ``PLATA_ORDER_PROCESSORS`` are called in turn every time
+    ``recalculate_total`` is called on the order.
+    """
+
     def __init__(self):
         self.state = {}
         self.processor_classes = [get_callable(processor)\
@@ -20,16 +26,28 @@ class OrderProcessor(object):
 
 
 class ProcessorBase(object):
+    """
+    Order processor class base. Offers helper methods for order total
+    aggregation and tax calculation.
+    """
+
     def __init__(self, processor):
         self.processor = processor
 
     def split_cost(self, cost_incl_tax, tax_rate):
+        """Split a cost incl. tax into the part excl. tax and the tax"""
+
         cost_incl_tax, tax_rate = Decimal(cost_incl_tax), Decimal(tax_rate)
 
         cost_excl_tax = cost_incl_tax / (1 + tax_rate / 100)
         return cost_excl_tax, cost_incl_tax - cost_excl_tax
 
     def add_tax_details(self, tax_details, tax_rate, price, discount, tax_amount):
+        """
+        Add tax details grouped by tax_rate. Especially useful if orders
+        potentially use more than one tax class.
+        """
+
         zero = Decimal('0.00')
         discount = discount or zero
 
@@ -56,10 +74,16 @@ class ProcessorBase(object):
         return dic
 
     def process(self, order, items):
+        """This is the method which must be implemented in order processor classes."""
         raise NotImplementedError
 
 
 class InitializeOrderProcessor(ProcessorBase):
+    """
+    Zero out all relevant order values and calculate line item prices
+    excl. tax.
+    """
+
     def process(self, order, items):
         order.items_subtotal = order.items_tax = order.items_discount = Decimal('0.00')
 
@@ -70,6 +94,10 @@ class InitializeOrderProcessor(ProcessorBase):
 
 
 class DiscountProcessor(ProcessorBase):
+    """
+    Apply all discounts and sum up the remaining discount.
+    """
+
     def process(self, order, items):
         remaining = Decimal('0.00')
 
@@ -83,6 +111,10 @@ class DiscountProcessor(ProcessorBase):
 
 
 class TaxProcessor(ProcessorBase):
+    """
+    Calculate taxes for every line item and aggregate tax details.
+    """
+
     def process(self, order, items):
         tax_details = {}
 
@@ -97,6 +129,10 @@ class TaxProcessor(ProcessorBase):
 
 
 class ItemSummationProcessor(ProcessorBase):
+    """
+    Sum up line item prices, discounts and taxes.
+    """
+
     def process(self, order, items):
         for item in items:
             order.items_subtotal += item._line_item_price
@@ -108,6 +144,10 @@ class ItemSummationProcessor(ProcessorBase):
 
 
 class ZeroShippingProcessor(ProcessorBase):
+    """
+    Set shipping costs to zero.
+    """
+
     def process(self, order, items):
         order.shipping_cost = order.shipping_discount = order.shipping_tax = 0
 
@@ -116,6 +156,17 @@ class ZeroShippingProcessor(ProcessorBase):
 
 
 class FixedAmountShippingProcessor(ProcessorBase):
+    """
+    Set shipping costs to a fixed value. Uses ``PLATA_SHIPPING_FIXEDAMOUNT``.
+    If you have differing needs you should probably implement your own
+    shipping processor (and propose it for inclusion if you like) instead
+    of extending this one.
+
+    ::
+
+        PLATA_SHIPPING_FIXEDAMOUNT = {'cost': Decimal('8.00'), 'tax': Decimal('19.6')}
+    """
+
     def process(self, order, items):
         cost = plata.settings.PLATA_SHIPPING_FIXEDAMOUNT['cost']
         tax = plata.settings.PLATA_SHIPPING_FIXEDAMOUNT['tax']
@@ -134,6 +185,10 @@ class FixedAmountShippingProcessor(ProcessorBase):
 
 
 class OrderSummationProcessor(ProcessorBase):
+    """
+    Sum up order total by adding up items and shipping totals.
+    """
+
     def process(self, order, items):
         """
         The value must be quantized here, because otherwise f.e. the payment

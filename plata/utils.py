@@ -31,7 +31,15 @@ def jsonize(v):
 
 
 class CallbackOnUpdateDict(dict):
-    """Dict which executes a callback on every update"""
+    """
+    ``dict`` subclass which executes a callback on every update::
+
+        def print_values(d):
+            print d
+
+        d = CallbackOnUpdateDict({'initial': 'data'},
+            callback=print_values)
+    """
 
     def __init__(self, *args, **kwargs):
         self.callback = kwargs.pop('callback')
@@ -49,6 +57,15 @@ class CallbackOnUpdateDict(dict):
 
 
 class JSONFieldDescriptor(object):
+    """
+    Descriptor offering access to a text field containing a JSON-encoded
+    string. Requires the name of the ``TextField``::
+
+        class MyModel(models.Model):
+            data = models.TextField(blank=True)
+            data_json = JSONFieldDescriptor('data')
+    """
+
     def __init__(self, field):
         self.field = field
 

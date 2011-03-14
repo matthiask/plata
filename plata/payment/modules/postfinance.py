@@ -1,3 +1,16 @@
+"""
+Payment module for Postfinance integration
+
+Needs the following settings to work correctly::
+
+    POSTFINANCE = {
+        'PSPID': 'your_shop_id',
+        'LIVE': True, # Or False
+        'SHA1_IN': 'yourhash',
+        'SHA1_OUT': 'yourotherhash',
+        }
+"""
+
 from datetime import datetime
 from decimal import Decimal
 from hashlib import sha1

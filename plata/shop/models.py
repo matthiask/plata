@@ -27,6 +27,7 @@ from plata.utils import JSONFieldDescriptor
 logger = logging.getLogger('plata.shop.order')
 
 class Order(BillingShippingAddress):
+    """The main order model. Used for carts and orders alike."""
     CART = 10
     CHECKOUT = 20
     CONFIRMED = 30
@@ -88,6 +89,10 @@ class Order(BillingShippingAddress):
         return u'Order #%d' % self.pk
 
     def recalculate_total(self, save=True):
+        """
+        Recalculate totals, discounts, taxes.
+        """
+
         items = self.items.all()
 
         processor = processors.OrderProcessor()
@@ -147,9 +152,32 @@ class Order(BillingShippingAddress):
 
     @classmethod
     def register_validator(cls, validator, group):
+        """
+        Register another order validator in a validation group
+
+        A validator is a callable accepting an order (and only an order).
+
+        There are several types of order validators:
+
+        - Base validators are always called
+        - Cart validators: Need to validate for a valid cart
+        - Checkout validators: Need to validate in the checkout process
+        """
+
         cls.VALIDATORS.setdefault(group, []).append(validator)
 
     def validate(self, group):
+        """
+        Validate this order
+
+        The argument determines which order validators are called:
+
+        - ``Order.VALIDATE_BASE``
+        - ``Order.VALIDATE_CART``
+        - ``Order.VALIDATE_CHECKOUT``
+        - ``Order.VALIDATE_ALL``
+        """
+
         for g in sorted(g for g in self.VALIDATORS.keys() if g<=group):
             for validator in self.VALIDATORS[g]:
                 validator(self)
@@ -157,6 +185,9 @@ class Order(BillingShippingAddress):
     def modify_item(self, product, relative=None, absolute=None, recalculate=True, **kwargs):
         """
         Update order with the given product
+
+        - ``relative`` or ``absolute``: Add/subtract or define order item amount exactly
+        - ``recalculate``: Recalculate order after cart modification (defaults to ``True``)
 
         Return OrderItem instance
         """
@@ -225,6 +256,13 @@ class Order(BillingShippingAddress):
         return item
 
     def add_discount(self, discount, recalculate=True):
+        """
+        Add a discount instance to this order
+
+        Removes the previous discount if a discount with this code has already
+        been added to this order before.
+        """
+
         discount.validate(self)
 
         try:
@@ -249,10 +287,14 @@ class Order(BillingShippingAddress):
 
     @property
     def discount_remaining(self):
-        # Remaining discount amount excl. tax
+        """Remaining discount amount excl. tax"""
         return sum((d.remaining for d in self.applied_discounts.all()), Decimal('0.00'))
 
     def update_status(self, status, notes):
+        """
+        Update the order status
+        """
+
         if status >= Order.CHECKOUT:
             if not self.items.count():
                 raise ValidationError(_('Cannot proceed to checkout without order items.'),
@@ -267,10 +309,17 @@ class Order(BillingShippingAddress):
         instance.save()
 
     def reload(self):
+        """
+        Return this order instance, reloaded from the database
+
+        Used f.e. inside the payment processors when adding new payment records etc.
+        """
+
         return self.__class__._default_manager.get(pk=self.id)
 
 
 def validate_order_currencies(order):
+    """Check whether order contains more than one or an invalid currency"""
     currencies = set(order.items.values_list('currency', flat=True))
     if currencies and (len(currencies) > 1 or order.currency not in currencies):
         raise ValidationError(_('Order contains more than one currency.'),
@@ -278,6 +327,7 @@ def validate_order_currencies(order):
 
 
 def validate_order_stock_available(order):
+    """Check whether enough stock is available for all selected products"""
     for item in order.items.all().select_related('variation'):
         if item.quantity > item.variation.available(exclude_order=order):
             raise ValidationError(_('Not enough stock available for %s.') % item.variation,
@@ -289,6 +339,8 @@ Order.register_validator(validate_order_stock_available, Order.VALIDATE_CART)
 
 
 class OrderItem(models.Model):
+    """Single order line item"""
+
     order = models.ForeignKey(Order, related_name='items')
     variation = models.ForeignKey(ProductVariation, verbose_name=_('product variation'))
 
@@ -374,6 +426,13 @@ class OrderItem(models.Model):
 
 
 class OrderStatus(models.Model):
+    """
+    Order status
+
+    Stored in separate model so that the order status changes stay
+    visible for analysis after the fact.
+    """
+
     order = models.ForeignKey(Order, related_name='statuses')
     created = models.DateTimeField(_('created'), default=datetime.now)
     status = models.PositiveIntegerField(_('status'), max_length=20, choices=Order.STATUS_CHOICES)
@@ -405,6 +464,13 @@ class OrderPaymentManager(models.Manager):
 
 
 class OrderPayment(models.Model):
+    """
+    Order payment
+
+    Stores additional data from the payment interface for analysis
+    and accountability.
+    """
+
     PENDING = 10
     PROCESSED = 20
     AUTHORIZED = 30
@@ -471,6 +537,11 @@ class OrderPayment(models.Model):
 
 
 class AppliedDiscount(DiscountBase):
+    """
+    Stores an applied discount, so that deletion of discounts does not
+    affect orders.
+    """
+
     order = models.ForeignKey(Order, related_name='applied_discounts',
         verbose_name=_('order'))
     code = models.CharField(_('code'), max_length=30) # We could make this a ForeignKey

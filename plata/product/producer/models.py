@@ -13,6 +13,10 @@ class ProducerManager(models.Manager):
 
 
 class Producer(models.Model):
+    """
+    Optional producer field for every product
+    """
+
     is_active = models.BooleanField(_('is active'), default=True)
     name = models.CharField(_('name'), max_length=100)
     slug = models.SlugField(_('slug'), unique=True)

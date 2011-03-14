@@ -38,6 +38,12 @@ class BestsellersNode(template.Node):
 
 @register.tag
 def bestsellers(parser, token):
+    """
+    Write bestsellers into specified context variable::
+
+        {% bestsellers as product_list %}
+    """
+
     tag, xx, as_ = token.contents.split()
 
     return BestsellersNode(as_)

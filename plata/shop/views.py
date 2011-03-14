@@ -23,13 +23,13 @@ logger = logging.getLogger('plata.shop.views')
 
 
 def cart_not_empty(order, request, **kwargs):
-    # Redirect to cart if later in checkout process and cart empty
+    """Redirect to cart if later in checkout process and cart empty"""
     if not order or not order.items.count():
         messages.warning(request, _('Cart is empty.'))
         return HttpResponseRedirect(reverse('plata_shop_cart'))
 
 def order_confirmed(order, request, **kwargs):
-    # Redirect to confirmation or already paid view if the order is already confirmed
+    """Redirect to confirmation or already paid view if the order is already confirmed"""
     if order and order.is_confirmed():
         if order.is_paid():
             return redirect('plata_order_success')
@@ -38,6 +38,7 @@ def order_confirmed(order, request, **kwargs):
         return HttpResponseRedirect(reverse('plata_shop_confirmation') + '?confirmed=1')
 
 def insufficient_stock(order, request, **kwargs):
+    """Redirect to cart if stock is insufficient and display an error message"""
     if request.method != 'GET':
         return
 
@@ -49,6 +50,14 @@ def insufficient_stock(order, request, **kwargs):
         return HttpResponseRedirect(reverse('plata_shop_cart'))
 
 def checkout_process_decorator(*checks):
+    """
+    Calls all passed checkout process decorators in turn::
+
+        @checkout_process_decorator(order_confirmed, insufficient_stock)
+        def mymethod(self...):
+            ...
+    """
+
     def _dec(fn):
         def _fn(self, request, *args, **kwargs):
             order = self.order_from_request(request, create=False)
@@ -74,6 +83,14 @@ class Shop(object):
     - Discount model
     - Default currency for the shop (if you do not override default_currency
       in your own Shop subclass)
+
+    Example::
+
+        shop_instance = Shop(Product, Contact, Order, Discount)
+
+        urlpatterns = patterns('',
+            url(r'^shop/', include(shop_instance.urls)),
+        )
     """
 
     def __init__(self, product_model, contact_model, order_model, discount_model,
@@ -91,6 +108,7 @@ class Shop(object):
 
     @property
     def urls(self):
+        """Property offering access to the Shop-managed URL patterns"""
         return self.get_urls()
 
     def get_urls(self):
@@ -115,18 +133,38 @@ class Shop(object):
         return patterns('', *urls)
 
     def get_payment_modules(self):
+        """
+        Import and return all payment modules defined in ``PLATA_PAYMENT_MODULES``
+        """
         return [get_callable(module)(self) for module in plata.settings.PLATA_PAYMENT_MODULES]
 
     def default_currency(self, request=None):
+        """
+        Return the default currency for instantiating new orders
+
+        Override this with your own implementation if you have a multi-currency
+        shop with auto-detection of currencies.
+        """
         return self._default_currency or plata.settings.CURRENCIES[0]
 
     def set_order_on_request(self, request, order):
+        """
+        Helper method encapsulating the process of setting the current order
+        in the session. Pass ``None`` if you want to remove any defined order
+        from the session.
+        """
         if order:
             request.session['shop_order'] = order.pk
         elif 'shop_order' in request.session:
             del request.session['shop_order']
 
     def order_from_request(self, request, create=False):
+        """
+        Instantiate the order instance for the current session. Optionally creates
+        a new order instance if ``create=True``.
+
+        Returns ``None`` if unable to find an offer.
+        """
         try:
             order_pk = request.session.get('shop_order')
             if order_pk is None:
@@ -147,6 +185,10 @@ class Shop(object):
         return None
 
     def contact_from_user(self, user):
+        """
+        Return the contact object bound to the current user if the user is
+        authenticated. Returns ``None`` if no contact exists.
+        """
         if not user.is_authenticated():
             return None
 
@@ -156,6 +198,10 @@ class Shop(object):
             return None
 
     def get_context(self, request, context):
+        """
+        Helper method returning a ``RequestContext``. Override this if you
+        need additional context variables.
+        """
         instance = RequestContext(request)
         instance.update(context)
         return instance
@@ -165,6 +211,20 @@ class Shop(object):
             template_form_name='form',
             template_object_name='object',
             redirect_to='plata_shop_cart'):
+        """
+        The ``product_detail`` helper provides order item form creation and
+        handling on product detail pages. This isn't a complete view - you
+        have to implement the product determination yourself. The minimal
+        implementation of a product detail view follows::
+
+            import plata
+
+            def my_product_detail_view(request, slug):
+                shop = plata.shop_instance()
+                product = get_object_or_404(Product, slug=slug)
+
+                return shop.product_detail(request, product)
+        """
 
         OrderItemForm = self.order_modify_item_form(request, product)
 
@@ -200,6 +260,11 @@ class Shop(object):
         return render_to_response(template_name, self.get_context(request, context))
 
     def order_modify_item_form(self, request, product):
+        """
+        Returns a form subclass which is used in ``product_detail`` above
+        to handle cart changes on the product detail page.
+        """
+
         class Form(forms.Form):
             quantity = forms.IntegerField(label=_('quantity'), initial=1)
 
@@ -273,6 +338,8 @@ class Shop(object):
 
     @checkout_process_decorator(order_confirmed)
     def cart(self, request, order):
+        """Shopping cart view"""
+
         if not order or not order.items.count():
             return self.render_cart_empty(request, {})
 
@@ -319,16 +386,19 @@ class Shop(object):
             })
 
     def render_cart_empty(self, request, context):
+        """Renders a cart-is-empty page"""
         context.update({'empty': True})
 
         return render_to_response('plata/shop_cart.html',
             self.get_context(request, context))
 
     def render_cart(self, request, context):
+        """Renders the shopping cart"""
         return render_to_response('plata/shop_cart.html',
             self.get_context(request, context))
 
     def checkout_form(self, request, order):
+        """Returns the address form used in the first checkout step"""
         REQUIRED_ADDRESS_FIELDS = self.order_model.ADDRESS_FIELDS[:]
         REQUIRED_ADDRESS_FIELDS.remove('company')
 
@@ -410,6 +480,7 @@ class Shop(object):
 
     @checkout_process_decorator(cart_not_empty, order_confirmed, insufficient_stock)
     def checkout(self, request, order):
+        """Handles the first step of the checkout process"""
         if not request.user.is_authenticated():
             if request.method == 'POST' and '_login' in request.POST:
                 loginform = AuthenticationForm(data=request.POST, prefix='login')
@@ -466,10 +537,12 @@ class Shop(object):
             })
 
     def render_checkout(self, request, context):
+        """Renders the checkout page"""
         return render_to_response('plata/shop_checkout.html',
             self.get_context(request, context))
 
     def discounts_form(self, request, order):
+        """Returns the discount form"""
         class DiscountForm(forms.Form):
             code = forms.CharField(label=_('code'), max_length=30, required=False)
 
@@ -496,6 +569,7 @@ class Shop(object):
 
     @checkout_process_decorator(cart_not_empty, order_confirmed, insufficient_stock)
     def discounts(self, request, order):
+        """Handles the discount code entry page"""
         DiscountForm = self.discounts_form(request, order)
 
         if request.method == 'POST':
@@ -519,10 +593,12 @@ class Shop(object):
             })
 
     def render_discounts(self, request, context):
+        """Renders the discount code entry page"""
         return render_to_response('plata/shop_discounts.html',
             self.get_context(request, context))
 
     def confirmation_form(self, request, order):
+        """Returns the confirmation and payment module selection form"""
         class ConfirmationForm(forms.Form):
             terms_and_conditions = forms.BooleanField(
                 label=_('I accept the terms and conditions.'),
@@ -547,6 +623,12 @@ class Shop(object):
 
     @checkout_process_decorator(cart_not_empty, insufficient_stock)
     def confirmation(self, request, order):
+        """
+        Handles the order confirmation and payment module selection checkout step
+
+        Hands off processing to the selected payment module if confirmation was
+        successful.
+        """
         order.recalculate_total()
         payment_module_dict = dict((m.__module__, m) for m in self.get_payment_modules())
 
@@ -571,10 +653,12 @@ class Shop(object):
             })
 
     def render_confirmation(self, request, context):
+        """Renders the confirmation page"""
         return render_to_response('plata/shop_confirmation.html',
             self.get_context(request, context))
 
     def order_success(self, request):
+        """Handles order successes (e.g. when an order has been successfully paid for)"""
         order = self.order_from_request(request)
 
         if not order:
@@ -586,6 +670,7 @@ class Shop(object):
                 }))
 
     def order_payment_failure(self, request):
+        """Handles order payment failures"""
         order = self.order_from_request(request)
 
         logger.warn('Order payment failure for %s' % order)
@@ -596,6 +681,10 @@ class Shop(object):
                 }))
 
     def order_new(self, request):
+        """
+        Forcibly create a new order and redirect user either to the frontpage
+        or to the URL passed as ``next`` GET parameter
+        """
         self.set_order_on_request(request, order=None)
 
         next = request.GET.get('next')

@@ -10,6 +10,10 @@ from plata.fields import CurrencyField
 
 
 class BillingShippingAddress(models.Model):
+    """
+    Abstract base class for all models storing a billing and a shipping address
+    """
+
     ADDRESS_FIELDS = ['company', 'first_name', 'last_name', 'address',
         'zip_code', 'city', 'country']
 
@@ -47,6 +51,10 @@ class BillingShippingAddress(models.Model):
 
 
 class Contact(BillingShippingAddress):
+    """
+    Each user can have at most one of these
+    """
+
     user = models.OneToOneField(User, verbose_name=_('user'),
         related_name='contactuser')
 

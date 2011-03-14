@@ -30,6 +30,10 @@ def form_item_plain(item):
 
 @register.tag
 def form_errors(parser, token):
+    """
+    Show all form and formset errors
+    """
+
     tokens = token.split_contents()
 
     return FormErrorsNode(*tokens[1:])

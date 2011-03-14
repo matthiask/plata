@@ -6,6 +6,10 @@ from plata.product.models import Product, ProductManager
 
 
 class CMSProduct(Product, Base):
+    """
+    FeinCMS-based product model
+    """
+
     class Meta:
         app_label = 'product'
         verbose_name = _('product')

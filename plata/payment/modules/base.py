@@ -14,7 +14,12 @@ logger = logging.getLogger('plata.payment')
 
 
 class ProcessorBase(object):
+    """Payment processor base class"""
+
+    #: Safe key for this payment module (shouldn't contain special chars, spaces etc.)
     ident = 'unnamed'
+
+    #: Human-readable name for this payment module. You may even use i18n here.
     default_name = 'unnamed'
 
     def __init__(self, shop):
@@ -38,14 +43,29 @@ class ProcessorBase(object):
         return patterns('')
 
     def process_order_confirmed(self, request, order):
+        """
+        Process order confirmation
+
+        Must return a response which is presented to the user (e.g. a
+        form with hidden values redirecting to the PSP)
+        """
+
         raise NotImplementedError
 
     def clear_pending_payments(self, order):
+        """
+        Clear pending payments
+        """
+
         logger.info('Clearing pending payments on %s' % order)
         order.payments.pending().delete()
         order.stock_transactions.filter(type=StockTransaction.PAYMENT_PROCESS_RESERVATION).delete()
 
     def create_pending_payment(self, order):
+        """
+        Create a pending payment
+        """
+
         self.clear_pending_payments(order)
         logger.info('Creating pending payment on %s' % order)
         return order.payments.create(
@@ -55,6 +75,11 @@ class ProcessorBase(object):
             )
 
     def create_transactions(self, order, stage, **kwargs):
+        """
+        Create transactions for all order items. The real work is offloaded
+        to ``StockTransaction.objects.bulk_create``.
+        """
+
         StockTransaction.objects.bulk_create(order,
             notes=_('%(stage)s: %(order)s processed by %(payment_module)s') % {
                 'stage': stage,
@@ -64,6 +89,10 @@ class ProcessorBase(object):
             **kwargs)
 
     def order_completed(self, order, payment=None):
+        """
+        Call this when payment has been confirmed
+        """
+
         if order.status < order.COMPLETED:
             logger.info('Order %s has been completely paid for using %s' % (
                 order, self.name))

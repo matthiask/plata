@@ -19,6 +19,8 @@ from plata.utils import JSONFieldDescriptor
 
 
 class DiscountBase(models.Model):
+    """Base class for discounts and applied discounts"""
+
     AMOUNT_EXCL_TAX = 10
     AMOUNT_INCL_TAX = 20
     PERCENTAGE = 30
@@ -128,6 +130,12 @@ class DiscountBase(models.Model):
             raise NotImplementedError, 'Unknown discount type %s' % self.type
 
     def apply_amount_discount(self, order, items, tax_included):
+        """
+        Apply amount discount evenly to all eligible order items
+
+        Aggregates remaining discount (if discount is bigger than order total)
+        """
+
         eligible_products = self.eligible_products(order, items).values_list('id', flat=True)
         eligible_items = [item for item in items if item.variation.product_id in eligible_products]
 
@@ -157,6 +165,10 @@ class DiscountBase(models.Model):
             item._line_item_discount += item.discounted_subtotal_excl_tax / items_subtotal * discount
 
     def apply_percentage_discount(self, order, items):
+        """
+        Apply percentage discount evenly to all eligible order items
+        """
+
         eligible_products = self.eligible_products(order, items).values_list('id', flat=True)
 
         factor = self.value / 100
@@ -193,6 +205,10 @@ class Discount(DiscountBase):
         verbose_name_plural = _('discounts')
 
     def validate(self, order):
+        """
+        Validate whether this discount can be applied at all on the given order
+        """
+
         messages = []
         if not self.is_active:
             messages.append(_('Discount is inactive.'))

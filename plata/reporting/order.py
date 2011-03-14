@@ -12,6 +12,8 @@ import plata
 
 
 def invoice_pdf(pdf, order):
+    """PDF suitable for use as invoice"""
+
     pdf.init_letter(page_fn=create_stationery_fn(
         get_callable(plata.settings.PLATA_REPORTING_STATIONERY)()))
 
@@ -106,6 +108,8 @@ def invoice_pdf(pdf, order):
 
 
 def packing_slip_pdf(pdf, order):
+    """PDF suitable for use as packing slip"""
+
     pdf.init_letter(page_fn=create_stationery_fn(
         get_callable(plata.settings.PLATA_REPORTING_STATIONERY)()))
 

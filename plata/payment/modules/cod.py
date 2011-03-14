@@ -1,3 +1,9 @@
+"""
+Payment module for cash on delivery handling
+
+Automatically completes every order passed.
+"""
+
 from datetime import datetime
 import logging
 

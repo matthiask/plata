@@ -9,6 +9,12 @@ from plata.product.models import Category
 
 
 class CategoryList(models.Model):
+    """
+    FeinCMS content type showing a list of categories
+
+    Does not depend on the FeinCMS-based product model.
+    """
+
     subcategories_of = models.ForeignKey(Category, blank=True, null=True,
         verbose_name=_('subcategories of'),
         limit_choices_to={'parent__isnull': True},
@@ -32,6 +38,12 @@ class CategoryList(models.Model):
 
 
 class ProductList(models.Model):
+    """
+    FeinCMS content type showing a list of products
+
+    Does not depend on the FeinCMS-based product model.
+    """
+
     only_featured = models.BooleanField(_('featured only'))
     only_sale = models.BooleanField(_('sales only'))
     categories = models.ManyToManyField(Category, blank=True, null=True,

@@ -69,6 +69,11 @@ class Style(object):
 
 
 def product_xls():
+    """
+    Create a list of all product variations, including stock and aggregated
+    stock transactions (by type)
+    """
+
     workbook = xlwt.Workbook()
     s = workbook.add_sheet(capfirst(_('products')))
 

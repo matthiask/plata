@@ -1,3 +1,14 @@
+"""
+Payment module for PayPal integration
+
+Needs the following settings to work correctly::
+
+    PAYPAL = {
+        'BUSINESS': 'yourbusiness@paypal.com',
+        'LIVE': True, # Or False
+        }
+"""
+
 from datetime import datetime
 from decimal import Decimal
 import logging

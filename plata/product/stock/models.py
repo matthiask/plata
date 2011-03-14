@@ -10,6 +10,10 @@ from plata.shop.models import Order, OrderPayment
 
 class PeriodManager(models.Manager):
     def current(self):
+        """
+        Return the newest active period
+        """
+
         try:
             return self.filter(start__lte=datetime.now()).order_by('-start')[0]
         except IndexError:
@@ -17,6 +21,14 @@ class PeriodManager(models.Manager):
 
 
 class Period(models.Model):
+    """
+    A period in which stock changes are tracked
+
+    You might want to create a new period every year and create initial amount
+    transactions for every variation. ``StockTransaction.objects.open_new_period``
+    does this automatically.
+    """
+
     name = models.CharField(_('name'), max_length=100)
     notes = models.TextField(_('notes'), blank=True)
     start = models.DateTimeField(_('start'), default=datetime.now)
@@ -35,6 +47,11 @@ class Period(models.Model):
 
 class StockTransactionManager(models.Manager):
     def open_new_period(self, name=None):
+        """
+        Create a new period and create initial transactions for all product
+        variations with their current ``items_in_stock`` value
+        """
+
         period = Period.objects.create(name=name or ugettext('New period'))
 
         for p in ProductVariation.objects.all():
@@ -52,24 +69,46 @@ class StockTransactionManager(models.Manager):
         return Q(type=self.model.PAYMENT_PROCESS_RESERVATION) & Q(created__lt=reservation_expiration)
 
     def stock(self):
+        """
+        Return all valid stock transactions (currently all transactions except
+        those of type ``PAYMENT_PROCESS_RESERVATION`` older than 15 minutes)
+        """
+
         return self.filter(period=Period.objects.current()).filter(~self._expired())
 
     def expired(self):
+        """
+        Return all expired stock transactions (currently only transactions of type
+        ``PAYMENT_PROCESS_RESERVATION`` older than 15 minutes)
+        """
+
         return self.filter(period=Period.objects.current()).filter(self._expired())
 
     def items_in_stock(self, product, update=False, query=None):
+        """
+        Determine the items in stock for the given product variation,
+        optionally updating the ``items_in_stock`` field in the database.
+        """
+
         queryset = self.stock().filter(product=product)
         if query:
             queryset.filter(query)
 
-        count = queryset.aggregate(items=Sum('change')).get('items') or 0
+        product.items_in_stock = queryset.aggregate(items=Sum('change')).get('items') or 0
 
         if update:
             ProductVariation.objects.filter(id=getattr(product, 'pk', product)).update(
-                items_in_stock=count)
-        return count
+                items_in_stock=product.items_in_stock)
+        return product.items_in_stock
 
     def bulk_create(self, order, type, negative=False, **kwargs):
+        """
+        Create transactions in bulk for every order item
+
+        Set ``negative`` to ``True`` for sales, lendings etc. (anything
+        that diminishes the stock you have)
+        """
+
         # Set negative to True for sales, lendings etc.
 
         factor = negative and -1 or 1
@@ -84,6 +123,37 @@ class StockTransactionManager(models.Manager):
 
 
 class StockTransaction(models.Model):
+    """
+    Stores stock transactions transactionally :-)
+
+    Stock transactions basically consist of a product variation reference,
+    an amount, a type and a timestamp. The following types are available:
+
+    - ``StockTransaction.INITIAL``: Initial amount, used when filling in the
+      stock database
+    - ``StockTransaction.CORRECTION``: Use this for any errors
+    - ``StockTransaction.PURCHASE``: Product purchase from a supplier
+    - ``StockTransaction.SALE``: Sales, f.e. through the webshop
+    - ``StockTransaction.RETURNS``: Returned products (from lending or whatever)
+    - ``StockTransaction.RESERVATION``: Reservations
+    - ``StockTransaction.INCOMING``: Generic warehousing
+    - ``StockTransaction.OUTGOING``: Generic warehousing
+    - ``StockTransaction.PAYMENT_PROCESS_RESERVATION``: Product reservation
+      during payment process
+
+    Most of these types do not have a significance to Plata. The exceptions are:
+
+    - ``INITIAL`` transactions are created by ``open_new_period``
+    - ``SALE`` transactions are created when orders are confirmed
+    - ``PAYMENT_PROCESS_RESERVATION`` transactions are created by payment modules
+      which send the user to a different domain for payment data entry (f.e. PayPal).
+      These transactions are also special in that they are only valid for
+      15 minutes. After 15 minutes, other customers are able to put the product
+      in their cart and proceed to checkout again. This time period is a security
+      measure against customers buying products at the same time which cannot
+      be delivered afterwards because stock isn't available.
+    """
+
     INITIAL = 10
     CORRECTION = 20
     PURCHASE = 30

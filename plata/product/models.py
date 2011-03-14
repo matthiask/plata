@@ -11,6 +11,10 @@ from plata.fields import CurrencyField
 
 
 class TaxClass(models.Model):
+    """
+    Tax class, storing a tax rate
+    """
+
     name = models.CharField(_('name'), max_length=100)
     rate = models.DecimalField(_('rate'), max_digits=10, decimal_places=2)
     priority = models.PositiveIntegerField(_('priority'), default=0,
@@ -34,6 +38,12 @@ class CategoryManager(models.Manager):
 
 
 class Category(models.Model):
+    """
+    Categories are both used for external and internal organization of products.
+    If the ``is_internal`` flag is set, categories will never appear in the shop
+    but can be used f.e. to group discountable products together.
+    """
+
     is_active = models.BooleanField(_('is active'), default=True)
     is_internal = models.BooleanField(_('is internal'), default=False,
         help_text=_('Only used to internally organize products, f.e. for discounting.'))
@@ -65,6 +75,10 @@ class Category(models.Model):
 
 
 class OptionGroup(models.Model):
+    """
+    Option group, f.e. size or color
+    """
+
     name = models.CharField(_('name'), max_length=100)
 
     class Meta:
@@ -77,6 +91,11 @@ class OptionGroup(models.Model):
 
 
 class Option(models.Model):
+    """
+    Single option belonging to an option group, f.e. red, blue or yellow for color
+    or XL, L or M for sizes
+    """
+
     group = models.ForeignKey(OptionGroup, related_name='options',
         verbose_name=_('option group'))
     name = models.CharField(_('name'), max_length=100)
@@ -113,6 +132,12 @@ class ProductManager(models.Manager):
 
 
 class Product(models.Model):
+    """
+    Default product model
+
+    Knows how to determine its own price and the stock of all its variations.
+    """
+
     is_active = models.BooleanField(_('is active'), default=True)
     is_featured = models.BooleanField(_('is featured'), default=False)
     name = models.CharField(_('name'), max_length=100)
@@ -228,6 +253,10 @@ class Product(models.Model):
 
 
 class ProductVariation(models.Model):
+    """
+    This is the physical product, sporting a field for the stock amount etc.
+    """
+
     product = models.ForeignKey(Product, related_name='variations')
     is_active = models.BooleanField(_('is active'), default=True)
     sku = models.CharField(_('SKU'), max_length=100, unique=True)
@@ -277,6 +306,14 @@ class ProductPriceManager(models.Manager):
 
 
 class ProductPrice(models.Model):
+    """
+    Price for a given product, currency, tax class and time period
+
+    Prices should not be changed or deleted but replaced by more recent prices.
+    (Deleting old prices does not hurt, but the price history cannot be
+    reconstructed anymore if you'd need it.)
+    """
+
     product = models.ForeignKey(Product, verbose_name=_('product'),
         related_name='prices')
     currency = CurrencyField()
