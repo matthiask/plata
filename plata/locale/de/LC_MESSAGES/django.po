@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-16 14:34+0100\n"
+"POT-Creation-Date: 2011-03-16 14:45+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -175,99 +175,111 @@ msgstr "Typ"
 msgid "value"
 msgstr "Wert"
 
-#: discount/models.py:82 product/models.py:25 product/models.py:324
+#: discount/models.py:82
+msgid "Only required for amount discounts."
+msgstr "Nur bei Betragsrabatten notwendig."
+
+#: discount/models.py:83 product/models.py:25 product/models.py:324
 #: shop/models.py:359
 msgid "tax class"
 msgstr "Steuerklasse"
 
-#: discount/models.py:85
+#: discount/models.py:84
+msgid "Only required for amount discounts incl. tax."
+msgstr "Nur bei Betragsrabatten inkl. MwSt notwendig."
+
+#: discount/models.py:86
 msgid "configuration"
 msgstr "Einstellung"
 
-#: discount/models.py:86
+#: discount/models.py:87
 msgid "If you edit this field directly, changes below will be ignored."
 msgstr ""
 "Wenn Sie dieses Feld direkt bearbeiten, werden alle Änderungen weiter unten "
 "ignoriert."
 
-#: discount/models.py:102
+#: discount/models.py:103
 msgid "Percentage discounts cannot have currency and tax class set."
-msgstr "Währung und Steuerklasse dürfen bei Prozentrabatten nicht gesetzt sein."
+msgstr ""
+"Währung und Steuerklasse dürfen bei Prozentrabatten nicht gesetzt sein."
 
-#: discount/models.py:105
-msgid "Amount discounts incl. tax need a currency and a tax class."
-msgstr "Bei Betragsrabatten inkl. MwSt müssen Währung und Steuerklasse gesetzt sein."
-
-#: discount/models.py:108
+#: discount/models.py:106
 msgid "Amount discounts excl. tax need a currency."
 msgstr "Bei Betragsrabatten exkl. MwSt muss die Währung gesetzt sein."
 
+#: discount/models.py:108
 msgid "Amount discounts excl. tax cannot have tax class set."
-msgstr "Bei Betragsrabatten exkl. MwSt darf die Steuerklasse nicht gesetzt sein."
+msgstr ""
+"Bei Betragsrabatten exkl. MwSt darf die Steuerklasse nicht gesetzt sein."
 
-#: discount/models.py:110
+#: discount/models.py:111
+msgid "Amount discounts incl. tax need a currency and a tax class."
+msgstr ""
+"Bei Betragsrabatten inkl. MwSt müssen Währung und Steuerklasse gesetzt sein."
+
+#: discount/models.py:113
 msgid "Unknown discount type."
 msgstr "Unbekannter Rabatttyp."
 
-#: discount/models.py:203 shop/models.py:553 shop/views.py:554
+#: discount/models.py:206 shop/models.py:553 shop/views.py:554
 msgid "code"
 msgstr "Code"
 
-#: discount/models.py:206 product/models.py:47 product/models.py:141
+#: discount/models.py:209 product/models.py:47 product/models.py:141
 #: product/models.py:261 product/models.py:326 product/producer/models.py:20
 msgid "is active"
 msgstr "ist aktiv"
 
-#: discount/models.py:207 product/models.py:327
+#: discount/models.py:210 product/models.py:327
 msgid "valid from"
 msgstr "gültig von"
 
-#: discount/models.py:208 product/models.py:328
+#: discount/models.py:211 product/models.py:328
 msgid "valid until"
 msgstr "gültig bis"
 
-#: discount/models.py:210
+#: discount/models.py:213
 msgid "number of allowed uses"
 msgstr "Anzahl erlaubte Verwendungen"
 
-#: discount/models.py:212
+#: discount/models.py:215
 msgid ""
 "Leave empty if there is no limit on the number of uses of this discount."
 msgstr ""
 "Leer lassen, falls keine Beschränkung der Anzahl Verwendungen für diesen "
 "Rabatt besteht."
 
-#: discount/models.py:213
+#: discount/models.py:216
 msgid "number of times already used"
 msgstr "Anzahl schon durchgeführte Verwendungen"
 
-#: discount/models.py:216 reporting/order.py:59 shop/models.py:368
+#: discount/models.py:219 reporting/order.py:59 shop/models.py:368
 #: shop/templates/plata/_order_overview.html:46
 msgid "discount"
 msgstr "Rabatt"
 
-#: discount/models.py:217
+#: discount/models.py:220
 msgid "discounts"
 msgstr "Rabatte"
 
-#: discount/models.py:226
+#: discount/models.py:229
 msgid "Discount is inactive."
 msgstr "Rabatt ist inaktiv."
 
-#: discount/models.py:230
+#: discount/models.py:233
 msgid "Discount is not active yet."
 msgstr "Rabatt ist noch nicht aktiv."
 
-#: discount/models.py:232
+#: discount/models.py:235
 msgid "Discount is expired."
 msgstr "Rabatt ist abgelaufen."
 
-#: discount/models.py:235
+#: discount/models.py:238
 msgid "Allowed uses for this discount has already been reached."
 msgstr ""
 "Die Anzahl erlaubter Anwendungen wurde für diesen Rabatt schon erreicht."
 
-#: discount/models.py:239
+#: discount/models.py:242
 msgid "Discount and order currencies do not match."
 msgstr "Währungs- und Bestellungswährung sind unterschiedlich."
 

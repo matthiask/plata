@@ -78,9 +78,10 @@ class DiscountBase(models.Model):
     type = models.PositiveIntegerField(_('type'), choices=TYPE_CHOICES)
     value = models.DecimalField(_('value'), max_digits=18, decimal_places=10)
 
-    currency = CurrencyField(blank=True, null=True)
+    currency = CurrencyField(blank=True, null=True,
+        help_text=_('Only required for amount discounts.'))
     tax_class = models.ForeignKey(TaxClass, verbose_name=_('tax class'),
-        blank=True, null=True)
+        blank=True, null=True, help_text=_('Only required for amount discounts incl. tax.'))
 
     config_json = models.TextField(_('configuration'), blank=True,
         help_text=_('If you edit this field directly, changes below will be ignored.'))
@@ -102,10 +103,12 @@ class DiscountBase(models.Model):
                 raise ValidationError(_('Percentage discounts cannot have currency and tax class set.'))
         elif self.type == self.AMOUNT_EXCL_TAX:
             if not self.currency:
-                raise ValidationError(_('Amount discounts incl. tax need a currency and a tax class.'))
+                raise ValidationError(_('Amount discounts excl. tax need a currency.'))
+            if self.tax_class:
+                raise ValidationError(_('Amount discounts excl. tax cannot have tax class set.'))
         elif self.type == self.AMOUNT_INCL_TAX:
             if not (self.currency and self.tax_class):
-                raise ValidationError(_('Amount discounts need a currency and a tax class.'))
+                raise ValidationError(_('Amount discounts incl. tax need a currency and a tax class.'))
         else:
             raise ValidationError(_('Unknown discount type.'))
 
