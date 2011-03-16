@@ -59,14 +59,15 @@ def checkout_process_decorator(*checks):
     """
 
     def _dec(fn):
-        def _fn(self, request, *args, **kwargs):
-            order = self.order_from_request(request, create=False)
+        def _fn(request, *args, **kwargs):
+            shop = plata.shop_instance()
+            order = shop.order_from_request(request, create=False)
 
             for check in checks:
-                r = check(order=order, shop=self, request=request)
+                r = check(order=order, shop=shop, request=request)
                 if r: return r
 
-            return fn(self, request, order=order, *args, **kwargs)
+            return fn(request, order=order, *args, **kwargs)
         return wraps(fn)(_fn)
     return _dec
 
@@ -117,10 +118,18 @@ class Shop(object):
     def get_shop_urls(self):
         from django.conf.urls.defaults import patterns, url
         return patterns('',
-            url(r'^cart/$', self.cart, name='plata_shop_cart'),
-            url(r'^checkout/$', self.checkout, name='plata_shop_checkout'),
-            url(r'^discounts/$', self.discounts, name='plata_shop_discounts'),
-            url(r'^confirmation/$', self.confirmation, name='plata_shop_confirmation'),
+            url(r'^cart/$',
+                checkout_process_decorator(order_confirmed)(self.cart),
+                name='plata_shop_cart'),
+            url(r'^checkout/$',
+                checkout_process_decorator(cart_not_empty, order_confirmed, insufficient_stock)(self.checkout),
+                name='plata_shop_checkout'),
+            url(r'^discounts/$',
+                checkout_process_decorator(cart_not_empty, order_confirmed, insufficient_stock)(self.discounts),
+                name='plata_shop_discounts'),
+            url(r'^confirmation/$',
+                checkout_process_decorator(cart_not_empty, insufficient_stock)(self.confirmation),
+                name='plata_shop_confirmation'),
 
             url(r'^order/success/$', self.order_success, name='plata_order_success'),
             url(r'^order/payment_failure/$', self.order_payment_failure, name='plata_order_payment_failure'),
@@ -336,7 +345,6 @@ class Shop(object):
                 return data
         return Form
 
-    @checkout_process_decorator(order_confirmed)
     def cart(self, request, order):
         """Shopping cart view"""
 
@@ -478,7 +486,6 @@ class Shop(object):
 
         return OrderForm
 
-    @checkout_process_decorator(cart_not_empty, order_confirmed, insufficient_stock)
     def checkout(self, request, order):
         """Handles the first step of the checkout process"""
         if not request.user.is_authenticated():
@@ -567,7 +574,6 @@ class Shop(object):
                 return code
         return DiscountForm
 
-    @checkout_process_decorator(cart_not_empty, order_confirmed, insufficient_stock)
     def discounts(self, request, order):
         """Handles the discount code entry page"""
         DiscountForm = self.discounts_form(request, order)
@@ -621,7 +627,6 @@ class Shop(object):
                 return data
         return ConfirmationForm
 
-    @checkout_process_decorator(cart_not_empty, insufficient_stock)
     def confirmation(self, request, order):
         """
         Handles the order confirmation and payment module selection checkout step
