@@ -338,6 +338,21 @@ class ModelTest(PlataTest):
 
         self.assertEqual(order.payments.all()[0].data['anything'], 42)
 
+        payment2 = order.payments.model(
+            order=order.reload(),
+            currency='EUR', # mismatch!
+            amount=Decimal('100'),
+            payment_method='Whatever',
+            )
+        payment2.data = {}
+        payment2.save()
+
+        order2 = order.reload()
+
+        # Shouldn't have changed
+        self.assertAlmostEqual(order2.balance_remaining, order.balance_remaining)
+        self.assertNotEqual(order2.notes, order.notes)
+
     def test_09_selective_discount(self):
         """Test applying discounts with product restriction"""
         p1 = self.create_product()
