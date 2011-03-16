@@ -874,3 +874,47 @@ class ModelTest(PlataTest):
         # and properties of the order
         plata.reporting.order.invoice_pdf(PDFDocument(StringIO.StringIO()),
             Order.objects.create())
+
+    def test_25_discount_validation(self):
+        p1 = self.create_product(stock=10)
+
+        discount = Discount.objects.create(
+            is_active=True,
+            type=Discount.PERCENTAGE,
+            code='asdf',
+            name='Percentage discount',
+            value=30)
+
+        discount.save() # should not raise
+
+        discount.type = Discount.AMOUNT_EXCL_TAX
+        self.assertRaises(ValidationError, lambda: discount.save())
+
+        discount.currency = 'CHF'
+        discount.save() # should not raise
+
+        discount.tax_class = self.tax_class
+        self.assertRaises(ValidationError, lambda: discount.save())
+
+        discount.type = Discount.AMOUNT_INCL_TAX
+        discount.save() # should not raise
+
+        discount.currency = None
+        self.assertRaises(ValidationError, lambda: discount.save())
+
+        discount.type = 42
+        self.assertRaises(ValidationError, lambda: discount.save())
+
+        discount.type = Discount.AMOUNT_INCL_TAX
+        discount.currency = 'EUR'
+        discount.save()
+
+        order = self.create_order()
+        order.modify_item(p1, 3)
+
+        self.assertRaises(ValidationError, lambda: order.add_discount(discount))
+
+        discount.currency = order.currency
+        discount.save()
+
+        order.add_discount(discount) # should not raise
