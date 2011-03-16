@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models import ObjectDoesNotExist, Sum
+from django.db.models import F, ObjectDoesNotExist, Sum
 from django.forms.formsets import all_valid
 from django.forms.models import modelform_factory, inlineformset_factory
 from django.http import HttpResponseRedirect
@@ -524,14 +524,18 @@ class OrderPayment(models.Model):
     def _recalculate_paid(self):
         paid = OrderPayment.objects.authorized().filter(
             order=self.order_id,
+            currency=F('order__currency'),
             ).aggregate(total=Sum('amount'))['total'] or 0
 
         Order.objects.filter(id=self.order_id).update(paid=paid)
 
     def save(self, *args, **kwargs):
-        # TODO raise error if currencies to not match
         super(OrderPayment, self).save(*args, **kwargs)
         self._recalculate_paid()
+
+        if self.currency != self.order.currency:
+            self.order.notes += u'\n' + _('Currency of payment %s does not match.') % self
+            self.order.save()
 
     def delete(self, *args, **kwargs):
         super(OrderPayment, self).delete(*args, **kwargs)
