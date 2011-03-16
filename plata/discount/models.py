@@ -100,10 +100,12 @@ class DiscountBase(models.Model):
         if self.type == self.PERCENTAGE:
             if self.currency or self.tax_class:
                 raise ValidationError(_('Percentage discounts cannot have currency and tax class set.'))
-        elif self.type == self.AMOUNT_EXCL_TAX and not self.currency:
-            raise ValidationError(_('Amount discounts incl. tax need a currency and a tax class.'))
-        elif self.type == self.AMOUNT_INCL_TAX and not (self.currency and self.tax_class):
-            raise ValidationError(_('Amount discounts need a currency and a tax class.'))
+        elif self.type == self.AMOUNT_EXCL_TAX:
+            if not self.currency:
+                raise ValidationError(_('Amount discounts incl. tax need a currency and a tax class.'))
+        elif self.type == self.AMOUNT_INCL_TAX:
+            if not (self.currency and self.tax_class):
+                raise ValidationError(_('Amount discounts need a currency and a tax class.'))
         else:
             raise ValidationError(_('Unknown discount type.'))
 
