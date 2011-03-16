@@ -4,8 +4,6 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from cldr_countries.fields import CountryField
-
 from plata.fields import CurrencyField
 
 
@@ -23,7 +21,7 @@ class BillingShippingAddress(models.Model):
     billing_address = models.TextField(_('address'))
     billing_zip_code = models.CharField(_('ZIP code'), max_length=50)
     billing_city = models.CharField(_('city'), max_length=100)
-    billing_country = CountryField()
+    billing_country = models.CharField(_('country'), max_length=3, blank=True)
 
     shipping_same_as_billing = models.BooleanField(_('shipping address equals billing address'),
         default=True)
@@ -34,7 +32,7 @@ class BillingShippingAddress(models.Model):
     shipping_address = models.TextField(_('address'), blank=True)
     shipping_zip_code = models.CharField(_('ZIP code'), max_length=50, blank=True)
     shipping_city = models.CharField(_('city'), max_length=100, blank=True)
-    shipping_country = CountryField(blank=True)
+    shipping_country = models.CharField(_('country'), max_length=3, blank=True)
 
     class Meta:
         abstract = True
