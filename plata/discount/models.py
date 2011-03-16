@@ -13,7 +13,7 @@ from django.utils.translation import ugettext_lazy as _
 
 import plata
 from plata.fields import CurrencyField
-from plata.product.models import Category, Product, ProductVariation
+from plata.product.models import Category, Product, ProductVariation, TaxClass
 from plata.shop.processors import ProcessorBase
 from plata.utils import JSONFieldDescriptor
 
@@ -75,9 +75,12 @@ class DiscountBase(models.Model):
 
     name = models.CharField(_('name'), max_length=100)
 
-    # TODO currency handling. Maybe split type/value into amount, tax, currency, percentage?
     type = models.PositiveIntegerField(_('type'), choices=TYPE_CHOICES)
     value = models.DecimalField(_('value'), max_digits=18, decimal_places=10)
+
+    currency = CurrencyField(blank=True, null=True)
+    tax_class = models.ForeignKey(TaxClass, verbose_name=_('tax class'),
+        blank=True, null=True)
 
     config_json = models.TextField(_('configuration'), blank=True,
         help_text=_('If you edit this field directly, changes below will be ignored.'))
@@ -88,6 +91,19 @@ class DiscountBase(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    def clean(self):
+        if self.type == self.PERCENTAGE:
+            if self.currency or self.tax_class:
+                raise ValidationError(_('Percentage discounts cannot have currency and tax class set.'))
+        elif self.type == self.AMOUNT_EXCL_TAX:
+            if not self.currency:
+                raise ValidationError(_('Amount discounts incl. tax need a currency and a tax class.'))
+        elif self.type == self.AMOUNT_INCL_TAX:
+            if not (self.currency and self.tax_class):
+                raise ValidationError(_('Amount discounts need a currency and a tax class.'))
+        else:
+            raise ValidationError(_('Unknown discount type.'))
 
     def eligible_products(self, order, items, products=None):
         """

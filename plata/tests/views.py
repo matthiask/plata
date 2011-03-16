@@ -718,6 +718,8 @@ class ViewTest(PlataTest):
             type=Discount.AMOUNT_INCL_TAX,
             value=1000,
             config_json='{"all":{}}',
+            tax_class=self.tax_class,
+            currency='CHF',
             )
 
         self.assertRedirects(self.client.post('/discounts/', {

@@ -268,6 +268,8 @@ class AdminTest(PlataTest):
             'valid_until': '',
             'allowed_uses': '',
             'used': 0,
+            'currency': '',
+            'tax_class': '',
             })
         self.assertRedirects(self.client.post('/admin/discount/discount/3/', discount_data),
             '/admin/discount/discount/')
@@ -280,6 +282,8 @@ class AdminTest(PlataTest):
             'valid_until': '',
             'allowed_uses': '',
             'used': 0,
+            'currency': '',
+            'tax_class': '',
 
             # Manually modified config_json overrides anything selected in the
             # generated form items

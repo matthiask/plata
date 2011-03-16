@@ -265,7 +265,9 @@ class ModelTest(PlataTest):
             code='asdf',
             name='Amount discount',
             value=Decimal('50.00'),
-            is_active=True)
+            is_active=True,
+            tax_class=self.tax_class,
+            currency='CHF')
         order.add_discount(discount)
         order.recalculate_total()
 
@@ -427,6 +429,8 @@ class ModelTest(PlataTest):
             code='amount_incl_20',
             value=Decimal('20.00'),
             is_active=True,
+            tax_class=self.tax_class,
+            currency='CHF',
             ))
         order.recalculate_total()
 
@@ -521,6 +525,8 @@ class ModelTest(PlataTest):
             name='Sonderrabatt Venice',
             value=Decimal('20.00'),
             code='1234code',
+            tax_class=self.tax_class,
+            currency='CHF',
             )
         discount.config = {'only_categories': {'categories': [c.pk]}}
         discount.save()
@@ -553,6 +559,7 @@ class ModelTest(PlataTest):
             name='Discount',
             value=532,
             code='1234code',
+            currency='CHF',
             )
         order.add_discount(discount)
 
@@ -578,6 +585,8 @@ class ModelTest(PlataTest):
             name='Discount',
             value='100',
             code='1234code',
+            tax_class=self.tax_class,
+            currency='CHF',
             ))
 
         self.assertAlmostEqual(order.subtotal, Decimal('79.90'))
@@ -706,7 +715,10 @@ class ModelTest(PlataTest):
             code='asdf',
             name='Amount discount',
             value=Decimal('50.00'),
-            is_active=True)
+            is_active=True,
+            tax_class=self.tax_class,
+            currency='CHF',
+            )
         order.add_discount(discount)
         order.recalculate_total()
 
@@ -739,7 +751,10 @@ class ModelTest(PlataTest):
             code='d2',
             name='d2',
             value=Decimal('640.00'),
-            is_active=True)
+            is_active=True,
+            tax_class=self.tax_class,
+            currency='CHF',
+            )
 
         order.add_discount(discount)
         self.assertAlmostEqual(order.total, Decimal('7.20'))
