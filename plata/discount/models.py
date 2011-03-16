@@ -92,16 +92,18 @@ class DiscountBase(models.Model):
     def __unicode__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super(DiscountBase, self).save(*args, **kwargs)
+
     def clean(self):
         if self.type == self.PERCENTAGE:
             if self.currency or self.tax_class:
                 raise ValidationError(_('Percentage discounts cannot have currency and tax class set.'))
-        elif self.type == self.AMOUNT_EXCL_TAX:
-            if not self.currency:
-                raise ValidationError(_('Amount discounts incl. tax need a currency and a tax class.'))
-        elif self.type == self.AMOUNT_INCL_TAX:
-            if not (self.currency and self.tax_class):
-                raise ValidationError(_('Amount discounts need a currency and a tax class.'))
+        elif self.type == self.AMOUNT_EXCL_TAX and not self.currency:
+            raise ValidationError(_('Amount discounts incl. tax need a currency and a tax class.'))
+        elif self.type == self.AMOUNT_INCL_TAX and not (self.currency and self.tax_class):
+            raise ValidationError(_('Amount discounts need a currency and a tax class.'))
         else:
             raise ValidationError(_('Unknown discount type.'))
 
@@ -229,6 +231,10 @@ class Discount(DiscountBase):
 
         if self.allowed_uses and self.used >= self.allowed_uses:
             messages.append(_('Allowed uses for this discount has already been reached.'))
+
+        if self.type in (self.AMOUNT_EXCL_TAX, self.AMOUNT_INCL_TAX) and \
+                self.currency != order.currency:
+            messages.append(_('Discount and order currencies do not match.'))
 
         if messages:
             raise ValidationError(messages)

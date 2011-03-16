@@ -115,6 +115,7 @@ class ProcessorBase(object):
                     name='Remaining discount amount for order #%s' % order.pk,
                     type=self.shop.discount_model.AMOUNT_EXCL_TAX,
                     value=order.discount_remaining,
+                    currency=order.currency,
                     config_json=getattr(discount, 'config_json', '{"all": {}}'),
                     allowed_uses=1,
                     )

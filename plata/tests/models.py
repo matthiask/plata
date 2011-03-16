@@ -694,12 +694,12 @@ class ModelTest(PlataTest):
         p1 = self.create_product()
         p2 = self.create_product()
 
-        price = p1.get_price(currency='ASDF')
+        price = p1.get_price(currency='CAD')
         price.tax_class = self.tax_class_germany
         price.save()
 
         order = self.create_order()
-        order.currency = 'ASDF'
+        order.currency = 'CAD'
         order.save()
 
         normal1 = order.modify_item(p1, 3)
@@ -716,8 +716,9 @@ class ModelTest(PlataTest):
             name='Amount discount',
             value=Decimal('50.00'),
             is_active=True,
-            tax_class=self.tax_class,
-            currency='CHF',
+            tax_class=self.tax_class_germany,
+            currency='CAD',
+            config_json='{"products": {"products": [%d]}}' % p1.id,
             )
         order.add_discount(discount)
         order.recalculate_total()

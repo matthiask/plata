@@ -133,7 +133,7 @@ class PlataTest(TestCase):
             )
 
         product.prices.create(
-            currency='ASDF',
+            currency='CAD',
             tax_class=tax_class_something,
             _unit_price=Decimal('65.00'),
             tax_included=False,

@@ -277,6 +277,8 @@ class Order(BillingShippingAddress):
             type=discount.type,
             name=discount.name,
             value=discount.value,
+            currency=discount.currency,
+            tax_class=discount.tax_class,
             config_json=discount.config_json,
             )
 
