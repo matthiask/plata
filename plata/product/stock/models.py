@@ -94,12 +94,16 @@ class StockTransactionManager(models.Manager):
         if query:
             queryset.filter(query)
 
-        product.items_in_stock = queryset.aggregate(items=Sum('change')).get('items') or 0
+        count = queryset.aggregate(items=Sum('change')).get('items') or 0
+
+        if isinstance(product, ProductVariation):
+            product.items_in_stock = count
 
         if update:
             ProductVariation.objects.filter(id=getattr(product, 'pk', product)).update(
-                items_in_stock=product.items_in_stock)
-        return product.items_in_stock
+                items_in_stock=count)
+
+        return count
 
     def bulk_create(self, order, type, negative=False, **kwargs):
         """
