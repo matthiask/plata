@@ -156,15 +156,7 @@ class DiscountBase(models.Model):
         eligible_items = [item for item in items if item.variation.product_id in eligible_products]
 
         if tax_included:
-            # calculate mean order item tax rate (only relevant if there are products
-            # with different tax rates in the order)
-            dividend = divisor = Decimal('0.00')
-            for item in eligible_items:
-                dividend += item.tax_rate * item.discounted_subtotal_excl_tax
-                divisor += item.discounted_subtotal_excl_tax
-
-            tax_rate = dividend / divisor
-            discount = self.value / (1 + tax_rate/100)
+            discount = self.value / (1 + self.tax_class.rate/100)
         else:
             discount = self.value
 
