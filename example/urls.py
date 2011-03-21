@@ -6,7 +6,7 @@ from django.shortcuts import redirect
 
 from plata.product.feincms.models import CMSProduct
 from plata.shop.views import Shop
-from plata.shop.models import Product, Contact, Order, Discount
+from plata.shop.models import Contact, Order, Discount
 
 
 admin.autodiscover()
