@@ -8,6 +8,8 @@ from plata.product.models import Product, ProductManager
 class CMSProduct(Product, Base):
     """
     FeinCMS-based product model
+
+    The admin integration requires FeinCMS >=1.2 to work correctly.
     """
 
     class Meta:
