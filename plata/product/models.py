@@ -1,8 +1,9 @@
 from datetime import date, datetime
 
 from django.db import models
-from django.db.models import Q, Count
+from django.db.models import Q, Count, signals
 
+from django.core.cache import cache
 from django.utils.translation import ugettext_lazy as _
 
 import plata
@@ -166,6 +167,7 @@ class Product(models.Model):
         if not self.sku:
             self.sku = self.slug
         super(Product, self).save(*args, **kwargs)
+        self.flush_price_cache()
 
     @models.permalink
     def get_absolute_url(self):
@@ -180,13 +182,22 @@ class Product(models.Model):
                 self._main_image = None
         return self._main_image
 
-    def get_price(self, currency=None, **kwargs):
-        kwargs['currency'] = currency or plata.shop_instance().default_currency()
-        return self.prices.active().filter(**kwargs).latest()
+    def get_price(self, currency=None):
+        currency = currency or plata.shop_instance().default_currency()
+
+        prices = dict(self.get_prices()).get(currency, {})
+
+        if prices.get('sale'):
+            return prices['sale']
+
+        if prices.get('normal'):
+            return prices['normal']
+        elif prices.get('sale'):
+            return prices['sale']
+
+        raise self.prices.model.DoesNotExist
 
     def get_prices(self):
-        from django.core.cache import cache
-
         key = 'product-prices-%s' % self.pk
 
         if cache.has_key(key):
@@ -213,6 +224,10 @@ class Product(models.Model):
 
         cache.set(key, prices)
         return prices
+
+    def flush_price_cache(self):
+        key = 'product-prices-%s' % self.pk
+        cache.delete(key)
 
     def in_sale(self, currency):
         prices = dict(self.get_prices())
@@ -363,6 +378,12 @@ class ProductPrice(models.Model):
             return self.unit_price_incl_tax
         else:
             return self.unit_price_excl_tax
+
+
+def flush_price_cache(instance, **kwargs):
+    instance.product.flush_price_cache()
+signals.post_save.connect(flush_price_cache, sender=ProductPrice)
+signals.post_delete.connect(flush_price_cache, sender=ProductPrice)
 
 
 class ProductImage(models.Model):

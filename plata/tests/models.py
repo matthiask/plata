@@ -105,13 +105,7 @@ class ModelTest(PlataTest):
         plata.settings.PLATA_PRICE_INCLUDES_TAX = True
 
         product.prices.filter(currency='CHF', is_sale=False).delete()
-        prices = dict(product.get_prices())
-        self.assertAlmostEqual(prices['CHF']['normal'].unit_price, Decimal('99.90'))
-        self.assertAlmostEqual(prices['CHF']['sale'].unit_price, Decimal('79.90'))
-
-        from django.core.cache import cache
-        cache.delete('product-prices-%s' % product.pk)
-
+        product.flush_price_cache()
         prices = dict(product.get_prices())
         self.assertEqual(prices['CHF']['normal'], None)
         self.assertAlmostEqual(prices['CHF']['sale'].unit_price, Decimal('79.90'))
