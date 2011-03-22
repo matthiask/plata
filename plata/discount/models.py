@@ -14,7 +14,6 @@ from django.utils.translation import ugettext_lazy as _
 import plata
 from plata.fields import CurrencyField
 from plata.product.models import Category, Product, ProductVariation, TaxClass
-from plata.shop.processors import ProcessorBase
 from plata.utils import JSONFieldDescriptor
 
 
