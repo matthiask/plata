@@ -5,7 +5,7 @@ import logging
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import get_callable, reverse
 from django.db import models
 from django.db.models import F, ObjectDoesNotExist, Sum
 from django.forms.formsets import all_valid
@@ -93,10 +93,14 @@ class Order(BillingShippingAddress):
         Recalculate totals, discounts, taxes.
         """
 
-        items = self.items.all()
+        items = list(self.items.all())
+        shared_state = {}
 
-        processor = processors.OrderProcessor()
-        processor.process(self, items)
+        processor_classes = [get_callable(processor) for processor\
+            in plata.settings.PLATA_ORDER_PROCESSORS]
+
+        for p in (cls(shared_state) for cls in processor_classes):
+            p.process(self, items)
 
         if save:
             self.save()

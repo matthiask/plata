@@ -5,34 +5,14 @@ from django.core.urlresolvers import get_callable
 import plata
 
 
-class OrderProcessor(object):
-    """
-    Order processor manager. The order processors defined in
-    ``PLATA_ORDER_PROCESSORS`` are called in turn every time
-    ``recalculate_total`` is called on the order.
-    """
-
-    def __init__(self):
-        self.state = {}
-        self.processor_classes = [get_callable(processor)\
-            for processor in plata.settings.PLATA_ORDER_PROCESSORS]
-
-    def load_processors(self):
-        return [cls(self) for cls in self.processor_classes]
-
-    def process(self, order, items):
-        for p in self.load_processors():
-            p.process(order, items)
-
-
 class ProcessorBase(object):
     """
     Order processor class base. Offers helper methods for order total
     aggregation and tax calculation.
     """
 
-    def __init__(self, processor):
-        self.processor = processor
+    def __init__(self, shared_state):
+        self.shared_state = shared_state
 
     def split_cost(self, cost_incl_tax, tax_rate):
         """Split a cost incl. tax into the part excl. tax and the tax"""
@@ -65,10 +45,10 @@ class ProcessorBase(object):
         row['total'] += price - discount + tax_amount
 
     def set_processor_value(self, group, key, value):
-        self.processor.state.setdefault(group, {})[key] = value
+        self.shared_state.setdefault(group, {})[key] = value
 
     def get_processor_value(self, group, key=None):
-        dic = self.processor.state.get(group, {})
+        dic = self.shared_state.get(group, {})
         if key:
             return dic.get(key)
         return dic
