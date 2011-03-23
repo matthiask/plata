@@ -292,9 +292,6 @@ class ProductVariation(models.Model):
             return u'%s (%s)' % (self.product, self.options_name_cache)
         return u'%s' % self.product
 
-    def get_absolute_url(self):
-        return self.product.get_absolute_url()
-
     def _regenerate_cache(self, options=None):
         if options is None:
             options = self.options.all()
@@ -311,12 +308,12 @@ class ProductVariation(models.Model):
         else:
             return self.stock_transactions.items_in_stock(self, update=True)
 
-
     def _generate_proxy(method):
         def func(self, *args, **kwargs):
             return getattr(self.product, method)(*args, **kwargs)
         return func
 
+    get_absolute_url = _generate_proxy('get_absolute_url')
     get_price = _generate_proxy('get_price')
 
 
