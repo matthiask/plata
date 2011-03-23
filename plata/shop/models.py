@@ -19,7 +19,7 @@ import plata
 from plata.contact.models import BillingShippingAddress, Contact
 from plata.discount.models import DiscountBase, Discount
 from plata.fields import CurrencyField
-from plata.product.models import ProductVariation, TaxClass
+from plata.product.models import TaxClass
 from plata.shop import processors
 from plata.utils import JSONFieldDescriptor
 
