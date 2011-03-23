@@ -2,21 +2,23 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import  list_detail
 
 import plata
+from plata.product.feincms.models import CMSProduct
+from plata.shop.views import Shop
+from plata.shop.models import Contact, Order, Discount
+
+
+shop = Shop(CMSProduct, Contact, Order, Discount)
 
 
 def product_list(request):
-    shop = plata.shop_instance()
-
     return list_detail.object_list(request,
-        queryset=shop.product_model.objects.active(),
+        queryset=CMSProduct.objects.active(),
         paginate_by=9,
         template_name='product/product_list.html',
         )
 
 
 def product_detail(request, object_id):
-    shop = plata.shop_instance()
+    product = get_object_or_404(CMSProduct.objects.active(), pk=object_id)
 
-    return shop.product_detail(request,
-        get_object_or_404(shop.product_model.objects.active(), pk=object_id),
-        )
+    return shop.product_detail(request, product)
