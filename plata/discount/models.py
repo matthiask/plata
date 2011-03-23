@@ -8,7 +8,7 @@ from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import get_callable
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, loading
 from django.utils.translation import ugettext_lazy as _
 
 import plata
@@ -44,7 +44,7 @@ class DiscountBase(models.Model):
             'title': _('Explicitly define discountable products'),
             'form_fields': [
                 ('products', forms.ModelMultipleChoiceField(
-                    Product.objects.all(),
+                    Product.objects.all(), # FIXME this isn't correct anymore, and not extensible at all
                     label=_('products'),
                     required=True,
                     widget=FilteredSelectMultiple(
@@ -53,7 +53,7 @@ class DiscountBase(models.Model):
                         ),
                     )),
                 ],
-            'variation_query': lambda products: Q(product__in=products),
+            'product_query': lambda products: Q(product__in=products), # FIXME
             }),
         ('only_categories', {
             'title': _('Only products from selected categories'),
@@ -68,7 +68,7 @@ class DiscountBase(models.Model):
                         ),
                     )),
                 ],
-            'variation_query': lambda categories: Q(product__categories__in=categories),
+            'product_query': lambda categories: Q(product__categories__in=categories), # FIXME
             }),
         ]
 
@@ -111,19 +111,19 @@ class DiscountBase(models.Model):
         else:
             raise ValidationError(_('Unknown discount type.'))
 
-    def eligible_products(self, order, items, products=None):
+    def eligible_products(self, order, items):
         """
         Return a list of products which are eligible for discounting using
         the discount configuration.
         """
 
-        if not products:
-            shop = plata.shop_instance()
-            products = shop.product_model._default_manager.all()
+        # FIXME control this: We are working with product variations
+        # too now, not with products
+        product_model = loading.get_model(*plata.settings.PLATA_SHOP_PRODUCT.split('.'))
 
-        variations = ProductVariation.objects.filter(
+        products = product_model._default_manager.filter(
             id__in=[item.product_id for item in items])
-        orderitems = shop.orderitem_model.objects.filter(
+        orderitems = order.items.model._default_manager.filter(
             id__in=[item.id for item in items])
 
         for key, parameters in self.config.items():
@@ -131,12 +131,12 @@ class DiscountBase(models.Model):
 
             cfg = dict(self.CONFIG_OPTIONS)[key]
 
-            if 'variation_query' in cfg:
-                variations = variations.filter(cfg['variation_query'](**parameters))
+            if 'product_query' in cfg:
+                products = products.filter(cfg['product_query'](**parameters))
             if 'orderitem_query' in cfg:
                 orderitems = orderitems.filter(cfg['orderitem_query'](**parameters))
 
-        return products.filter(id__in=variations.values('product_id')).filter(id__in=orderitems.values('product__product__id'))
+        return products.filter(id__in=orderitems.values('product_id'))
 
     def apply(self, order, items, **kwargs):
         if not items:

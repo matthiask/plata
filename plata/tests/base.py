@@ -8,6 +8,7 @@ from django.contrib.auth.models import AnonymousUser, User
 import plata
 from plata.contact.models import Contact
 
+from plata.product.feincms.models import CMSProduct
 from plata.product.models import TaxClass, Product, ProductVariation,\
     ProductPrice, OptionGroup, Option
 from plata.product.stock.models import Period, StockTransaction
@@ -94,7 +95,7 @@ class PlataTest(TestCase):
     def create_product(self, stock=0):
         tax_class, tax_class_germany, tax_class_something = self.create_tax_classes()
 
-        Product = plata.shop_instance().product_model
+        Product = CMSProduct
 
         product = Product.objects.create(
             name='Test Product 1',

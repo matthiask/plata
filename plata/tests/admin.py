@@ -11,6 +11,7 @@ from django.test import TestCase
 import plata
 from plata.contact.models import Contact
 from plata.discount.models import Discount
+from plata.product.feincms.models import CMSProduct
 from plata.product.models import TaxClass, Product, ProductVariation,\
     ProductPrice, OptionGroup, Option
 from plata.product.stock.models import Period, StockTransaction
@@ -26,10 +27,10 @@ class AdminTest(PlataTest):
         u.is_superuser = True
         u.save()
 
-        shop = plata.shop_instance()
+        product_model = CMSProduct
         self.product_admin_url = '/admin/%s/%s/' % (
-            shop.product_model._meta.app_label,
-            shop.product_model._meta.module_name,
+            product_model._meta.app_label,
+            product_model._meta.module_name,
             )
 
     def login(self):

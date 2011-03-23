@@ -77,7 +77,6 @@ class Shop(object):
 
     Shop needs a few model classes with relations between them:
 
-    - Product class with variations, option groups, options and prices
     - Contact model linking to Django's auth.user
     - Order model with order items and an applied discount model
     - Discount model
@@ -93,9 +92,8 @@ class Shop(object):
         )
     """
 
-    def __init__(self, product_model, contact_model, order_model, discount_model,
+    def __init__(self, contact_model, order_model, discount_model,
             default_currency=None):
-        self.product_model = product_model
         self.contact_model = contact_model
         self.order_model = order_model
         self.orderitem_model = self.order_model.items.related.model

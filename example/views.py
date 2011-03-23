@@ -15,7 +15,7 @@ from plata.shop.views import Shop
 from plata.shop.models import Contact, Order, Discount
 
 
-shop = Shop(CMSProduct, Contact, Order, Discount)
+shop = Shop(Contact, Order, Discount)
 logger = logging.getLogger('example.views')
 
 
