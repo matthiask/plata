@@ -313,7 +313,7 @@ class Shop(object):
                 if quantity and variation:
                     if self.order:
                         try:
-                            orderitem = self.order.items.get(variation=variation)
+                            orderitem = self.order.items.get(product=variation)
                             old_quantity = orderitem.quantity
                             new_quantity += orderitem.quantity
                         except ObjectDoesNotExist:
@@ -368,12 +368,12 @@ class Shop(object):
                 # checks in modify_item must be performed.
                 for form in formset.forms:
                     if formset.can_delete and formset._should_delete_form(form):
-                        order.modify_item(form.instance.variation,
+                        order.modify_item(form.instance.product,
                             absolute=0,
                             recalculate=False)
                         changed = True
                     elif form.has_changed():
-                        order.modify_item(form.instance.variation,
+                        order.modify_item(form.instance.product,
                             absolute=form.cleaned_data['quantity'],
                             recalculate=False)
                         changed = True

@@ -4,6 +4,7 @@ from django.db import models
 from django.db.models import Sum, Q, signals
 from django.utils.translation import ugettext_lazy as _, ugettext
 
+import plata
 from plata.product.models import ProductVariation
 from plata.shop.models import Order, OrderPayment
 
@@ -119,7 +120,7 @@ class StockTransactionManager(models.Manager):
 
         for item in order.items.all():
             self.model.objects.create(
-                product=item.variation,
+                product=item.product,
                 type=type,
                 change=item.quantity * factor,
                 order=order,
@@ -187,7 +188,7 @@ class StockTransaction(models.Model):
     period = models.ForeignKey(Period, default=Period.objects.current,
         related_name='stock_transactions', verbose_name=_('period'))
     created = models.DateTimeField(_('created'), default=datetime.now)
-    product = models.ForeignKey(ProductVariation, related_name='stock_transactions',
+    product = models.ForeignKey(plata.settings.PLATA_SHOP_PRODUCT, related_name='stock_transactions',
         verbose_name=_('product variation'))
     type = models.PositiveIntegerField(_('type'), choices=TYPE_CHOICES)
     change = models.IntegerField(_('change'),

@@ -122,7 +122,7 @@ class DiscountBase(models.Model):
             products = shop.product_model._default_manager.all()
 
         variations = ProductVariation.objects.filter(
-            id__in=[item.variation_id for item in items])
+            id__in=[item.product_id for item in items])
         orderitems = shop.orderitem_model.objects.filter(
             id__in=[item.id for item in items])
 
@@ -136,7 +136,7 @@ class DiscountBase(models.Model):
             if 'orderitem_query' in cfg:
                 orderitems = orderitems.filter(cfg['orderitem_query'](**parameters))
 
-        return products.filter(id__in=variations.values('product_id')).filter(id__in=orderitems.values('variation__product__id'))
+        return products.filter(id__in=variations.values('product_id')).filter(id__in=orderitems.values('product__product__id'))
 
     def apply(self, order, items, **kwargs):
         if not items:
@@ -159,7 +159,7 @@ class DiscountBase(models.Model):
         """
 
         eligible_products = self.eligible_products(order, items).values_list('id', flat=True)
-        eligible_items = [item for item in items if item.variation.product_id in eligible_products]
+        eligible_items = [item for item in items if item.product.product_id in eligible_products]
 
         if tax_included:
             discount = self.value / (1 + self.tax_class.rate/100)
@@ -188,7 +188,7 @@ class DiscountBase(models.Model):
         factor = self.value / 100
 
         for item in items:
-            if item.variation.product_id not in eligible_products:
+            if item.product.product_id not in eligible_products:
                 continue
 
             item._line_item_discount += item.discounted_subtotal_excl_tax * factor

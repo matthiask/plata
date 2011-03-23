@@ -312,6 +312,14 @@ class ProductVariation(models.Model):
             return self.stock_transactions.items_in_stock(self, update=True)
 
 
+    def _generate_proxy(method):
+        def func(self, *args, **kwargs):
+            return getattr(self.product, method)(*args, **kwargs)
+        return func
+
+    get_price = _generate_proxy('get_price')
+
+
 class ProductPriceManager(models.Manager):
     def active(self):
         return self.filter(

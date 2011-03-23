@@ -186,7 +186,7 @@ class Order(BillingShippingAddress):
             for validator in self.VALIDATORS[g]:
                 validator(self)
 
-    def modify_item(self, product, relative=None, absolute=None, recalculate=True, **kwargs):
+    def modify_item(self, product, relative=None, absolute=None, recalculate=True):
         """
         Update order with the given product
 
@@ -202,11 +202,6 @@ class Order(BillingShippingAddress):
             raise ValidationError(_('Cannot modify order once it has been confirmed.'),
                 code='order_sealed')
 
-        if isinstance(product, ProductVariation):
-            product, variation = product.product, product
-        else:
-            product, variation = product, product.variations.get(**kwargs)
-
         try:
             price = product.get_price(currency=self.currency)
         except ObjectDoesNotExist:
@@ -215,11 +210,11 @@ class Order(BillingShippingAddress):
             raise
 
         try:
-            item = self.items.get(variation=variation)
+            item = self.items.get(product=product)
         except self.items.model.DoesNotExist:
             item = self.items.model(
                 order=self,
-                variation=variation,
+                product=product,
                 quantity=0,
                 currency=self.currency,
                 )
@@ -335,8 +330,8 @@ def validate_order_currencies(order):
 def validate_order_stock_available(order):
     """Check whether enough stock is available for all selected products"""
     for item in order.items.all().select_related('variation'):
-        if item.quantity > item.variation.available(exclude_order=order):
-            raise ValidationError(_('Not enough stock available for %s.') % item.variation,
+        if item.quantity > item.product.available(exclude_order=order):
+            raise ValidationError(_('Not enough stock available for %s.') % item.product,
                 code='insufficient_stock')
 
 
@@ -348,7 +343,7 @@ class OrderItem(models.Model):
     """Single order line item"""
 
     order = models.ForeignKey(Order, related_name='items')
-    variation = models.ForeignKey(ProductVariation, verbose_name=_('product variation'))
+    product = models.ForeignKey(plata.settings.PLATA_SHOP_PRODUCT, verbose_name=_('product'))
 
     quantity = models.IntegerField(_('quantity'))
 
@@ -382,13 +377,13 @@ class OrderItem(models.Model):
     data = JSONFieldDescriptor('data_json')
 
     class Meta:
-        ordering = ('variation',)
-        unique_together = (('order', 'variation'),)
+        ordering = ('product',)
+        unique_together = (('order', 'product'),)
         verbose_name = _('order item')
         verbose_name_plural = _('order items')
 
     def __unicode__(self):
-        return u'%s of %s' % (self.quantity, self.variation)
+        return u'%s of %s' % (self.quantity, self.product)
 
     @property
     def unit_price(self):

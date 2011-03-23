@@ -56,3 +56,6 @@ PLATA_ORDER_BCC = getattr(settings, 'PLATA_ORDER_BCC',
 PLATA_SHIPPING_INFO = getattr(settings, 'PLATA_SHIPPING_INFO', PLATA_ORDER_BCC)
 
 CURRENCIES = getattr(settings, 'CURRENCIES', ('CHF', 'EUR', 'USD', 'CAD'))
+
+#: Target of order item product foreign key
+PLATA_SHOP_PRODUCT = getattr(settings, 'PLATA_SHOP_PRODUCT', 'product.productvariation')

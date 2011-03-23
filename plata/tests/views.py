@@ -297,7 +297,7 @@ class ViewTest(PlataTest):
             'items-0-quantity': 43,
             'items-0-DELETE': False,
             }), '/confirmation/?confirmed=1')
-        self.assertTrue(Order.objects.all()[0].items.get(variation__product=p2).quantity != 42)
+        self.assertTrue(Order.objects.all()[0].items.get(product__product=p2).quantity != 42)
 
         # Test this view works at all
         self.client.get('/order/payment_failure/')

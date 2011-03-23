@@ -69,9 +69,9 @@ class ModelTest(PlataTest):
         self.assertTrue(product.in_sale('CHF'))
         self.assertFalse(product.in_sale('EUR'))
 
-        order.modify_item(product, 5)
-        order.modify_item(product, -4)
-        item = order.modify_item(product, 1)
+        order.modify_item(product.variations.get(), 5)
+        order.modify_item(product.variations.get(), -4)
+        item = order.modify_item(product.variations.get(), 1)
 
         self.assertEqual(order.items.count(), 1)
 
@@ -122,7 +122,7 @@ class ModelTest(PlataTest):
         order.currency = 'EUR'
         order.save()
 
-        item = order.modify_item(product, 2)
+        item = order.modify_item(product.variations.get(), 2)
 
         self.assertEqual(item.unit_price, Decimal('49.90'))
         self.assertEqual(item.currency, order.currency)
@@ -135,10 +135,10 @@ class ModelTest(PlataTest):
         order = self.create_order()
 
         order.currency = 'CHF'
-        i1 = order.modify_item(p1, 3)
+        i1 = order.modify_item(p1.variations.get(), 3)
 
         order.currency = 'EUR'
-        self.assertRaisesWithCode(ValidationError, lambda: order.modify_item(p2, 2),
+        self.assertRaisesWithCode(ValidationError, lambda: order.modify_item(p2.variations.get(), 2),
             code='multiple_currency')
 
         # Validation should still fail
@@ -155,18 +155,18 @@ class ModelTest(PlataTest):
         p2 = self.create_product()
         order = self.create_order()
 
-        order.modify_item(p1, 42)
-        order.modify_item(p2, 42)
+        order.modify_item(p1.variations.get(), 42)
+        order.modify_item(p2.variations.get(), 42)
         self.assertEqual(order.items.count(), 2)
 
-        order.modify_item(p1, -42)
+        order.modify_item(p1.variations.get(), -42)
         self.assertEqual(order.items.count(), 1)
 
-        item = order.modify_item(p1, relative=3)
+        item = order.modify_item(p1.variations.get(), relative=3)
         self.assertEqual(item.quantity, 3)
-        item = order.modify_item(p1, relative=2)
+        item = order.modify_item(p1.variations.get(), relative=2)
         self.assertEqual(item.quantity, 5)
-        item = order.modify_item(p1, absolute=33)
+        item = order.modify_item(p1.variations.get(), absolute=33)
         self.assertEqual(item.quantity, 33)
 
     def test_05_order_status(self):
@@ -179,7 +179,7 @@ class ModelTest(PlataTest):
             ), code='order_empty')
 
         product = self.create_product()
-        order.modify_item(product, 1)
+        order.modify_item(product.variations.get(), 1)
 
         # Should be possible to update order status now
         order.update_status(
@@ -188,7 +188,7 @@ class ModelTest(PlataTest):
             )
 
         # Should not be possible to modify order once checkout process has started
-        self.assertRaisesWithCode(ValidationError, lambda: order.modify_item(product, 2),
+        self.assertRaisesWithCode(ValidationError, lambda: order.modify_item(product.variations.get(), 2),
             code='order_sealed')
 
         self.assertEqual(order.status, Order.CONFIRMED)
@@ -200,8 +200,8 @@ class ModelTest(PlataTest):
         p1 = self.create_product()
         p2 = self.create_product()
 
-        order.modify_item(p1, 3)
-        order.modify_item(p2, 5)
+        order.modify_item(p1.variations.get(), 3)
+        order.modify_item(p2.variations.get(), 5)
 
         discount = Discount.objects.create(
             is_active=False,
@@ -222,8 +222,8 @@ class ModelTest(PlataTest):
         item_price_excl_tax = item_price_incl_tax / tax_factor
 
         order.recalculate_total()
-        item = order.modify_item(p1, relative=0)
-        item2 = order.modify_item(p2, relative=0)
+        item = order.modify_item(p1.variations.get(), relative=0)
+        item2 = order.modify_item(p2.variations.get(), relative=0)
 
         self.assertAlmostEqual(item.unit_price, item_price_incl_tax)
         self.assertAlmostEqual(item.line_item_discount, item_price_incl_tax * 3 * Decimal('0.30'))
@@ -232,8 +232,8 @@ class ModelTest(PlataTest):
 
         plata.settings.PLATA_PRICE_INCLUDES_TAX = False
         order.recalculate_total()
-        item = order.modify_item(p1, 0)
-        item2 = order.modify_item(p2, 0)
+        item = order.modify_item(p1.variations.get(), 0)
+        item2 = order.modify_item(p2.variations.get(), 0)
 
         self.assertAlmostEqual(item.unit_price, item_price_excl_tax)
         self.assertAlmostEqual(item.line_item_discount, item_price_excl_tax * 3 * Decimal('0.30'))
@@ -248,8 +248,8 @@ class ModelTest(PlataTest):
         p1 = self.create_product()
         p2 = self.create_product()
 
-        normal1 = order.modify_item(p1, 3)
-        normal2 = order.modify_item(p2, 5)
+        normal1 = order.modify_item(p1.variations.get(), 3)
+        normal2 = order.modify_item(p2.variations.get(), 5)
 
         order.recalculate_total()
         self.assertAlmostEqual(order.total, Decimal('639.20'))
@@ -265,8 +265,8 @@ class ModelTest(PlataTest):
         order.add_discount(discount)
         order.recalculate_total()
 
-        discounted1 = order.modify_item(p1, 0)
-        discounted2 = order.modify_item(p2, 0)
+        discounted1 = order.modify_item(p1.variations.get(), 0)
+        discounted2 = order.modify_item(p2.variations.get(), 0)
 
         tax_factor = Decimal('1.076')
         item_price_incl_tax = Decimal('79.90')
@@ -289,8 +289,8 @@ class ModelTest(PlataTest):
 
         plata.settings.PLATA_PRICE_INCLUDES_TAX = False
         order.recalculate_total()
-        discounted1 = order.modify_item(p1, 0)
-        discounted2 = order.modify_item(p2, 0)
+        discounted1 = order.modify_item(p1.variations.get(), 0)
+        discounted2 = order.modify_item(p2.variations.get(), 0)
 
         self.assertAlmostEqual(order.total, Decimal('639.20') - Decimal('50.00'))
 
@@ -306,7 +306,7 @@ class ModelTest(PlataTest):
         order = self.create_order()
         product = self.create_product()
 
-        order.modify_item(product, 10)
+        order.modify_item(product.variations.get(), 10)
         order.recalculate_total()
 
         payment = order.payments.model(
@@ -374,8 +374,8 @@ class ModelTest(PlataTest):
         d.save()
 
         order = self.create_order()
-        order.modify_item(p1, 3)
-        order.modify_item(p2, 2)
+        order.modify_item(p1.variations.get(), 3)
+        order.modify_item(p2.variations.get(), 2)
         order.add_discount(d)
         order.recalculate_total()
 
@@ -416,7 +416,7 @@ class ModelTest(PlataTest):
         """Test behavior of orders with more than one discount"""
         order = self.create_order()
         product = self.create_product()
-        order.modify_item(product, 3)
+        order.modify_item(product.variations.get(), 3)
         order.recalculate_total()
 
         self.assertAlmostEqual(order.total, Decimal('239.70'))
@@ -475,8 +475,8 @@ class ModelTest(PlataTest):
             )
         p1.categories.add(c)
 
-        order.modify_item(p1, 1)
-        order.modify_item(p2, 1)
+        order.modify_item(p1.variations.get(), 1)
+        order.modify_item(p2.variations.get(), 1)
 
         self.assertAlmostEqual(order.total, Decimal('440.00'))
 
@@ -520,8 +520,8 @@ class ModelTest(PlataTest):
             tax_class=self.tax_class,
             )
 
-        order.modify_item(p1, 1)
-        order.modify_item(p2, 1)
+        order.modify_item(p1.variations.get(), 1)
+        order.modify_item(p2.variations.get(), 1)
 
         c = Category.objects.create(
             name='category',
@@ -560,8 +560,8 @@ class ModelTest(PlataTest):
             tax_class=self.tax_class,
             )
 
-        order.modify_item(p, 952)
-        order.modify_item(p, 120)
+        order.modify_item(p.variations.get(), 952)
+        order.modify_item(p.variations.get(), 120)
 
         discount = Discount.objects.create(
             type=Discount.AMOUNT_EXCL_TAX,
@@ -586,7 +586,7 @@ class ModelTest(PlataTest):
         order = self.create_order()
         product = self.create_product()
 
-        order.modify_item(product, 1)
+        order.modify_item(product.variations.get(), 1)
         self.assertAlmostEqual(order.total, Decimal('79.90'))
 
         order.add_discount(Discount.objects.create(
@@ -608,7 +608,7 @@ class ModelTest(PlataTest):
         order = self.create_order()
         product = self.create_product()
 
-        order.modify_item(product, 3)
+        order.modify_item(product.variations.get(), 3)
         self.assertAlmostEqual(order.balance_remaining, Decimal('79.90') * 3)
 
         payment = order.payments.create(
@@ -711,8 +711,8 @@ class ModelTest(PlataTest):
         order.currency = 'CAD'
         order.save()
 
-        normal1 = order.modify_item(p1, 3)
-        normal2 = order.modify_item(p2, 5)
+        normal1 = order.modify_item(p1.variations.get(), 3)
+        normal2 = order.modify_item(p2.variations.get(), 5)
 
         order.recalculate_total()
         #self.assertAlmostEqual(order.total, Decimal('598.84'))
@@ -751,8 +751,8 @@ class ModelTest(PlataTest):
         p1 = self.create_product()
         p2 = self.create_product()
         order = self.create_order()
-        normal1 = order.modify_item(p1, 3, recalculate=False)
-        normal2 = order.modify_item(p2, 5)
+        normal1 = order.modify_item(p1.variations.get(), 3, recalculate=False)
+        normal2 = order.modify_item(p2.variations.get(), 5)
 
         self.assertAlmostEqual(order.total, Decimal('639.20') + 8)
 
@@ -809,7 +809,7 @@ class ModelTest(PlataTest):
             tax_class=self.tax_class_germany,
             )
 
-        order.modify_item(p1, absolute=1)
+        order.modify_item(p1.variations.get(), absolute=1)
 
         self.assertEqual(order.total, Decimal('84.01'))
 
@@ -822,7 +822,7 @@ class ModelTest(PlataTest):
             tax_class=self.tax_class_germany,
             )
 
-        order.modify_item(p1, absolute=1)
+        order.modify_item(p1.variations.get(), absolute=1)
 
         self.assertEqual(order.total, Decimal('84.00'))
 
@@ -835,7 +835,7 @@ class ModelTest(PlataTest):
             tax_class=self.tax_class_germany,
             )
 
-        order.modify_item(p1, absolute=1)
+        order.modify_item(p1.variations.get(), absolute=1)
 
         self.assertEqual(order.total, Decimal('84.01'))
 
@@ -859,8 +859,8 @@ class ModelTest(PlataTest):
 
         order = self.create_order()
 
-        order.modify_item(p1, 5)
-        order.modify_item(p2, 5)
+        order.modify_item(p1.variations.get(), 5)
+        order.modify_item(p2.variations.get(), 5)
 
         self.assertEqual(order.items.count(), 2)
         self.assertAlmostEqual(order.total, Decimal('707.00'))
@@ -919,7 +919,7 @@ class ModelTest(PlataTest):
         discount.save()
 
         order = self.create_order()
-        order.modify_item(p1, 3)
+        order.modify_item(p1.variations.get(), 3)
 
         self.assertRaises(ValidationError, lambda: order.add_discount(discount))
 
