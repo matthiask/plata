@@ -23,7 +23,7 @@
     </tr>
 {% for orderitemform in orderitemformset.forms %}
     <tr>
-        <td>{{ orderitemform.instance.variation }}</td>
+        <td>{{ orderitemform.instance.product }}</td>
         <td>{{ orderitemform.instance.unit_price|floatformat:2 }}</td>
         <td>
             {{ orderitemform.id }}

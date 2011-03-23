@@ -329,7 +329,7 @@ def validate_order_currencies(order):
 
 def validate_order_stock_available(order):
     """Check whether enough stock is available for all selected products"""
-    for item in order.items.all().select_related('variation'):
+    for item in order.items.all().select_related('product'):
         if item.quantity > item.product.available(exclude_order=order):
             raise ValidationError(_('Not enough stock available for %s.') % item.product,
                 code='insufficient_stock')
