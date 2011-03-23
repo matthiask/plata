@@ -1,0 +1,65 @@
+.. _products:
+
+========
+Products
+========
+
+
+This document is meant as a guide to using and extending the built-in
+product model.
+
+The product model itself only contains the bare minimum needed to get
+up and running. A name, a description, a stock keeping unit and a few
+flags, that's it.
+
+
+Product prices
+==============
+
+Plata comes with a flexible product price model allowing you to store
+several prices for a product using different time periods, currencies,
+tax classes etc.
+
+If it is already known that a product will change its price in a few
+days or weeks, you don't have to stay up all night just to make this
+change - just add a new product price and set the validity period so
+that the price isn't activated until the day you specify.
+
+
+Product variations
+==================
+
+All products have at least one ``ProductVariation``. While a product
+could be "T-Shirt XY", product variations exist for each available
+combination of color and size.
+
+Products without option groups still have exactly one product
+variation. The variation is used to track items in stock and is put
+in carts.
+
+
+Categories
+==========
+
+Categories serve two purposes: They are used to group products in
+related groups, internal categories are used to logically group
+products f.e. for the discount module or for whatever idea the shop
+managers have.
+
+
+Extending the product model
+===========================
+
+Extending is easily doable through subclassing. Plata does not offer
+any helpers for creating polymorphic models and resolving subclasses;
+other applications such as django_polymorphic_ should be used for this
+purpose.
+
+Plata comes with a sample producer extension which adds a producer model
+and a foreign key to every product, and with a sample FeinCMS_-enabled
+product subclass which allows the administrator to use FeinCMS_ content
+types to assemble the product description instead of a boring text field
+or a single rich text area.
+
+.. _django_polymorphic: https://github.com/bconstantin/django_polymorphic
+.. _FeinCMS: http://www.feinheit.ch/labs/feincms-django-cms/

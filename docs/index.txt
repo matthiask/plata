@@ -23,6 +23,7 @@ Contents
    :maxdepth: 3
 
    installation
+   products
    payment
    settings
    taxes_and_discounts
