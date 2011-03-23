@@ -41,7 +41,12 @@ class ProductList(models.Model):
     """
     FeinCMS content type showing a list of products
 
-    Does not depend on the FeinCMS-based product model.
+    Does not depend on the FeinCMS-based product model. Specify the product
+    queryset you want to use with the ``queryset`` argument to
+    ``create_content_type``::
+
+        Page.create_content_type(ProductList,
+            queryset=Product.objects.active())
     """
 
     only_featured = models.BooleanField(_('featured only'))
@@ -56,9 +61,12 @@ class ProductList(models.Model):
         verbose_name = _('product list')
         verbose_name_plural = _('product lists')
 
+    @classmethod
+    def initialize_type(self, queryset):
+        self.queryset = queryset
+
     def render(self, request, context, **kwargs):
-        shop = plata.shop_instance()
-        products = shop.product_model.objects.active()
+        products = self.queryset._clone()
 
         if self.only_featured:
             products = products.filter(is_featured=True)
@@ -68,6 +76,7 @@ class ProductList(models.Model):
             products = products.filter(categories__in=categories)
 
         if self.only_sale:
+            shop = plata.shop_instance()
             currency = shop.default_currency(request=request)
             products = [p for p in products if p.in_sale(currency)]
 
