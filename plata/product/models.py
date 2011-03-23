@@ -129,7 +129,7 @@ class ProductManager(models.Manager):
     def also_bought(self, product):
         return self.bestsellers(
             self.exclude(id=product.id).exclude(variations__orderitem__isnull=True
-                ).filter(variations__orderitem__order__items__variation__product=product))
+                ).filter(variations__orderitem__order__items__product__product=product))
 
 
 class Product(models.Model):
