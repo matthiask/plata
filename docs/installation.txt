@@ -114,14 +114,12 @@ Generic views using ``plata.shop_instance()`` could look like this::
     from django.shortcuts import get_object_or_404
     from django.views.generic import list_detail
 
-    import plata
+    from plata.product.models import Product
 
 
     def product_list(request):
-        shop = plata.shop_instance()
-
         return list_detail.object_list(request,
-            queryset=shop.product_model.objects.active(),
+            queryset=Product.objects.active(),
             paginate_by=10,
             template_name='product/product_list.html',
             )
@@ -129,10 +127,9 @@ Generic views using ``plata.shop_instance()`` could look like this::
 
     def product_detail(request, object_id):
         shop = plata.shop_instance()
+        product = get_object_or_404(Product.objects.active(), pk=object_id)
 
-        return shop.product_detail(request,
-            get_object_or_404(shop.product_model.objects.active(), pk=object_id),
-            )
+        return shop.product_detail(request, product)
 
 ``shop.product_detail`` behaves similar to Django's generic views. It handles
 adding articles to the cart.
