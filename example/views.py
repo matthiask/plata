@@ -1,3 +1,5 @@
+import logging
+
 from django import forms
 from django.contrib import messages
 from django.core.exceptions import ValidationError
@@ -14,6 +16,7 @@ from plata.shop.models import Contact, Order, Discount
 
 
 shop = Shop(CMSProduct, Contact, Order, Discount)
+logger = logging.getLogger('example.views')
 
 
 def product_list(request):
