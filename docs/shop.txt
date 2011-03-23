@@ -1,0 +1,23 @@
+.. _shop:
+
+=====================
+The core shop classes
+=====================
+
+
+Order models
+============
+
+The order models in Plata serve two purposes: They are used to store
+shopping carts and finished orders.
+
+Orders and order items yadda yadda
+
+
+
+The Shop class
+==============
+
+Plata's shop processing logic is contained in this class. The checkout
+process and all cart modifications are controlled through the shop
+object.
