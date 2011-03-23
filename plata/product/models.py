@@ -1,3 +1,17 @@
+"""
+This module contains the core classes needed to work with products in
+Plata. The core classes should be used directly and not replaced even
+if you provide your own product model implementation.
+
+The core models are:
+
+* ``TaxClass``
+* ``ProductPrice``
+
+(FIXME: They aren't enough abstract yet. Product, ProductVariation,
+ProductImage, OptionGroup and Option should be moved somewhere else.)
+"""
+
 from datetime import date, datetime
 
 from django.db import models
@@ -14,6 +28,8 @@ from plata.fields import CurrencyField
 class TaxClass(models.Model):
     """
     Tax class, storing a tax rate
+
+    TODO informational / advisory currency or country fields?
     """
 
     name = models.CharField(_('name'), max_length=100)
@@ -78,6 +94,8 @@ class Category(models.Model):
 class OptionGroup(models.Model):
     """
     Option group, f.e. size or color
+
+    TODO What about user visible vs machine readable names?
     """
 
     name = models.CharField(_('name'), max_length=100)
@@ -116,6 +134,7 @@ class Option(models.Model):
 
 
 class ProductManager(models.Manager):
+    # TODO which of these methods are guaranteed to exist / required?
     def active(self):
         return self.filter(is_active=True)
 
@@ -302,6 +321,7 @@ class ProductVariation(models.Model):
         return self.orderitem_set.count() == 0
 
     def available(self, exclude_order=None):
+        # FIXME move this method into a stock handling extension
         if exclude_order:
             return self.stock_transactions.items_in_stock(self,
                 query=Q(order__isnull=True) | ~Q(order=exclude_order))
@@ -332,6 +352,8 @@ class ProductPrice(models.Model):
     Prices should not be changed or deleted but replaced by more recent prices.
     (Deleting old prices does not hurt, but the price history cannot be
     reconstructed anymore if you'd need it.)
+
+    TODO rename this to Price and move to plata.shop.models?
     """
 
     product = models.ForeignKey(Product, verbose_name=_('product'),
