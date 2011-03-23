@@ -39,9 +39,10 @@ def shop_instance():
     returns the centrally instantiated :class:`plata.shop.views.Shop` object.
     """
 
-    # Load default URL patterns to ensure that the shop
-    # object has been created
-    from django.core.urlresolvers import get_resolver
-    get_resolver(None)._populate()
+    if not _shop_instance:
+        # Load default URL patterns to ensure that the shop
+        # object has been created
+        from django.core.urlresolvers import get_resolver
+        get_resolver(None)._populate()
 
     return _shop_instance
