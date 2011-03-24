@@ -574,26 +574,5 @@
       "is_sale": false,
       "tax_included": true
     }
-  },
-  {
-    "pk": 1,
-    "model": "product.cmsproduct",
-    "fields": {
-      "option_groups": [],
-      "categories": []
-    }
-  },
-  {
-    "pk": 2,
-    "model": "product.cmsproduct",
-    "fields": {
-      "option_groups": [
-        1,
-        2
-      ],
-      "categories": [
-        1
-      ]
-    }
   }
 ]
