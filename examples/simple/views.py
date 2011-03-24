@@ -27,7 +27,8 @@ def product_list(request):
 
 
 class OrderItemForm(forms.Form):
-    quantity = forms.IntegerField(label=_('quantity'), initial=1)
+    quantity = forms.IntegerField(label=_('quantity'), initial=1,
+        min_value=1, max_value=100)
 
     def __init__(self, *args, **kwargs):
         self.order = kwargs.pop('order', None)
