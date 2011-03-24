@@ -5,7 +5,7 @@ from django.db.models import Sum, Q, signals
 from django.utils.translation import ugettext_lazy as _, ugettext
 
 import plata
-from plata.product.models import ProductVariation
+from plata.product.modules.options.models import ProductVariation # FIXME no hardcoded imports
 from plata.shop.models import Order, OrderPayment
 
 

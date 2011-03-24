@@ -5,7 +5,7 @@ from django.db.models import Sum
 from django.utils.text import capfirst
 from django.utils.translation import ugettext as _
 
-from plata.product.models import ProductVariation
+from plata.product.modules.options.models import ProductVariation # FIXME
 from plata.product.stock.models import Period, StockTransaction
 
 

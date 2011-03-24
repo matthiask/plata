@@ -5,7 +5,7 @@ from feincms.admin.item_editor import ItemEditor, FEINCMS_CONTENT_FIELDSET
 
 from plata.product.admin import ProductAdmin, ProductVariationInline,\
     ProductPriceInline, ProductImageInline, ProductForm
-from plata.product.models import Product
+from plata.product.modules.options.models import Product
 from . import models
 
 

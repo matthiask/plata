@@ -12,8 +12,9 @@ from pdfdocument.document import PDFDocument
 import plata
 from plata.contact.models import Contact
 from plata.discount.models import Discount
-from plata.product.models import TaxClass, Product, ProductVariation, Category,\
-    ProductPrice, OptionGroup, Option
+from plata.product.models import TaxClass, ProductPrice
+from plata.product.modules.options.models import Product, \
+    ProductVariation, OptionGroup, Option, Category # FIXME import paths
 from plata.product.stock.models import Period, StockTransaction
 import plata.reporting.order
 from plata.shop.models import Order, OrderStatus, OrderPayment

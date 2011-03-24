@@ -4,8 +4,6 @@ from django.forms.models import BaseInlineFormSet
 from django.utils.translation import ugettext_lazy as _
 
 from . import models
-from plata.product.modules.options.models import Product, \
-    ProductVariation, ProductImage, Option, OptionGroup
 
 
 class ProductPriceInline(admin.TabularInline):
@@ -13,7 +11,7 @@ class ProductPriceInline(admin.TabularInline):
     extra = 0
 
 class ProductImageInline(admin.TabularInline):
-    model = ProductImage
+    model = models.ProductImage
     extra = 0
 
 
@@ -22,7 +20,7 @@ class ProductForm(forms.ModelForm):
     create_variations = forms.BooleanField(label=_('Create all variations'), required=False)
 
     class Meta:
-        model = Product
+        model = models.Product
 
     def save(self, *args, **kwargs):
         instance = super(ProductForm, self).save(*args, **kwargs)
@@ -99,7 +97,7 @@ class ProductVariationForm(forms.ModelForm):
             else:
                 options_errors.append(
                     _('You need to select the following groups before this variation can be created: %s') %\
-                    u', '.join(unicode(g) for g in OptionGroup.objects.filter(id__in=groups_on_variation)))
+                    u', '.join(unicode(g) for g in models.OptionGroup.objects.filter(id__in=groups_on_variation)))
 
         if options_errors:
             self._errors['options'] = self.error_class(options_errors)
@@ -109,14 +107,14 @@ class ProductVariationForm(forms.ModelForm):
 
 
 class ProductVariationInline(admin.TabularInline):
-    model = ProductVariation
+    model = models.ProductVariation
     form = ProductVariationForm
     formset = ProductVariationFormSet
     extra = 0
     readonly_fields = ('items_in_stock',)
 
 class OptionInline(admin.TabularInline):
-    model = Option
+    model = models.Option
 
 
 class ProductAdmin(admin.ModelAdmin):
@@ -157,12 +155,12 @@ admin.site.register(models.Category,
     search_fields=('name', 'description'),
     )
 
-admin.site.register(OptionGroup,
+admin.site.register(models.OptionGroup,
     inlines=[OptionInline],
     list_display=('name',),
     )
 
-admin.site.register(Product, ProductAdmin)
+admin.site.register(models.Product, ProductAdmin)
 
 
 class ReadonlyModelAdmin(admin.ModelAdmin):
@@ -182,7 +180,7 @@ admin.site.register(models.ProductPrice,
     can_delete=False,
     )
 
-admin.site.register(ProductVariation,
+admin.site.register(models.ProductVariation,
     admin_class=ReadonlyModelAdmin,
     list_display=('product', 'is_active', 'sku', 'items_in_stock', 'ordering'),
     list_filter=('is_active',),

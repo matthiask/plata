@@ -13,7 +13,8 @@ from django.utils.translation import ugettext_lazy as _
 
 import plata
 from plata.fields import CurrencyField
-from plata.product.models import Category, Product, ProductVariation, TaxClass
+from plata.product.models import Category, TaxClass
+from plata.product.modules.options.models import Product, ProductVariation # FIXME no hardcoded paths
 from plata.utils import JSONFieldDescriptor
 
 

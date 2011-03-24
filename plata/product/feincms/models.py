@@ -2,7 +2,7 @@ from django.utils.translation import get_language, ugettext_lazy as _
 
 from feincms.models import Base
 
-from plata.product.models import Product, ProductManager
+from plata.product.modules.options.models import Product, ProductManager
 
 
 class CMSProduct(Product, Base):
