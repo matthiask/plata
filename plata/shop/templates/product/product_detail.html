@@ -9,11 +9,6 @@
 
 {{ object.description|linebreaks }}
 
-{% if object.cmsproduct %}
-{% load feincms_tags %}
-{% feincms_render_region object.cmsproduct "main" request %}
-{% endif %}
-
 <div class="prices">
     {% for currency, prices in object.get_prices %}
         {% if prices.sale %}
