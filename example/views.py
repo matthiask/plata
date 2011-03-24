@@ -10,9 +10,10 @@ from django.utils.translation import ugettext as _
 from django.views.generic import  list_detail
 
 import plata
+from plata.discount.models import Discount
 from plata.product.feincms.models import CMSProduct
 from plata.shop.views import Shop
-from plata.shop.models import Contact, Order, Discount
+from plata.shop.models import Contact, Order
 
 
 shop = Shop(Contact, Order, Discount)

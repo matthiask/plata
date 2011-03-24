@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
-from . import models
+from plata.discount.models import AppliedDiscount
+from plata.shop import models
 
 
 class OrderItemInline(admin.TabularInline):
@@ -9,7 +10,7 @@ class OrderItemInline(admin.TabularInline):
     raw_id_fields = ('product',)
 
 class AppliedDiscountInline(admin.TabularInline):
-    model = models.AppliedDiscount
+    model = AppliedDiscount
 
 class OrderStatusInline(admin.TabularInline):
     model = models.OrderStatus

@@ -244,3 +244,25 @@ class Discount(DiscountBase):
             raise ValidationError(messages)
 
         return True
+
+
+class AppliedDiscount(DiscountBase):
+    """
+    Stores an applied discount, so that deletion of discounts does not
+    affect orders.
+    """
+
+    order = models.ForeignKey(plata.settings.PLATA_SHOP_ORDER, related_name='applied_discounts',
+        verbose_name=_('order'))
+    code = models.CharField(_('code'), max_length=30) # We could make this a ForeignKey
+                                                      # to Discount.code, but we do not
+                                                      # want deletions to cascade to this
+                                                      # table.
+    remaining = models.DecimalField(_('remaining'),
+        max_digits=18, decimal_places=10, default=0,
+        help_text=_('Discount amount excl. tax remaining after discount has been applied.'))
+
+    class Meta:
+        ordering = ['type', 'name']
+        verbose_name = _('applied discount')
+        verbose_name_plural = _('applied discounts')
