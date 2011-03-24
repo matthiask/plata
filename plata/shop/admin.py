@@ -84,3 +84,8 @@ class OrderPaymentAdmin(admin.ModelAdmin):
 
 
 admin.site.register(models.OrderPayment, OrderPaymentAdmin)
+
+
+admin.site.register(models.TaxClass,
+    list_display=('name', 'rate', 'priority'),
+    )

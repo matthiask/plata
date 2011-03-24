@@ -13,11 +13,10 @@ from django.test import TestCase
 import plata
 from plata.contact.models import Contact
 from plata.discount.models import Discount
-from plata.product.models import TaxClass, ProductPrice
 from plata.product.modules.options.models import Product, \
     ProductVariation, OptionGroup, Option # FIXME import paths
 from plata.product.stock.models import Period, StockTransaction
-from plata.shop.models import Order, OrderStatus, OrderPayment
+from plata.shop.models import Order, OrderPayment
 
 from plata.tests.base import PlataTest, get_request
 

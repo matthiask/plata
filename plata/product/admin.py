@@ -5,11 +5,11 @@ from django.utils.translation import ugettext_lazy as _
 
 from . import models
 from plata.product.modules.options.models import Product, \
-    ProductVariation, ProductImage, Option, OptionGroup
+    ProductVariation, ProductImage, Option, OptionGroup, ProductPrice
 
 
 class ProductPriceInline(admin.TabularInline):
-    model = models.ProductPrice
+    model = ProductPrice
     extra = 0
 
 class ProductImageInline(admin.TabularInline):
@@ -145,10 +145,6 @@ class ProductAdmin(admin.ModelAdmin):
                 form.instance.create_variations()
 
 
-admin.site.register(models.TaxClass,
-    list_display=('name', 'rate', 'priority'),
-    )
-
 admin.site.register(models.Category,
     list_display=('is_active', 'is_internal', '__unicode__', 'ordering'),
     list_display_links=('__unicode__',),
@@ -171,7 +167,7 @@ class ReadonlyModelAdmin(admin.ModelAdmin):
         return False
 
 # All fields are read only; these models are only used for raw_id_fields support
-admin.site.register(models.ProductPrice,
+admin.site.register(ProductPrice,
     admin_class=ReadonlyModelAdmin,
     list_display=('__unicode__', 'product', 'currency', '_unit_price', 'tax_included',
         'tax_class', 'is_active', 'valid_from', 'valid_until', 'is_sale'),

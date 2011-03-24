@@ -1,15 +1,5 @@
 """
-This module contains the core classes needed to work with products in
-Plata. The core classes should be used directly and not replaced even
-if you provide your own product model implementation.
-
-The core models are:
-
-* ``TaxClass``
-* ``ProductPrice``
-
-(FIXME: They aren't enough abstract yet. Product, ProductVariation,
-ProductImage, OptionGroup and Option should be moved somewhere else.)
+This module contains the original product model of Plata
 """
 
 from datetime import date, datetime
@@ -23,7 +13,21 @@ from django.utils.translation import ugettext_lazy as _
 import plata
 from plata.compat import product as itertools_product
 from plata.fields import CurrencyField
-from plata.product.models import TaxClass, ProductPrice
+from plata.shop.models import Price, PriceManager
+
+
+class ProductPrice(Price):
+    product = models.ForeignKey('product.Product', verbose_name=_('product'),
+        related_name='prices')
+
+    class Meta:
+        app_label = 'product'
+        get_latest_by = 'id'
+        ordering = ['-valid_from']
+        verbose_name = _('price')
+        verbose_name_plural = _('prices')
+
+    objects = PriceManager()
 
 
 class CategoryManager(models.Manager):
