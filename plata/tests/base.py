@@ -7,8 +7,8 @@ from django.contrib.auth.models import AnonymousUser, User
 
 import plata
 from plata.contact.models import Contact
-from plata.discount import configs
 from plata.product.feincms.models import CMSProduct
+from plata.product.modules.options.discount import explicit_products, only_categories
 from plata.product.modules.options.models import Category
 from plata.product.stock.models import StockTransaction
 from plata.reporting.notifications import EmailHandler
@@ -19,8 +19,8 @@ handler = EmailHandler.register()
 
 
 # Add discount config options
-configs.only_categories(Category)
-configs.explicit_products(CMSProduct)
+only_categories(Category)
+explicit_products(CMSProduct)
 
 class Empty(object):
     pass
