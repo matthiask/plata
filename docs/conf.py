@@ -20,7 +20,8 @@ sys.modules['Image'] = PIL.Image
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.append(os.path.abspath('.'))
 sys.path.append(os.path.abspath('..'))
-os.environ['DJANGO_SETTINGS_MODULE'] = 'example.settings'
+sys.path.append(os.path.abspath('../examples/'))
+os.environ['DJANGO_SETTINGS_MODULE'] = 'options.settings'
 
 # -- General configuration -----------------------------------------------------
 

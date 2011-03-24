@@ -82,7 +82,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'example.urls'
+ROOT_URLCONF = 'options.urls'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -112,7 +112,7 @@ INSTALLED_APPS = (
 
     'feincms',
     'feincms.module.medialibrary',
-    'example',
+    'options',
 )
 
 # PLATA settings
@@ -135,7 +135,7 @@ PLATA_REPORTING_ADDRESSLINE = 'Example Corp. - 3. Example Street - 1234 Example'
 
 # PLATA settings
 
-TEST_RUNNER = 'example.test_utils.test_runner_with_coverage'
+TEST_RUNNER = 'options.test_utils.test_runner_with_coverage'
 COVERAGE_MODULES = ['plata']
 
 import logging, sys
