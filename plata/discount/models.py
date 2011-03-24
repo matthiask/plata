@@ -1,12 +1,10 @@
-from datetime import date, datetime
+from datetime import date
 from decimal import Decimal
 import random
-import string
 
 from django import forms
 from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.core.exceptions import ValidationError
-from django.core.urlresolvers import get_callable
 from django.db import models
 from django.db.models import ObjectDoesNotExist, Q
 from django.utils.translation import ugettext_lazy as _
@@ -14,7 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 import plata
 from plata.fields import CurrencyField
 from plata.product.models import Category
-from plata.product.modules.options.models import Product, ProductVariation # FIXME no hardcoded paths
+from plata.product.modules.options.models import Product # FIXME no hardcoded paths
 from plata.shop.models import TaxClass
 from plata.utils import JSONFieldDescriptor
 
@@ -279,6 +277,10 @@ class Discount(DiscountBase):
 
 
 class AppliedDiscountManager(models.Manager):
+    """
+    Default manager for the ``AppliedDiscount`` model
+    """
+
     def remaining(self, order=None):
         """
         Calculate remaining discount excl. tax

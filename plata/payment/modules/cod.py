@@ -7,7 +7,6 @@ Automatically completes every order passed.
 from datetime import datetime
 import logging
 
-from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 

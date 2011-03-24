@@ -1,23 +1,15 @@
-import os
-
-from datetime import date, datetime
 from decimal import Decimal
 
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
 from django.forms.models import model_to_dict
-from django.test import TestCase
 
-import plata
-from plata.contact.models import Contact
 from plata.discount.models import Discount
 from plata.product.feincms.models import CMSProduct
 from plata.product.modules.options.models import Product, \
     ProductVariation, OptionGroup, Option, ProductPrice # FIXME import paths
-from plata.product.stock.models import Period, StockTransaction
-from plata.shop.models import TaxClass, Order, OrderStatus, OrderPayment
+from plata.shop.models import TaxClass
 
-from plata.tests.base import PlataTest, get_request
+from plata.tests.base import PlataTest
 
 
 class AdminTest(PlataTest):
@@ -40,7 +32,7 @@ class AdminTest(PlataTest):
         """Test whether the administration interface is well behaved"""
         self.login()
 
-        tax_class = TaxClass.objects.create(
+        TaxClass.objects.create(
             name='Standard Swiss Tax Rate',
             rate=Decimal('7.60'),
             )

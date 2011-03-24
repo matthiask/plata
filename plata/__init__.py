@@ -26,12 +26,12 @@ class LazySettings(object):
 settings = LazySettings()
 
 
-_shop_instance = None
+shop_instance_cache = None
 def register(instance):
     logger.debug('Registering shop instance: %s' % instance)
 
-    global _shop_instance
-    _shop_instance = instance
+    global shop_instance_cache
+    shop_instance_cache = instance
 
 def shop_instance():
     """
@@ -39,13 +39,13 @@ def shop_instance():
     returns the centrally instantiated :class:`plata.shop.views.Shop` object.
     """
 
-    if not _shop_instance:
+    if not shop_instance_cache:
         # Load default URL patterns to ensure that the shop
         # object has been created
         from django.core.urlresolvers import get_resolver
         get_resolver(None)._populate()
 
-    return _shop_instance
+    return shop_instance_cache
 
 def product_model():
     from django.db.models import loading

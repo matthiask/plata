@@ -1,4 +1,3 @@
-from decimal import Decimal
 import StringIO
 
 from django.contrib.admin.views.decorators import staff_member_required

@@ -9,11 +9,9 @@ import plata
 from plata.contact.models import Contact
 
 from plata.product.feincms.models import CMSProduct
-from plata.product.modules.options.models import Product, \
-    ProductVariation, OptionGroup, Option, ProductPrice # FIXME import paths
-from plata.product.stock.models import Period, StockTransaction
+from plata.product.stock.models import StockTransaction
 from plata.reporting.notifications import EmailHandler
-from plata.shop.models import TaxClass, Order, OrderStatus, OrderPayment
+from plata.shop.models import TaxClass, Order
 
 
 handler = EmailHandler.register()

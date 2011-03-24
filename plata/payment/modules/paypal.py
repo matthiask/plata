@@ -13,12 +13,10 @@ from datetime import datetime
 from decimal import Decimal
 import logging
 import urllib
-import sys, traceback
 
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseForbidden,\
-    HttpResponseServerError
-from django.shortcuts import get_object_or_404, redirect, render_to_response
+from django.http import HttpResponse, HttpResponseForbidden
+from django.shortcuts import redirect, render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 

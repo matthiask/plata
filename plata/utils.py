@@ -1,4 +1,3 @@
-from decimal import Decimal
 import simplejson
 
 from django.core.serializers.json import DjangoJSONEncoder

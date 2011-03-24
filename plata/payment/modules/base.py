@@ -1,8 +1,5 @@
-from datetime import datetime
 import logging
 
-from django.http import HttpResponse
-from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 
 import plata
@@ -39,7 +36,7 @@ class ProcessorBase(object):
         # Please note that these patterns are added with global scope;
         # You should define URLs which do not clash with other parts
         # of the site yourself.
-        from django.conf.urls.defaults import patterns, url
+        from django.conf.urls.defaults import patterns
         return patterns('')
 
     def process_order_confirmed(self, request, order):

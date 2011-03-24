@@ -4,8 +4,10 @@ from django.contrib.sites.models import Site
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
+from pdfdocument.document import PDFDocument
+
 import plata
-from plata.reporting.order import PDFDocument, invoice_pdf, packing_slip_pdf
+from plata.reporting.order import invoice_pdf, packing_slip_pdf
 from plata.shop import signals
 
 

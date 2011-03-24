@@ -2,8 +2,6 @@
 This module contains the original product model of Plata
 """
 
-from datetime import date, datetime
-
 from django.db import models
 from django.db.models import Q, Count, signals
 
@@ -12,7 +10,6 @@ from django.utils.translation import ugettext_lazy as _
 
 import plata
 from plata.compat import product as itertools_product
-from plata.fields import CurrencyField
 from plata.shop.models import Price, PriceManager
 
 

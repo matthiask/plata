@@ -1,4 +1,3 @@
-from decimal import Decimal
 from functools import wraps
 import logging
 
@@ -8,11 +7,11 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import get_callable, reverse
-from django.forms.models import inlineformset_factory, modelform_factory
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404, redirect, render_to_response
+from django.forms.models import inlineformset_factory
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect, render_to_response
 from django.template import RequestContext
-from django.utils.translation import ugettext as _, ungettext
+from django.utils.translation import ugettext as _
 
 import plata
 from plata.shop import signals

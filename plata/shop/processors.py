@@ -1,7 +1,5 @@
 from decimal import Decimal, ROUND_HALF_UP
 
-from django.core.urlresolvers import get_callable
-
 import plata
 
 

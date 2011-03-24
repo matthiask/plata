@@ -4,9 +4,8 @@ from django.core.urlresolvers import get_callable
 from django.utils.text import capfirst
 from django.utils.translation import ugettext as _
 
-from pdfdocument.document import PDFDocument, cm, mm
-from pdfdocument.elements import create_stationery_fn, ExampleStationery
-from pdfdocument.utils import pdf_response
+from pdfdocument.document import cm, mm
+from pdfdocument.elements import create_stationery_fn
 
 import plata
 

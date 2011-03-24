@@ -1,20 +1,18 @@
 import os
 import re
 
-from datetime import date, datetime, timedelta
-from decimal import Decimal
+from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core import mail
 from django.core.exceptions import ValidationError
-from django.test import TestCase
 
 import plata
 from plata.contact.models import Contact
 from plata.discount.models import Discount
-from plata.product.modules.options.models import Product, \
-    ProductVariation, OptionGroup, Option # FIXME import paths
+from plata.product.modules.options.models import \
+    ProductVariation, OptionGroup # FIXME import paths
 from plata.product.stock.models import Period, StockTransaction
 from plata.shop.models import Order, OrderPayment
 
