@@ -4,7 +4,7 @@ from django.db import models
 from django.db.models import Sum, signals
 from django.utils.translation import ugettext_lazy as _
 
-from plata.product.modules.options.models import Product
+from plata.product.modules.options.models import Product # FIXME
 
 
 class ProducerManager(models.Manager):
