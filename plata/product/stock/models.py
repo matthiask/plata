@@ -107,7 +107,7 @@ class StockTransactionManager(models.Manager):
 
         return count
 
-    def bulk_create(self, order, type, negative=False, **kwargs):
+    def bulk_create(self, order, type, negative, **kwargs):
         """
         Create transactions in bulk for every order item
 
