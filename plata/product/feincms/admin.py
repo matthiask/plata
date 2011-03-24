@@ -3,9 +3,9 @@ from django.utils.translation import ugettext_lazy as _
 
 from feincms.admin.item_editor import ItemEditor, FEINCMS_CONTENT_FIELDSET
 
-from plata.product.admin import ProductAdmin, ProductVariationInline,\
-    ProductPriceInline, ProductImageInline, ProductForm
-from plata.product.modules.options.models import Product
+from plata.product.modules.options.admin import ProductAdmin, ProductVariationInline,\
+    ProductPriceInline, ProductImageInline, ProductForm # FIXME hardcoded
+from plata.product.modules.options.models import Product # FIXME hardcoded
 from . import models
 
 

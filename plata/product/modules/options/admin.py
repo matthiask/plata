@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib import admin
 from django.forms.models import BaseInlineFormSet
 from django.utils.translation import ugettext_lazy as _
@@ -141,10 +142,6 @@ class ProductAdmin(admin.ModelAdmin):
                 # variation which is needed
                 form.instance.create_variations()
 
-
-admin.site.register(models.TaxClass,
-    list_display=('name', 'rate', 'priority'),
-    )
 
 admin.site.register(models.Category,
     list_display=('is_active', 'is_internal', '__unicode__', 'ordering'),
