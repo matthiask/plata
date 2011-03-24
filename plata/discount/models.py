@@ -3,7 +3,6 @@ from decimal import Decimal
 import random
 
 from django import forms
-from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import ObjectDoesNotExist, Q
@@ -11,8 +10,6 @@ from django.utils.translation import ugettext_lazy as _
 
 import plata
 from plata.fields import CurrencyField
-from plata.product.models import Category
-from plata.product.modules.options.models import Product # FIXME no hardcoded paths
 from plata.shop.models import TaxClass
 from plata.utils import JSONFieldDescriptor
 
@@ -30,8 +27,8 @@ class DiscountBase(models.Model):
         (PERCENTAGE, _('percentage')),
         )
 
-    # You can add and remove options at will, except for 'all': This option
-    # must always be available, and it cannot have any form fields
+    #: You can add and remove options at will, except for 'all': This option
+    #: must always be available, and it cannot have any form fields
     CONFIG_OPTIONS = [
         ('all', {
             'title': _('All products'),
@@ -39,36 +36,6 @@ class DiscountBase(models.Model):
         ('exclude_sale', {
             'title': _('Exclude sale prices'),
             'orderitem_query': lambda **values: Q(is_sale=False),
-            }),
-        ('products', {
-            'title': _('Explicitly define discountable products'),
-            'form_fields': [
-                ('products', forms.ModelMultipleChoiceField(
-                    Product.objects.all(), # FIXME this isn't correct anymore, and not extensible at all
-                    label=_('products'),
-                    required=True,
-                    widget=FilteredSelectMultiple(
-                        verbose_name=_('products'),
-                        is_stacked=False,
-                        ),
-                    )),
-                ],
-            'product_query': lambda products: Q(product__in=products), # FIXME
-            }),
-        ('only_categories', {
-            'title': _('Only products from selected categories'),
-            'form_fields': [
-                ('categories', forms.ModelMultipleChoiceField(
-                    Category.objects.all(),
-                    label=_('categories'),
-                    required=True,
-                    widget=FilteredSelectMultiple(
-                        verbose_name=_('categories'),
-                        is_stacked=False,
-                        ),
-                    )),
-                ],
-            'product_query': lambda categories: Q(product__categories__in=categories), # FIXME
             }),
         ]
 
