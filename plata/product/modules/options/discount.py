@@ -24,7 +24,7 @@ def explicit_products(product_model):
                     ),
                 )),
             ],
-        'product_query': lambda products: Q(product__in=products), # FIXME
+        'product_query': lambda products: Q(product__in=products),
         }))
 
 
