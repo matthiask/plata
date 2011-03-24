@@ -274,16 +274,6 @@ class Order(BillingShippingAddress):
 
         return item
 
-    def add_discount(self, discount, recalculate=True):
-        """
-        Add a discount instance to this order
-
-        Removes the previous discount if a discount with this code has already
-        been added to this order before.
-        """
-
-        return discount.apply_to(self, recalculate=recalculate)
-
     @property
     def discount_remaining(self):
         """Remaining discount amount excl. tax"""

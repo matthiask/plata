@@ -246,6 +246,13 @@ class Discount(DiscountBase):
         return True
 
     def apply_to(self, order, recalculate=True):
+        """
+        Add discount to passed order
+
+        Removes the previous discount if a discount with this code has already
+        been added to the order before.
+        """
+
         self.validate(order)
 
         try:
