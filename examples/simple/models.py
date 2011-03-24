@@ -4,7 +4,6 @@ from django.db import models
 from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
 
-import plata
 from plata.reporting.notifications import ConsoleHandler
 from plata.shop.models import Price, PriceManager
 
@@ -26,11 +25,6 @@ class ProductPrice(Price):
     objects = PriceManager()
 
 
-class ProductManager(models.Manager):
-    def active(self):
-        return self.filter(is_active=True)
-
-
 class Product(models.Model):
     """(Nearly) the simplest product model ever"""
 
@@ -46,8 +40,6 @@ class Product(models.Model):
         ordering = ['ordering', 'name']
         verbose_name = _('product')
         verbose_name_plural = _('products')
-
-    objects = ProductManager()
 
     def __unicode__(self):
         return self.name

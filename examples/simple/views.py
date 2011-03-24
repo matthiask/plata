@@ -7,7 +7,6 @@ from django.template import RequestContext
 from django.utils.translation import ugettext as _
 from django.views.generic import  list_detail
 
-import plata
 from plata.discount.models import Discount
 from plata.shop.views import Shop
 from plata.shop.models import Contact, Order
@@ -20,8 +19,7 @@ shop = Shop(Contact, Order, Discount)
 
 def product_list(request):
     return list_detail.object_list(request,
-        queryset=Product.objects.active(),
-        paginate_by=9,
+        queryset=Product.objects.filter(is_active=True),
         template_name='product/product_list.html',
         )
 
@@ -47,8 +45,7 @@ class OrderItemForm(forms.Form):
 
 
 def product_detail(request, object_id):
-    shop = plata.shop_instance()
-    product = get_object_or_404(Product.objects.active(), pk=object_id)
+    product = get_object_or_404(Product.objects.filter(is_active=True), pk=object_id)
 
     if request.method == 'POST':
         order = shop.order_from_request(request, create=True)
