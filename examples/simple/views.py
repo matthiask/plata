@@ -29,7 +29,6 @@ class OrderItemForm(forms.Form):
         min_value=1, max_value=100)
 
     def __init__(self, *args, **kwargs):
-        self.order = kwargs.pop('order', None)
         self.product = kwargs.pop('product')
         super(OrderItemForm, self).__init__(*args, **kwargs)
 
@@ -37,7 +36,7 @@ class OrderItemForm(forms.Form):
         data = super(OrderItemForm, self).clean()
 
         try:
-            data['price'] = self.product.get_price(currency=self.order.currency)
+            data['price'] = self.product.get_price()
         except ObjectDoesNotExist:
             raise forms.ValidationError(_('Price could not be determined.'))
 
@@ -48,10 +47,10 @@ def product_detail(request, object_id):
     product = get_object_or_404(Product.objects.filter(is_active=True), pk=object_id)
 
     if request.method == 'POST':
-        order = shop.order_from_request(request, create=True)
-        form = OrderItemForm(request.POST, order=order, product=product)
+        form = OrderItemForm(request.POST, product=product)
 
         if form.is_valid():
+            order = shop.order_from_request(request, create=True)
             try:
                 order.modify_item(product, form.cleaned_data.get('quantity'))
                 messages.success(request, _('The cart has been updated.'))

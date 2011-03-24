@@ -140,3 +140,4 @@ logging.basicConfig(
     )
 
 PLATA_SHOP_PRODUCT = 'product.Product'
+CURRENCIES = ('CHF',)
