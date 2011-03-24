@@ -8,7 +8,7 @@ from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import get_callable
 from django.db import models
-from django.db.models import Q, loading
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
 import plata
@@ -119,9 +119,7 @@ class DiscountBase(models.Model):
         the discount configuration.
         """
 
-        # FIXME control this: We are working with product variations
-        # too now, not with products
-        product_model = loading.get_model(*plata.settings.PLATA_SHOP_PRODUCT.split('.'))
+        product_model = plata.product_model()
 
         products = product_model._default_manager.filter(
             id__in=[item.product_id for item in items])
@@ -161,7 +159,7 @@ class DiscountBase(models.Model):
         """
 
         eligible_products = self.eligible_products(order, items).values_list('id', flat=True)
-        eligible_items = [item for item in items if item.product.product_id in eligible_products]
+        eligible_items = [item for item in items if item.product_id in eligible_products]
 
         if tax_included:
             discount = self.value / (1 + self.tax_class.rate/100)
@@ -190,7 +188,7 @@ class DiscountBase(models.Model):
         factor = self.value / 100
 
         for item in items:
-            if item.product.product_id not in eligible_products:
+            if item.product_id not in eligible_products:
                 continue
 
             item._line_item_discount += item.discounted_subtotal_excl_tax * factor
