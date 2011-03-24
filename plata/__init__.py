@@ -46,3 +46,11 @@ def shop_instance():
         get_resolver(None)._populate()
 
     return _shop_instance
+
+def product_model():
+    from django.db.models import loading
+    return loading.get_model(*settings.PLATA_SHOP_PRODUCT.split('.'))
+
+def order_model():
+    from django.db.models import loading
+    return loading.get_model(*settings.PLATA_SHOP_ORDER.split('.'))

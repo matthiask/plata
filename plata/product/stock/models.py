@@ -5,7 +5,6 @@ from django.db.models import Sum, Q, signals
 from django.utils.translation import ugettext_lazy as _, ugettext
 
 import plata
-from plata.product.modules.options.models import ProductVariation # FIXME no hardcoded imports
 from plata.shop.models import Order, OrderPayment
 
 
@@ -55,7 +54,7 @@ class StockTransactionManager(models.Manager):
 
         period = Period.objects.create(name=name or ugettext('New period'))
 
-        for p in ProductVariation.objects.all():
+        for p in plata.product_model()._default_manager.all():
             p.stock_transactions.create(
                 period=period,
                 type=StockTransaction.INITIAL,
@@ -97,11 +96,13 @@ class StockTransactionManager(models.Manager):
 
         count = queryset.aggregate(items=Sum('change')).get('items') or 0
 
-        if isinstance(product, ProductVariation):
+        product_model = plata.product_model()
+
+        if isinstance(product, product_model):
             product.items_in_stock = count
 
         if update:
-            ProductVariation.objects.filter(id=getattr(product, 'pk', product)).update(
+            product_model._default_manager.filter(id=getattr(product, 'pk', product)).update(
                 items_in_stock=count)
 
         return count
