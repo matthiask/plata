@@ -4,8 +4,6 @@ This module contains the original product model of Plata
 
 from django.db import models
 from django.db.models import Q, Count, signals
-
-from django.core.cache import cache
 from django.utils.translation import ugettext_lazy as _
 
 import plata
@@ -187,51 +185,13 @@ class Product(models.Model):
         return self._main_image
 
     def get_price(self, currency=None):
-        currency = currency or plata.shop_instance().default_currency()
-
-        prices = dict(self.get_prices()).get(currency, {})
-
-        if prices.get('sale'):
-            return prices['sale']
-
-        if prices.get('normal'):
-            return prices['normal']
-        elif prices.get('sale'):
-            return prices['sale']
-
-        raise self.prices.model.DoesNotExist
+        return self.prices.determine_price(self, currency)
 
     def get_prices(self):
-        key = 'product-prices-%s' % self.pk
-
-        if cache.has_key(key):
-            return cache.get(key)
-
-        prices = []
-        for currency in plata.settings.CURRENCIES:
-            try:
-                normal, sale = self.prices.active().filter(currency=currency).latest(), None
-            except self.prices.model.DoesNotExist:
-                continue
-
-            if normal.is_sale:
-                sale = normal
-                try:
-                    normal = self.prices.active().filter(is_sale=False, currency=currency).latest()
-                except self.prices.model.DoesNotExist:
-                    normal = None
-
-            prices.append((currency, {
-                'normal': normal,
-                'sale': sale,
-                }))
-
-        cache.set(key, prices)
-        return prices
+        return self.prices.determine_prices(self)
 
     def flush_price_cache(self):
-        key = 'product-prices-%s' % self.pk
-        cache.delete(key)
+        self.prices.flush_price_cache(self)
 
     def in_sale(self, currency):
         prices = dict(self.get_prices())

@@ -2,6 +2,7 @@ from datetime import date, datetime
 from decimal import Decimal
 import logging
 
+from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import get_callable
 from django.db import models
@@ -527,6 +528,53 @@ class PriceManager(models.Manager):
             Q(is_active=True),
             Q(valid_from__lte=date.today()),
             Q(valid_until__isnull=True) | Q(valid_until__gte=date.today()))
+
+    def determine_price(self, product, currency=None):
+        currency = currency or plata.shop_instance().default_currency()
+
+        prices = dict(self.determine_prices(product)).get(currency, {})
+
+        if prices.get('sale'):
+            return prices['sale']
+
+        if prices.get('normal'):
+            return prices['normal']
+        elif prices.get('sale'):
+            return prices['sale']
+
+        raise self.model.DoesNotExist
+
+    def determine_prices(self, product):
+        key = 'product-prices-%s' % product.pk
+
+        if cache.has_key(key):
+            return cache.get(key)
+
+        prices = []
+        for currency in plata.settings.CURRENCIES:
+            try:
+                normal, sale = product.prices.active().filter(currency=currency).latest(), None
+            except product.prices.model.DoesNotExist:
+                continue
+
+            if normal.is_sale:
+                sale = normal
+                try:
+                    normal = product.prices.active().filter(is_sale=False, currency=currency).latest()
+                except self.model.DoesNotExist:
+                    normal = None
+
+            prices.append((currency, {
+                'normal': normal,
+                'sale': sale,
+                }))
+
+        cache.set(key, prices)
+        return prices
+
+    def flush_price_cache(self, product):
+        key = 'product-prices-%s' % product.pk
+        cache.delete(key)
 
 
 class Price(models.Model):
