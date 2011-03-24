@@ -279,8 +279,24 @@ class Discount(DiscountBase):
 
 
 class AppliedDiscountManager(models.Manager):
-    def remaining(self):
-        return sum((d.remaining for d in self.all()), Decimal('0.00'))
+    def remaining(self, order=None):
+        """
+        Calculate remaining discount excl. tax
+
+        Can either be used as related manager::
+
+            order.applied_discounts.remaining()
+
+        or directly::
+
+            AppliedDiscount.objects.remaining(order)
+        """
+
+        queryset = self.all()
+        if order:
+            queryset = queryset.filter(order=order)
+
+        return sum((d.remaining for d in queryset), Decimal('0.00'))
 
 
 class AppliedDiscount(DiscountBase):
