@@ -450,7 +450,7 @@ class Shop(object):
 
             if form.is_valid():
                 if 'discount' in form.cleaned_data:
-                    order.add_discount(form.cleaned_data['discount'])
+                    form.cleaned_data['discount'].apply_to(order)
 
                 if 'proceed' in request.POST:
                     return redirect('plata_shop_confirmation')
