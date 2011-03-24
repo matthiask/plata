@@ -1,5 +1,6 @@
 import logging
 
+from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 
 import plata
@@ -119,3 +120,15 @@ class ProcessorBase(object):
 
             signals.order_completed.send(**signal_kwargs)
         self.clear_pending_payments(order)
+
+
+    def already_paid(self, order):
+        if not order.is_completed():
+            logger.info('Order %s is already completely paid' % order)
+
+            self.create_transactions(order, _('sale'),
+                type=StockTransaction.SALE, negative=True)
+
+            self.order_completed(order)
+
+        return redirect('plata_order_success')

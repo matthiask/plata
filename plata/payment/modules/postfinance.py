@@ -19,7 +19,7 @@ import logging
 
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseForbidden
-from django.shortcuts import redirect, render_to_response
+from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _, get_language, to_locale
 
@@ -86,16 +86,7 @@ class PaymentProcessor(ProcessorBase):
         POSTFINANCE = settings.POSTFINANCE
 
         if order.is_paid():
-            if not order.is_completed():
-                logger.info('Order %s is already completely paid' % order)
-
-                self.create_transactions(order, _('sale'),
-                    type=StockTransaction.SALE, negative=True)
-
-                if order.is_paid():
-                    self.order_completed(order)
-
-            return redirect('plata_order_success')
+            return self.already_paid(order)
 
         logger.info('Processing order %s using Postfinance' % order)
 
