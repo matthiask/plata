@@ -287,7 +287,7 @@ class Order(BillingShippingAddress):
     @property
     def discount_remaining(self):
         """Remaining discount amount excl. tax"""
-        return sum((d.remaining for d in self.applied_discounts.all()), Decimal('0.00'))
+        return self.applied_discounts.remaining()
 
     def update_status(self, status, notes):
         """

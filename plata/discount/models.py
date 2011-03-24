@@ -271,6 +271,11 @@ class Discount(DiscountBase):
         return instance
 
 
+class AppliedDiscountManager(models.Manager):
+    def remaining(self):
+        return sum((d.remaining for d in self.all()), Decimal('0.00'))
+
+
 class AppliedDiscount(DiscountBase):
     """
     Stores an applied discount, so that deletion of discounts does not
@@ -291,3 +296,5 @@ class AppliedDiscount(DiscountBase):
         ordering = ['type', 'name']
         verbose_name = _('applied discount')
         verbose_name_plural = _('applied discounts')
+
+    objects = AppliedDiscountManager()
