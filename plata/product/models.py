@@ -15,7 +15,7 @@ ProductImage, OptionGroup and Option should be moved somewhere else.)
 from datetime import date, datetime
 
 from django.db import models
-from django.db.models import Q, Count, signals
+from django.db.models import Q, Count
 
 from django.core.cache import cache
 from django.utils.translation import ugettext_lazy as _
@@ -160,9 +160,3 @@ class ProductPrice(models.Model):
             return self.unit_price_incl_tax
         else:
             return self.unit_price_excl_tax
-
-
-def flush_price_cache(instance, **kwargs):
-    instance.product.flush_price_cache()
-signals.post_save.connect(flush_price_cache, sender=ProductPrice)
-signals.post_delete.connect(flush_price_cache, sender=ProductPrice)
