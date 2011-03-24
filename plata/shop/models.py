@@ -282,29 +282,7 @@ class Order(BillingShippingAddress):
         been added to this order before.
         """
 
-        discount.validate(self)
-
-        try:
-            self.applied_discounts.get(code=discount.code).delete()
-        except ObjectDoesNotExist:
-            # Don't increment used count when discount has already been applied
-            discount.used += 1
-            discount.save()
-
-        instance = self.applied_discounts.create(
-            code=discount.code,
-            type=discount.type,
-            name=discount.name,
-            value=discount.value,
-            currency=discount.currency,
-            tax_class=discount.tax_class,
-            config_json=discount.config_json,
-            )
-
-        if recalculate:
-            self.recalculate_total()
-
-        return instance
+        return discount.apply_to(self, recalculate=recalculate)
 
     @property
     def discount_remaining(self):

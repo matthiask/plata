@@ -8,7 +8,7 @@ from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import get_callable
 from django.db import models
-from django.db.models import Q
+from django.db.models import ObjectDoesNotExist, Q
 from django.utils.translation import ugettext_lazy as _
 
 import plata
@@ -244,6 +244,31 @@ class Discount(DiscountBase):
             raise ValidationError(messages)
 
         return True
+
+    def apply_to(self, order, recalculate=True):
+        self.validate(order)
+
+        try:
+            order.applied_discounts.get(code=self.code).delete()
+        except ObjectDoesNotExist:
+            # Don't increment used count when discount has already been applied
+            self.used += 1
+            self.save()
+
+        instance = order.applied_discounts.create(
+            code=self.code,
+            type=self.type,
+            name=self.name,
+            value=self.value,
+            currency=self.currency,
+            tax_class=self.tax_class,
+            config_json=self.config_json,
+            )
+
+        if recalculate:
+            order.recalculate_total()
+
+        return instance
 
 
 class AppliedDiscount(DiscountBase):
