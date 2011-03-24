@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal
 import logging
 
@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import get_callable, reverse
 from django.db import models
-from django.db.models import F, ObjectDoesNotExist, Sum
+from django.db.models import F, ObjectDoesNotExist, Sum, Q
 from django.forms.formsets import all_valid
 from django.forms.models import modelform_factory, inlineformset_factory
 from django.http import HttpResponseRedirect
@@ -18,12 +18,33 @@ from django.utils.translation import ugettext_lazy as _
 import plata
 from plata.contact.models import BillingShippingAddress, Contact
 from plata.fields import CurrencyField
-from plata.product.models import TaxClass
 from plata.shop import processors
 from plata.utils import JSONFieldDescriptor
 
 
 logger = logging.getLogger('plata.shop.order')
+
+
+class TaxClass(models.Model):
+    """
+    Tax class, storing a tax rate
+
+    TODO informational / advisory currency or country fields?
+    """
+
+    name = models.CharField(_('name'), max_length=100)
+    rate = models.DecimalField(_('rate'), max_digits=10, decimal_places=2)
+    priority = models.PositiveIntegerField(_('priority'), default=0,
+        help_text = _('Used to order the tax classes in the administration interface.'))
+
+    class Meta:
+        ordering = ['-priority']
+        verbose_name = _('tax class')
+        verbose_name_plural = _('tax classes')
+
+    def __unicode__(self):
+        return self.name
+
 
 class Order(BillingShippingAddress):
     """The main order model. Used for carts and orders alike."""
@@ -538,3 +559,71 @@ class OrderPayment(models.Model):
     def delete(self, *args, **kwargs):
         super(OrderPayment, self).delete(*args, **kwargs)
         self._recalculate_paid()
+
+
+class PriceManager(models.Manager):
+    def active(self):
+        return self.filter(
+            Q(is_active=True),
+            Q(valid_from__lte=date.today()),
+            Q(valid_until__isnull=True) | Q(valid_until__gte=date.today()))
+
+
+class Price(models.Model):
+    """
+    Price for a given product, currency, tax class and time period
+
+    Prices should not be changed or deleted but replaced by more recent prices.
+    (Deleting old prices does not hurt, but the price history cannot be
+    reconstructed anymore if you'd need it.)
+
+    The concrete implementation needs to provide a foreign key to the
+    product model and add the ``PriceManager`` as default manager.
+    """
+
+    currency = CurrencyField()
+    _unit_price = models.DecimalField(_('unit price'), max_digits=18, decimal_places=10)
+    tax_included = models.BooleanField(_('tax included'),
+        help_text=_('Is tax included in given unit price?'),
+        default=plata.settings.PLATA_PRICE_INCLUDES_TAX)
+    tax_class = models.ForeignKey(TaxClass, verbose_name=_('tax class'))
+
+    is_active = models.BooleanField(_('is active'), default=True)
+    valid_from = models.DateField(_('valid from'), default=date.today)
+    valid_until = models.DateField(_('valid until'), blank=True, null=True)
+
+    is_sale = models.BooleanField(_('is sale'), default=False,
+        help_text=_('Set this if this price is a sale price. Whether the sale is temporary or not does not matter.'))
+
+    class Meta:
+        abstract = True
+        get_latest_by = 'id'
+        ordering = ['-valid_from']
+        verbose_name = _('price')
+        verbose_name_plural = _('prices')
+
+    def __unicode__(self):
+        return u'%s %.2f' % (self.currency, self.unit_price)
+
+    @property
+    def unit_tax(self):
+        return self.unit_price_excl_tax * (self.tax_class.rate/100)
+
+    @property
+    def unit_price_incl_tax(self):
+        if self.tax_included:
+            return self._unit_price
+        return self._unit_price * (1+self.tax_class.rate/100)
+
+    @property
+    def unit_price_excl_tax(self):
+        if not self.tax_included:
+            return self._unit_price
+        return self._unit_price / (1+self.tax_class.rate/100)
+
+    @property
+    def unit_price(self):
+        if plata.settings.PLATA_PRICE_INCLUDES_TAX:
+            return self.unit_price_incl_tax
+        else:
+            return self.unit_price_excl_tax
