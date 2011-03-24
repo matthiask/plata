@@ -7,9 +7,8 @@ from django.contrib.auth.models import AnonymousUser, User
 
 import plata
 from plata.contact.models import Contact
-from plata.product.feincms.models import CMSProduct
 from plata.product.modules.options.discount import explicit_products, only_categories
-from plata.product.modules.options.models import Category
+from plata.product.modules.options.models import Category, Product
 from plata.product.stock.models import StockTransaction
 from plata.reporting.notifications import EmailHandler
 from plata.shop.models import TaxClass, Order
@@ -20,7 +19,7 @@ handler = EmailHandler.register()
 
 # Add discount config options
 only_categories(Category)
-explicit_products(CMSProduct)
+explicit_products(Product)
 
 class Empty(object):
     pass
@@ -97,8 +96,6 @@ class PlataTest(TestCase):
 
     def create_product(self, stock=0):
         tax_class, tax_class_germany, tax_class_something = self.create_tax_classes()
-
-        Product = CMSProduct
 
         product = Product.objects.create(
             name='Test Product 1',

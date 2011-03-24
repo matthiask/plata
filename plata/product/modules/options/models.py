@@ -133,7 +133,12 @@ class ProductManager(models.Manager):
                 ).filter(variations__orderitem__order__items__product__product=product))
 
 
-class Product(models.Model):
+if False: # TODO?
+    from feincms.models import Base
+else:
+    Base = models.Model
+
+class Product(Base):
     """
     Default product model
 

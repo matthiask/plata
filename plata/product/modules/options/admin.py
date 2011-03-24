@@ -156,7 +156,30 @@ admin.site.register(models.OptionGroup,
     list_display=('name',),
     )
 
-admin.site.register(models.Product, ProductAdmin)
+
+if False: # TODO?
+    from feincms.admin.item_editor import ItemEditor, FEINCMS_CONTENT_FIELDSET
+
+    class CMSProductForm(ProductForm):
+        class Meta:
+            model = models.CMSProduct
+
+    class CMSProductAdmin(ProductAdmin, ItemEditor):
+        fieldsets = [(None, {
+            'fields': ('is_active', 'name', 'slug', 'sku', 'is_featured'),
+            }),
+            FEINCMS_CONTENT_FIELDSET,
+            (_('Properties'), {
+                'fields': ('ordering', 'description', 'producer', 'categories',
+                    'option_groups', 'create_variations'),
+            }),
+            ]
+        form = CMSProductForm
+        inlines = [ProductVariationInline, ProductPriceInline, ProductImageInline]
+
+    admin.site.register(models.Product, CMSProductAdmin)
+else:
+    admin.site.register(models.Product, ProductAdmin)
 
 
 class ReadonlyModelAdmin(admin.ModelAdmin):

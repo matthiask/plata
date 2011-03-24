@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 from django.forms.models import model_to_dict
 
 from plata.discount.models import Discount
-from plata.product.feincms.models import CMSProduct
 from plata.product.modules.options.models import Product, \
     ProductVariation, OptionGroup, Option, ProductPrice # FIXME import paths
 from plata.shop.models import TaxClass
@@ -19,7 +18,7 @@ class AdminTest(PlataTest):
         u.is_superuser = True
         u.save()
 
-        product_model = CMSProduct
+        product_model = Product
         self.product_admin_url = '/admin/%s/%s/' % (
             product_model._meta.app_label,
             product_model._meta.module_name,
