@@ -3,7 +3,7 @@ This module contains the original product model of Plata
 """
 
 from django.db import models
-from django.db.models import Q, Count, signals
+from django.db.models import Count, signals
 from django.utils.translation import ugettext_lazy as _
 
 import plata
@@ -270,14 +270,6 @@ class ProductVariation(models.Model):
 
     def can_delete(self):
         return self.orderitem_set.count() == 0
-
-    def available(self, exclude_order=None):
-        # FIXME move this method into a stock handling extension
-        if exclude_order:
-            return self.stock_transactions.items_in_stock(self,
-                query=Q(order__isnull=True) | ~Q(order=exclude_order))
-        else:
-            return self.stock_transactions.items_in_stock(self, update=True)
 
     def _generate_proxy(method):
         def func(self, *args, **kwargs):

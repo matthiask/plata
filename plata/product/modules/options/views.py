@@ -128,7 +128,8 @@ class ProductView(object):
                         'variation': variation,
                         'quantity': old_quantity,
                         }
-                    available = variation.available(exclude_order=self.order)
+                    available = variation.stock_transactions.items_in_stock(variation, # FIXME hardcoded
+                        exclude_order=self.order)
 
                     if new_quantity > available:
                         if not available:

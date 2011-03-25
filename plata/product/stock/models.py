@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Sum, Q, signals
 from django.utils.translation import ugettext_lazy as _, ugettext
@@ -84,15 +85,20 @@ class StockTransactionManager(models.Manager):
 
         return self.filter(period=Period.objects.current()).filter(self._expired())
 
-    def items_in_stock(self, product, update=False, query=None):
+    def items_in_stock(self, product, update=False, exclude_order=None):
         """
         Determine the items in stock for the given product variation,
         optionally updating the ``items_in_stock`` field in the database.
+
+        If ``exclude_order`` is given, ``update`` is always switched off
+        and transactions from the given order aren't taken into account.
         """
 
         queryset = self.stock().filter(product=product)
-        if query:
-            queryset.filter(query)
+
+        if exclude_order:
+            update = False
+            queryset = queryset.filter(Q(order__isnull=True) | ~Q(order=exclude_order))
 
         count = queryset.aggregate(items=Sum('change')).get('items') or 0
 
@@ -224,5 +230,19 @@ class StockTransaction(models.Model):
 
 def update_items_in_stock(instance, **kwargs):
     StockTransaction.objects.items_in_stock(instance.product_id, update=True)
-signals.post_delete.connect(update_items_in_stock, sender=StockTransaction)
-signals.post_save.connect(update_items_in_stock, sender=StockTransaction)
+
+
+def validate_order_stock_available(order):
+    """Check whether enough stock is available for all selected products"""
+    for item in order.items.all().select_related('product'):
+        if item.quantity > StockTransaction.objects.items_in_stock(item.product,
+                exclude_order=order):
+            raise ValidationError(_('Not enough stock available for %s.') % item.product,
+                code='insufficient_stock')
+
+
+if plata.settings.PLATA_STOCK_TRACKING:
+    signals.post_delete.connect(update_items_in_stock, sender=StockTransaction)
+    signals.post_save.connect(update_items_in_stock, sender=StockTransaction)
+
+    Order.register_validator(validate_order_stock_available, Order.VALIDATE_CART)
