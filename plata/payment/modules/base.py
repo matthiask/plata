@@ -57,7 +57,9 @@ class ProcessorBase(object):
 
         logger.info('Clearing pending payments on %s' % order)
         order.payments.pending().delete()
-        order.stock_transactions.filter(type=StockTransaction.PAYMENT_PROCESS_RESERVATION).delete()
+
+        if plata.settings.PLATA_STOCK_TRACKING:
+            order.stock_transactions.filter(type=StockTransaction.PAYMENT_PROCESS_RESERVATION).delete()
 
     def create_pending_payment(self, order):
         """
@@ -77,6 +79,9 @@ class ProcessorBase(object):
         Create transactions for all order items. The real work is offloaded
         to ``StockTransaction.objects.bulk_create``.
         """
+
+        if not plata.settings.PLATA_STOCK_TRACKING:
+            return
 
         StockTransaction.objects.bulk_create(order,
             notes=_('%(stage)s: %(order)s processed by %(payment_module)s') % {
@@ -126,8 +131,9 @@ class ProcessorBase(object):
         if not order.is_completed():
             logger.info('Order %s is already completely paid' % order)
 
-            self.create_transactions(order, _('sale'),
-                type=StockTransaction.SALE, negative=True)
+            if plata.settings.PLATA_STOCK_TRACKING:
+                self.create_transactions(order, _('sale'),
+                    type=StockTransaction.SALE, negative=True)
 
             self.order_completed(order)
 

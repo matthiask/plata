@@ -55,6 +55,9 @@ PLATA_ORDER_BCC = getattr(settings, 'PLATA_ORDER_BCC',
 #: Send shipping information to these people
 PLATA_SHIPPING_INFO = getattr(settings, 'PLATA_SHIPPING_INFO', PLATA_ORDER_BCC)
 
+#: Transactional stock tracking
+PLATA_STOCK_TRACKING = getattr(settings, 'PLATA_STOCK_TRACKING', False)
+
 CURRENCIES = getattr(settings, 'CURRENCIES', ('CHF', 'EUR', 'USD', 'CAD'))
 
 #: Target of order item product foreign key
