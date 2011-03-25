@@ -178,12 +178,15 @@ class Shop(object):
         except (ValueError, self.order_model.DoesNotExist):
             if create:
                 contact = self.contact_from_user(request.user)
-                currency = contact and contact.currency or self.default_currency(request)
 
-                order = self.order_model.objects.create(
-                    contact=contact,
-                    currency=currency,
-                    )
+                if contact:
+                    currency = contact.currency
+                    user = contact.user
+                else:
+                    currency = self.default_currency(request)
+                    user = request.user if request.user.is_authenticated() else None
+
+                order = self.order_model.objects.create(currency=currency, user=user)
                 self.set_order_on_request(request, order)
                 return order
 
@@ -322,27 +325,6 @@ class Shop(object):
                             # Clear e-mail address so that further processing is aborted
                             email = None
 
-                if email and create_account and not self.contact and not self._errors:
-                    password = None
-                    if not self.request.user.is_authenticated():
-                        password = User.objects.make_random_password()
-                        user = User.objects.create_user(email, email, password)
-                        user = auth.authenticate(username=email, password=password)
-                        auth.login(self.request, user)
-                    else:
-                        user = self.request.user
-
-                    shop = plata.shop_instance()
-                    contact = shop.contact_model.objects.create_from_order(
-                        self.instance, user=user)
-
-                    self.instance.contact = contact
-
-                    signals.contact_created.send(sender=self, user=user,
-                        contact=contact, password=password)
-                elif self.contact:
-                    self.instance.contact = self.contact
-
                 return data
 
         return OrderForm
@@ -357,7 +339,7 @@ class Shop(object):
                     user = loginform.get_user()
                     auth.login(request, user)
 
-                    order.contact = self.contact_from_user(user)
+                    order.user = user
                     order.save()
 
                     return HttpResponseRedirect('.')
@@ -392,7 +374,34 @@ class Shop(object):
             orderform = OrderForm(request.POST, **orderform_kwargs)
 
             if orderform.is_valid():
-                order = orderform.save()
+                order = orderform.save(commit=False)
+
+                if contact:
+                    order.user = contact.user
+                elif request.user.is_authenticated():
+                    order.user = request.user
+
+                if orderform.cleaned_data.get('create_account') and not contact:
+                    password = None
+                    email = orderform.cleaned_data.get('email')
+
+                    if not request.user.is_authenticated():
+                        password = User.objects.make_random_password()
+                        user = User.objects.create_user(email, email, password)
+                        user = auth.authenticate(username=email, password=password)
+                        auth.login(request, user)
+                    else:
+                        user = request.user
+
+                    contact = self.contact_model.objects.create_from_order(
+                        order, user=user)
+
+                    order.user = user
+
+                    signals.contact_created.send(sender=self, user=user,
+                        contact=contact, password=password)
+
+                order.save()
 
                 return redirect('plata_shop_discounts')
         else:

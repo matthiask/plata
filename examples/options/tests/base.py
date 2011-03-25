@@ -71,7 +71,7 @@ class PlataTest(TestCase):
         contact = contact or self.create_contact()
 
         return Order.objects.create(
-            contact=contact,
+            user=contact.user if contact else None,
             currency='CHF',
             )
 

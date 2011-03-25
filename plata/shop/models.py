@@ -2,6 +2,7 @@ from datetime import date, datetime
 from decimal import Decimal
 import logging
 
+from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import get_callable
@@ -55,8 +56,8 @@ class Order(BillingShippingAddress):
 
     created = models.DateTimeField(_('created'), default=datetime.now)
     confirmed = models.DateTimeField(_('confirmed'), blank=True, null=True)
-    contact = models.ForeignKey(plata.settings.PLATA_SHOP_CONTACT, blank=True, null=True,
-        verbose_name=_('contact'), related_name='orders')
+    user = models.ForeignKey(User, blank=True, null=True,
+        verbose_name=_('user'), related_name='orders')
     status = models.PositiveIntegerField(_('status'), choices=STATUS_CHOICES,
         default=CART)
 

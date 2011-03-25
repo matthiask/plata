@@ -343,7 +343,7 @@ class ViewTest(PlataTest):
 
         order = shop.order_from_request(request, create=True)
         self.assertEqual(Order.objects.count(), 1)
-        self.assertEqual(order.contact, None)
+        self.assertEqual(order.user, None)
 
     def test_06_postfinance_ipn(self):
         """Test Postfinance server-to-server request handling"""
@@ -513,7 +513,7 @@ class ViewTest(PlataTest):
 
         # There should be exactly one contact object now
         contact = Contact.objects.get()
-        self.assertEqual(contact.orders.count(), 1)
+        self.assertEqual(contact.user.orders.count(), 1)
         self.assertEqual(contact.billing_city, 'Beispielstadt')
 
         # User e-mail address is unchanged
@@ -556,7 +556,7 @@ class ViewTest(PlataTest):
 
         # There should be exactly one contact object now
         contact = Contact.objects.get()
-        self.assertEqual(contact.orders.count(), 1)
+        self.assertEqual(contact.user.orders.count(), 1)
         self.assertEqual(contact.billing_city, 'Beispielstadt')
 
         self.assertEqual(contact.user.email, 'something@example.com')
@@ -621,7 +621,7 @@ class ViewTest(PlataTest):
 
         # Order should be assigned to contact
         self.assertEqual(Order.objects.count(), 1)
-        self.assertEqual(contact.orders.count(), 1)
+        self.assertEqual(contact.user.orders.count(), 1)
 
     def test_11_login_in_checkout_create_contact(self):
         """Test checkout using already existing user, but no contact"""
@@ -664,7 +664,7 @@ class ViewTest(PlataTest):
 
         # Order should be assigned to contact
         self.assertEqual(Order.objects.count(), 1)
-        self.assertEqual(contact.orders.count(), 1)
+        self.assertEqual(contact.user.orders.count(), 1)
 
     def test_12_insufficient_stock(self):
         """Test insufficient stock handling in checkout process"""

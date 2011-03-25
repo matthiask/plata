@@ -66,8 +66,5 @@ PLATA_SHOP_PRODUCT = getattr(settings, 'PLATA_SHOP_PRODUCT', 'product.Product')
 #: Target of order foreign keys
 PLATA_SHOP_ORDER = getattr(settings, 'PLATA_SHOP_ORDER', 'shop.Order')
 
-#: Target of contact foreign keys
-PLATA_SHOP_CONTACT = getattr(settings, 'PLATA_SHOP_CONTACT', 'contact.Contact')
-
 #: Should the options module product use FeinCMS?
 PLATA_PRODUCT_OPTIONS_FEINCMS = getattr(settings, 'PLATA_PRODUCT_OPTIONS_FEINCMS', False)
