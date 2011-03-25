@@ -35,7 +35,7 @@ def order_confirmed(order, request, **kwargs):
             _('You have already confirmed this order earlier, but it is not fully paid for yet.'))
         return HttpResponseRedirect(reverse('plata_shop_confirmation') + '?confirmed=1')
 
-def insufficient_stock(order, request, **kwargs):
+def order_cart_validates(order, request, **kwargs):
     """Redirect to cart if stock is insufficient and display an error message"""
     if request.method != 'GET':
         return
@@ -51,7 +51,7 @@ def checkout_process_decorator(*checks):
     """
     Calls all passed checkout process decorators in turn::
 
-        @checkout_process_decorator(order_confirmed, insufficient_stock)
+        @checkout_process_decorator(order_confirmed, order_cart_validates)
         def mymethod(self...):
             ...
     """
@@ -118,13 +118,13 @@ class Shop(object):
                 checkout_process_decorator(order_confirmed)(self.cart),
                 name='plata_shop_cart'),
             url(r'^checkout/$',
-                checkout_process_decorator(cart_not_empty, order_confirmed, insufficient_stock)(self.checkout),
+                checkout_process_decorator(cart_not_empty, order_confirmed, order_cart_validates)(self.checkout),
                 name='plata_shop_checkout'),
             url(r'^discounts/$',
-                checkout_process_decorator(cart_not_empty, order_confirmed, insufficient_stock)(self.discounts),
+                checkout_process_decorator(cart_not_empty, order_confirmed, order_cart_validates)(self.discounts),
                 name='plata_shop_discounts'),
             url(r'^confirmation/$',
-                checkout_process_decorator(cart_not_empty, insufficient_stock)(self.confirmation),
+                checkout_process_decorator(cart_not_empty, order_cart_validates)(self.confirmation),
                 name='plata_shop_confirmation'),
 
             url(r'^order/success/$', self.order_success, name='plata_order_success'),
