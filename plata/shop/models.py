@@ -10,8 +10,8 @@ from django.db.models import F, ObjectDoesNotExist, Sum, Q
 from django.utils.translation import ugettext_lazy as _
 
 import plata
-from plata.contact.models import BillingShippingAddress
 from plata.fields import CurrencyField
+from plata.models import BillingShippingAddress
 from plata.utils import JSONFieldDescriptor
 
 
