@@ -51,6 +51,9 @@ class BillingShippingAddress(models.Model):
 class Contact(BillingShippingAddress):
     """
     Each user can have at most one of these
+
+    TODO: This model does not necessarily suit everyone. Move addresses to a
+          different model?
     """
 
     user = models.OneToOneField(User, verbose_name=_('user'),

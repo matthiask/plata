@@ -333,7 +333,7 @@ class Shop(object):
                         user = self.request.user
 
                     shop = plata.shop_instance()
-                    contact = shop.contact_model(
+                    contact = shop.contact_model( # FIXME generalize contact generation a bit
                         user=user,
                         currency=self.instance.currency)
 
