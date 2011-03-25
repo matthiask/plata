@@ -9,7 +9,7 @@ from pdfdocument.document import PDFDocument
 import plata
 from plata.discount.models import Discount
 from plata.product.modules.options.models import Product, \
-    ProductVariation, Category, ProductPrice # FIXME import paths
+    ProductVariation, Category, ProductPrice
 from plata.product.stock.models import Period, StockTransaction
 import plata.reporting.order
 from plata.shop.models import Order

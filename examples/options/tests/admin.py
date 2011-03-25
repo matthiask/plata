@@ -5,7 +5,7 @@ from django.forms.models import model_to_dict
 
 from plata.discount.models import Discount
 from plata.product.modules.options.models import Product, \
-    ProductVariation, OptionGroup, Option, ProductPrice # FIXME import paths
+    ProductVariation, OptionGroup, Option, ProductPrice
 from plata.shop.models import TaxClass
 
 from options.tests.base import PlataTest

@@ -11,8 +11,7 @@ from django.core.exceptions import ValidationError
 import plata
 from plata.contact.models import Contact
 from plata.discount.models import Discount
-from plata.product.modules.options.models import \
-    ProductVariation, OptionGroup # FIXME import paths
+from plata.product.modules.options.models import ProductVariation, OptionGroup
 from plata.product.stock.models import Period, StockTransaction
 from plata.shop.models import Order, OrderPayment
 
