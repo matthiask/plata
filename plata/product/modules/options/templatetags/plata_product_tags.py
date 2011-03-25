@@ -1,6 +1,6 @@
 from django import template
 
-import plata
+from plata.product.modules.options.models import Product
 
 
 register = template.Library()
@@ -12,7 +12,7 @@ def featured_products_for_categories(category_list, variable_name='featured_prod
     {% featured_products_for_categories category_list "variable_name" %}
     """
 
-    product_qset = plata.shop_instance().product_model.objects.active()
+    product_qset = Product.objects.active()
     category_list = list(category_list)
 
     for category in category_list:
@@ -30,9 +30,7 @@ class BestsellersNode(template.Node):
         self.as_ = as_
 
     def render(self, context):
-        shop = plata.shop_instance()
-
-        context[self.as_] = shop.product_model.objects.bestsellers()[:5]
+        context[self.as_] = Product.objects.bestsellers()[:5]
         return u''
 
 
