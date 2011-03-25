@@ -5,3 +5,7 @@
 /secrets.py
 .DS_Store
 ._*
+plata.db
+plata.log
+/docs/_build
+/docs/deploy.sh
