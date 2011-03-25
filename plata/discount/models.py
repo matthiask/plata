@@ -77,7 +77,7 @@ class DiscountBase(models.Model):
         else:
             raise ValidationError(_('Unknown discount type.'))
 
-    def eligible_products(self, order, items):
+    def _eligible_products(self, order, items):
         """
         Return a list of products which are eligible for discounting using
         the discount configuration.
@@ -107,22 +107,22 @@ class DiscountBase(models.Model):
             return
 
         if self.type == self.AMOUNT_EXCL_TAX:
-            self.apply_amount_discount(order, items, tax_included=False)
+            self._apply_amount_discount(order, items, tax_included=False)
         elif self.type == self.AMOUNT_INCL_TAX:
-            self.apply_amount_discount(order, items, tax_included=True)
+            self._apply_amount_discount(order, items, tax_included=True)
         elif self.type == self.PERCENTAGE:
-            self.apply_percentage_discount(order, items)
+            self._apply_percentage_discount(order, items)
         else:
             raise NotImplementedError, 'Unknown discount type %s' % self.type
 
-    def apply_amount_discount(self, order, items, tax_included):
+    def _apply_amount_discount(self, order, items, tax_included):
         """
         Apply amount discount evenly to all eligible order items
 
         Aggregates remaining discount (if discount is bigger than order total)
         """
 
-        eligible_products = self.eligible_products(order, items).values_list('id', flat=True)
+        eligible_products = self._eligible_products(order, items).values_list('id', flat=True)
         eligible_items = [item for item in items if item.product_id in eligible_products]
 
         if tax_included:
@@ -142,12 +142,12 @@ class DiscountBase(models.Model):
         for item in eligible_items:
             item._line_item_discount += item.discounted_subtotal_excl_tax / items_subtotal * discount
 
-    def apply_percentage_discount(self, order, items):
+    def _apply_percentage_discount(self, order, items):
         """
         Apply percentage discount evenly to all eligible order items
         """
 
-        eligible_products = self.eligible_products(order, items).values_list('id', flat=True)
+        eligible_products = self._eligible_products(order, items).values_list('id', flat=True)
 
         factor = self.value / 100
 
