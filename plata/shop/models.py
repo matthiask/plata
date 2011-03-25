@@ -10,7 +10,7 @@ from django.db.models import F, ObjectDoesNotExist, Sum, Q
 from django.utils.translation import ugettext_lazy as _
 
 import plata
-from plata.contact.models import BillingShippingAddress, Contact
+from plata.contact.models import BillingShippingAddress
 from plata.fields import CurrencyField
 from plata.utils import JSONFieldDescriptor
 
@@ -55,7 +55,7 @@ class Order(BillingShippingAddress):
 
     created = models.DateTimeField(_('created'), default=datetime.now)
     confirmed = models.DateTimeField(_('confirmed'), blank=True, null=True)
-    contact = models.ForeignKey(Contact, blank=True, null=True,
+    contact = models.ForeignKey(plata.settings.PLATA_SHOP_CONTACT, blank=True, null=True,
         verbose_name=_('contact'), related_name='orders')
     status = models.PositiveIntegerField(_('status'), choices=STATUS_CHOICES,
         default=CART)

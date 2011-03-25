@@ -54,3 +54,8 @@ def product_model():
 def order_model():
     from django.db.models import loading
     return loading.get_model(*settings.PLATA_SHOP_ORDER.split('.'))
+
+
+def contact_model():
+    from django.db.models import loading
+    return loading.get_model(*settings.PLATA_SHOP_CONTACT.split('.'))
