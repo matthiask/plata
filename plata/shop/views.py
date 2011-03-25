@@ -84,7 +84,7 @@ class Shop(object):
 
     Example::
 
-        shop_instance = Shop(Product, Contact, Order, Discount)
+        shop_instance = Shop(Contact, Order, Discount)
 
         urlpatterns = patterns('',
             url(r'^shop/', include(shop_instance.urls)),
@@ -421,6 +421,7 @@ class Shop(object):
 
             def __init__(self, *args, **kwargs):
                 self.order = kwargs.pop('order')
+                self.discount_model = kwargs.pop('discount_model')
                 super(DiscountForm, self).__init__(*args, **kwargs)
 
             def clean_code(self):
@@ -428,11 +429,9 @@ class Shop(object):
                 if not code:
                     return self.cleaned_data
 
-                shop = plata.shop_instance()
-
                 try:
-                    discount = shop.discount_model.objects.get(code=code)
-                except shop.discount_model.DoesNotExist:
+                    discount = self.discount_model.objects.get(code=code)
+                except self.discount_model.DoesNotExist:
                     raise forms.ValidationError(_('This code does not validate'))
 
                 discount.validate(self.order)
@@ -444,8 +443,10 @@ class Shop(object):
         """Handles the discount code entry page"""
         DiscountForm = self.discounts_form(request, order)
 
+        kwargs = {'order': order, 'discount_model': self.discount_model}
+
         if request.method == 'POST':
-            form = DiscountForm(request.POST, order=order)
+            form = DiscountForm(request.POST, **kwargs)
 
             if form.is_valid():
                 if 'discount' in form.cleaned_data:
@@ -455,7 +456,7 @@ class Shop(object):
                     return redirect('plata_shop_confirmation')
                 return HttpResponseRedirect('.')
         else:
-            form = DiscountForm(order=order)
+            form = DiscountForm(**kwargs)
 
         order.recalculate_total()
 
@@ -478,13 +479,14 @@ class Shop(object):
 
             def __init__(self, *args, **kwargs):
                 self.order = kwargs.pop('order')
+                payment_modules = kwargs.pop('payment_modules')
 
                 super(ConfirmationForm, self).__init__(*args, **kwargs)
-                payment_module_choices = [(m.__module__, m.name) for m in \
-                    plata.shop_instance().get_payment_modules()]
+
                 self.fields['payment_method'] = forms.ChoiceField(
                     label=_('Payment method'),
-                    choices=[('', '----------')]+payment_module_choices,
+                    choices=[('', '----------')] + [
+                        (m.__module__, m.name) for m in payment_modules],
                     )
 
             def clean(self):
@@ -501,20 +503,27 @@ class Shop(object):
         successful.
         """
         order.recalculate_total()
-        payment_module_dict = dict((m.__module__, m) for m in self.get_payment_modules())
+
+        payment_modules = self.get_payment_modules()
+        payment_module_dict = dict((m.__module__, m) for m in payment_modules)
 
         ConfirmationForm = self.confirmation_form(request, order)
 
+        kwargs = {'order': order, 'payment_modules': payment_modules}
+
         if request.method == 'POST':
-            form = ConfirmationForm(request.POST, order=order)
+            form = ConfirmationForm(request.POST, **kwargs)
 
             if form.is_valid():
                 order.update_status(self.order_model.CONFIRMED, 'Confirmation given')
                 signals.order_confirmed.send(sender=self, order=order)
+
+                payment_module_dict = dict((m.__module__, m) for m in payment_modules)
                 payment_module = payment_module_dict[form.cleaned_data['payment_method']]
+
                 return payment_module.process_order_confirmed(request, order)
         else:
-            form = ConfirmationForm(order=order)
+            form = ConfirmationForm(**kwargs)
 
         return self.render_confirmation(request, {
             'order': order,
