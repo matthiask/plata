@@ -209,7 +209,7 @@ class Order(BillingShippingAddress):
         Return OrderItem instance
         """
 
-        assert (relative is not None and absolute is None) or (absolute is not None and relative is None), 'One of relative or absolute must be provided.'
+        assert (relative is None) != (absolute is None), 'One of relative or absolute must be provided.'
 
         if self.status >= self.CONFIRMED:
             raise ValidationError(_('Cannot modify order once it has been confirmed.'),
