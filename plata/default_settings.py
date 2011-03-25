@@ -61,7 +61,7 @@ PLATA_STOCK_TRACKING = getattr(settings, 'PLATA_STOCK_TRACKING', False)
 CURRENCIES = getattr(settings, 'CURRENCIES', ('CHF', 'EUR', 'USD', 'CAD'))
 
 #: Target of order item product foreign key
-PLATA_SHOP_PRODUCT = getattr(settings, 'PLATA_SHOP_PRODUCT', 'product.ProductVariation')
+PLATA_SHOP_PRODUCT = getattr(settings, 'PLATA_SHOP_PRODUCT', 'product.Product')
 
 #: Target of order foreign keys
 PLATA_SHOP_ORDER = getattr(settings, 'PLATA_SHOP_ORDER', 'shop.Order')
