@@ -7,9 +7,10 @@ from django.template import RequestContext
 from django.utils.translation import ugettext as _
 from django.views.generic import  list_detail
 
+from plata.contact.models import Contact
 from plata.discount.models import Discount
 from plata.shop.views import Shop
-from plata.shop.models import Contact, Order
+from plata.shop.models import Order
 
 from simple.models import Product
 
