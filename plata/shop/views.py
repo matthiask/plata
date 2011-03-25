@@ -333,14 +333,9 @@ class Shop(object):
                         user = self.request.user
 
                     shop = plata.shop_instance()
-                    contact = shop.contact_model( # FIXME generalize contact generation a bit
-                        user=user,
-                        currency=self.instance.currency)
+                    contact = shop.contact_model.objects.create_from_order(
+                        self.instance, user=user)
 
-                    for k, v in data.items():
-                        if k.startswith('shipping_') or k.startswith('billing_'):
-                            setattr(contact, k, v)
-                    contact.save()
                     self.instance.contact = contact
 
                     signals.contact_created.send(sender=self, user=user,
