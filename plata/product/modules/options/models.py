@@ -135,7 +135,7 @@ class ProductManager(models.Manager):
                 ).filter(variations__orderitem__order__items__product__product=product))
 
 
-if False: # TODO?
+if plata.settings.PLATA_PRODUCT_OPTIONS_FEINCMS:
     from feincms.models import create_base_model
     Base = create_base_model(ProductBase)
 else:

@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.forms.models import BaseInlineFormSet
 from django.utils.translation import ugettext_lazy as _
 
+import plata
 from . import models
 
 
@@ -157,12 +158,8 @@ admin.site.register(models.OptionGroup,
     )
 
 
-if False: # TODO?
+if plata.settings.PLATA_PRODUCT_OPTIONS_FEINCMS:
     from feincms.admin.item_editor import ItemEditor, FEINCMS_CONTENT_FIELDSET
-
-    class CMSProductForm(ProductForm):
-        class Meta:
-            model = models.CMSProduct
 
     class CMSProductAdmin(ProductAdmin, ItemEditor):
         fieldsets = [(None, {
@@ -174,7 +171,6 @@ if False: # TODO?
                     'option_groups', 'create_variations'),
             }),
             ]
-        form = CMSProductForm
         inlines = [ProductVariationInline, ProductPriceInline, ProductImageInline]
 
     admin.site.register(models.Product, CMSProductAdmin)
