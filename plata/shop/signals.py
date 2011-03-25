@@ -10,6 +10,3 @@ order_confirmed = Signal(providing_args=['order'])
 #: Emitted upon order completion. Receives the order and payment instances
 #: and the remaining discount, if there is any.
 order_completed = Signal(providing_args=['order', 'payment', 'remaining_discount'])
-
-
-# TODO signals during payment process?
