@@ -14,7 +14,7 @@ from plata.product.stock.models import Period, StockTransaction
 import plata.reporting.order
 from plata.shop.models import Order
 
-from plata.tests.base import PlataTest
+from options.tests.base import PlataTest
 
 
 class ModelTest(PlataTest):

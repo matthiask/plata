@@ -8,7 +8,7 @@ from plata.product.modules.options.models import Product, \
     ProductVariation, OptionGroup, Option, ProductPrice # FIXME import paths
 from plata.shop.models import TaxClass
 
-from plata.tests.base import PlataTest
+from options.tests.base import PlataTest
 
 
 class AdminTest(PlataTest):

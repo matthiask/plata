@@ -135,7 +135,50 @@ PLATA_REPORTING_ADDRESSLINE = 'Example Corp. - 3. Example Street - 1234 Example'
 # PLATA settings
 
 TEST_RUNNER = 'options.test_utils.test_runner_with_coverage'
-COVERAGE_MODULES = ['plata']
+TEST_RUNNER = 'options.test_utils.CoverageRunner'
+COVERAGE_MODULES = [
+    'plata',
+    'plata.compat',
+    'plata.contact.admin',
+    'plata.contact.models',
+    'plata.context_processors',
+    'plata.default_settings',
+    'plata.discount.admin',
+    'plata.discount.models',
+    'plata.fields',
+    'plata.models',
+    'plata.payment.modules.base',
+    'plata.payment.modules.cod',
+    'plata.payment.modules.paypal',
+    'plata.payment.modules.postfinance',
+    'plata.product.admin',
+    'plata.product.feincms.content',
+    'plata.product.models',
+    'plata.product.modules.options.admin',
+    'plata.product.modules.options.discount',
+    'plata.product.modules.options.models',
+    'plata.product.modules.options.sitemap',
+    'plata.product.modules.options.templatetags.plata_product_tags',
+    'plata.product.modules.options.views',
+    'plata.product.producer.admin',
+    'plata.product.producer.models',
+    'plata.product.stock.admin',
+    'plata.product.stock.models',
+    'plata.reporting.notifications',
+    'plata.reporting.order',
+    'plata.reporting.product',
+    'plata.reporting.urls',
+    'plata.reporting.views',
+    'plata.shop.admin',
+    'plata.shop.management.commands.deluge',
+    'plata.shop.models',
+    'plata.shop.processors',
+    'plata.shop.signals',
+    'plata.shop.templatetags.plata_tags',
+    'plata.shop.views',
+    'plata.utils',
+    ]
+
 
 import logging, sys
 logging.basicConfig(

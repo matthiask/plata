@@ -11,8 +11,9 @@ from django.core.management.base import NoArgsCommand
 from django.db import transaction
 
 from plata.contact.models import Contact
-from plata.product.models import Category, Product, Discount, TaxClass
-from plata.shop.models import Order
+from plata.discount.models import Discount
+from plata.product.modules.options.models import Category, Product
+from plata.shop.models import Order, TaxClass
 
 
 class Command(NoArgsCommand):

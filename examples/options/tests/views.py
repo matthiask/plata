@@ -16,7 +16,7 @@ from plata.product.modules.options.models import \
 from plata.product.stock.models import Period, StockTransaction
 from plata.shop.models import Order, OrderPayment
 
-from plata.tests.base import PlataTest, get_request
+from options.tests.base import PlataTest, get_request
 
 
 class ViewTest(PlataTest):

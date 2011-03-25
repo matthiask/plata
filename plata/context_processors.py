@@ -7,6 +7,8 @@ def plata_context(request):
     """
 
     shop = plata.shop_instance()
+    if not shop:
+        return {}
 
     return {'plata': {
         'shop': shop,
