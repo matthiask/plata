@@ -1,9 +1,9 @@
 import sys
 
 from django.db import models
-from django.db.models import signals
 from django.utils.translation import ugettext_lazy as _
 
+from plata.product.models import ProductBase, register_price_cache_handlers
 from plata.reporting.notifications import ConsoleHandler
 from plata.shop.models import Price, PriceManager
 
@@ -24,8 +24,10 @@ class ProductPrice(Price):
 
     objects = PriceManager()
 
+register_price_cache_handlers(ProductPrice)
 
-class Product(models.Model):
+
+class Product(ProductBase):
     """(Nearly) the simplest product model ever"""
 
     is_active = models.BooleanField(_('is active'), default=True)
@@ -44,28 +46,6 @@ class Product(models.Model):
     def __unicode__(self):
         return self.name
 
-    def save(self, *args, **kwargs):
-        super(Product, self).save(*args, **kwargs)
-        self.flush_price_cache()
-
     @models.permalink
     def get_absolute_url(self):
         return ('plata_product_detail', (), {'object_id': self.pk})
-
-    def get_price(self, currency=None):
-        return self.prices.determine_price(self, currency)
-
-    def get_prices(self):
-        return self.prices.determine_prices(self)
-
-    def flush_price_cache(self):
-        self.prices.flush_price_cache(self)
-
-
-def flush_price_cache(instance, **kwargs):
-    instance.product.flush_price_cache()
-signals.post_save.connect(flush_price_cache, sender=ProductPrice)
-signals.post_delete.connect(flush_price_cache, sender=ProductPrice)
-
-
-

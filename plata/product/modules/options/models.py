@@ -8,6 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 
 import plata
 from plata.compat import product as itertools_product
+from plata.product.models import ProductBase, register_price_cache_handlers
 from plata.shop.models import Price, PriceManager
 
 
@@ -23,6 +24,8 @@ class ProductPrice(Price):
         verbose_name_plural = _('prices')
 
     objects = PriceManager()
+
+register_price_cache_handlers(ProductPrice)
 
 
 class CategoryManager(models.Manager):
@@ -134,9 +137,10 @@ class ProductManager(models.Manager):
 
 
 if False: # TODO?
-    from feincms.models import Base
+    from feincms.models import create_base_model
+    Base = create_base_model(ProductBase)
 else:
-    Base = models.Model
+    Base = ProductBase
 
 class Product(Base):
     """
@@ -174,7 +178,6 @@ class Product(Base):
         if not self.sku:
             self.sku = self.slug
         super(Product, self).save(*args, **kwargs)
-        self.flush_price_cache()
 
     @models.permalink
     def get_absolute_url(self):
@@ -188,15 +191,6 @@ class Product(Base):
             except IndexError:
                 self._main_image = None
         return self._main_image
-
-    def get_price(self, currency=None):
-        return self.prices.determine_price(self, currency)
-
-    def get_prices(self):
-        return self.prices.determine_prices(self)
-
-    def flush_price_cache(self):
-        self.prices.flush_price_cache(self)
 
     def in_sale(self, currency):
         prices = dict(self.get_prices())
@@ -278,12 +272,6 @@ class ProductVariation(models.Model):
 
     get_absolute_url = _generate_proxy('get_absolute_url')
     get_price = _generate_proxy('get_price')
-
-
-def flush_price_cache(instance, **kwargs):
-    instance.product.flush_price_cache()
-signals.post_save.connect(flush_price_cache, sender=ProductPrice)
-signals.post_delete.connect(flush_price_cache, sender=ProductPrice)
 
 
 class ProductImage(models.Model):
