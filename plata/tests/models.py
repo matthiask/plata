@@ -206,11 +206,11 @@ class ModelTest(PlataTest):
             name='Percentage discount',
             value=30)
 
-        self.assertRaises(ValidationError, lambda: discount.apply_to(order))
+        self.assertRaises(ValidationError, lambda: discount.add_to(order))
         discount.is_active = True
         discount.save()
 
-        discount.apply_to(order)
+        discount.add_to(order)
         order.recalculate_total()
 
         tax_factor = Decimal('1.076')
@@ -258,7 +258,7 @@ class ModelTest(PlataTest):
             is_active=True,
             tax_class=self.tax_class,
             currency='CHF')
-        discount.apply_to(order)
+        discount.add_to(order)
         order.recalculate_total()
 
         discounted1 = order.modify_item(p1.variations.get(), 0)
@@ -372,7 +372,7 @@ class ModelTest(PlataTest):
         order = self.create_order()
         order.modify_item(p1.variations.get(), 3)
         order.modify_item(p2.variations.get(), 2)
-        d.apply_to(order)
+        d.add_to(order)
         order.recalculate_total()
 
         # Test that only one order item has its discount applied
@@ -423,7 +423,7 @@ class ModelTest(PlataTest):
             code='perc20',
             value=Decimal('20.00'),
             is_active=True,
-            ).apply_to(order)
+            ).add_to(order)
         order.recalculate_total()
 
         self.assertAlmostEqual(order.total, Decimal('239.70') / 5 * 4)
@@ -437,7 +437,7 @@ class ModelTest(PlataTest):
             is_active=True,
             tax_class=self.tax_class,
             currency='CHF',
-            ).apply_to(order)
+            ).add_to(order)
         order.recalculate_total()
 
         self.assertAlmostEqual(order.total, (Decimal('239.70') - 20) / 5 * 4)
@@ -486,7 +486,7 @@ class ModelTest(PlataTest):
         discount.config = {'only_categories': {'categories': [c.pk]}}
         discount.save()
 
-        discount.apply_to(order)
+        discount.add_to(order)
         order.recalculate_total()
 
         self.assertAlmostEqual(order.total, 408)
@@ -537,7 +537,7 @@ class ModelTest(PlataTest):
         discount.config = {'only_categories': {'categories': [c.pk]}}
         discount.save()
 
-        discount.apply_to(order)
+        discount.add_to(order)
         order.recalculate_total()
 
         self.assertAlmostEqual(order.total, Decimal('190.80'))
@@ -567,7 +567,7 @@ class ModelTest(PlataTest):
             code='1234code',
             currency='CHF',
             )
-        discount.apply_to(order)
+        discount.add_to(order)
 
         order.recalculate_total()
 
@@ -593,7 +593,7 @@ class ModelTest(PlataTest):
             code='1234code',
             tax_class=self.tax_class,
             currency='CHF',
-            ).apply_to(order)
+            ).add_to(order)
 
         self.assertAlmostEqual(order.subtotal, Decimal('79.90'))
         self.assertAlmostEqual(order.discount, Decimal('79.90'))
@@ -726,7 +726,7 @@ class ModelTest(PlataTest):
             currency='CAD',
             config_json='{"products": {"products": [%d]}}' % p1.id,
             )
-        discount.apply_to(order)
+        discount.add_to(order)
         order.recalculate_total()
 
         # Exact values after usage of different tax rates in same order
@@ -763,11 +763,11 @@ class ModelTest(PlataTest):
             currency='CHF',
             )
 
-        discount.apply_to(order)
+        discount.add_to(order)
         self.assertAlmostEqual(order.total, Decimal('7.20'))
 
         discount.value = Decimal('650.00')
-        discount.apply_to(order)
+        discount.add_to(order)
         self.assertAlmostEqual(order.total, Decimal('0.00'))
 
         plata.settings.PLATA_ORDER_PROCESSORS = order_processors[:]
@@ -922,9 +922,9 @@ class ModelTest(PlataTest):
         order = self.create_order()
         order.modify_item(p1.variations.get(), 3)
 
-        self.assertRaises(ValidationError, lambda: discount.apply_to(order))
+        self.assertRaises(ValidationError, lambda: discount.add_to(order))
 
         discount.currency = order.currency
         discount.save()
 
-        discount.apply_to(order) # should not raise
+        discount.add_to(order) # should not raise

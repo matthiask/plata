@@ -209,7 +209,7 @@ class Discount(DiscountBase):
 
         return True
 
-    def apply_to(self, order, recalculate=True):
+    def add_to(self, order, recalculate=True):
         """
         Add discount to passed order
 
