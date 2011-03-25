@@ -119,7 +119,6 @@ class Option(models.Model):
 
 
 class ProductManager(models.Manager):
-    # TODO which of these methods are guaranteed to exist / required?
     def active(self):
         return self.filter(is_active=True)
 
