@@ -20,7 +20,7 @@ class OrderStatusInline(admin.TabularInline):
 class OrderAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     fieldsets = (
-        (None, {'fields': ('created', 'confirmed', 'contact', 'email', 'status')}),
+        (None, {'fields': ('created', 'confirmed', 'user', 'email', 'status')}),
         (_('Billing address'), {'fields': ('billing_company', 'billing_first_name',
             'billing_last_name', 'billing_address', 'billing_zip_code',
             'billing_city', 'billing_country')}),
@@ -34,10 +34,10 @@ class OrderAdmin(admin.ModelAdmin):
         (_('Additional fields'), {'fields': ('notes',)}),
         )
     inlines = [OrderItemInline, AppliedDiscountInline, OrderStatusInline]
-    list_display = ('__unicode__', 'created', 'contact', 'status', 'total',
+    list_display = ('__unicode__', 'created', 'user', 'status', 'total',
         'balance_remaining', 'is_paid', 'admin_invoice_pdf', 'admin_packing_slip_pdf')
     list_filter = ('status',)
-    raw_id_fields = ('contact',)
+    raw_id_fields = ('user',)
     search_fields = tuple('billing_%s' % s for s in models.Order.ADDRESS_FIELDS)\
         +tuple('shipping_%s' % s for s in models.Order.ADDRESS_FIELDS)\
         +('total', 'notes')
