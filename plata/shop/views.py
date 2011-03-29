@@ -276,8 +276,6 @@ class Shop(object):
 
     def checkout_form(self, request, order):
         """Returns the address form used in the first checkout step"""
-        REQUIRED_ADDRESS_FIELDS = self.order_model.ADDRESS_FIELDS[:]
-        REQUIRED_ADDRESS_FIELDS.remove('company')
 
         class OrderForm(forms.ModelForm):
             class Meta:
@@ -287,12 +285,27 @@ class Shop(object):
                 model = self.order_model
 
             def __init__(self, *args, **kwargs):
+                contact = kwargs.pop('contact')
                 self.request = kwargs.pop('request')
-                self.contact = kwargs.pop('contact')
+                shop = kwargs.pop('shop')
+
+                self.REQUIRED_ADDRESS_FIELDS = shop.contact_model.ADDRESS_FIELDS[:]
+                self.REQUIRED_ADDRESS_FIELDS.remove('company')
+
+                if contact:
+                    initial = {}
+                    if contact:
+                        initial['email'] = contact.user.email
+                        initial['shipping_same_as_billing'] = contact.shipping_same_as_billing
+                        for f in contact.ADDRESS_FIELDS:
+                            initial['billing_%s' % f] = getattr(contact, 'billing_%s' % f)
+                            initial['shipping_%s' % f] = getattr(contact, 'shipping_%s' % f)
+
+                    kwargs['initial'] = initial
 
                 super(OrderForm, self).__init__(*args, **kwargs)
 
-                if not self.contact:
+                if not contact:
                     self.fields['create_account'] = forms.BooleanField(
                         label=_('create account'),
                         required=False, initial=True)
@@ -301,7 +314,7 @@ class Shop(object):
                 data = self.cleaned_data
 
                 if not data.get('shipping_same_as_billing'):
-                    for f in REQUIRED_ADDRESS_FIELDS:
+                    for f in self.REQUIRED_ADDRESS_FIELDS:
                         field = 'shipping_%s' % f
                         if not data.get(field):
                             self._errors[field] = self.error_class([
@@ -354,20 +367,12 @@ class Shop(object):
         OrderForm = self.checkout_form(request, order)
         contact = self.contact_from_user(request.user)
 
-        initial = {}
-        if contact:
-            initial['email'] = contact.user.email
-            initial['shipping_same_as_billing'] = contact.shipping_same_as_billing
-            for f in contact.ADDRESS_FIELDS:
-                initial['billing_%s' % f] = getattr(contact, 'billing_%s' % f)
-                initial['shipping_%s' % f] = getattr(contact, 'shipping_%s' % f)
-
         orderform_kwargs = {
             'prefix': 'order',
             'instance': order,
             'request': request,
             'contact': contact,
-            'initial': initial,
+            'shop': self,
             }
 
         if request.method == 'POST' and '_checkout' in request.POST:
