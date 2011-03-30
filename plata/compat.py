@@ -1,6 +1,9 @@
 try:
     from itertools import product
 except ImportError:
+    # Python versions earlier than 2.6 do not include itertools.product yet
+    # Use equivalent (but slower and more memory intensive) alternative
+    # implementation instead
     def product(*args, **kwds):
         # product('ABCD', 'xy') --> Ax Ay Bx By Cx Cy Dx Dy
         # product(range(2), repeat=3) --> 000 001 010 011 100 101 110 111
