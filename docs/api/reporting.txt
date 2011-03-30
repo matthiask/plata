@@ -6,14 +6,6 @@ Reporting
    :noindex:
 
 
-Notifications
--------------
-
-.. automodule:: plata.reporting.notifications
-   :members:
-   :noindex:
-
-
 Order reports
 -------------
 
