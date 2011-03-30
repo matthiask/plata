@@ -1,0 +1,12 @@
+Settings
+========
+
+The settings here should be accessed using ``plata.settings.<KEY>``. All
+settings can be overridden by putting them in your standard ``settings.py``
+module.
+
+
+.. automodule:: plata.default_settings
+   :members:
+   :noindex:
+

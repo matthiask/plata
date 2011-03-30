@@ -46,6 +46,7 @@ API Documentation
    api/fields
    api/utils
    api/reporting
+   api/settings
 
 
 Indices and tables
