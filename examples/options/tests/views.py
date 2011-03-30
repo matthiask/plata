@@ -248,6 +248,7 @@ class ViewTest(PlataTest):
             'order-shipping_same_as_billing': True,
             'order-email': 'something@example.com',
             'order-currency': 'CHF',
+            'order-notes': 'Test\n\nJust testing.',
             }), '/discounts/')
 
         self.assertContains(self.client.post('/discounts/', {
