@@ -5,7 +5,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from plata.fields import CurrencyField
-from plata.models import BillingShippingAddress
+from plata.shop.models import BillingShippingAddress
 
 
 class ContactManager(models.Manager):
