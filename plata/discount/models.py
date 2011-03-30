@@ -9,7 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 
 import plata
 from plata.fields import CurrencyField
-from plata.shop.models import TaxClass
+from plata.shop.models import TaxClass, Order
 from plata.utils import JSONFieldDescriptor
 
 
@@ -273,7 +273,7 @@ class AppliedDiscount(DiscountBase):
     affect orders.
     """
 
-    order = models.ForeignKey(plata.settings.PLATA_SHOP_ORDER, related_name='applied_discounts',
+    order = models.ForeignKey(Order, related_name='applied_discounts',
         verbose_name=_('order'))
     code = models.CharField(_('code'), max_length=30) # We could make this a ForeignKey
                                                       # to Discount.code, but we do not
