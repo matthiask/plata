@@ -11,28 +11,21 @@ from plata.reporting.order import invoice_pdf, packing_slip_pdf
 from plata.shop import signals
 
 
-class BaseHandler(object):
-    @classmethod
-    def register(cls, **kwargs):
-        instance = cls(**kwargs)
+class EmailHandler(object):
+    def __init__(self, always_to=None, always_bcc=None):
+        self.always_to = always_to
+        self.always_bcc = always_bcc
 
-        dispatch_uid = kwargs.get('dispatch_uid', cls.__name__)
+    def __call__(self, sender, **kwargs):
+        email = self.message(sender, **kwargs)
 
-        signals.contact_created.connect(instance.on_contact_created,
-            dispatch_uid=dispatch_uid)
-        signals.order_confirmed.connect(instance.on_order_confirmed,
-            dispatch_uid=dispatch_uid)
-        signals.order_completed.connect(instance.on_order_completed,
-            dispatch_uid=dispatch_uid)
+        if self.always_to:
+            email.to += list(self.always_to)
+        if self.always_bcc:
+            email.bcc += list(self.always_bcc)
 
-        return instance
+        email.send()
 
-    def on_contact_created(self, sender, **kwargs): pass
-    def on_order_confirmed(self, sender, **kwargs): pass
-    def on_order_completed(self, sender, **kwargs): pass
-
-
-class EmailHandler(BaseHandler):
     def context(self, kwargs):
         ctx = {
             'site': Site.objects.get_current(),
@@ -40,21 +33,21 @@ class EmailHandler(BaseHandler):
         ctx.update(kwargs)
         return ctx
 
-    def on_contact_created(self, sender, **kwargs):
-        contact = kwargs['contact']
+
+class ContactCreatedHandler(EmailHandler):
+    def message(self, sender, contact, **kwargs):
         email = render_to_string('plata/notifications/contact_created.txt',
             self.context(kwargs)).splitlines()
 
-        message = EmailMessage(
+        return EmailMessage(
             subject=email[0],
             body=u'\n'.join(email[2:]),
             to=[contact.user.email],
-            bcc=plata.settings.PLATA_ALWAYS_BCC,
             )
-        message.send()
 
-    def on_order_completed(self, sender, **kwargs):
-        order = kwargs['order']
+
+class SendInvoiceHandler(EmailHandler):
+    def message(self, sender, order, **kwargs):
         email = render_to_string('plata/notifications/order_completed.txt',
             self.context(kwargs)).splitlines()
 
@@ -66,11 +59,14 @@ class EmailHandler(BaseHandler):
             subject=email[0],
             body=u'\n'.join(email[2:]),
             to=[order.email],
-            bcc=plata.settings.PLATA_ALWAYS_BCC + plata.settings.PLATA_ORDER_BCC,
             )
-        message.attach('invoice-%09d.pdf' % order.id, content.getvalue(), 'application/pdf')
-        message.send()
 
+        message.attach('invoice-%09d.pdf' % order.id, content.getvalue(), 'application/pdf')
+        return message
+
+
+class SendPackingSlipHandler(EmailHandler):
+    def message(self, sender, order, **kwargs):
         email = render_to_string('plata/notifications/packing_slip.txt',
             self.context(kwargs)).splitlines()
 
@@ -79,11 +75,23 @@ class EmailHandler(BaseHandler):
         packing_slip_pdf(pdf, order)
 
         message = EmailMessage(
-            subject='packing slip',
-            body=u'',
-            to=plata.settings.PLATA_SHIPPING_INFO,
-            bcc=plata.settings.PLATA_ALWAYS_BCC + plata.settings.PLATA_ORDER_BCC,
+            subject=email[0],
+            body=u'\n'.join(email[2:]),
             )
         message.attach('packing-slip-%09d.pdf' % order.id, content.getvalue(), 'application/pdf')
-        message.send()
+        return message
 
+
+"""
+signals.contact_created.connect(
+    ContactCreatedHandler(always_bcc=plata.settings.PLATA_ALWAYS_BCC),
+    weak=False)
+signals.order_completed.connect(
+    SendInvoiceHandler(always_bcc=plata.settings.PLATA_ALWAYS_BCC + plata.settings.PLATA_ORDER_BCC),
+    weak=False)
+signals.order_completed.connect(
+    SendPackingSlipHandler(
+        always_to=plata.settings.PLATA_SHIPPING_INFO,
+        always_bcc=plata.settings.PLATA_ALWAYS_BCC + plata.settings.PLATA_ORDER_BCC)
+    weak=False)
+"""

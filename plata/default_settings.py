@@ -1,9 +1,3 @@
-"""
-Note: The E-Mail configuration (PLATA_ALWAYS_BCC, PLATA_ORDER_BCC and
-PLATA_SHIPPING_INFO) is obscure and not very flexible and will be
-reworked.
-"""
-
 from decimal import Decimal
 
 from django.conf import settings
@@ -43,17 +37,6 @@ PLATA_REPORTING_STATIONERY = getattr(settings, 'PLATA_REPORTING_STATIONERY',
 
 #: PDF address line
 PLATA_REPORTING_ADDRESSLINE = getattr(settings, 'PLATA_REPORTING_ADDRESSLINE', '')
-
-#: Always BCC those people when sending out invoice and packing slip emails
-PLATA_ALWAYS_BCC = getattr(settings, 'PLATA_ALWAYS_BCC',
-    [email for name, email in settings.ADMINS])
-
-#: Always BCC these people on successful orders
-PLATA_ORDER_BCC = getattr(settings, 'PLATA_ORDER_BCC',
-    [email for name, email in settings.MANAGERS])
-
-#: Send shipping information to these people
-PLATA_SHIPPING_INFO = getattr(settings, 'PLATA_SHIPPING_INFO', PLATA_ORDER_BCC)
 
 #: Transactional stock tracking
 PLATA_STOCK_TRACKING = getattr(settings, 'PLATA_STOCK_TRACKING', False)

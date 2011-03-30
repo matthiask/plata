@@ -304,7 +304,7 @@ class ViewTest(PlataTest):
             'terms_and_conditions': True,
             'payment_method': 'plata.payment.modules.cod',
             }), '/order/success/')
-        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(len(mail.outbox), 2) # invoice and packing slip
         self.assertEqual(Order.objects.get(pk=order.id).status, Order.COMPLETED)
 
         # Clear order
