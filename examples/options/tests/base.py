@@ -131,6 +131,32 @@ class PlataTest(TestCase):
         product.prices.create(
             currency='CHF',
             tax_class=tax_class,
+            _unit_price=Decimal('199.90'),
+            tax_included=True,
+            valid_from=date(2000, 1, 1),
+            valid_until=date(2001, 1, 1),
+            )
+
+        product.prices.create(
+            currency='CHF',
+            tax_class=tax_class,
+            _unit_price=Decimal('299.90'),
+            tax_included=True,
+            valid_from=date(2000, 1, 1),
+            )
+
+        product.prices.create(
+            currency='CHF',
+            tax_class=tax_class,
+            _unit_price=Decimal('299.90'),
+            tax_included=True,
+            valid_from=date(2000, 7, 1),
+            is_sale=True,
+            )
+
+        product.prices.create(
+            currency='CHF',
+            tax_class=tax_class,
             _unit_price=Decimal('79.90'),
             tax_included=True,
             is_sale=True,

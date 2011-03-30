@@ -542,23 +542,25 @@ class PriceManager(models.Manager):
         if cache.has_key(key):
             return cache.get(key)
 
+        _prices = {}
+        for price in product.prices.active().order_by('valid_from'):
+            # First item is normal price, second is sale price
+            _prices.setdefault(price.currency, [None, None])[int(price.is_sale)] = price
+
         prices = []
         for currency in plata.settings.CURRENCIES:
-            try:
-                normal, sale = product.prices.active().filter(currency=currency).latest(), None
-            except product.prices.model.DoesNotExist:
+            p = _prices.get(currency)
+            if not p:
                 continue
 
-            if normal.is_sale:
-                sale = normal
-                try:
-                    normal = product.prices.active().filter(is_sale=False, currency=currency).latest()
-                except self.model.DoesNotExist:
-                    normal = None
+            # Sale prices are only active if they are newer than the newest
+            # normal price
+            if (p[0] and p[1]) and p[0].valid_from > p[1].valid_from:
+                p[1] = None
 
             prices.append((currency, {
-                'normal': normal,
-                'sale': sale,
+                'normal': p[0],
+                'sale': p[1],
                 }))
 
         cache.set(key, prices)
