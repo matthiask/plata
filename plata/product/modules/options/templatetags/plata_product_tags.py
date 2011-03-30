@@ -41,7 +41,14 @@ def bestsellers(parser, token):
 
         {% bestsellers as product_list %}
     """
-
     tag, xx, as_ = token.contents.split()
-
     return BestsellersNode(as_)
+
+"""
+Django 1.3::
+
+    @register.simple_tag(needs_context=True)
+    def bestsellers(context, variable):
+        context[variable] = Product.objects.bestsellers()[:5]
+        return u''
+"""
