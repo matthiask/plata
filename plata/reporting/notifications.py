@@ -32,23 +32,6 @@ class BaseHandler(object):
     def on_order_completed(self, sender, **kwargs): pass
 
 
-class ConsoleHandler(BaseHandler):
-    def __init__(self, stream):
-        self.stream = stream
-
-    def on_contact_created(self, sender, **kwargs):
-        print >>self.stream, 'Contact created: %(contact)s, password %(password)s' % kwargs
-
-    def on_order_confirmed(self, sender, **kwargs):
-        print >>self.stream, 'Order confirmed: %(order)s' % kwargs
-
-    def on_order_completed(self, sender, **kwargs):
-        print >>self.stream, 'Order completed: %s, payment %s, new discount %s' % (
-            kwargs.get('order'),
-            kwargs.get('payment'),
-            kwargs.get('remaining_discount'))
-
-
 class EmailHandler(BaseHandler):
     def context(self, kwargs):
         ctx = {

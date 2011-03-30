@@ -4,11 +4,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from plata.product.models import ProductBase, register_price_cache_handlers
-from plata.reporting.notifications import ConsoleHandler
 from plata.shop.models import Price, PriceManager
-
-
-handler = ConsoleHandler.register(stream=sys.stderr)
 
 
 class ProductPrice(Price):

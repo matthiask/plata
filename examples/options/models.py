@@ -1,9 +1,5 @@
 import sys
 
-from plata.reporting.notifications import ConsoleHandler
-
-handler = ConsoleHandler.register(stream=sys.stderr)
-
 """
 from django.utils.translation import get_language, ugettext_lazy as _
 
