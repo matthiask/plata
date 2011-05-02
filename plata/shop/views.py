@@ -274,7 +274,7 @@ class Shop(object):
     def checkout_form(self, request, order):
         """Returns the address form used in the first checkout step"""
 
-        class OrderForm(forms.ModelForm):
+        class CheckoutForm(forms.ModelForm):
             class Meta:
                 fields = ['notes', 'email', 'shipping_same_as_billing']
                 fields.extend('billing_%s' % f for f in self.order_model.ADDRESS_FIELDS)
@@ -300,7 +300,7 @@ class Shop(object):
 
                     kwargs['initial'] = initial
 
-                super(OrderForm, self).__init__(*args, **kwargs)
+                super(CheckoutForm, self).__init__(*args, **kwargs)
 
                 if not contact:
                     self.fields['create_account'] = forms.BooleanField(
@@ -337,7 +337,7 @@ class Shop(object):
 
                 return data
 
-        return OrderForm
+        return CheckoutForm
 
     def checkout(self, request, order):
         """Handles the first step of the checkout process"""
