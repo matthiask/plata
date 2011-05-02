@@ -179,14 +179,11 @@ class Shop(object):
             if create:
                 contact = self.contact_from_user(request.user)
 
-                if contact:
-                    currency = contact.currency
-                    user = contact.user
-                else:
-                    currency = self.default_currency(request)
-                    user = request.user if request.user.is_authenticated() else None
+                order = self.order_model.objects.create(
+                    currency=getattr(contact, 'currency', self.default_currency(request)),
+                    user=getattr(contact, 'user',
+                        request.user if request.user.is_authenticated() else None))
 
-                order = self.order_model.objects.create(currency=currency, user=user)
                 self.set_order_on_request(request, order)
                 return order
 
