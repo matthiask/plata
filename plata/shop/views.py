@@ -332,9 +332,6 @@ class Shop(object):
                                 self._errors['email'] = self.error_class([
                                     _('This e-mail address might belong to you, but we cannot know for sure because you are not authenticated yet.')])
 
-                            # Clear e-mail address so that further processing is aborted
-                            email = None
-
                 return data
 
         return CheckoutForm
