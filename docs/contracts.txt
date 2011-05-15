@@ -1,0 +1,97 @@
+.. _contracts:
+
+=========
+Contracts
+=========
+
+This document describes the minimum contract the shop models are supposed
+to fulfill.
+
+The simple example at ``examples/simple/`` is supposed to demonstrate the
+most simple use of Plata.
+
+
+
+Product model
+=============
+
+The (base) product model has to be specified as ``PLATA_SHOP_PRODUCT``
+using Django's ``app_label.model_name`` notation. The model referenced
+will be the model pointed to by the ``OrderItem`` order line items.
+
+Since it's your responsability to write all views and URLs for your
+product catalogue, there aren't many things Plata's products have to
+fulfill.
+
+Plata provides an abstract model at ``plata.product.models.ProductBase``.
+You do not have to use it - it just provides the standard interface to
+the price determination routines already.
+
+* ``get_price(currency)``:
+
+  The ``get_price`` method has to accept at least the current currency
+  and optionally more arguments too, such as the current line item
+  for the implementation of price tiers.
+
+  This method must return a ``Price`` instance. It has to raise a
+  ``Price.DoesNotExist`` exception if no price could be found for
+  the passed arguments.
+
+
+Different product models
+------------------------
+
+If you need different product models, consider using Django's model
+inheritance and something like django-polymorphic_.
+
+.. _django-polymorphic: https://github.com/bconstantin/django_polymorphic
+
+
+
+Price model
+===========
+
+Plata has a bundled abstract price model which does almost everything
+required. You have to provide the concrete price model yourself though.
+
+The only thing it lacks for a basic price is a foreign key to product
+(with ``related_name='prices'``) and a manager subclass implementing
+cached price lookup methods.
+
+The price object has to offer the following attributes:
+
+* unit_price_excl_tax
+
+  A ``decimal.Decimal`` describing the unit price with tax excluded.
+  ``unit_price_incl_tax`` and ``unit_price`` are offered by the default
+  implementation too, but they aren't mandatory.
+
+* unit_tax
+
+  A ``decimal.Decimal`` too. This is the tax amount per unit, **not**
+  the tax rate.
+
+* tax_class.rate
+
+  The tax rate as a percentage, meaning ``19.0`` for a tax rate of
+  19.6%.
+
+* tax_class
+
+  A ``plata.shop.models.TaxClass`` object for the given price.
+
+* is_sale
+
+  Purely information field describing whether this price is a sale
+  price or not.
+
+
+
+Contact model
+=============
+
+The contact model will soon be exchangeable. This probably means that you'll
+have to provide your own checkout form too.
+
+For now, Plata only works with the contact model at
+``plata.contact.models.Contact``.

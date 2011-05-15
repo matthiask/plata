@@ -28,6 +28,7 @@ Contents
    payment
    settings
    taxes_and_discounts
+   contracts
 
 
 API Documentation
