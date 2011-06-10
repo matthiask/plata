@@ -192,7 +192,7 @@ class PaymentProcessor(ProcessorBase):
             payment.payment_method = BRAND
             payment.notes = STATUS_DICT.get(STATUS)
 
-            if STATUS == '5':
+            if STATUS in ('5', '9'):
                 payment.authorized = datetime.now()
                 payment.status = OrderPayment.AUTHORIZED
 
