@@ -26,10 +26,10 @@ class EmailHandler(object):
 
         email.send()
 
-    def context(self, kwargs):
-        ctx = {
+    def context(self, ctx, **kwargs):
+        ctx.update({
             'site': Site.objects.get_current(),
-            }
+            })
         ctx.update(kwargs)
         return ctx
 

@@ -18,7 +18,7 @@
 <input type="hidden" name="invoice" value="Order-{{ order.id }}-{{ payment.id }}" />
 {% if order.partially_paid %}
     <input type="hidden" name="item_name_1" value="Remaining Balance for order {{ order.id }}" />
-    <input type="hidden" name="amount_1" value="{{ order.balance_remaining|floatformat:2 }}" />
+    <input type="hidden" name="amount_1" value="{{ order.balance_remaining|stringformat:".2f" }}" />
     <input type="hidden" name="quantity_1" value="1" />
 {% else %}
 
@@ -26,18 +26,18 @@
     <input type="hidden" name="item_name_{{ forloop.counter }}"
         value="{{ item }}" />
     <input type="hidden" name="amount_{{ forloop.counter }}"
-        value="{{ item.unit_price|floatformat:2 }}" />
+        value="{{ item.unit_price|stringformat:".2f" }}" />
     {% if item.line_item_discount %}<input type="hidden" name="discount_amount_{{ forloop.counter }}"
-        value="{{ item.line_item_discount|floatformat:2 }}" />{% endif %}
+        value="{{ item.line_item_discount|stringformat:".2f" }}" />{% endif %}
     <input type="hidden" name="quantity_{{ forloop.counter }}"
         value="{{ item.quantity|floatformat:0 }}" />
 {% endfor %}
 
 {# LEAVE THE HANDLING CHARGE ALONE!  PAYPAL SHIPPING WILL INEVITABLY BE MESSED UP IF YOU USE THEIR SHIPPING METHODS #}
 {# To work around their bizarre system, we are telling Paypal "no shipping" and adding all shipping charges as handling #}
-<input type="hidden" name="handling_cart" value="{{ order.shipping|floatformat:2 }}" />
+<input type="hidden" name="handling_cart" value="{{ order.shipping|stringformat:".2f" }}" />
 <!--
-<input type="hidden" name="tax_cart" value="{{ order.tax|floatformat:2 }}" />
+<input type="hidden" name="tax_cart" value="{{ order.tax|stringformat:".2f" }}" />
 -->
 
 {% endif %}
