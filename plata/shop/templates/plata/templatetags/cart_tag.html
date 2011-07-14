@@ -1,0 +1,17 @@
+{% load i18n %}
+<div class="plata-cart">
+{% if not order or order.is_completed or order.total == 0 %}
+	{% trans "The cart is empty" %}
+{% else %}
+	{% for item in order.items.all %}
+	<div class="variation">{{ item.variation }}</div>
+	<div class="quantity">{% trans "Quantity" %}: {{ item.quantity }}</div>
+	<div class="price">{{ item.subtotal|floatformat:2 }} {{ order.currency }}</div>
+	{% endfor %}
+	<div class="total">
+		{% trans "Total" %}: {{ order.total|floatformat:2 }} {{ order.currency }}
+	</div>
+	
+	<a href="{% url plata_shop_cart %}">{% trans "Show cart" %}</a>
+{% endif %}
+</div>

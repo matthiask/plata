@@ -9,3 +9,5 @@ plata.db
 plata.log
 /docs/_build
 /docs/deploy.sh
+.pydevproject
+.project

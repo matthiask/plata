@@ -1,7 +1,38 @@
 from django import forms, template
 from django.template.loader import render_to_string
 
+import plata
+from plata.product.models import Product, Category
+
 register = template.Library()
+
+
+@register.inclusion_tag('plata/templatetags/cart_tag.html', takes_context=True)
+def plata_cart(context):
+    shop = plata.shop_instance()
+    order = shop.order_from_request(context['request'], create=False)
+    
+    return {
+        'order': order
+    }
+
+    
+@register.inclusion_tag('product/templatetags/bestsellers_tag.html')
+def plata_bestsellers():
+    return {
+        'bestsellers': Product.objects.bestsellers()
+    }
+
+    
+@register.inclusion_tag('product/templatetags/categories_and_featured_tag.html')
+def plata_categories_and_featured():
+    categories = Category.objects.public()
+    for category in categories:
+        category.featured = Product.objects.featured().filter(categories__id=category.id)
+    
+    return {
+        'categories': categories
+    }
 
 
 @register.inclusion_tag('_form_item.html')
