@@ -925,3 +925,48 @@ class ModelTest(PlataTest):
         discount.save()
 
         discount.add_to(order) # should not raise
+
+    def test_26_amount_coupon_incl_tax(self):
+        """Test coupons"""
+        tax_class, tax_class_germany, tax_class_something = self.create_tax_classes()
+
+        product = Product.objects.create(
+            name='Ein Paar Hosen',
+            slug='prodeinpaarhosen1',
+            )
+
+        product.create_variations()
+        product.prices.create(
+            currency='CHF',
+            tax_class=tax_class,
+            _unit_price=Decimal('100.00'),
+            tax_included=False,
+            )
+
+        price = product.get_price(currency='CHF')
+        price.tax_class = tax_class
+        price.save()
+
+        order = self.create_order()
+        order.save()
+
+        normal1 = order.modify_item(product.variations.get(), 1)
+
+        order.recalculate_total()
+        # We use ROUND_HALF_UP now
+        self.assertAlmostEqual(order.total, Decimal('100'))
+
+        discount = Discount.objects.create(
+            type=Discount.PREPAID,
+            code='asdf',
+            name='Amount discount',
+            value=Decimal('20.00'),
+            is_active=True,
+            tax_class=tax_class,
+            currency='CHF',
+            )
+        discount.add_to(order)
+        order.recalculate_total()
+
+        # We use ROUND_HALF_UP now
+        self.assertAlmostEqual(order.total, Decimal('87.6'))
