@@ -940,7 +940,7 @@ class ModelTest(PlataTest):
             currency='CHF',
             tax_class=tax_class,
             _unit_price=Decimal('100.00'),
-            tax_included=False,
+            tax_included=True,
             )
 
         price = product.get_price(currency='CHF')
