@@ -279,6 +279,9 @@ class Order(BillingShippingAddress):
         item.tax_class = price.tax_class
         item.is_sale = price.is_sale
 
+        item.name = unicode(product)
+        item.sku = getattr(product, 'sku', u'')
+
         if relative is not None:
             item.quantity += relative
         else:
@@ -356,7 +359,11 @@ class OrderItem(models.Model):
     """Single order line item"""
 
     order = models.ForeignKey(Order, related_name='items')
-    product = models.ForeignKey(plata.settings.PLATA_SHOP_PRODUCT, verbose_name=_('product'))
+    product = models.ForeignKey(plata.settings.PLATA_SHOP_PRODUCT, verbose_name=_('product'),
+        blank=True, null=True, on_delete=models.SET_NULL)
+
+    name = models.CharField(_('name'), max_length=100, blank=True)
+    sku = models.CharField(_('SKU'), max_length=100, blank=True)
 
     quantity = models.IntegerField(_('quantity'))
 
@@ -369,8 +376,7 @@ class OrderItem(models.Model):
 
     tax_rate = models.DecimalField(_('tax rate'), max_digits=10, decimal_places=2)
     tax_class = models.ForeignKey(TaxClass, verbose_name=_('tax class'),
-        #blank=True, null=True, on_delete=models.SET_NULL)  # Only available in Django 1.3
-        blank=True, null=True)
+        blank=True, null=True, on_delete=models.SET_NULL)
 
     is_sale = models.BooleanField(_('is sale'))
 
