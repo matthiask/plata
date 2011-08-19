@@ -273,14 +273,8 @@ class Order(BillingShippingAddress):
                 currency=self.currency,
                 )
 
-        item._unit_price = price.unit_price_excl_tax
-        item._unit_tax = price.unit_tax
-        item.tax_rate = price.tax_class.rate
-        item.tax_class = price.tax_class
-        item.is_sale = price.is_sale
-
-        item.name = unicode(product)
-        item.sku = getattr(product, 'sku', u'')
+        price.handle_order_item(item)
+        product.handle_order_item(item)
 
         if relative is not None:
             item.quantity += relative
@@ -652,6 +646,16 @@ class Price(models.Model):
 
     def __unicode__(self):
         return u'%s %.2f' % (self.currency, self.unit_price)
+
+    def handle_order_item(self, item):
+        """
+        Set price data on the ``OrderItem`` passed
+        """
+        item._unit_price = self.unit_price_excl_tax
+        item._unit_tax = self.unit_tax
+        item.tax_rate = self.tax_class.rate
+        item.tax_class = self.tax_class
+        item.is_sale = self.is_sale
 
     @property
     def unit_tax(self):

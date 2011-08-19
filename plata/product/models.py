@@ -27,6 +27,9 @@ class ProductBase(models.Model):
     def flush_price_cache(self):
         self.prices.flush_price_cache(self)
 
+    def handle_order_item(self, orderitem):
+        orderitem.name = unicode(self)
+        orderitem.sku = getattr(self, 'sku', u'')
 
 def flush_price_cache(instance, **kwargs):
     instance.product.flush_price_cache()
