@@ -7,20 +7,20 @@ import pkg_resources
 
 
 add_django_dependency = True
-# See issues #50, #57 and #58 for why this is necessary
+# See feinCMS issues #50, #57 and #58 for why this is necessary
 try:
     pkg_resources.get_distribution('Django')
     add_django_dependency = False
 except pkg_resources.DistributionNotFound:
     try:
         import django
-        if django.VERSION[0] >= 1 and django.VERSION[1] >= 2 and django.VERSION[2] >= 0:
+        if django.VERSION[0] >= 1 and django.VERSION[1] >= 3 and django.VERSION[2] >= 0:
             add_django_dependency = False
     except ImportError:
         pass
 
 Distribution({
-    "setup_requires": add_django_dependency and  ['Django >=1.2.0'] or []
+    "setup_requires": add_django_dependency and  ['Django >=1.3.0'] or []
 })
 
 import plata
@@ -47,7 +47,7 @@ setup(name='Plata',
         'Topic :: Software Development :: Libraries :: Application Frameworks',
     ],
     install_requires=[
-        #'Django >=1.1.1' # See http://github.com/matthiask/feincms/issues/closed#issue/50
+        #'Django >=1.3.0' # See http://github.com/feincms/feincms/issues/closed#issue/50
     ],
     requires=[
     ],
