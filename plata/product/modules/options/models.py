@@ -288,4 +288,6 @@ class ProductImage(models.Model):
         verbose_name_plural = _('product images')
 
     def __unicode__(self):
-        return self.image.name
+        if self.image.name:
+            return self.image.name
+        return u'product image of %s' % self.product
