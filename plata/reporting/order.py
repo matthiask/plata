@@ -39,8 +39,8 @@ def invoice_pdf(pdf, order):
             capfirst(_('line item price')),
         )]+[
         (
-            item.product.sku,
-            unicode(item.product),
+            item.sku,
+            item.name,
             item.quantity,
             u'%.2f' % item.unit_price,
             u'%.2f' % item.discounted_subtotal,
@@ -133,8 +133,8 @@ def packing_slip_pdf(pdf, order):
             capfirst(_('quantity')),
         )]+[
         (
-            item.product.sku,
-            unicode(item.product),
+            item.sku,
+            item.name,
             item.quantity,
         ) for item in order.items.all()],
         (2*cm, 13.4*cm, 1*cm), pdf.style.tableHead+(
