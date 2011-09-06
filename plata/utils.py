@@ -1,13 +1,16 @@
-import simplejson
-
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Model
 
 
 try:
+    from django.utils import simplejson
     simplejson.dumps([42], use_decimal=True)
 except TypeError:
-    raise Exception('simplejson>=2.1 with support for use_decimal required.')
+    try:
+        import simplejson
+        simplejson.dumps([42], use_decimal=True)
+    except (ImportError, TypeError):
+        raise Exception('simplejson>=2.1 with support for use_decimal required.')
 
 
 def jsonize(v):
