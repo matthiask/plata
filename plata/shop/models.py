@@ -273,15 +273,14 @@ class Order(BillingShippingAddress):
                 currency=self.currency,
                 )
 
-        price.handle_order_item(item)
-        product.handle_order_item(item)
-
         if relative is not None:
             item.quantity += relative
         else:
             item.quantity = absolute
 
         if item.quantity > 0:
+            price.handle_order_item(item)
+            product.handle_order_item(item)
             item.save()
         else:
             if item.pk:
