@@ -970,3 +970,58 @@ class ModelTest(PlataTest):
 
         # We use ROUND_HALF_UP now
         self.assertAlmostEqual(order.total, Decimal('87.6'))
+
+    def test_27_discounts(self):
+        """Discount testing reloaded"""
+        tax_class, tax_class_germany, tax_class_something = self.create_tax_classes()
+
+        product = Product.objects.create(
+            name='Ein Paar Hosen',
+            slug='prodeinpaarhosen1',
+            )
+
+        product.create_variations()
+        product.prices.create(
+            currency='CHF',
+            tax_class=tax_class,
+            _unit_price=Decimal('100.00'),
+            tax_included=True,
+            )
+
+        price = product.get_price(currency='CHF')
+        price.tax_class = tax_class
+        price.save()
+
+        order = self.create_order()
+        order.save()
+
+        normal1 = order.modify_item(product.variations.get(), 1)
+
+        order.recalculate_total()
+        self.assertAlmostEqual(order.total, Decimal('100'))
+
+        discount = Discount.objects.create(
+            type=Discount.PREPAID,
+            code='asdf',
+            name='Amount discount',
+            value=Decimal('20.00'),
+            is_active=True,
+            tax_class=tax_class,
+            currency='CHF',
+            )
+        discount.add_to(order)
+        order.recalculate_total()
+
+        # Pre-paid discount -- tax still applies to undiscounted value
+        self.assertAlmostEqual(order.total, Decimal('80.00'))
+        self.assertAlmostEqual(order.subtotal, Decimal('100.00') / Decimal('1.076') - Decimal('20.00'))
+
+        # Change something on the discount
+        discount.before_tax = True # TODO implement this
+        discount.add_to(order)
+        order.recalculate_total()
+
+        # Voucher from a magazine or something -- tax only applies to
+        # discounted value
+        self.assertAlmostEqual(order.total, Decimal('80.00'))
+        self.assertAlmostEqual(order.subtotal, Decimal('80.00') / Decimal('1.076'))
