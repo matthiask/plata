@@ -37,6 +37,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ('__unicode__', 'created', 'user', 'status', 'total',
         'balance_remaining', 'is_paid', 'admin_invoice_pdf', 'admin_packing_slip_pdf')
     list_filter = ('status',)
+    ordering = ['-created']
     raw_id_fields = ('user',)
     search_fields = tuple('billing_%s' % s for s in models.Order.ADDRESS_FIELDS)\
         +tuple('shipping_%s' % s for s in models.Order.ADDRESS_FIELDS)\
