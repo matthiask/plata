@@ -547,7 +547,7 @@ class Shop(object):
         if not order:
             return self.order_new(request)
 
-        # Create a new, empty order right away. It makes no sense
+        # Create a new, empty order right away. It makes no sense
         # to keep the completed order around anymore.
         self.set_order_on_request(request, order=None)
 
