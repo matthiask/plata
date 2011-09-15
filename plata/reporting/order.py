@@ -28,7 +28,7 @@ def invoice_pdf(pdf, order):
         ))
     pdf.spacer(3*mm)
 
-    pdf.h1(_('Order %09d') % order.id)
+    pdf.h1(_('Order %s') % order.order_id)
     pdf.hr()
 
     pdf.table([(
@@ -124,7 +124,7 @@ def packing_slip_pdf(pdf, order):
         ))
     pdf.spacer(3*mm)
 
-    pdf.h1(_('Order %09d') % order.id)
+    pdf.h1(_('Order %s') % order.order_id)
     pdf.hr()
 
     pdf.table([(

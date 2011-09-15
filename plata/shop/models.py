@@ -1,6 +1,7 @@
 from datetime import date, datetime
 from decimal import Decimal
 import logging
+import re
 
 from django.contrib.auth.models import User
 from django.core.cache import cache
@@ -101,7 +102,7 @@ class Order(BillingShippingAddress):
     status = models.PositiveIntegerField(_('status'), choices=STATUS_CHOICES,
         default=CART)
 
-    #order_id = models.CharField(_('order ID'), max_length=20, unique=True)
+    _order_id = models.CharField(_('order ID'), max_length=20, blank=True)
     email = models.EmailField(_('e-mail address'))
 
     currency = CurrencyField()
@@ -141,6 +142,24 @@ class Order(BillingShippingAddress):
 
     def __unicode__(self):
         return u'Order #%d' % self.pk
+
+    def save(self, *args, **kwargs):
+        """Sequential order IDs for completed orders."""
+        if not self._order_id and self.status >= self.COMPLETED:
+            try:
+                order = Order.objects.exclude(_order_id='').order_by('-_order_id')[0]
+                latest = int(re.sub(r'[^0-9]', '', order._order_id))
+            except (IndexError, ValueError):
+                latest = 0
+
+            self._order_id = 'O-%09d' % (latest + 1)
+        super(Order, self).save(*args, **kwargs)
+
+    @property
+    def order_id(self):
+        if self._order_id:
+            return self._order_id
+        return u'No. %d' % self.id
 
     def recalculate_total(self, save=True):
         """

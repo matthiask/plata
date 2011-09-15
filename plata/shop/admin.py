@@ -34,7 +34,7 @@ class OrderAdmin(admin.ModelAdmin):
         (_('Additional fields'), {'fields': ('notes',)}),
         )
     inlines = [OrderItemInline, AppliedDiscountInline, OrderStatusInline]
-    list_display = ('__unicode__', 'created', 'user', 'status', 'total',
+    list_display = ('order_id', 'created', 'user', 'status', 'total',
         'balance_remaining', 'is_paid', 'admin_invoice_pdf', 'admin_packing_slip_pdf')
     list_filter = ('status',)
     ordering = ['-created']
