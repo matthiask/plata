@@ -73,9 +73,9 @@ admin.site.register(models.Order, OrderAdmin)
 class OrderPaymentAdmin(admin.ModelAdmin):
     date_hierarchy = 'timestamp'
     list_display = ('order', 'timestamp', 'currency', 'amount', 'status', 'authorized',
-        'payment_module', 'payment_method', 'notes_short')
+        'payment_module_key', 'notes_short')
     list_display_links = ('timestamp',)
-    list_filter = ('status',)
+    list_filter = ('status', 'payment_module_key')
     raw_id_fields = ('order',)
     search_fields = ('amount', 'payment_module', 'payment_method', 'transaction_id',
         'notes', 'data')
