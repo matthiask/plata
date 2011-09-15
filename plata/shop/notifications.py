@@ -125,15 +125,17 @@ class SendPackingSlipHandler(EmailHandler):
 
 
 """
-signals.contact_created.connect(
-    ContactCreatedHandler(always_bcc=plata.settings.PLATA_ALWAYS_BCC),
+from plata.shop import notifications, signals as shop_signals
+
+shop_signals.contact_created.connect(
+    notifications.ContactCreatedHandler(always_bcc=plata.settings.PLATA_ALWAYS_BCC),
     weak=False)
-signals.order_completed.connect(
-    SendInvoiceHandler(always_bcc=plata.settings.PLATA_ALWAYS_BCC + plata.settings.PLATA_ORDER_BCC),
+shop_signals.order_completed.connect(
+    notifications.SendInvoiceHandler(always_bcc=plata.settings.PLATA_ALWAYS_BCC + plata.settings.PLATA_ORDER_BCC),
     weak=False)
-signals.order_completed.connect(
-    SendPackingSlipHandler(
+shop_signals.order_completed.connect(
+    notifications.SendPackingSlipHandler(
         always_to=plata.settings.PLATA_SHIPPING_INFO,
-        always_bcc=plata.settings.PLATA_ALWAYS_BCC + plata.settings.PLATA_ORDER_BCC)
+        always_bcc=plata.settings.PLATA_ALWAYS_BCC + plata.settings.PLATA_ORDER_BCC),
     weak=False)
 """
