@@ -19,7 +19,7 @@ logger = logging.getLogger('plata.payment.cod')
 
 
 class PaymentProcessor(ProcessorBase):
-    ident = 'cod'
+    key = 'cod'
     default_name = _('Cash on delivery')
 
     def process_order_confirmed(self, request, order):

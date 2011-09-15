@@ -29,7 +29,7 @@ logger = logging.getLogger('plata.payment.paypal')
 
 
 class PaymentProcessor(ProcessorBase):
-    ident = 'paypal'
+    key = 'paypal'
     default_name = _('Paypal')
 
     def get_urls(self):

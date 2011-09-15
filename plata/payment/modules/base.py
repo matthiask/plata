@@ -15,7 +15,7 @@ class ProcessorBase(object):
     """Payment processor base class"""
 
     #: Safe key for this payment module (shouldn't contain special chars, spaces etc.)
-    ident = 'unnamed'
+    key = 'unnamed'
 
     #: Human-readable name for this payment module. You may even use i18n here.
     default_name = 'unnamed'
@@ -26,7 +26,7 @@ class ProcessorBase(object):
     @property
     def name(self):
         return plata.settings.PLATA_PAYMENT_MODULE_NAMES.get(
-            self.ident,
+            self.key,
             self.default_name)
 
     @property
@@ -71,6 +71,7 @@ class ProcessorBase(object):
         return order.payments.create(
             currency=order.currency,
             amount=order.balance_remaining,
+            payment_module_key=self.key,
             payment_module=u'%s' % self.name,
             )
 

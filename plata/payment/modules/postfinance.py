@@ -72,7 +72,7 @@ STATUS_DICT = dict(line.split('\t') for line in STATUSES.splitlines())
 
 
 class PaymentProcessor(ProcessorBase):
-    ident = 'postfinance'
+    key = 'postfinance'
     default_name = _('Postfinance')
 
     def get_urls(self):

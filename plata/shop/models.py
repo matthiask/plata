@@ -520,6 +520,8 @@ class OrderPayment(models.Model):
 
     currency = CurrencyField()
     amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2)
+    payment_module_key = models.CharField(_('payment module key'), max_length=20,
+        help_text=_('Machine-readable identifier for the payment module used.'))
     payment_module = models.CharField(_('payment module'), max_length=50, blank=True,
         help_text=_('For example \'Cash on delivery\', \'PayPal\', ...'))
     payment_method = models.CharField(_('payment method'), max_length=50, blank=True,
