@@ -141,7 +141,7 @@ class Order(BillingShippingAddress):
         verbose_name_plural = _('orders')
 
     def __unicode__(self):
-        return u'Order #%d' % self.pk
+        return self.order_id
 
     def save(self, *args, **kwargs):
         """Sequential order IDs for completed orders."""
