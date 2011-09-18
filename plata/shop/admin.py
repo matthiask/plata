@@ -21,13 +21,9 @@ class OrderAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     fieldsets = (
         (None, {'fields': ('created', 'confirmed', 'user', 'email', 'status')}),
-        (_('Billing address'), {'fields': ('billing_company', 'billing_first_name',
-            'billing_last_name', 'billing_address', 'billing_zip_code',
-            'billing_city', 'billing_country')}),
-        (_('Shipping address'), {'fields': ('shipping_same_as_billing',
-            'shipping_company', 'shipping_first_name',
-            'shipping_last_name', 'shipping_address', 'shipping_zip_code',
-            'shipping_city', 'shipping_country')}),
+        (_('Billing address'), {'fields': models.Order.address_fields('billing_')}),
+        (_('Shipping address'), {'fields': ['shipping_same_as_billing'] +\
+            models.Order.address_fields('shipping_')}),
         (_('Order items'), {'fields': ('items_subtotal', 'items_discount', 'items_tax')}),
         (_('Shipping'), {'fields': ('shipping_cost', 'shipping_discount', 'shipping_tax')}),
         (_('Total'), {'fields': ('currency', 'total', 'paid')}),
@@ -39,9 +35,9 @@ class OrderAdmin(admin.ModelAdmin):
     list_filter = ('status',)
     ordering = ['-created']
     raw_id_fields = ('user',)
-    search_fields = tuple('billing_%s' % s for s in models.Order.ADDRESS_FIELDS)\
-        +tuple('shipping_%s' % s for s in models.Order.ADDRESS_FIELDS)\
-        +('total', 'notes')
+    search_fields = (['_order_id', 'email', 'total', 'notes'] +
+        models.Order.address_fields('billing_') +
+        models.Order.address_fields('shipping_'))
 
     def admin_order_id(self, instance):
         return instance.order_id

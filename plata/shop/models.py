@@ -80,6 +80,10 @@ class BillingShippingAddress(models.Model):
 
         return {'billing': billing, 'shipping': shipping}
 
+    @classmethod
+    def address_fields(cls, prefix=''):
+        return ['%s%s' % (prefix, f) for f in cls.ADDRESS_FIELDS]
+
 
 class Order(BillingShippingAddress):
     """The main order model. Used for carts and orders alike."""

@@ -90,6 +90,7 @@ class DiscountAdmin(admin.ModelAdmin):
     form = DiscountAdminForm
     list_display = ('name', 'type', 'code', 'value')
     list_filter = ('type',)
+    search_fields = ('name', 'code', 'config_json')
 
     def get_fieldsets(self, request, obj=None):
         fieldsets = super(DiscountAdmin, self).get_fieldsets(request, obj)
