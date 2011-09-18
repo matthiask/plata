@@ -34,7 +34,7 @@ class OrderAdmin(admin.ModelAdmin):
         (_('Additional fields'), {'fields': ('notes',)}),
         )
     inlines = [OrderItemInline, AppliedDiscountInline, OrderStatusInline]
-    list_display = ('order_id', 'created', 'user', 'status', 'total',
+    list_display = ('admin_order_id', 'created', 'user', 'status', 'total',
         'balance_remaining', 'is_paid', 'admin_invoice_pdf', 'admin_packing_slip_pdf')
     list_filter = ('status',)
     ordering = ['-created']
@@ -42,6 +42,11 @@ class OrderAdmin(admin.ModelAdmin):
     search_fields = tuple('billing_%s' % s for s in models.Order.ADDRESS_FIELDS)\
         +tuple('shipping_%s' % s for s in models.Order.ADDRESS_FIELDS)\
         +('total', 'notes')
+
+    def admin_order_id(self, instance):
+        return instance.order_id
+    admin_order_id.short_description = _('order ID')
+    admin_order_id.admin_order_field = '_order_id'
 
     def admin_invoice_pdf(self, instance):
         from django.core.urlresolvers import reverse
