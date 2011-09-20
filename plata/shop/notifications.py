@@ -1,3 +1,6 @@
+from __future__ import with_statement
+
+import contextlib
 import StringIO
 
 from django.contrib.sites.models import Site
@@ -11,7 +14,28 @@ from plata.reporting.order import invoice_pdf, packing_slip_pdf
 from plata.shop import signals
 
 
-class EmailHandler(object):
+class BaseHandler(object):
+    def invoice_pdf(self, order):
+        with contextlib.closing(StringIO.StringIO()) as content:
+            pdf = PDFDocument(content)
+            invoice_pdf(pdf, order)
+            return content.getvalue()
+
+    def packing_slip_pdf(self, order):
+        with contextlib.closing(StringIO.StringIO()) as content:
+            pdf = PDFDocument(content)
+            packing_slip_pdf(pdf, order)
+            return content.getvalue()
+
+    def context(self, ctx, **kwargs):
+        ctx.update({
+            'site': Site.objects.get_current(),
+            })
+        ctx.update(kwargs)
+        return ctx
+
+
+class EmailHandler(BaseHandler):
     def __init__(self, always_to=None, always_bcc=None):
         self.always_to = always_to
         self.always_bcc = always_bcc
@@ -25,13 +49,6 @@ class EmailHandler(object):
             email.bcc += list(self.always_bcc)
 
         email.send()
-
-    def context(self, ctx, **kwargs):
-        ctx.update({
-            'site': Site.objects.get_current(),
-            })
-        ctx.update(kwargs)
-        return ctx
 
 
 class ContactCreatedHandler(EmailHandler):
@@ -80,17 +97,13 @@ class SendInvoiceHandler(EmailHandler):
         email = render_to_string('plata/notifications/order_completed.txt',
             self.context(kwargs)).splitlines()
 
-        content = StringIO.StringIO()
-        pdf = PDFDocument(content)
-        invoice_pdf(pdf, order)
-
         message = EmailMessage(
             subject=email[0],
             body=u'\n'.join(email[2:]),
             to=[order.email],
             )
 
-        message.attach('invoice-%09d.pdf' % order.id, content.getvalue(), 'application/pdf')
+        message.attach('invoice-%09d.pdf' % order.id, self.invoice_pdf(order), 'application/pdf')
         return message
 
 
@@ -112,15 +125,11 @@ class SendPackingSlipHandler(EmailHandler):
         email = render_to_string('plata/notifications/packing_slip.txt',
             self.context(kwargs)).splitlines()
 
-        content = StringIO.StringIO()
-        pdf = PDFDocument(content)
-        packing_slip_pdf(pdf, order)
-
         message = EmailMessage(
             subject=email[0],
             body=u'\n'.join(email[2:]),
             )
-        message.attach('packing-slip-%09d.pdf' % order.id, content.getvalue(), 'application/pdf')
+        message.attach('packing-slip-%09d.pdf' % order.id, self.packing_slip_pdf(order), 'application/pdf')
         return message
 
 
