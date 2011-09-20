@@ -34,7 +34,7 @@ class BaseHandler(object):
         ctx.update(kwargs)
         return ctx
 
-    def email_message(self, template_name, **kwargs):
+    def create_email_message(self, template_name, **kwargs):
         email = render_to_string(template_name, self.context(kwargs)).splitlines()
         return EmailMessage(subject=email[0], body=u'\n'.join(email[2:]))
 
@@ -74,7 +74,7 @@ class ContactCreatedHandler(EmailHandler):
     """
 
     def message(self, sender, contact, **kwargs):
-        message = self.email_message('plata/notifications/contact_created.txt',
+        message = self.create_email_message('plata/notifications/contact_created.txt',
             contact=contact,
             **kwargs)
         message.to.append(contact.user.email)
@@ -95,7 +95,7 @@ class SendInvoiceHandler(EmailHandler):
     """
 
     def message(self, sender, order, **kwargs):
-        message = self.email_message('plata/notifications/order_completed.txt',
+        message = self.create_email_message('plata/notifications/order_completed.txt',
             order=order,
             **kwargs)
 
@@ -119,7 +119,7 @@ class SendPackingSlipHandler(EmailHandler):
     """
 
     def message(self, sender, order, **kwargs):
-        message = self.email_message('plata/notifications/packing_slip.txt',
+        message = self.create_email_message('plata/notifications/packing_slip.txt',
             order=order,
             **kwargs)
         message.attach('packing-slip-%09d.pdf' % order.id, self.packing_slip_pdf(order), 'application/pdf')
@@ -130,14 +130,14 @@ class SendPackingSlipHandler(EmailHandler):
 from plata.shop import notifications, signals as shop_signals
 
 shop_signals.contact_created.connect(
-    notifications.ContactCreatedHandler(always_bcc=plata.settings.PLATA_ALWAYS_BCC),
+    notifications.ContactCreatedHandler(always_bcc=[]),
     weak=False)
 shop_signals.order_completed.connect(
-    notifications.SendInvoiceHandler(always_bcc=plata.settings.PLATA_ALWAYS_BCC + plata.settings.PLATA_ORDER_BCC),
+    notifications.SendInvoiceHandler(always_bcc=[]),
     weak=False)
 shop_signals.order_completed.connect(
     notifications.SendPackingSlipHandler(
-        always_to=plata.settings.PLATA_SHIPPING_INFO,
-        always_bcc=plata.settings.PLATA_ALWAYS_BCC + plata.settings.PLATA_ORDER_BCC),
+        always_to=[],
+        always_bcc=[]),
     weak=False)
 """
