@@ -34,6 +34,10 @@ class BaseHandler(object):
         ctx.update(kwargs)
         return ctx
 
+    def email_message(self, template_name, **kwargs):
+        email = render_to_string(template_name, self.context(kwargs)).splitlines()
+        return EmailMessage(subject=email[0], body=u'\n'.join(email[2:]))
+
 
 class EmailHandler(BaseHandler):
     def __init__(self, always_to=None, always_bcc=None):
@@ -70,14 +74,11 @@ class ContactCreatedHandler(EmailHandler):
     """
 
     def message(self, sender, contact, **kwargs):
-        email = render_to_string('plata/notifications/contact_created.txt',
-            self.context(kwargs)).splitlines()
-
-        return EmailMessage(
-            subject=email[0],
-            body=u'\n'.join(email[2:]),
-            to=[contact.user.email],
-            )
+        message = self.email_message('plata/notifications/contact_created.txt',
+            contact=contact,
+            **kwargs)
+        message.to.append(contact.user.email)
+        return message
 
 
 class SendInvoiceHandler(EmailHandler):
@@ -94,15 +95,11 @@ class SendInvoiceHandler(EmailHandler):
     """
 
     def message(self, sender, order, **kwargs):
-        email = render_to_string('plata/notifications/order_completed.txt',
-            self.context(kwargs)).splitlines()
+        message = self.email_message('plata/notifications/order_completed.txt',
+            order=order,
+            **kwargs)
 
-        message = EmailMessage(
-            subject=email[0],
-            body=u'\n'.join(email[2:]),
-            to=[order.email],
-            )
-
+        message.to.append(order.email)
         message.attach('invoice-%09d.pdf' % order.id, self.invoice_pdf(order), 'application/pdf')
         return message
 
@@ -122,13 +119,9 @@ class SendPackingSlipHandler(EmailHandler):
     """
 
     def message(self, sender, order, **kwargs):
-        email = render_to_string('plata/notifications/packing_slip.txt',
-            self.context(kwargs)).splitlines()
-
-        message = EmailMessage(
-            subject=email[0],
-            body=u'\n'.join(email[2:]),
-            )
+        message = self.email_message('plata/notifications/packing_slip.txt',
+            order=order,
+            **kwargs)
         message.attach('packing-slip-%09d.pdf' % order.id, self.packing_slip_pdf(order), 'application/pdf')
         return message
 
