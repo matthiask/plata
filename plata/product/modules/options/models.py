@@ -9,7 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 import plata
 from plata.compat import product as itertools_product
 from plata.product.models import ProductBase, register_price_cache_handlers
-from plata.shop.models import Price, PriceManager
+from plata.shop.models import Order, Price, PriceManager
 
 
 class ProductPrice(Price):
@@ -127,7 +127,9 @@ class ProductManager(models.Manager):
 
     def bestsellers(self, queryset=None):
         queryset = queryset or self
-        return queryset.annotate(sold=Count('variations__orderitem')).order_by('-sold')
+        return queryset.filter(
+            variations__orderitem__order__status=Order.COMPLETED,
+            ).annotate(sold=Count('variations__orderitem')).order_by('-sold')
 
     def also_bought(self, product):
         return self.bestsellers(
