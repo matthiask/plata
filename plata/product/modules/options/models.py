@@ -271,9 +271,12 @@ class ProductVariation(models.Model):
             return getattr(self.product, method)(*args, **kwargs)
         return func
 
+    def handle_order_item(self, orderitem):
+        orderitem.name = unicode(self)
+        orderitem.sku = self.sku
+
     get_absolute_url = _generate_proxy('get_absolute_url')
     get_price = _generate_proxy('get_price')
-    handle_order_item = _generate_proxy('handle_order_item')
 
 
 class ProductImage(models.Model):
