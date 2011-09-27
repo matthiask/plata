@@ -16,6 +16,7 @@ class CategoryList(models.Model):
     """
 
     subcategories_of = models.ForeignKey(Category, blank=True, null=True,
+        related_name='+',
         verbose_name=_('subcategories of'),
         limit_choices_to={'parent__isnull': True},
         help_text=_('Only top-level categories are shown if left empty.'),
@@ -52,7 +53,7 @@ class ProductList(models.Model):
     only_featured = models.BooleanField(_('featured only'))
     only_sale = models.BooleanField(_('sales only'))
     categories = models.ManyToManyField(Category, blank=True, null=True,
-        verbose_name=_('categories'))
+        verbose_name=_('categories'), related_name='+')
     paginate_by = models.PositiveIntegerField(_('paginate by'), default=0,
         help_text=_('Set to 0 to disable pagination.'))
 
