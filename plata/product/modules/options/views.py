@@ -99,7 +99,7 @@ class ProductView(object):
                     # If we do not have values for all options, the form will not
                     # validate anyway.
 
-                    variations = product.variations.all()
+                    variations = product.variations.filter(is_active=True)
 
                     for group in product.option_groups.all():
                         variations = variations.filter(options=self.cleaned_data.get('option_%s' % group.id))

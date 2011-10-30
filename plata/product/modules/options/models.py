@@ -224,7 +224,7 @@ class Product(Base):
     def items_in_stock(self):
         items = {}
 
-        for variation in self.variations.all():
+        for variation in self.variations.filter(is_active=True):
             key = '_'.join(str(pk) for pk in variation.options.values_list('pk', flat=True))
             items[key] = variation.items_in_stock
 
