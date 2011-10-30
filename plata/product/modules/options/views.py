@@ -87,7 +87,9 @@ class ProductView(object):
                 super(Form, self).__init__(*args, **kwargs)
                 for group in product.option_groups.all():
                     self.fields['option_%s' % group.id] = forms.ModelChoiceField(
-                        queryset=group.options.filter(variations__product=product).distinct(),
+                        queryset=group.options.filter(
+                            variations__is_active=True,
+                            variations__product=product).distinct(),
                         label=group.name)
 
             def clean(self):
