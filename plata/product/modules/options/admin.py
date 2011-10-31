@@ -36,8 +36,10 @@ class ProductVariationFormSet(BaseInlineFormSet):
         # This method ensures two things:
         # 1. No combination of options occurs twice
         # 2. SKUs are filled out and unique
+        # 3. Active products have at least one active variation
         variations = set()
         skus = set()
+        is_active_flags = []
 
         for form in self.forms:
             if self.can_delete and self._should_delete_form(form):
@@ -74,6 +76,10 @@ class ProductVariationFormSet(BaseInlineFormSet):
 
                 form.instance.sku = sku
             skus.add(form.instance.sku)
+            is_active_flags.append(form.instance.is_active)
+
+        if self.instance.is_active and is_active_flags and not any(is_active_flags):
+            raise forms.ValidationError(_('The product is active but does not have any active variations.'))
 
 
 class ProductVariationForm(forms.ModelForm):
