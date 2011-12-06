@@ -137,11 +137,15 @@ class Shop(object):
         urls = [url(r'', include(module.urls)) for module in self.get_payment_modules()]
         return patterns('', *urls)
 
-    def get_payment_modules(self):
+    def get_payment_modules(self, request=None):
         """
         Import and return all payment modules defined in ``PLATA_PAYMENT_MODULES``
+        If request is given only aplicable modules are loaded.
         """
-        return [get_callable(module)(self) for module in plata.settings.PLATA_PAYMENT_MODULES]
+        all_modules = [get_callable(module)(self) for module in plata.settings.PLATA_PAYMENT_MODULES]
+        if not request:
+            return all_modules
+        return filter(lambda item: item.enabled_for_request(request), all_modules)
 
     def default_currency(self, request=None):
         """
@@ -507,7 +511,7 @@ class Shop(object):
         """
         order.recalculate_total()
 
-        payment_modules = self.get_payment_modules()
+        payment_modules = self.get_payment_modules(request)
         payment_module_dict = dict((m.__module__, m) for m in payment_modules)
 
         ConfirmationForm = self.confirmation_form(request, order)

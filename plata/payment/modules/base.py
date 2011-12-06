@@ -40,6 +40,12 @@ class ProcessorBase(object):
         from django.conf.urls.defaults import patterns
         return patterns('')
 
+    def enabled_for_request(self, request):
+        """
+        Decides whether or not this payment modules is available for a given request.
+        """
+        return True
+
     def process_order_confirmed(self, request, order):
         """
         Process order confirmation
