@@ -1,12 +1,12 @@
 from datetime import date
 import xlwt
 
-from django.db.models import Sum
+from django.db.models import get_model, Sum
 from django.utils.text import capfirst
 from django.utils.translation import ugettext as _
 
-from plata.product.modules.options.models import ProductVariation # FIXME
 from plata.product.stock.models import Period, StockTransaction
+from plata import settings
 
 
 class Style(object):
@@ -115,7 +115,8 @@ def product_xls():
     for t in _transactions:
         transactions.setdefault(t['product'], {})[t['type']] = t['change__sum']
 
-    for product in ProductVariation.objects.all().select_related():
+    product_model = get_model(*settings.PLATA_SHOP_PRODUCT.split('.'))
+    for product in product_model.objects.all().select_related():
         s.write(row, 0, unicode(product))
         s.write(row, 1, product.sku)
         s.write(row, 2, product.items_in_stock)
