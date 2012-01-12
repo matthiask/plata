@@ -10,12 +10,12 @@ Installation
 This document describes the steps needed to get Plata up and running.
 
 Plata is based on Django_, so you need a working Django_ installation
-first. Plata is developed using Django_ 1.2, and is not guaranteed to
+first. Plata is developed using Django_ 1.3, and will not
 work with any earlier version.
 
 You can download a stable release of plata using ``easy_install``::
 
-    $ sudo easy_install plata
+    $ sudo easy_install Plata
 
 Please note that the package installable with ``easy_install`` only
 contains the files needed to run plata. It does not include documentation,
@@ -44,7 +44,6 @@ Adding the modules to ``INSTALLED_APPS``
 
     INSTALLED_APPS = (
         ...
-        'plata',
         'plata',
         'plata.contact',
         'plata.discount',
@@ -83,7 +82,7 @@ Example::
 
     from plata.contact.models import Contact
     from plata.discount.models import Discount
-    from plata.product.models import Product
+    from plata.product.modules.options.models import Product
     from plata.shop.models import Order
     from plata.shop.views import Shop
 
@@ -114,7 +113,8 @@ Generic views using ``plata.shop_instance()`` could look like this::
     from django.shortcuts import get_object_or_404
     from django.views.generic import list_detail
 
-    from plata.product.models import Product
+    import plata
+    from plata.product.modules.options.models import Product
 
 
     def product_list(request):
@@ -140,7 +140,7 @@ Next, you need to add the Shop's URLs to your URLconf::
     from myapp.views import shop
 
     urlpatterns = patterns('',
-        url(r'^shop/', include(shop.urls),
+        url(r'^shop/', include(shop.urls)),
         url(r'^products/$', 'myapp.views.product_list',
             name='plata_product_list'),
         url(r'^products/(?P<object_id>\d+)/$', 'myapp.views.product_detail',
