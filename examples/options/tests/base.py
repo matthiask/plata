@@ -1,6 +1,5 @@
 from datetime import date
 from decimal import Decimal
-import random
 
 from django.test import TestCase
 from django.contrib.auth.models import AnonymousUser, User
@@ -49,6 +48,8 @@ def get_request(**kwargs):
 
     return request
 
+
+PRODUCTION_CREATION_COUNTER = 0
 
 class PlataTest(TestCase):
     def assertRaisesWithCode(self, exception, fn, code):
@@ -105,11 +106,14 @@ class PlataTest(TestCase):
 
 
     def create_product(self, stock=0):
+        global PRODUCTION_CREATION_COUNTER
+        PRODUCTION_CREATION_COUNTER += 1
+
         tax_class, tax_class_germany, tax_class_something = self.create_tax_classes()
 
         product = Product.objects.create(
             name='Test Product 1',
-            slug='prod%s' % str(random.random())[2:7],
+            slug='prod%s' % PRODUCTION_CREATION_COUNTER,
             )
 
         product.create_variations()
