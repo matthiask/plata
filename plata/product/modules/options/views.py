@@ -49,6 +49,7 @@ class ProductView(object):
                     order.modify_item(
                         form.cleaned_data.get('variation'),
                         form.cleaned_data.get('quantity'),
+                        price=form.cleaned_data.get('price'),
                         )
                     messages.success(request, _('The cart has been updated.'))
                 except ValidationError, e:
@@ -148,7 +149,7 @@ class ProductView(object):
                     try:
                         data['price'] = product.get_price(currency=self.order.currency, **data)
                     except TypeError:
-                        data['price'] = product.get_price(currency=self.order.currency)                        
+                        data['price'] = product.get_price(currency=self.order.currency)
                 except ObjectDoesNotExist:
                     raise forms.ValidationError(_('Price could not be determined.'))
 
