@@ -1017,7 +1017,7 @@ class ModelTest(PlataTest):
         self.assertAlmostEqual(order.subtotal, Decimal('100.00') / Decimal('1.076') - Decimal('20.00'))
 
         # Change something on the discount
-        discount.before_tax = True # TODO implement this
+        discount.before_tax = True # TODO implement this
         discount.add_to(order)
         order.recalculate_total()
 
