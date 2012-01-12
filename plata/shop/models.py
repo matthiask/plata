@@ -263,12 +263,15 @@ class Order(BillingShippingAddress):
             for validator in self.VALIDATORS[g]:
                 validator(self)
 
-    def modify_item(self, product, relative=None, absolute=None, recalculate=True):
+    def modify_item(self, product, relative=None, absolute=None, recalculate=True,
+            price=None):
         """
         Update order with the given product
 
         - ``relative`` or ``absolute``: Add/subtract or define order item amount exactly
         - ``recalculate``: Recalculate order after cart modification (defaults to ``True``)
+        - ``price``: A price instance; will be automatically determined using the order's
+          currency if it isn't given
 
         Return OrderItem instance
         """
@@ -279,12 +282,13 @@ class Order(BillingShippingAddress):
             raise ValidationError(_('Cannot modify order once it has been confirmed.'),
                 code='order_sealed')
 
-        try:
-            price = product.get_price(currency=self.currency)
-        except ObjectDoesNotExist:
-            logger.error('No price could be found for %s with currency %s' % (
-                product, self.currency))
-            raise
+        if price is None:
+            try:
+                price = product.get_price(currency=self.currency)
+            except ObjectDoesNotExist:
+                logger.error('No price could be found for %s with currency %s' % (
+                    product, self.currency))
+                raise
 
         try:
             item = self.items.get(product=product)
