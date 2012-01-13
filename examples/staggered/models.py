@@ -1,12 +1,12 @@
 import sys
 
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
-from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
 import plata
 from plata.product.models import ProductBase, register_price_cache_handlers
-from plata.shop.models import Price, PriceManager
+from plata.shop.models import PriceBase
 
 
 class Product(ProductBase):
@@ -37,29 +37,22 @@ class Product(ProductBase):
             currency = (orderitem.currency if orderitem else
                 plata.shop_instance().default_currency())
 
-        possible = self.prices.active().filter(currency=currency)
+        possible = self.prices.filter(currency=currency)
 
         if orderitem is not None:
             possible = possible.exclude(from_quantity__gt=orderitem.quantity)
 
-        prices = {}
+        try:
+            return possible.order_by('-from_quantity')[0]
+        except IndexError:
+            raise possible.model.DoesNotExist
 
-        for price in possible.order_by('-valid_from'):
-            if price.is_sale not in prices:
-                prices[price.is_sale] = price
-            else:
-                if price.from_quantity > prices[price.is_sale].from_quantity:
-                    prices[price.is_sale] = price
-
-        if True in prices:
-            return prices[True]
-        elif False in prices:
-            return prices[False]
-
-        raise self.prices.model.DoesNotExist
+    def get_prices(self):
+        # Do nothing.
+        pass
 
 
-class ProductPrice(Price):
+class ProductPrice(PriceBase):
     product = models.ForeignKey(Product, verbose_name=_('product'),
         related_name='prices')
     from_quantity = models.IntegerField(_('From quantity'), default=0)
@@ -67,10 +60,8 @@ class ProductPrice(Price):
     class Meta:
         app_label = 'product'
         get_latest_by = 'id'
-        ordering = ['from_quantity', '-valid_from']
+        ordering = ['from_quantity']
         verbose_name = _('price')
         verbose_name_plural = _('prices')
-
-    objects = PriceManager()
 
 register_price_cache_handlers(ProductPrice)
