@@ -36,7 +36,7 @@ class ProductBase(models.Model):
         elif prices.get('sale'):
             return prices['sale']
 
-        raise self.DoesNotExist
+        raise self.prices.model.DoesNotExist
 
     def get_prices(self):
         key = 'product-prices-%s' % self.pk
