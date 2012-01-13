@@ -585,17 +585,14 @@ class PriceManager(models.Manager):
             Q(valid_until__isnull=True) | Q(valid_until__gte=date.today()))
 
 
-class Price(models.Model):
+class PriceBase(models.Model):
     """
-    Price for a given product, currency, tax class and time period
-
-    Prices should not be changed or deleted but replaced by more recent prices.
-    (Deleting old prices does not hurt, but the price history cannot be
-    reconstructed anymore if you'd need it.)
-
-    The concrete implementation needs to provide a foreign key to the
-    product model and add the ``PriceManager`` as default manager.
+    Class containing the absolute minimum price model for Plata
     """
+
+    class Meta:
+        abstract = True
+        ordering = ['-id']
 
     currency = CurrencyField()
     _unit_price = models.DecimalField(_('unit price'), max_digits=18, decimal_places=10)
@@ -603,20 +600,6 @@ class Price(models.Model):
         help_text=_('Is tax included in given unit price?'),
         default=plata.settings.PLATA_PRICE_INCLUDES_TAX)
     tax_class = models.ForeignKey(TaxClass, verbose_name=_('tax class'))
-
-    is_active = models.BooleanField(_('is active'), default=True)
-    valid_from = models.DateField(_('valid from'), default=date.today)
-    valid_until = models.DateField(_('valid until'), blank=True, null=True)
-
-    is_sale = models.BooleanField(_('is sale'), default=False,
-        help_text=_('Set this if this price is a sale price. Whether the sale is temporary or not does not matter.'))
-
-    class Meta:
-        abstract = True
-        get_latest_by = 'id'
-        ordering = ['-valid_from']
-        verbose_name = _('price')
-        verbose_name_plural = _('prices')
 
     def __unicode__(self):
         return u'%s %.2f' % (self.currency, self.unit_price)
@@ -629,7 +612,7 @@ class Price(models.Model):
         item._unit_tax = self.unit_tax
         item.tax_rate = self.tax_class.rate
         item.tax_class = self.tax_class
-        item.is_sale = self.is_sale
+        item.is_sale = False # Hardcoded; add an is_sale like in the ``Price`` class below
 
     @property
     def unit_tax(self):
@@ -653,3 +636,37 @@ class Price(models.Model):
             return self.unit_price_incl_tax
         else:
             return self.unit_price_excl_tax
+
+
+class Price(PriceBase):
+    """
+    Price for a given product, currency, tax class and time period
+
+    Prices should not be changed or deleted but replaced by more recent prices.
+    (Deleting old prices does not hurt, but the price history cannot be
+    reconstructed anymore if you'd need it.)
+
+    The concrete implementation needs to provide a foreign key to the
+    product model and add the ``PriceManager`` as default manager.
+    """
+
+    is_active = models.BooleanField(_('is active'), default=True)
+    valid_from = models.DateField(_('valid from'), default=date.today)
+    valid_until = models.DateField(_('valid until'), blank=True, null=True)
+
+    is_sale = models.BooleanField(_('is sale'), default=False,
+        help_text=_('Set this if this price is a sale price. Whether the sale is temporary or not does not matter.'))
+
+    class Meta:
+        abstract = True
+        get_latest_by = 'id'
+        ordering = ['-valid_from']
+        verbose_name = _('price')
+        verbose_name_plural = _('prices')
+
+    def handle_order_item(self, item):
+        """
+        Set price data on the ``OrderItem`` passed
+        """
+        super(Price, self).handle_order_item(item)
+        item.is_sale = self.is_sale
