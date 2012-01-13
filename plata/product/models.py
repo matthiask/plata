@@ -22,6 +22,13 @@ class ProductBase(models.Model):
         self.flush_price_cache()
 
     def get_price(self, currency=None, orderitem=None):
+        """
+        This method is part of the public, required API of products. It returns
+        either a price instance or raises a ``DoesNotExist`` exception.
+
+        If you need more complex pricing schemes, override this method with your
+        own implementation.
+        """
         if currency is None:
             currency = (orderitem.currency if orderitem else
                 plata.shop_instance().default_currency())
@@ -39,6 +46,12 @@ class ProductBase(models.Model):
         raise self.prices.model.DoesNotExist
 
     def get_prices(self):
+        """
+        This method is just for demonstration purposes. It's use in ``get_price``
+        above does not mean that its API is stable. It's not even guaranteed
+        to stay. It does not work for more exotic pricing models such as
+        staggered prices at all.
+        """
         key = 'product-prices-%s' % self.pk
 
         if cache.has_key(key):
