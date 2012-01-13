@@ -280,13 +280,6 @@ class Order(BillingShippingAddress):
                 code='order_sealed')
 
         try:
-            price = product.get_price(currency=self.currency)
-        except ObjectDoesNotExist:
-            logger.error('No price could be found for %s with currency %s' % (
-                product, self.currency))
-            raise
-
-        try:
             item = self.items.get(product=product)
         except self.items.model.DoesNotExist:
             item = self.items.model(
@@ -302,6 +295,13 @@ class Order(BillingShippingAddress):
             item.quantity = absolute
 
         if item.quantity > 0:
+            try:
+                price = product.get_price(currency=self.currency, orderitem=item)
+            except ObjectDoesNotExist:
+                logger.error('No price could be found for %s with currency %s' % (
+                    product, self.currency))
+                raise
+
             price.handle_order_item(item)
             product.handle_order_item(item)
             item.save()

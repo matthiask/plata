@@ -18,7 +18,7 @@ class ProductBase(models.Model):
         super(ProductBase, self).save(*args, **kwargs)
         self.flush_price_cache()
 
-    def get_price(self, currency=None):
+    def get_price(self, currency=None, orderitem=None):
         return self.prices.determine_price(self, currency)
 
     def get_prices(self):
