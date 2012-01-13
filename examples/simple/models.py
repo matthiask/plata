@@ -7,22 +7,6 @@ from plata.product.models import ProductBase, register_price_cache_handlers
 from plata.shop.models import Price, PriceManager
 
 
-class ProductPrice(Price):
-    product = models.ForeignKey('product.Product', verbose_name=_('product'),
-        related_name='prices')
-
-    class Meta:
-        app_label = 'product'
-        get_latest_by = 'id'
-        ordering = ['-valid_from']
-        verbose_name = _('price')
-        verbose_name_plural = _('prices')
-
-    objects = PriceManager()
-
-register_price_cache_handlers(ProductPrice)
-
-
 class Product(ProductBase):
     """(Nearly) the simplest product model ever"""
 
@@ -45,3 +29,19 @@ class Product(ProductBase):
     @models.permalink
     def get_absolute_url(self):
         return ('plata_product_detail', (), {'object_id': self.pk})
+
+
+class ProductPrice(Price):
+    product = models.ForeignKey(Product, verbose_name=_('product'),
+        related_name='prices')
+
+    class Meta:
+        app_label = 'product'
+        get_latest_by = 'id'
+        ordering = ['-valid_from']
+        verbose_name = _('price')
+        verbose_name_plural = _('prices')
+
+    objects = PriceManager()
+
+register_price_cache_handlers(ProductPrice)
