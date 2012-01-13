@@ -4,7 +4,6 @@ import logging
 import re
 
 from django.contrib.auth.models import User
-from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import get_callable
 from django.db import models
@@ -584,55 +583,6 @@ class PriceManager(models.Manager):
             Q(is_active=True),
             Q(valid_from__lte=date.today()),
             Q(valid_until__isnull=True) | Q(valid_until__gte=date.today()))
-
-    def determine_price(self, product, currency=None):
-        currency = currency or plata.shop_instance().default_currency()
-
-        prices = dict(self.determine_prices(product)).get(currency, {})
-
-        if prices.get('sale'):
-            return prices['sale']
-
-        if prices.get('normal'):
-            return prices['normal']
-        elif prices.get('sale'):
-            return prices['sale']
-
-        raise self.model.DoesNotExist
-
-    def determine_prices(self, product):
-        key = 'product-prices-%s' % product.pk
-
-        if cache.has_key(key):
-            return cache.get(key)
-
-        _prices = {}
-        for price in product.prices.active().order_by('valid_from'):
-            # First item is normal price, second is sale price
-            _prices.setdefault(price.currency, [None, None])[int(price.is_sale)] = price
-
-        prices = []
-        for currency in plata.settings.CURRENCIES:
-            p = _prices.get(currency)
-            if not p:
-                continue
-
-            # Sale prices are only active if they are newer than the newest
-            # normal price
-            if (p[0] and p[1]) and p[0].valid_from > p[1].valid_from:
-                p[1] = None
-
-            prices.append((currency, {
-                'normal': p[0],
-                'sale': p[1],
-                }))
-
-        cache.set(key, prices)
-        return prices
-
-    def flush_price_cache(self, product):
-        key = 'product-prices-%s' % product.pk
-        cache.delete(key)
 
 
 class Price(models.Model):
