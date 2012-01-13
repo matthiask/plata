@@ -1,6 +1,3 @@
-import sys
-
-from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -37,16 +34,12 @@ class Product(ProductBase):
             currency = (orderitem.currency if orderitem else
                 plata.shop_instance().default_currency())
 
-        possible = self.prices.filter(currency=currency)
-
-        if orderitem is not None:
-            possible = possible.filter(
-                from_quantity__lte=orderitem.quantity).order_by('-from_quantity')
-        else:
-            possible = possible.order_by('from_quantity')
+        possible = self.prices.filter(
+            currency=currency,
+            from_quantity__lte=(orderitem.quantity if orderitem else 0))
 
         try:
-            return possible[0]
+            return possible.order_by('-from_quantity')[0]
         except IndexError:
             raise possible.model.DoesNotExist
 
