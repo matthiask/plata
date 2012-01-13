@@ -27,7 +27,7 @@ PLATA_PAYMENT_MODULES = getattr(settings, 'PLATA_PAYMENT_MODULES', [
 
 #: Override payment module names without modifying the payment module code
 #:
-#: The key in this dictionary should use the ``ident`` variable of the
+#: The key in this dictionary should use the ``key`` variable of the
 #: respective payment module.
 #:
 #: Example::
@@ -64,5 +64,6 @@ CURRENCIES = getattr(settings, 'CURRENCIES', ('CHF', 'EUR', 'USD', 'CAD'))
 #: Target of order item product foreign key (Defaults to ``'product.Product'``)
 PLATA_SHOP_PRODUCT = getattr(settings, 'PLATA_SHOP_PRODUCT', 'product.Product')
 
-#: Should the options module product use FeinCMS?
+#: Should the options module product use FeinCMS? (somewhat deprecated, writing
+#: your own product model would probably be more future-proof)
 PLATA_PRODUCT_OPTIONS_FEINCMS = getattr(settings, 'PLATA_PRODUCT_OPTIONS_FEINCMS', False)

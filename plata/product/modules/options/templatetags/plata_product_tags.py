@@ -52,3 +52,4 @@ Django 1.3::
         context[variable] = Product.objects.bestsellers()[:5]
         return u''
 """
+

@@ -70,6 +70,10 @@ class BillingShippingAddress(models.Model):
         abstract = True
 
     def addresses(self):
+        """
+        Return a ``dict`` containing a billing and a shipping address, taking
+        into account the value of the ``shipping_same_as_billing`` flag
+        """
         billing = dict((f, getattr(self, 'billing_%s' % f)) for f in self.ADDRESS_FIELDS)
 
         if self.shipping_same_as_billing:
@@ -577,14 +581,6 @@ class OrderPayment(models.Model):
         self._recalculate_paid()
 
 
-class PriceManager(models.Manager):
-    def active(self):
-        return self.filter(
-            Q(is_active=True),
-            Q(valid_from__lte=date.today()),
-            Q(valid_until__isnull=True) | Q(valid_until__gte=date.today()))
-
-
 class PriceBase(models.Model):
     """
     Class containing the absolute minimum price model for Plata
@@ -636,6 +632,14 @@ class PriceBase(models.Model):
             return self.unit_price_incl_tax
         else:
             return self.unit_price_excl_tax
+
+
+class PriceManager(models.Manager):
+    def active(self):
+        return self.filter(
+            Q(is_active=True),
+            Q(valid_from__lte=date.today()),
+            Q(valid_until__isnull=True) | Q(valid_until__gte=date.today()))
 
 
 class Price(PriceBase):

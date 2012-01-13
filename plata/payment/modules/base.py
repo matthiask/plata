@@ -25,24 +25,51 @@ class ProcessorBase(object):
 
     @property
     def name(self):
+        """
+        Return name of this payment module suitable for human consumption
+
+        Defaults to ``default_name`` but can be overridden by placing an entry
+        in ``PLATA_PAYMENT_MODULE_NAMES``. Example::
+
+            PLATA_PAYMENT_MODULE_NAMES = {
+                'paypal': _('Paypal and credit cards'),
+                }
+        """
         return plata.settings.PLATA_PAYMENT_MODULE_NAMES.get(
             self.key,
             self.default_name)
 
     @property
     def urls(self):
+        """
+        Return URLconf definitions used by this payment processor
+
+        This is especially useful for processors offering server-to-server
+        communication such as Paypal's IPN (Instant Payment Notification) where
+        Paypal communicates payment success immediately and directly, without
+        involving the client.
+
+        Define your own URLs in ``get_urls``.
+        """
         return self.get_urls()
 
     def get_urls(self):
-        # Please note that these patterns are added with global scope;
-        # You should define URLs which do not clash with other parts
-        # of the site yourself.
+        """
+        Define URLs for this payment processor
+
+        Note that these URLs are added directly to the shop views URLconf
+        without prefixes. It is your responsability to namespace these URLs
+        so they don't clash with shop views and other payment processors.
+        """
         from django.conf.urls.defaults import patterns
         return patterns('')
 
     def enabled_for_request(self, request):
         """
         Decides whether or not this payment modules is available for a given request.
+
+        Defaults to ``True``. If you need to disable payment modules for certain
+        visitors or group of visitors, that is the method you are searching for.
         """
         return True
 
@@ -53,14 +80,12 @@ class ProcessorBase(object):
         Must return a response which is presented to the user (e.g. a
         form with hidden values redirecting to the PSP)
         """
-
         raise NotImplementedError
 
     def clear_pending_payments(self, order):
         """
         Clear pending payments
         """
-
         logger.info('Clearing pending payments on %s' % order)
         order.payments.pending().delete()
 
@@ -71,7 +96,6 @@ class ProcessorBase(object):
         """
         Create a pending payment
         """
-
         self.clear_pending_payments(order)
         logger.info('Creating pending payment on %s' % order)
         return order.payments.create(
@@ -101,6 +125,16 @@ class ProcessorBase(object):
     def order_completed(self, order, payment=None):
         """
         Call this when payment has been confirmed
+
+        This method does the following:
+
+        - Sets order status to ``COMPLETED``.
+        - Create a amount discount if amount discounts were used in this order
+          and the order total does not use up the discount yet. The discount object
+          is passed as ``remaining_discount`` to the ``order_completed`` signal.
+          It is your responsability to do something with the discount (and
+          communicating the code to the customer).
+        - Clears pending payments which aren't interesting anymore anyway.
         """
 
         if order.status < order.COMPLETED:
@@ -133,8 +167,12 @@ class ProcessorBase(object):
             signals.order_completed.send(**signal_kwargs)
         self.clear_pending_payments(order)
 
-
     def already_paid(self, order):
+        """
+        Handles the case where a payment module is selected but the order
+        is already paid for (f.e. because an amount discount has been used which
+        covers the order).
+        """
         if not order.is_completed():
             logger.info('Order %s is already completely paid' % order)
 

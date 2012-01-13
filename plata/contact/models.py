@@ -28,8 +28,14 @@ class Contact(BillingShippingAddress):
     """
     Each user can have at most one of these
 
-    TODO: This model does not necessarily suit everyone. Move addresses to a
-          different model?
+    Note: You do not have to use this model if you want to store the contact
+    information somewhere else. If you use your own contact model, you should
+    take care of two things:
+
+    - ``Contact.objects.create_from_order`` has to exist, and should fill in
+      contact details from the order
+    - ``Contact.ADDRESS_FIELDS`` should exist; if it does not you'll have to
+      override ``Shop.checkout_form``
     """
 
     user = models.OneToOneField(User, verbose_name=_('user'),

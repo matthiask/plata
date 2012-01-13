@@ -9,6 +9,11 @@ from plata.discount.models import DiscountBase
 def explicit_products(product_model):
     """
     Explicitly define products eligible for discounting
+
+    Example::
+
+        from ... import Product
+        explicit_products(Product)
     """
 
     DiscountBase.CONFIG_OPTIONS.append(('products', {
@@ -31,6 +36,11 @@ def explicit_products(product_model):
 def only_categories(category_model):
     """
     Define categories whose products are eligible for discounting
+
+    Example::
+
+        from ... import Product
+        only_categories(Product)
     """
 
     DiscountBase.CONFIG_OPTIONS.append(('only_categories', {
