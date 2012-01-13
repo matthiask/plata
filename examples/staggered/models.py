@@ -40,7 +40,7 @@ class Product(ProductBase):
         possible = self.prices.filter(currency=currency)
 
         if orderitem is not None:
-            possible = possible.exclude(from_quantity__gt=orderitem.quantity)
+            possible = possible.filter(from_quantity__lte=orderitem.quantity)
 
         try:
             return possible.order_by('-from_quantity')[0]
