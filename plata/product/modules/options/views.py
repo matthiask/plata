@@ -48,8 +48,7 @@ class ProductView(object):
                 try:
                     order.modify_item(
                         form.cleaned_data.get('variation'),
-                        form.cleaned_data.get('quantity'),
-                        price=form.cleaned_data.get('price'),
+                        relative=form.cleaned_data.get('quantity'),
                         )
                     messages.success(request, _('The cart has been updated.'))
                 except ValidationError, e:
