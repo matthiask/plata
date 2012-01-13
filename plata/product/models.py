@@ -24,7 +24,7 @@ class ProductBase(models.Model):
             currency = (orderitem.currency if orderitem else
                 plata.shop_instance().default_currency())
 
-        prices = dict(self.prices.determine_prices(self)).get(currency, {})
+        prices = dict(self.get_prices()).get(currency, {})
 
         if prices.get('sale'):
             return prices['sale']
