@@ -1,6 +1,7 @@
 import sys
 
 from django.db import models
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
 import plata
@@ -32,18 +33,31 @@ class Product(ProductBase):
         return ('plata_product_detail', (), {'object_id': self.pk})
 
     def get_price(self, currency=None, orderitem=None):
+        if currency is None:
+            currency = (orderitem.currency if orderitem else
+                plata.shop_instance().default_currency())
+
+        possible = self.prices.active().filter(currency=currency)
+
         if orderitem is not None:
-            try:
-                return self.prices.active().exclude(
-                    from_quantity__gt=orderitem.quantity,
-                    ).order_by('-from_quantity')[0]
-            except IndexError:
-                # Fall back to default handling
-                pass
+            possible = possible.exclude(from_quantity__gt=orderitem.quantity)
 
-        return self.prices.active()
+        prices = {}
 
-        return self.prices.determine_price(self, currency)
+        for price in possible.order_by('-valid_from'):
+            if price.is_sale not in prices:
+                prices[price.is_sale] = price
+            else:
+                if price.from_quantity > prices[price.is_sale].from_quantity:
+                    prices[price.is_sale] = price
+
+        if True in prices:
+            return prices[True]
+        elif False in prices:
+            return prices[False]
+
+        raise self.prices.model.DoesNotExist
+
 
 class ProductPrice(Price):
     product = models.ForeignKey(Product, verbose_name=_('product'),
