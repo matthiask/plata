@@ -8,13 +8,15 @@ from plata.shop import models
 class OrderItemInline(admin.TabularInline):
     model = models.OrderItem
     raw_id_fields = ('product',)
+    extra = 0
 
 class AppliedDiscountInline(admin.TabularInline):
     model = AppliedDiscount
+    extra = 0
 
 class OrderStatusInline(admin.TabularInline):
     model = models.OrderStatus
-    extra = 1
+    extra = 0
 
 
 class OrderAdmin(admin.ModelAdmin):
