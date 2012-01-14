@@ -2,6 +2,8 @@
 This module contains the original product model of Plata
 """
 
+from datetime import date
+
 from django.db import models
 from django.db.models import Count, signals
 from django.utils.translation import ugettext_lazy as _
