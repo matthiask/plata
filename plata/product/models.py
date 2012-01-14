@@ -82,10 +82,18 @@ class ProductBase(models.Model):
         return prices
 
     def flush_price_cache(self):
+        """
+        Flush cached prices
+        """
         key = 'product-prices-%s' % self.pk
         cache.delete(key)
 
     def handle_order_item(self, orderitem):
+        """
+        This method has to ensure that the information on the order item is
+        sufficient for posteriority. Old orders should always be complete
+        even if the products have been changed or deleted in the meantime.
+        """
         orderitem.name = unicode(self)
         orderitem.sku = getattr(self, 'sku', u'')
 
