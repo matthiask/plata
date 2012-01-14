@@ -9,21 +9,42 @@ from django.utils.translation import ugettext_lazy as _
 import plata
 from plata.compat import product as itertools_product
 from plata.product.models import ProductBase, register_price_cache_handlers
-from plata.shop.models import Order, Price, PriceManager
+from plata.shop.models import Order, Price
+
+
+class PriceManager(models.Manager):
+    def active(self):
+        return self.filter(
+            Q(is_active=True),
+            Q(valid_from__lte=date.today()),
+            Q(valid_until__isnull=True) | Q(valid_until__gte=date.today()))
 
 
 class ProductPrice(Price):
     product = models.ForeignKey('product.Product', verbose_name=_('product'),
         related_name='prices')
 
+    is_active = models.BooleanField(_('is active'), default=True)
+    valid_from = models.DateField(_('valid from'), default=date.today)
+    valid_until = models.DateField(_('valid until'), blank=True, null=True)
+
+    is_sale = models.BooleanField(_('is sale'), default=False,
+        help_text=_('Set this if this price is a sale price. Whether the sale is temporary or not does not matter.'))
+
     class Meta:
         app_label = 'product'
-        get_latest_by = 'id'
         ordering = ['-valid_from']
         verbose_name = _('price')
         verbose_name_plural = _('prices')
 
     objects = PriceManager()
+
+    def handle_order_item(self, item):
+        """
+        Set price data on the ``OrderItem`` passed
+        """
+        super(Price, self).handle_order_item(item)
+        item.is_sale = self.is_sale
 
 register_price_cache_handlers(ProductPrice)
 

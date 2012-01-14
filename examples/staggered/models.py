@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 import plata
 from plata.product.models import ProductBase, register_price_cache_handlers
-from plata.shop.models import PriceBase
+from plata.shop.models import Price
 
 
 class Product(ProductBase):
@@ -48,7 +48,7 @@ class Product(ProductBase):
         pass
 
 
-class ProductPrice(PriceBase):
+class ProductPrice(Price):
     product = models.ForeignKey(Product, verbose_name=_('product'),
         related_name='prices')
     from_quantity = models.IntegerField(_('From quantity'), default=0)
