@@ -26,7 +26,8 @@ class TaxClass(models.Model):
     """
 
     name = models.CharField(_('name'), max_length=100)
-    rate = models.DecimalField(_('rate'), max_digits=10, decimal_places=2)
+    rate = models.DecimalField(_('rate'), max_digits=10, decimal_places=2,
+        help_text=_('Tax rate in percent.'))
     priority = models.PositiveIntegerField(_('priority'), default=0,
         help_text = _('Used to order the tax classes in the administration interface.'))
 
