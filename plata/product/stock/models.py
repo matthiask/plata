@@ -34,7 +34,8 @@ class Period(models.Model):
 
     name = models.CharField(_('name'), max_length=100)
     notes = models.TextField(_('notes'), blank=True)
-    start = models.DateTimeField(_('start'), default=datetime.now)
+    start = models.DateTimeField(_('start'), default=datetime.now,
+        help_text=_('Period starts at this time. May also be a future date.'))
 
     class Meta:
         get_latest_by = 'start'
@@ -197,8 +198,8 @@ class StockTransaction(models.Model):
     period = models.ForeignKey(Period, default=Period.objects.current,
         related_name='stock_transactions', verbose_name=_('period'))
     created = models.DateTimeField(_('created'), default=datetime.now)
-    product = models.ForeignKey(plata.settings.PLATA_SHOP_PRODUCT, related_name='stock_transactions',
-        verbose_name=_('product variation'))
+    product = models.ForeignKey(plata.settings.PLATA_SHOP_PRODUCT,
+        related_name='stock_transactions', verbose_name=_('product'))
     type = models.PositiveIntegerField(_('type'), choices=TYPE_CHOICES)
     change = models.IntegerField(_('change'),
         help_text=_('Use negative numbers for sales, lendings and other outgoings.'))
