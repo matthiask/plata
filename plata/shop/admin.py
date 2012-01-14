@@ -92,4 +92,5 @@ admin.site.register(models.OrderPayment, OrderPaymentAdmin)
 
 admin.site.register(models.TaxClass,
     list_display=('name', 'rate', 'priority'),
+    list_editable=('rate', 'priority'),
     )
