@@ -18,7 +18,9 @@ class PeriodManager(models.Manager):
         try:
             return self.filter(start__lte=datetime.now()).order_by('-start')[0]
         except IndexError:
-            return None
+            return self.create(
+                name='Automatically created',
+                notes='Automatically created because no period existed yet.')
 
 
 class Period(models.Model):
@@ -222,8 +224,7 @@ class StockTransaction(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.period_id:
-            self.period = Period.objects.create(name='Automatically created',
-                notes='Automatically created because no period existed yet.')
+            self.period = Period.objects.current()
 
         super(StockTransaction, self).save(*args, **kwargs)
 
