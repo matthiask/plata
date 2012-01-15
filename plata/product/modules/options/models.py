@@ -4,13 +4,14 @@ This module contains the original product model of Plata
 
 from datetime import date
 
+from django.core.cache import cache
 from django.db import models
 from django.db.models import Count, signals
 from django.utils.translation import ugettext_lazy as _
 
 import plata
 from plata.compat import product as itertools_product
-from plata.product.models import ProductBase, register_price_cache_handlers
+from plata.product.models import ProductBase
 from plata.shop.models import Order, Price
 
 
@@ -48,7 +49,12 @@ class ProductPrice(Price):
         super(Price, self).handle_order_item(item)
         item.is_sale = self.is_sale
 
-register_price_cache_handlers(ProductPrice)
+
+def flush_price_cache(instance, **kwargs):
+    instance.product.flush_price_cache()
+
+signals.post_save.connect(flush_price_cache, sender=ProductPrice)
+signals.post_delete.connect(flush_price_cache, sender=ProductPrice)
 
 
 class CategoryManager(models.Manager):
@@ -202,6 +208,7 @@ class Product(Base):
         if not self.sku:
             self.sku = self.slug
         super(Product, self).save(*args, **kwargs)
+        self.flush_price_cache()
 
     @models.permalink
     def get_absolute_url(self):
@@ -215,6 +222,66 @@ class Product(Base):
             except IndexError:
                 self._main_image = None
         return self._main_image
+
+    def get_price(self, currency=None, orderitem=None):
+        if currency is None:
+            currency = (orderitem.currency if orderitem else
+                plata.shop_instance().default_currency())
+
+        prices = dict(self.get_prices()).get(currency, {})
+
+        if prices.get('sale'):
+            return prices['sale']
+
+        if prices.get('normal'):
+            return prices['normal']
+        elif prices.get('sale'):
+            return prices['sale']
+
+        raise self.prices.model.DoesNotExist
+
+    def get_prices(self):
+        """
+        This method is just for demonstration purposes. It's use in ``get_price``
+        above does not mean that its API is stable. It's not even guaranteed
+        to stay. It does not work for more exotic pricing models such as
+        staggered prices at all.
+        """
+        key = 'product-prices-%s' % self.pk
+
+        if cache.has_key(key):
+            return cache.get(key)
+
+        _prices = {}
+        for price in self.prices.active().order_by('valid_from'):
+            # First item is normal price, second is sale price
+            _prices.setdefault(price.currency, [None, None])[int(price.is_sale)] = price
+
+        prices = []
+        for currency in plata.settings.CURRENCIES:
+            p = _prices.get(currency)
+            if not p:
+                continue
+
+            # Sale prices are only active if they are newer than the newest
+            # normal price
+            if (p[0] and p[1]) and p[0].valid_from > p[1].valid_from:
+                p[1] = None
+
+            prices.append((currency, {
+                'normal': p[0],
+                'sale': p[1],
+                }))
+
+        cache.set(key, prices)
+        return prices
+
+    def flush_price_cache(self):
+        """
+        Flush cached prices
+        """
+        key = 'product-prices-%s' % self.pk
+        cache.delete(key)
 
     def in_sale(self, currency):
         prices = dict(self.get_prices())

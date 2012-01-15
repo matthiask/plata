@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 import plata
-from plata.product.models import ProductBase, register_price_cache_handlers
+from plata.product.models import ProductBase
 from plata.shop.models import Price
 
 
@@ -59,5 +59,3 @@ class ProductPrice(Price):
         ordering = ['from_quantity']
         verbose_name = _('price')
         verbose_name_plural = _('prices')
-
-register_price_cache_handlers(ProductPrice)
