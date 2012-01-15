@@ -33,7 +33,7 @@ class OrderAdmin(admin.ModelAdmin):
         )
     inlines = [OrderItemInline, AppliedDiscountInline, OrderStatusInline]
     list_display = ('admin_order_id', 'created', 'user', 'status', 'total',
-        'balance_remaining', 'is_paid', 'admin_invoice_pdf', 'admin_packing_slip_pdf')
+        'balance_remaining', 'is_paid')
     list_filter = ('status',)
     ordering = ['-created']
     raw_id_fields = ('user',)
@@ -45,30 +45,6 @@ class OrderAdmin(admin.ModelAdmin):
         return instance.order_id
     admin_order_id.short_description = _('order ID')
     admin_order_id.admin_order_field = '_order_id'
-
-    def admin_invoice_pdf(self, instance):
-        from django.core.urlresolvers import reverse
-        return u'<a href="%(url)s">%(title)s</a>' % {
-            'url': reverse('plata_reporting_invoice_pdf',
-                args=(),
-                kwargs={'order_id': instance.id}
-                ),
-            'title': _('PDF'),
-            }
-    admin_invoice_pdf.allow_tags = True
-    admin_invoice_pdf.short_description = _('Invoice')
-
-    def admin_packing_slip_pdf(self, instance):
-        from django.core.urlresolvers import reverse
-        return u'<a href="%(url)s">%(title)s</a>' % {
-            'url': reverse('plata_reporting_packing_slip_pdf',
-                args=(),
-                kwargs={'order_id': instance.id}
-                ),
-            'title': _('PDF'),
-            }
-    admin_packing_slip_pdf.allow_tags = True
-    admin_packing_slip_pdf.short_description = _('Packing slip')
 
 admin.site.register(models.Order, OrderAdmin)
 
@@ -85,7 +61,6 @@ class OrderPaymentAdmin(admin.ModelAdmin):
 
     notes_short = lambda self, obj: (len(obj.notes) > 50) and obj.notes[:40]+'...' or obj.notes
     notes_short.short_description = _('notes')
-
 
 admin.site.register(models.OrderPayment, OrderPaymentAdmin)
 
