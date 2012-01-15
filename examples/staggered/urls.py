@@ -20,8 +20,6 @@ urlpatterns = patterns('',
     url(r'^products/(?P<object_id>\d+)/$', 'staggered.views.product_detail',
         name='plata_product_detail'),
 
-    url(r'^reporting/', include('plata.reporting.urls')),
-
     (r'^media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': os.path.join(os.path.dirname(__file__), 'media/')}),
 )
