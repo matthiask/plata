@@ -1,3 +1,21 @@
+"""
+Exact, transactional stock tracking for Plata
+=============================================
+
+Follow these steps to enable this module:
+
+- Ensure your product model has an ``items_in_stock`` field with the following
+  definiton::
+
+      items_in_stock = models.IntegerField(default=0)
+
+- Add ``'plata.product.stock'`` to ``INSTALLED_APPS``.
+- Set ``PLATA_STOCK_TRACKING = True`` to enable stock tracking in the checkout
+  and payment processes.
+- Optionally modify your add-to-cart forms on product detail pages to take into
+  account ``items_in_stock``.
+"""
+
 from datetime import datetime, timedelta
 
 from django.core.exceptions import ValidationError
