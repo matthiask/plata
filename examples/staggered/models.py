@@ -17,7 +17,6 @@ class Product(ProductBase):
     description = models.TextField(_('description'), blank=True)
 
     class Meta:
-        app_label = 'product'
         ordering = ['ordering', 'name']
         verbose_name = _('product')
         verbose_name_plural = _('products')
@@ -54,7 +53,6 @@ class ProductPrice(Price):
     from_quantity = models.IntegerField(_('From quantity'), default=0)
 
     class Meta:
-        app_label = 'product'
         get_latest_by = 'id'
         ordering = ['from_quantity']
         verbose_name = _('price')

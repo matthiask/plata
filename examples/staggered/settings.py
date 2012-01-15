@@ -137,5 +137,5 @@ logging.basicConfig(
     level=logging.DEBUG,
     )
 
-PLATA_SHOP_PRODUCT = 'product.Product'
+PLATA_SHOP_PRODUCT = 'staggered.Product'
 CURRENCIES = ('CHF',)
