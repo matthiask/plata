@@ -10,7 +10,13 @@ import plata
 
 
 class ProductBase(models.Model):
-    """(Nearly) the simplest product model ever"""
+    """
+    Product models must have two methods to be usable with Plata:
+
+    - ``get_price``: Return a price instance
+    - ``handle_order_item``: Fill in fields on the order item from the product,
+      i.e. the name and the stock keeping unit.
+    """
 
     class Meta:
         abstract = True
