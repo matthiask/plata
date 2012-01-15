@@ -63,21 +63,24 @@ from django.contrib.sites.models import Site
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
-from pdfdocument.document import PDFDocument
-
 import plata
-from plata.reporting.order import invoice_pdf, packing_slip_pdf
 from plata.shop import signals
 
 
 class BaseHandler(object):
     def invoice_pdf(self, order):
+        from pdfdocument.document import PDFDocument
+        from plata.reporting.order import invoice_pdf
+
         with contextlib.closing(StringIO.StringIO()) as content:
             pdf = PDFDocument(content)
             invoice_pdf(pdf, order)
             return content.getvalue()
 
     def packing_slip_pdf(self, order):
+        from pdfdocument.document import PDFDocument
+        from plata.reporting.order import packing_slip_pdf
+
         with contextlib.closing(StringIO.StringIO()) as content:
             pdf = PDFDocument(content)
             packing_slip_pdf(pdf, order)
