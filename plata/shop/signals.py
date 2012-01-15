@@ -1,3 +1,8 @@
+"""
+Signals sent by the Plata during the checkout process
+=====================================================
+"""
+
 from django.dispatch import Signal
 
 #: Emitted upon contact creation. Receives the user and contact instance

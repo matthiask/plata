@@ -1,3 +1,59 @@
+"""
+Even though these shop signal handlers might be useful you might be better
+of writing your own handlers for the three important signals:
+
+- ``contact_created``: A new contact has been created during the checkout
+  process
+- ``order_confirmed``: The order has been confirmed, a payment method has
+  been selected
+- ``order_completed``: The order is fully paid
+
+A real-world example follows::
+
+    class EmailHandler(notifications.BaseHandler):
+        ALWAYS = ['shopadmin@example.com']
+        SHIPPING = ['warehouse@example.com']
+
+        def __call__(self, sender, order, **kwargs):
+            cash_on_delivery = False
+            try:
+                if (order.payments.all()[0].payment_module_key == 'cod'):
+                    cash_on_delivery = True
+            except:
+                pass
+
+            invoice_message = self.create_email_message('plata/notifications/order_completed.txt',
+                order=order,
+                **kwargs)
+            invoice_message.attach(order.order_id + '.pdf', self.invoice_pdf(order), 'application/pdf')
+            invoice_message.to.append(order.email)
+            invoice_message.bcc.extend(self.ALWAYS)
+
+            packing_slip_message = self.create_email_message('plata/notifications/packing_slip.txt',
+                order=order,
+                **kwargs)
+            packing_slip_message.attach(
+                order.order_id + '-LS.pdf',
+                self.packing_slip_pdf(order),
+                'application/pdf')
+            packing_slip_message.to.extend(self.ALWAYS)
+
+            if cash_on_delivery:
+                invoice_message.bcc.extend(self.SHIPPING)
+            else:
+                packing_slip_message.to.extend(self.SHIPPING)
+
+            invoice_message.send()
+            packing_slip_message.send()
+
+    shop_signals.contact_created.connect(
+        notifications.ContactCreatedHandler(),
+        weak=False)
+    shop_signals.order_completed.connect(
+        RRRevolveEmailHandler(),
+        weak=False)
+"""
+
 from __future__ import with_statement
 
 import contextlib
