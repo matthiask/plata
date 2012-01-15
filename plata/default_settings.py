@@ -63,7 +63,3 @@ CURRENCIES = getattr(settings, 'CURRENCIES', ('CHF', 'EUR', 'USD', 'CAD'))
 
 #: Target of order item product foreign key (Defaults to ``'product.Product'``)
 PLATA_SHOP_PRODUCT = getattr(settings, 'PLATA_SHOP_PRODUCT', 'product.Product')
-
-#: Should the options module product use FeinCMS? (somewhat deprecated, writing
-#: your own product model would probably be more future-proof)
-PLATA_PRODUCT_OPTIONS_FEINCMS = getattr(settings, 'PLATA_PRODUCT_OPTIONS_FEINCMS', False)
