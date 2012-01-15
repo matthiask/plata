@@ -23,33 +23,73 @@ def plata_bestsellers():
     }
 
 
+def _type_class(item):
+    if isinstance(item.field.widget, forms.CheckboxInput):
+        return 'checkbox'
+    elif isinstance(item.field.widget, forms.DateInput):
+        return 'date'
+    elif isinstance(item.field.widget, (forms.RadioSelect, forms.CheckboxSelectMultiple)):
+        return 'list'
+    return ''
+
+
+@register.simple_tag
+def form_items(form):
+    """
+    Render all form items::
+
+        {% form_items form %}
+    """
+    return u''.join(render_to_string('_form_item.html', {
+        'item': field,
+        'is_checkbox': isinstance(field.field.widget, forms.CheckboxInput),
+        'type_class': _type_class(field),
+        }) for field in form)
+
+
 @register.inclusion_tag('_form_item.html')
 def form_item(item, additional_classes=None):
     """
-    Helper for easy displaying of form items.
+    Helper for easy displaying of form items::
+
+        {% for field in form %}
+            {% form_item field %}
+        {% endfor %}
     """
 
     return {
         'item': item,
         'additional_classes': additional_classes,
+        'is_checkbox': isinstance(item.field.widget, forms.CheckboxInput),
+        'type_class': _type_class(item),
         }
 
 
 @register.inclusion_tag('_form_item_plain.html')
-def form_item_plain(item):
+def form_item_plain(item, additional_classes=None):
     """
-    Helper for easy displaying of form items.
+    Helper for easy displaying of form items without any additional
+    tags (table cells or paragraphs) or labels::
+
+        {% form_item_plain field %}
     """
 
     return {
         'item': item,
+        'additional_classes': additional_classes,
+        'is_checkbox': isinstance(item.field.widget, forms.CheckboxInput),
+        'type_class': _type_class(item),
         }
 
 
 @register.tag
 def form_errors(parser, token):
     """
-    Show all form and formset errors
+    Show all form and formset errors::
+
+        {% form_errors form formset1 formset2 %}
+
+    Silently ignores non-existant variables.
     """
 
     tokens = token.split_contents()

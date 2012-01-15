@@ -1,12 +1,12 @@
-{% load i18n %}
-<div class="errors">
-    <p>{% trans "Please correct the following errors:" %}</p>
+{% load i18n verbose_name_tags %}
+<div class="box error cf">
+    <strong>{% trans "Please correct the following errors:" %}</strong>
 
     <ul>
     {% for form in forms %}
-    {% for error in form.non_field_errors %}
-        <li>{{ error }}</li>
-    {% endfor %}
+    {% if form.non_field_errors %}
+        <li><span>{% trans "Form errors" %}:</span> {{ form.non_field_errors }}</li>
+    {% endif %}
     {% for field in form %}
         {% if field.errors %}
             <li id="error_{{ field.name }}"><span>{{ field.label }}:</span> {{ field.errors }}</li>
@@ -15,10 +15,14 @@
     {% endfor %}
 
     {% for formset in formsets %}
+    {% if formset.non_form_errors %}
+        <li><span>{{ fieldset|verbose_name_plural|default:_("Fieldset errors") }}:</span>
+            {{ formset.non_form_errors }}</li>
+    {% endif %}
     {% for form in formset.forms %}
-        {% for error in form.non_field_errors %}
-            <li>{{ error }}</li>
-        {% endfor %}
+        {% if form.non_field_errors %}
+            <li><span>{% trans "Form errors" %}:</span> {{ form.non_field_errors }}</li>
+        {% endif %}
         {% for field in form %}
             {% if field.errors %}
                 <li id="error_{{ field.name }}"><span>{{ field.label }}:</span> {{ field.errors }}</li>

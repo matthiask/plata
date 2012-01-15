@@ -1,4 +1,4 @@
-<tr class="{{ additional_classes|default_if_none:"" }} {% if item.field.required %}required {% endif %}{% if item.errors %}invalid {% endif %}">
+<tr class="{{ additional_classes|default_if_none:"" }} {% if item.field.required %}required {% endif %}{% if item.errors %}invalid {% endif %} {{ type_class }}">
     <th>{{ item.label_tag }}</th>
     <td>{{ item }}{% if item.field.help_text %}<p class="help">{{ item.field.help_text }}</p>{% endif %}</td>
 </tr>
