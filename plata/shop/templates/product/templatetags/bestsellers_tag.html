@@ -1,9 +1,0 @@
-<div class="plata-bestsellers">
-{% for product in bestsellers|slice:":5" %}
-	<div class="name"><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></div>
-	<div class="price">{{ product.get_price.unit_price|floatformat:2 }} {{ product.get_price.currency }}</div>
-	{% if not forloop.last %}
-		<div class="separator"></div>
-	{% endif %}
-{% endfor %}
-</div>

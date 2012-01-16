@@ -16,13 +16,6 @@ def plata_cart(context):
     }
 
 
-@register.inclusion_tag('product/templatetags/bestsellers_tag.html')
-def plata_bestsellers():
-    return {
-        'bestsellers': plata.product_model().objects.bestsellers()
-    }
-
-
 def _type_class(item):
     if isinstance(item.field.widget, forms.CheckboxInput):
         return 'checkbox'
