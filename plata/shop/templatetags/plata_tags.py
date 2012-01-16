@@ -6,16 +6,6 @@ import plata
 register = template.Library()
 
 
-@register.inclusion_tag('plata/templatetags/cart_tag.html', takes_context=True)
-def plata_cart(context):
-    shop = plata.shop_instance()
-    order = shop.order_from_request(context['request'], create=False)
-
-    return {
-        'order': order
-    }
-
-
 def _type_class(item):
     if isinstance(item.field.widget, forms.CheckboxInput):
         return 'checkbox'
