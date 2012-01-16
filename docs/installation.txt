@@ -13,11 +13,11 @@ Plata is based on Django_, so you need a working Django_ installation
 first. Plata is developed using Django_ 1.3, and will not
 work with any earlier version.
 
-You can download a stable release of plata using ``easy_install``::
+You can download a stable release of plata using ``pip``::
 
-    $ sudo easy_install Plata
+    $ sudo pip Plata
 
-Please note that the package installable with ``easy_install`` only
+Please note that the package installable with ``pip`` only
 contains the files needed to run plata. It does not include documentation,
 tests or the example project which comes with the development version,
 which you can download using the Git_ version control system::
@@ -25,13 +25,10 @@ which you can download using the Git_ version control system::
     $ git clone git://github.com/matthiask/plata.git
 
 In addition, you will PDFDocument_ if you want to generate PDFs.
-Several FeinCMS_ content types and a FeinCMS_-based product model is
-available too. FeinCMS_ isn't required to use Plata, though.
 
 .. _Django: http://www.djangoproject.com/
 .. _Git: http://git-scm.com/
 .. _PDFDocument: http://github.com/matthiask/pdfdocument
-.. _FeinCMS: http://www.feinheit.ch/labs/feincms-django-cms/
 
 
 Configuration
@@ -45,12 +42,11 @@ Adding the modules to ``INSTALLED_APPS``
     INSTALLED_APPS = (
         ...
         'plata',
-        'plata.contact',
+        'plata.contact', # Not strictly required (contact model can be exchanged)
         'plata.discount',
         'plata.payment',
-        'plata.product',
-        'plata.product.feincms', # Not strictly necessary
-        'plata.product.stock', # Currently necessary, but this might change
+        'plata.product', # Does nothing
+        'plata.product.stock', # Accurate stock tracking, not required
         'plata.shop',
         ...
         )
@@ -73,7 +69,6 @@ either configurable or overridable.
 
 The models which need to be passed when instantiating the Shop object are
 
-* Product
 * Contact
 * Order
 * Discount
@@ -82,12 +77,10 @@ Example::
 
     from plata.contact.models import Contact
     from plata.discount.models import Discount
-    from plata.product.modules.options.models import Product
     from plata.shop.models import Order
     from plata.shop.views import Shop
 
     shop = Shop(
-        product_model=Product,
         contact_model=Contact,
         order_model=Order,
         discount_model=Discount,
@@ -114,7 +107,7 @@ Generic views using ``plata.shop_instance()`` could look like this::
     from django.views.generic import list_detail
 
     import plata
-    from plata.product.modules.options.models import Product
+    from yourapp.models import Product
 
 
     def product_list(request):
