@@ -15,19 +15,3 @@ Accurate stock tracking
 .. automodule:: plata.product.stock.models
    :members:
    :noindex:
-
-
-FeinCMS-based product
-*********************
-
-.. automodule:: plata.product.feincms.models
-   :members:
-   :noindex:
-
-
-Producer extension
-******************
-
-.. automodule:: plata.product.producer.models
-   :members:
-   :noindex:
