@@ -34,6 +34,47 @@ In addition, you will need PDFDocument_ if you want to generate PDFs.
 Configuration
 =============
 
+Writing your product model
+--------------------------
+
+First, you need to write your own product and price model. There is a small
+(and documented) interface contract described in :ref:`contracts`.
+
+The smallest possible implementation follows here::
+
+    from django.db import models
+
+    from plata.product.models import ProductBase
+    from plata.shop.models import Price
+
+    class Product(ProductBase):
+        name = models.CharField(_('name'), max_length=100)
+        slug = models.SlugField(_('slug'), unique=True)
+        description = models.TextField(_('description'), blank=True)
+
+        class Meta:
+            ordering = ['name']
+            verbose_name = _('product')
+            verbose_name_plural = _('products')
+
+        def __unicode__(self):
+            return self.name
+
+        @models.permalink
+        def get_absolute_url(self):
+            return ('plata_product_detail', (), {'slug': self.slug})
+
+    class ProductPrice(Price):
+        product = models.ForeignKey(Product, verbose_name=_('product'),
+            related_name='prices')
+
+        class Meta:
+            get_latest_by = 'id'
+            ordering = ['-id']
+            verbose_name = _('price')
+            verbose_name_plural = _('prices')
+
+
 Adding the modules to ``INSTALLED_APPS``
 ----------------------------------------
 
@@ -41,6 +82,7 @@ Adding the modules to ``INSTALLED_APPS``
 
     INSTALLED_APPS = (
         ...
+        'yourapp',
         'plata',
         'plata.contact', # Not strictly required (contact model can be exchanged)
         'plata.discount',
@@ -116,9 +158,9 @@ Generic views using ``plata.shop_instance()`` could look like this::
         )
 
 
-    def product_detail(request, object_id):
+    def product_detail(request, slug):
         shop = plata.shop_instance()
-        product = get_object_or_404(Product.objects.active(), pk=object_id)
+        product = get_object_or_404(Product.objects.active(), slug=slug)
 
         return shop.product_detail(request, product)
 
@@ -134,7 +176,7 @@ Next, you need to add the Shop's URLs to your URLconf::
         url(r'^shop/', include(shop.urls)),
         url(r'^products/$', 'myapp.views.product_list',
             name='plata_product_list'),
-        url(r'^products/(?P<object_id>\d+)/$', 'myapp.views.product_detail',
+        url(r'^products/(?P<slug>[-\w]+)/$', 'myapp.views.product_detail',
             name='plata_product_detail'),
     )
 
