@@ -40,9 +40,11 @@ Writing your product model
 First, you need to write your own product and price model. There is a small
 (and documented) interface contract described in :ref:`contracts`.
 
-The smallest possible implementation follows here::
+The smallest possible implementation while still following best practice
+follows here::
 
     from django.db import models
+    from django.utils.translation import ugettext_lazy as _
 
     from plata.product.models import ProductBase
     from plata.shop.models import Price
@@ -144,7 +146,8 @@ anything else fitting your needs.
 
 Generic views using ``plata.shop_instance()`` could look like this::
 
-    from django.shortcuts import get_object_or_404
+    from django import forms
+    from django.shortcuts import get_object_or_404, render
     from django.views.generic import base
 
     import plata
@@ -152,20 +155,43 @@ Generic views using ``plata.shop_instance()`` could look like this::
 
 
     product_list = base.ListView.as_view(
-        queryset=Product.objects.active(),
+        queryset=Product.objects.all(),
         paginate_by=10,
         template_name='product/product_list.html',
         )
 
 
+    class OrderItemForm(forms.Form):
+        quantity = forms.IntegerField(label=_('quantity'), initial=1,
+            min_value=1, max_value=100)
+
+
     def product_detail(request, slug):
-        shop = plata.shop_instance()
-        product = get_object_or_404(Product.objects.active(), slug=slug)
+        product = get_object_or_404(Product, slug=slug)
 
-        return shop.product_detail(request, product)
+        if request.method == 'POST':
+            form = OrderItemForm(request.POST)
 
-``shop.product_detail`` behaves similar to Django's generic views. It handles
-adding articles to the cart.
+            if form.is_valid():
+                order = shop.order_from_request(request, create=True)
+                try:
+                    order.modify_item(product, form.cleaned_data.get('quantity'))
+                    messages.success(request, _('The cart has been updated.'))
+                except ValidationError, e:
+                    if e.code == 'order_sealed':
+                        [messages.error(request, msg) for msg in e.messages]
+                    else:
+                        raise
+
+                return redirect('plata_shop_cart')
+        else:
+            form = OrderItemForm()
+
+        return render(request, 'product/product_detail.html', {
+            'object': product,
+            'form': form,
+            })
+
 
 Next, you need to add the Shop's URLs to your URLconf::
 
