@@ -24,7 +24,7 @@ which you can download using the Git_ version control system::
 
     $ git clone git://github.com/matthiask/plata.git
 
-In addition, you will PDFDocument_ if you want to generate PDFs.
+In addition, you will need PDFDocument_ if you want to generate PDFs.
 
 .. _Django: http://www.djangoproject.com/
 .. _Git: http://git-scm.com/
@@ -69,9 +69,9 @@ either configurable or overridable.
 
 The models which need to be passed when instantiating the Shop object are
 
-* Contact
-* Order
-* Discount
+* ``Contact``
+* ``Order``
+* ``Discount``
 
 Example::
 
@@ -97,25 +97,23 @@ Adding views and configuring URLs
 ---------------------------------
 
 The :class:`~plata.shop.views.Shop` class itself does not define any product
-views. You have to do this yourself. You may either use Django's generic views,
-:class:`plata.product.feincms.content.ProductList` if you use FeinCMS, or
+views. You have to do this yourself. You may use Django's generic views or
 anything else fitting your needs.
 
 Generic views using ``plata.shop_instance()`` could look like this::
 
     from django.shortcuts import get_object_or_404
-    from django.views.generic import list_detail
+    from django.views.generic import base
 
     import plata
     from yourapp.models import Product
 
 
-    def product_list(request):
-        return list_detail.object_list(request,
-            queryset=Product.objects.active(),
-            paginate_by=10,
-            template_name='product/product_list.html',
-            )
+    product_list = base.ListView.as_view(
+        queryset=Product.objects.active(),
+        paginate_by=10,
+        template_name='product/product_list.html',
+        )
 
 
     def product_detail(request, object_id):

@@ -1,4 +1,4 @@
-..taxes_and_discounts:
+.. taxes_and_discounts:
 
 ===================
 Taxes and Discounts

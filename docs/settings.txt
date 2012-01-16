@@ -23,7 +23,14 @@ Settings
 
 
 ``PLATA_PAYMENT_MODULES``:
-  The list of payment modules which can be used to pay the order.
+  The list of payment modules which can be used to pay the order. Currently,
+  all available modules are enabled too.
+
+
+``PLATA_PAYMENT_MODULE_NAMES``
+  The user-visible names of payment modules can be modified here. Example::
+
+      PLATA_PAYMENT_MODULE_NAMES = {'paypal': _('Paypal and credit cards')}
 
 
 ``PLATA_SHIPPING_FIXEDAMOUNT``:
@@ -31,3 +38,27 @@ Settings
   you should fill in the cost incl. tax and tax rate here.
 
   Defaults to ``{'cost': Decimal('8.00'), 'tax': Decimal('7.6')}``
+
+
+``PLATA_REPORTING_STATIONERY``:
+  Stationery used by PDFDocument to render invoice and packing slip PDFs.
+
+
+``PLATA_STOCK_TRACKING``:
+  Accurate transactional stock tracking. Needs the ``plata.product.stock``
+  Django application.
+
+  Each stock change will be recorded as a distinct entry in the database.
+  Products will be locked when an order is confirmed for 15 minutes, which
+  means that it's not possible to begin or end the checkout process when
+  stock is limited and someone else has already started paying.
+
+
+``CURRENCIES``:
+  A list of available currencies. Defaults to ``('CHF', 'EUR', 'USD', 'CAD')``.
+  You should set this variable for your shop.
+
+
+``PLATA_SHOP_PRODUCT``:
+  Target of order item product foreign key in ``app_label.model_name``
+  notation. Defaults to ``'product.Product'``
