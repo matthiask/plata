@@ -10,14 +10,9 @@
 {{ object.description|linebreaks }}
 
 <div class="prices">
-    {% for currency, prices in object.get_prices %}
-        {% if prices.sale %}
-            {% if prices.normal %}<span style="text-decoration: line-through;">{{ prices.normal }}</span>{% endif %}
-            <strong>{{ prices.sale }}</strong><br />
-        {% else %}
-            <strong>{{ prices.normal }}</strong><br />
-        {% endif %}
-    {% endfor %}
+    {% with price=object.get_price %}
+        <strong>{{ price }}</strong><br />
+    {% endwith %}
 </div>
 
 <form method="post" action=".">

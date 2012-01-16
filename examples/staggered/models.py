@@ -42,10 +42,6 @@ class Product(ProductBase):
         except IndexError:
             raise possible.model.DoesNotExist
 
-    def get_prices(self):
-        # Do nothing.
-        pass
-
 
 class ProductPrice(Price):
     product = models.ForeignKey(Product, verbose_name=_('product'),
