@@ -15,3 +15,6 @@ Visit these sites for more information
 * Plata's own website: http://www.feinheit.ch/labs/plata-django-shop/
 * Documentation: http://www.feinheit.ch/media/labs/plata/
 * Plata on github: http://github.com/matthiask/plata
+* Once upon a time Plata came with an included product model. It is still
+  available in its own repository:
+  https://github.com/matthiask/plata-options-product
