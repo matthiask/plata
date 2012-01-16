@@ -2,26 +2,6 @@
 
 import os
 from setuptools import setup, find_packages
-from setuptools.dist import Distribution
-import pkg_resources
-
-
-add_django_dependency = True
-# See feinCMS issues #50, #57 and #58 for why this is necessary
-try:
-    pkg_resources.get_distribution('Django')
-    add_django_dependency = False
-except pkg_resources.DistributionNotFound:
-    try:
-        import django
-        if django.VERSION[0] >= 1 and django.VERSION[1] >= 3 and django.VERSION[2] >= 0:
-            add_django_dependency = False
-    except ImportError:
-        pass
-
-Distribution({
-    "setup_requires": add_django_dependency and  ['Django >=1.3.0'] or []
-})
 
 import plata
 
@@ -46,30 +26,7 @@ setup(name='Plata',
         'Topic :: Software Development',
         'Topic :: Software Development :: Libraries :: Application Frameworks',
     ],
-    install_requires=[
-        #'Django >=1.3.0' # See http://github.com/feincms/feincms/issues/closed#issue/50
-    ],
-    requires=[
-    ],
-    packages=[
-        'plata',
-        'plata.contact',
-        'plata.discount',
-        'plata.payment',
-        'plata.payment.modules',
-        'plata.product',
-        'plata.product.feincms',
-        'plata.product.modules.options',
-        'plata.product.modules.options.templatetags',
-        'plata.product.producer',
-        'plata.product.stock',
-        'plata.reporting',
-        'plata.shop',
-        'plata.shop.management',
-        'plata.shop.management.commands',
-        'plata.shop.templatetags',
-    ],
+    packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
 )
-
