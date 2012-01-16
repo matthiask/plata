@@ -11,3 +11,5 @@ plata.log
 /docs/deploy.sh
 .pydevproject
 .project
+/dist
+/Plata.egg-info
