@@ -28,7 +28,7 @@ import plata
 setup(name='Plata',
     version=plata.__version__,
     description='Plata - the lean and mean Django-based Shop',
-    long_description=open(os.path.join(os.path.dirname(__file__), 'README')).read(),
+    long_description=open(os.path.join(os.path.dirname(__file__), 'README.rst')).read(),
     author='Matthias Kestenholz',
     author_email='mk@feinheit.ch',
     url='https://github.com/matthiask/plata/',
