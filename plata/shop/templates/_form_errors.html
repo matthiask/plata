@@ -1,4 +1,4 @@
-{% load i18n verbose_name_tags %}
+{% load i18n %}
 <div class="box error cf">
     <strong>{% trans "Please correct the following errors:" %}</strong>
 
@@ -16,7 +16,7 @@
 
     {% for formset in formsets %}
     {% if formset.non_form_errors %}
-        <li><span>{{ fieldset|verbose_name_plural|default:_("Fieldset errors") }}:</span>
+        <li><span>{% trans "Fieldset errors" %}:</span>
             {{ formset.non_form_errors }}</li>
     {% endif %}
     {% for form in formset.forms %}
