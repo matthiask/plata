@@ -129,6 +129,8 @@ PAYPAL = {
 
 PLATA_REPORTING_ADDRESSLINE = 'Example Corp. - 3. Example Street - 1234 Example'
 
+STATIC_URL = '/static/'
+
 # PLATA settings
 
 TEST_RUNNER = 'options.test_utils.test_runner_with_coverage'
@@ -141,5 +143,5 @@ logging.basicConfig(
     level=logging.DEBUG,
     )
 
-PLATA_SHOP_PRODUCT = 'product.Product'
+PLATA_SHOP_PRODUCT = 'custom.Product'
 CURRENCIES = ('CHF',)

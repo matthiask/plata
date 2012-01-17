@@ -109,6 +109,8 @@ INSTALLED_APPS = (
     'simple',
 )
 
+STATIC_URL = '/static/'
+
 # PLATA settings
 
 #PLATA_PRICE_INCLUDES_TAX = False
@@ -139,5 +141,5 @@ logging.basicConfig(
     level=logging.DEBUG,
     )
 
-PLATA_SHOP_PRODUCT = 'product.Product'
+PLATA_SHOP_PRODUCT = 'simple.Product'
 CURRENCIES = ('CHF',)

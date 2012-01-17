@@ -19,7 +19,6 @@ class Product(ProductBase):
     description = models.TextField(_('description'), blank=True)
 
     class Meta:
-        app_label = 'product'
         ordering = ['ordering', 'name']
         verbose_name = _('product')
         verbose_name_plural = _('products')
@@ -37,9 +36,8 @@ class ProductPrice(PriceBase):
         related_name='prices')
 
     class Meta:
-        app_label = 'product'
         get_latest_by = 'id'
-        ordering = ['-valid_from']
+        ordering = ['-id']
         verbose_name = _('price')
         verbose_name_plural = _('prices')
 
