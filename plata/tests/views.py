@@ -17,6 +17,9 @@ from plata.shop.models import Order, OrderPayment
 from plata.tests.base import PlataTest, get_request
 
 
+Product = plata.product_model()
+
+
 class ViewTest(PlataTest):
     def setUp(self):
         self.ORIG_TEMPLATE_DIRS = settings.TEMPLATE_DIRS
