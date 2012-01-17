@@ -23,13 +23,13 @@ class DiscountBase(models.Model):
 
     TYPE_CHOICES = (
         (AMOUNT_VOUCHER_EXCL_TAX,
-            _('amount voucher (reduce the subtotal excl. tax by this amount)')),
+            _('amount voucher excl. tax (reduces total tax on order)')),
         (AMOUNT_VOUCHER_INCL_TAX,
-            _('amount voucher (reduce the subtotal incl. tax by this amount)')),
+            _('amount voucher incl. tax (reduces total tax on order)')),
         (PERCENTAGE_VOUCHER,
-            _('percentage voucher (reduce the subtotal by this percentage)')),
+            _('percentage voucher (reduces total tax on order)')),
         (MEANS_OF_PAYMENT,
-            _('means of payment (applies to total, does not change subtotal nor tax)')),
+            _('means of payment (does not change total tax on order)')),
         )
 
     #: You can add and remove options at will, except for 'all': This option
