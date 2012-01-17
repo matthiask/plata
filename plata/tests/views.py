@@ -49,95 +49,8 @@ class ViewTest(PlataTest):
 
     def test_03_product_detail(self):
         """Test product detail view and cart handling methods"""
-        p1 = self.create_product()
-        response = self.client.post(p1.get_absolute_url(), {
-            'quantity': 5,
-            })
-        self.assertTrue(re.search(r'No items of .* on stock', response.content))
-
-        p1.stock_transactions.create(type=StockTransaction.PURCHASE, change=100)
-
-        response = self.client.post(p1.get_absolute_url(), {
-            'quantity': 150,
-            })
-        self.assertTrue(re.search(r'Only \d+ items for .*available.', response.content))
-
-        self.assertRedirects(self.client.post(p1.get_absolute_url(), {'quantity': 5}),
-            '/cart/')
-
-        response = self.client.post(p1.get_absolute_url(), {
-            'quantity': 150,
-            })
-        self.assertTrue(
-            re.search(r'Only 100 items for .*available; you already have 5 in your order.',
-                response.content))
-
-        p1.variations.all().delete()
-        self.assertContains(self.client.post(p1.get_absolute_url(), {'quantity': 5}),
-            'The requested product does not exist.')
-
-        group = OptionGroup.objects.create(name='color')
-        group.options.create(name='red', value='red')
-        group.options.create(name='green', value='green')
-        group.options.create(name='blue', value='blue')
-        p1.option_groups.add(group)
-
-        group = OptionGroup.objects.create(name='size')
-        group.options.create(name='s', value='s')
-        group.options.create(name='m', value='m')
-
-        option = group.options.create(name='l', value='l')
-
-        self.assertEqual(unicode(option), 'l')
-        self.assertEqual(option.full_name(), 'size - l')
-        p1.option_groups.add(group)
-
-        p1.create_variations()
-        self.assertEqual(p1.variations.count(), 9)
-
-        self.assertContains(self.client.post(p1.get_absolute_url(), {'quantity': 5}),
-            'This field is required', count=2)
-        self.assertContains(self.client.post(p1.get_absolute_url(), {
-            'quantity': 5,
-            'option_1': 1,
-            }), 'This field is required', count=1)
-
-        response = self.client.post(p1.get_absolute_url(), {
-            'quantity': 5,
-            'option_1': 1,
-            'option_2': 5,
-            })
-        self.assertTrue(re.search(r'No items of .* on stock', response.content))
-
-        variation = p1.variations.filter(options__id=1).filter(options__id=5).get()
-        variation.stock_transactions.create(type=StockTransaction.PURCHASE, change=100)
-
-        self.assertRedirects(self.client.post(p1.get_absolute_url(), {
-            'quantity': 5,
-            'option_1': 1,
-            'option_2': 5,
-            }), '/cart/')
-
-        self.assertRedirects(self.client.post(p1.get_absolute_url(), {
-            'quantity': -5,
-            'option_1': 2,
-            'option_2': 5,
-            }), '/cart/')
-
-        for variation in p1.variations.all():
-            variation.stock_transactions.create(type=StockTransaction.PURCHASE, change=10)
-
-        items_in_stock = p1.items_in_stock()
-        self.assertEqual(items_in_stock['3_5'], 10)
-        self.assertEqual(items_in_stock['1_5'], 110)
-        self.assertEqual(len(items_in_stock), 9)
-
-        p1.prices.all().delete()
-        self.assertContains(self.client.post(p1.get_absolute_url(), {
-            'quantity': 5,
-            'option_1': 1,
-            'option_2': 5,
-            }), 'Price could not be determined', count=1)
+        # Removed everything -- the minimal add to cart form is really,
+        # really stupid. Nothing to test here.
 
     def test_04_shopping(self):
         """Test shopping, checkout and order PDF generation in one go"""
@@ -297,7 +210,7 @@ class ViewTest(PlataTest):
             'items-0-quantity': 43,
             'items-0-DELETE': False,
             }), '/confirmation/?confirmed=1')
-        self.assertTrue(Order.objects.all()[0].items.get(product__product=p2).quantity != 42)
+        self.assertTrue(Order.objects.all()[0].items.get(product=p2).quantity != 42)
 
         # Test this view works at all
         self.client.get('/order/payment_failure/')
@@ -354,9 +267,6 @@ class ViewTest(PlataTest):
         request = get_request()
 
         product = self.create_product()
-        self.client.post(product.get_absolute_url(), {
-            'quantity': 5,
-            })
 
         Period.objects.create(name='Test period')
         product.stock_transactions.create(type=StockTransaction.PURCHASE, change=10)
@@ -685,18 +595,14 @@ class ViewTest(PlataTest):
             type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
             change=-7)
 
-        response = self.client.post(p1.get_absolute_url(), {'quantity': 5})
-        self.assertTrue(re.search(r'Only \d+ items for .* available', response.content))
-
+        self.assertEqual(StockTransaction.objects.items_in_stock(p1), 3)
         StockTransaction.objects.update(created=datetime.now()-timedelta(minutes=10))
-        response = self.client.post(p1.get_absolute_url(), {'quantity': 5})
-        self.assertTrue(re.search(r'Only \d+ items for .* available', response.content))
-
+        self.assertEqual(StockTransaction.objects.items_in_stock(p1), 3)
         StockTransaction.objects.update(created=datetime.now()-timedelta(minutes=20))
-        self.assertRedirects(self.client.post(p1.get_absolute_url(), {'quantity': 5}),
-            '/cart/')
+        self.assertEqual(StockTransaction.objects.items_in_stock(p1), 10)
 
-        order = Order.objects.all()[0]
+        order = self.create_order()
+        order.modify_item(p1, relative=5)
         order.validate(order.VALIDATE_ALL)
 
         StockTransaction.objects.update(created=datetime.now()-timedelta(minutes=10))
@@ -758,4 +664,5 @@ class ViewTest(PlataTest):
         # Stock transactions must be created for orders which are paid from the start
         # 10 purchase, -5 sale, -1 sale
         self.assertEqual(StockTransaction.objects.count(), 3)
+        p1 = Product.objects.get(pk=p1.pk)
         self.assertEqual(p1.items_in_stock, 4)

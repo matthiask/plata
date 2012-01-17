@@ -18,6 +18,10 @@ class Product(ProductBase):
     def get_absolute_url(self):
         return ('plata_product_detail', (self.pk,), {})
 
+    @property
+    def sku(self):
+        return u''
+
 
 class Price(PriceBase):
     product = models.ForeignKey(Product, related_name='prices')

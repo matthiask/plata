@@ -897,12 +897,7 @@ class ModelTest(PlataTest):
             tax_included=True,
             )
 
-        price = product.get_price(currency='CHF')
-        price.tax_class = tax_class
-        price.save()
-
         order = self.create_order()
-        order.save()
 
         normal1 = order.modify_item(product, 1)
 
@@ -933,7 +928,6 @@ class ModelTest(PlataTest):
             name='Ein Paar Hosen',
             )
 
-        product.create_variations()
         product.prices.create(
             currency='CHF',
             tax_class=tax_class,
@@ -941,12 +935,7 @@ class ModelTest(PlataTest):
             tax_included=True,
             )
 
-        price = product.get_price(currency='CHF')
-        price.tax_class = tax_class
-        price.save()
-
         order = self.create_order()
-        order.save()
 
         normal1 = order.modify_item(product, 1)
 
