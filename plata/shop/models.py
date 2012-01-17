@@ -582,7 +582,7 @@ class OrderPayment(models.Model):
         self._recalculate_paid()
 
 
-class Price(models.Model):
+class PriceBase(models.Model):
     """
     Price for a given product, currency, tax class and time period
 

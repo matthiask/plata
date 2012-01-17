@@ -4,7 +4,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from plata.product.models import ProductBase
-from plata.shop.models import Price, PriceManager
+from plata.shop.models import PriceBase
 
 
 class Product(ProductBase):
@@ -31,7 +31,7 @@ class Product(ProductBase):
         return ('plata_product_detail', (), {'object_id': self.pk})
 
 
-class ProductPrice(Price):
+class ProductPrice(PriceBase):
     product = models.ForeignKey(Product, verbose_name=_('product'),
         related_name='prices')
 
@@ -41,5 +41,3 @@ class ProductPrice(Price):
         ordering = ['-valid_from']
         verbose_name = _('price')
         verbose_name_plural = _('prices')
-
-    objects = PriceManager()

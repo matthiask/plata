@@ -28,26 +28,12 @@ class OrderItemForm(forms.Form):
     quantity = forms.IntegerField(label=_('quantity'), initial=1,
         min_value=1, max_value=100)
 
-    def __init__(self, *args, **kwargs):
-        self.product = kwargs.pop('product')
-        super(OrderItemForm, self).__init__(*args, **kwargs)
-
-    def clean(self):
-        data = super(OrderItemForm, self).clean()
-
-        try:
-            data['price'] = self.product.get_price()
-        except ObjectDoesNotExist:
-            raise forms.ValidationError(_('Price could not be determined.'))
-
-        return data
-
 
 def product_detail(request, object_id):
     product = get_object_or_404(Product.objects.filter(is_active=True), pk=object_id)
 
     if request.method == 'POST':
-        form = OrderItemForm(request.POST, product=product)
+        form = OrderItemForm(request.POST)
 
         if form.is_valid():
             order = shop.order_from_request(request, create=True)
@@ -62,7 +48,7 @@ def product_detail(request, object_id):
 
             return redirect('plata_shop_cart')
     else:
-        form = OrderItemForm(product=product)
+        form = OrderItemForm()
 
     return render_to_response('product/product_detail.html', {
         'object': product,

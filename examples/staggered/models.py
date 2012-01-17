@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 
 import plata
 from plata.product.models import ProductBase
-from plata.shop.models import Price
+from plata.shop.models import PriceBase
 
 
 class Product(ProductBase):
@@ -43,7 +43,7 @@ class Product(ProductBase):
             raise possible.model.DoesNotExist
 
 
-class ProductPrice(Price):
+class ProductPrice(PriceBase):
     product = models.ForeignKey(Product, verbose_name=_('product'),
         related_name='prices')
     from_quantity = models.IntegerField(_('From quantity'), default=0)

@@ -47,7 +47,7 @@ follows here::
     from django.utils.translation import ugettext_lazy as _
 
     from plata.product.models import ProductBase
-    from plata.shop.models import Price
+    from plata.shop.models import PriceBase
 
     class Product(ProductBase):
         name = models.CharField(_('name'), max_length=100)
@@ -66,7 +66,7 @@ follows here::
         def get_absolute_url(self):
             return ('plata_product_detail', (), {'slug': self.slug})
 
-    class ProductPrice(Price):
+    class ProductPrice(PriceBase):
         product = models.ForeignKey(Product, verbose_name=_('product'),
             related_name='prices')
 
