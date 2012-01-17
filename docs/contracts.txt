@@ -60,8 +60,9 @@ Price model
 Plata has a bundled abstract price model which does almost everything
 required. You have to provide the concrete price model yourself though.
 
-The only thing it lacks for a basic price is a foreign key to product
-(with ``related_name='prices'``).
+The only thing it lacks for a basic price is a foreign key to product.
+``ProductBase.get_price`` assumes that the foreign key is defined with
+``related_name='prices'``.
 
 When modifying a cart or an order, Plata will call the price object's
 ``handle_order_item`` method, passing the order item instance as the only
