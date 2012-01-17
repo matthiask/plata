@@ -14,6 +14,10 @@ class Product(ProductBase):
     def __unicode__(self):
         return self.name
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('plata_product_detail', (self.pk,), {})
+
 
 class Price(PriceBase):
     product = models.ForeignKey(Product, related_name='prices')

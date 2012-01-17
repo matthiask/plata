@@ -1,17 +1,25 @@
 from django.conf.urls import patterns, include, url
 
-# Uncomment the next two lines to enable the admin:
-# from django.contrib import admin
-# admin.autodiscover()
+from django.contrib import admin
+admin.autodiscover()
+
+from plata.contact.models import Contact
+from plata.discount.models import Discount
+from plata.shop.models import Order
+from plata.shop.views import Shop
+
+shop = Shop(
+    contact_model=Contact,
+    order_model=Order,
+    discount_model=Discount,
+    )
+
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'tests.views.home', name='home'),
-    # url(r'^tests/', include('tests.foo.urls')),
-
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-    # Uncomment the next line to enable the admin:
-    # url(r'^admin/', include(admin.site.urls)),
+    url(r'', include(shop.urls)),
+    url(r'^products/$', 'tests.views.product_list',
+        name='plata_product_list'),
+    url(r'^products/(\d+)/$', 'tests.views.product_detail',
+        name='plata_product_detail'),
+    url(r'^admin/', include(admin.site.urls)),
 )

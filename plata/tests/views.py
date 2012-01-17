@@ -11,11 +11,10 @@ from django.core.exceptions import ValidationError
 import plata
 from plata.contact.models import Contact
 from plata.discount.models import Discount
-from plata.product.modules.options.models import ProductVariation, OptionGroup
 from plata.product.stock.models import Period, StockTransaction
 from plata.shop.models import Order, OrderPayment
 
-from options.tests.base import PlataTest, get_request
+from plata.tests.base import PlataTest, get_request
 
 
 class ViewTest(PlataTest):
@@ -53,7 +52,7 @@ class ViewTest(PlataTest):
             })
         self.assertTrue(re.search(r'No items of .* on stock', response.content))
 
-        p1.variations.get().stock_transactions.create(type=StockTransaction.PURCHASE, change=100)
+        p1.stock_transactions.create(type=StockTransaction.PURCHASE, change=100)
 
         response = self.client.post(p1.get_absolute_url(), {
             'quantity': 150,
@@ -145,9 +144,9 @@ class ViewTest(PlataTest):
         p2.name = 'Test Product 2'
         p2.save()
 
-        p1.variations.get().stock_transactions.create(type=StockTransaction.PURCHASE, change=100)
-        p2.variations.get().stock_transactions.create(type=StockTransaction.PURCHASE, change=100)
-        self.assertEqual(ProductVariation.objects.filter(items_in_stock=0).count(), 0)
+        p1.stock_transactions.create(type=StockTransaction.PURCHASE, change=100)
+        p2.stock_transactions.create(type=StockTransaction.PURCHASE, change=100)
+        self.assertEqual(Product.objects.filter(items_in_stock=0).count(), 0)
 
         self.assertContains(self.client.get(p1.get_absolute_url()),
             p1.name)
@@ -357,7 +356,7 @@ class ViewTest(PlataTest):
             })
 
         Period.objects.create(name='Test period')
-        product.variations.get().stock_transactions.create(type=StockTransaction.PURCHASE, change=10)
+        product.stock_transactions.create(type=StockTransaction.PURCHASE, change=10)
         self.client.post(product.get_absolute_url(), {
             'quantity': 5,
             })
@@ -445,7 +444,7 @@ class ViewTest(PlataTest):
         request = get_request()
 
         product = self.create_product()
-        product.variations.get().stock_transactions.create(type=StockTransaction.PURCHASE, change=10)
+        product.stock_transactions.create(type=StockTransaction.PURCHASE, change=10)
         self.client.post(product.get_absolute_url(), {
             'quantity': 5,
             })
@@ -666,7 +665,7 @@ class ViewTest(PlataTest):
         p1 = self.create_product(stock=10)
         self.client.post(p1.get_absolute_url(), {'quantity': 9})
 
-        p1.variations.get().stock_transactions.create(type=StockTransaction.SALE, change=-5)
+        p1.stock_transactions.create(type=StockTransaction.SALE, change=-5)
 
         response = self.client.get('/checkout/')
         self.assertEqual(response.status_code, 302)
@@ -679,7 +678,7 @@ class ViewTest(PlataTest):
         """Test payment process reservation expiration"""
         p1 = self.create_product(stock=10)
 
-        p1.variations.get().stock_transactions.create(
+        p1.stock_transactions.create(
             type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
             change=-7)
 
@@ -756,4 +755,4 @@ class ViewTest(PlataTest):
         # Stock transactions must be created for orders which are paid from the start
         # 10 purchase, -5 sale, -1 sale
         self.assertEqual(StockTransaction.objects.count(), 3)
-        self.assertEqual(p1.variations.get().items_in_stock, 4)
+        self.assertEqual(p1.items_in_stock, 4)

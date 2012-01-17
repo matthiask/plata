@@ -71,3 +71,14 @@ INSTALLED_APPS = (
 
 PLATA_SHOP_PRODUCT = 'tests.Product'
 PLATA_STOCK_TRACKING = True
+POSTFINANCE = {
+    'PSPID': 'plataTEST',
+    'SHA1_IN': 'plataSHA1_IN',
+    'SHA1_OUT': 'plataSHA1_OUT',
+    'LIVE': False,
+    }
+
+PAYPAL = {
+    'BUSINESS': 'example@paypal.com',
+    'LIVE': False,
+    }
