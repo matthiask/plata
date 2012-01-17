@@ -35,9 +35,7 @@ def form_item(item, additional_classes=None):
     """
     Helper for easy displaying of form items::
 
-        {% for field in form %}
-            {% form_item field %}
-        {% endfor %}
+        {% for field in form %}{% form_item field %}{% endfor %}
     """
 
     return {

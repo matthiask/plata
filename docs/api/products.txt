@@ -9,9 +9,6 @@ Products
 Product extensions
 ------------------
 
-Accurate stock tracking
-***********************
-
 .. automodule:: plata.product.stock.models
    :members:
    :noindex:

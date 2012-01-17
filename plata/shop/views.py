@@ -53,7 +53,7 @@ def checkout_process_decorator(*checks):
 
         @checkout_process_decorator(order_confirmed, order_cart_validates)
         def mymethod(self...):
-            ...
+            # Whatever
     """
 
     def _dec(fn):

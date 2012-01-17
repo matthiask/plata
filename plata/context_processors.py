@@ -2,8 +2,11 @@ import plata
 
 def plata_context(request):
     """
-    Adds the current :class:`plata.shop.views.Shop` and (if available)
-    the current order and contact instances to the context.
+    Adds a few variables from Plata to the context if they are available:
+
+    * ``plata.shop``: The current :class:`plata.shop.views.Shop` instance
+    * ``plata.order``: The current order
+    * ``plata.contact``: The current contact instance
     """
 
     shop = plata.shop_instance()

@@ -17,10 +17,6 @@ Order processors
 Template tags
 -------------
 
-.. automodule:: plata.shop.templatetags.plata_product_tags
-   :members:
-   :noindex:
-
 .. automodule:: plata.shop.templatetags.plata_tags
    :members:
    :noindex:
