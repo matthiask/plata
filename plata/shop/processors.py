@@ -72,9 +72,10 @@ class InitializeOrderProcessor(ProcessorBase):
             item._line_item_discount = Decimal('0.00')
 
 
-class SubtotalDiscountProcessor(ProcessorBase):
+class DiscountProcessor(ProcessorBase):
     """
-    Apply all discounts which apply to the subtotal and sum up the remaining discount.
+    Apply all discounts which do not act as a means of payment but instead
+    act on the subtotal
     """
 
     def process(self, order, items):
