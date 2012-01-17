@@ -26,6 +26,8 @@ Contents
    payment
    settings
    contracts
+   taxes
+   discounts
    examples
 
 

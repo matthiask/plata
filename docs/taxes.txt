@@ -1,0 +1,26 @@
+.. _taxes:
+
+=====
+Taxes
+=====
+
+Plata supports different tax rates, even different tax rates in the
+same order. When calculating the order total, tax amounts with the same
+tax rate are grouped and can be shown separately on an invoice document.
+
+The tax details are stored in the ``data`` attribute on the order instance.
+The format is as follows::
+
+    order.data['tax_details'] = [
+        [<tax_rate>, {
+            'discounts': <sum of all discounts>,
+            'prices': <sum of line item prices>,
+            'tax_amount': <sum of line item tax amounts>,
+            'tax_rate': <tax rate (redundant)>,
+            'total': <sum of line item totals>,
+            }],
+        # Another [tax_rate, {details}] instance etc.
+        ]
+
+The PDF code in ``plata.reporting.order`` demonstrates how the tax details
+might be used when generating an invoice.

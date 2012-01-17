@@ -1,0 +1,89 @@
+.. _discounts:
+
+=========
+Discounts
+=========
+
+Plata comes with a discount implementation which already implements a wide
+range of possible discounting strategies. Several factors decide whether
+a certain discount is active:
+
+* Its ``is_active`` flag.
+* The validity period, determined by two dates, ``valid_from`` and
+  ``valid_until``.
+* The number of allowed uses, ``allowed_uses``. An usage example is limiting
+  a discount to the first ten customers using it.
+
+Plata knows three distinct discount types:
+
+* An amount discount (given with tax included or excluded) which is applied
+  to the subtotal. This type reduces the subtotal, the total and the tax amount.
+* A percentage discount which is applied to the subtotal. Like the aforementioned
+  amount type, this type reduces the subtotal, the total and the tax amount.
+* A discount code usable as a means of payment. This discount type only leads
+  to a reduced total and does not change the subtotal or the tax amount.
+
+Discounts should not always be applicable to all products which can be bought.
+Because Plata does not come with a product model it also does not come with
+many strategies for selecting eligible products.
+
+Bundled strategies are:
+
+* ``all``: All products are eligible.
+* ``exclude_sale``: Order items which have their ``is_sale`` flag set to
+  ``True`` are excluded from discounting.
+
+It's quite easy to add additional strategies. If you have a category model
+and only want to allow products from a set of categories for discounting,
+that's the code you need::
+
+    from django import forms
+    from django.db.models import Q
+    from django.utils.translation import ugettext_lazy as _
+    from plata.discount.models import DiscountBase
+    from yourapp.models import Category
+
+    DiscountBase.CONFIG_OPTIONS.append(('only_categories', {
+        'title': _('Only products from selected categories'),
+        'form_fields': [
+            ('categories', forms.ModelMultipleChoiceField(
+                Category.objects.all(),
+                label=_('categories'),
+                required=True,
+                )),
+            ],
+        'product_query': lambda categories: Q(categories__in=categories),
+        }))
+
+A different requirement might be that discounts can only be applied if
+a product will be bought several times (granted, that's a bit a stupid
+idea but it demonstrates how eligible products can be determined by their
+cart status)::
+
+    from django import forms
+    from django.db.models import Q
+    from django.utils.translation import ugettext_lazy as _
+    from plata.discount.models import DiscountBase
+    from yourapp.models import Category
+
+    DiscountBase.CONFIG_OPTIONS.append(('only_multiple', {
+        'title': _('Only products which will be bought several times'),
+        'orderitem_query': lambda **values: Q(quantity__gt=1),
+        }))
+
+Discounts are configured with the following variables:
+
+* The key, given as first argument in the ``(key, configuration)`` tuple.
+* ``title``: A human-readable title.
+* ``form_fields``: A list of ``(field_name, field_instance)`` form fields
+  which will be shown in the Django administration. Note: The fields are
+  only visible after saving the discount once.
+* ``product_query``: The values from the form fields above will be passed
+  as keyword arguments, the return value is passed to a ``filter()`` call
+  on the product model queryset.
+* ``orderitem_query``: The values frmo the form fields above will be passed
+  as keyword arguments, the return value is passed to a ``filter()`` call
+  on the order items queryset.
+
+``form_fields`` is optional, one of ``product_query`` and ``orderitem_query``
+should always be provided. This is not enforced by the code however.
