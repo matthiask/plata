@@ -150,14 +150,14 @@ class ProcessorBase(object):
                 discount_model = self.shop.discount_model
                 try:
                     discount = order.applied_discounts.filter(
-                        type__in=(discount_model.AMOUNT_EXCL_TAX, discount_model.AMOUNT_INCL_TAX),
+                        type__in=(discount_model.AMOUNT_VOUCHER_EXCL_TAX, discount_model.AMOUNT_VOUCHER_INCL_TAX),
                         ).order_by('type')[0]
                 except IndexError:
                     discount = None
 
                 signal_kwargs['remaining_discount'] = discount_model.objects.create(
                     name='Remaining discount amount for order #%s' % order.pk,
-                    type=self.shop.discount_model.AMOUNT_EXCL_TAX,
+                    type=self.shop.discount_model.AMOUNT_VOUCHER_EXCL_TAX,
                     value=order.discount_remaining,
                     currency=order.currency,
                     config_json=getattr(discount, 'config_json', '{"all": {}}'),

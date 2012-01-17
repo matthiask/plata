@@ -172,7 +172,7 @@ class ViewTest(PlataTest):
 
         Discount.objects.create(
             is_active=True,
-            type=Discount.PERCENTAGE,
+            type=Discount.PERCENTAGE_VOUCHER,
             code='asdf',
             name='Percentage discount',
             value=30)
@@ -615,7 +615,7 @@ class ViewTest(PlataTest):
 
         discount = Discount.objects.create(
             name='Testname',
-            type=Discount.AMOUNT_INCL_TAX,
+            type=Discount.AMOUNT_VOUCHER_INCL_TAX,
             value=1000,
             config_json='{"all":{}}',
             tax_class=self.tax_class,

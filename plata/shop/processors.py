@@ -1,6 +1,7 @@
 from decimal import Decimal, ROUND_HALF_UP
 
 import plata
+from plata.discount.models import DiscountBase
 
 
 class ProcessorBase(object):
@@ -71,21 +72,38 @@ class InitializeOrderProcessor(ProcessorBase):
             item._line_item_discount = Decimal('0.00')
 
 
-class DiscountProcessor(ProcessorBase):
+class SubtotalDiscountProcessor(ProcessorBase):
     """
-    Apply all discounts and sum up the remaining discount.
+    Apply all discounts which apply to the subtotal and sum up the remaining discount.
     """
 
     def process(self, order, items):
         remaining = Decimal('0.00')
 
-        for applied in order.applied_discounts.all():
+        for applied in order.applied_discounts.exclude(type=DiscountBase.MEANS_OF_PAYMENT):
             applied.apply(order, items)
             remaining += applied.remaining
 
-        order.data.update({'discounts': {
-            'remaining': remaining,
-            }})
+        discounts = order.data.get('discounts', {})
+        discounts['remaining_subtotal'] = remaining
+        order.data['discounts'] = discounts
+
+
+class MeansOfPaymentDiscountProcessor(ProcessorBase):
+    """
+    Apply all discounts which act as a means of payment.
+    """
+
+    def process(self, order, items):
+        remaining = Decimal('0.00')
+
+        for applied in order.applied_discounts.filter(type=DiscountBase.MEANS_OF_PAYMENT):
+            applied.apply(order, items)
+            remaining += applied.remaining
+
+        discounts = order.data.get('discounts', {})
+        discounts['remaining_means_of_payment'] = remaining
+        order.data['discounts'] = discounts
 
 
 class TaxProcessor(ProcessorBase):
@@ -160,6 +178,17 @@ class FixedAmountShippingProcessor(ProcessorBase):
         self.add_tax_details(tax_details, tax, order.shipping_cost,
             order.shipping_discount, order.shipping_tax)
         order.data['tax_details'] = tax_details.items()
+
+
+class ApplyRemainingDiscountToShippingProcessor(ProcessorBase):
+    """
+    Apply the remaining discount to the shipping (if shipping is non-zero
+    and there are any remaining discounts left)
+    """
+
+    def process(self, order, items):
+        raise NotImplementedError(
+            "ApplyRemainingDiscountToShippingProcessor is not implemented yet")
 
 
 class OrderSummationProcessor(ProcessorBase):

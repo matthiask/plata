@@ -68,7 +68,7 @@ class AdminTest(PlataTest):
 
         discount_data = {
             'name': 'Discount 1',
-            'type': Discount.PERCENTAGE,
+            'type': Discount.PERCENTAGE_VOUCHER,
             'value': 30,
             'code': 'discount1',
             'is_active': True,

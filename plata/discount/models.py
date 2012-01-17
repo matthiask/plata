@@ -16,14 +16,20 @@ from plata.utils import JSONFieldDescriptor
 class DiscountBase(models.Model):
     """Base class for discounts and applied discounts"""
 
-    AMOUNT_EXCL_TAX = 10
-    AMOUNT_INCL_TAX = 20
-    PERCENTAGE = 30
+    AMOUNT_VOUCHER_EXCL_TAX = 10
+    AMOUNT_VOUCHER_INCL_TAX = 20
+    PERCENTAGE_VOUCHER = 30
+    MEANS_OF_PAYMENT = 40
 
     TYPE_CHOICES = (
-        (AMOUNT_EXCL_TAX, _('amount excl. tax')),
-        (AMOUNT_INCL_TAX, _('amount incl. tax')),
-        (PERCENTAGE, _('percentage')),
+        (AMOUNT_VOUCHER_EXCL_TAX,
+            _('amount voucher (reduce the subtotal excl. tax by this amount)')),
+        (AMOUNT_VOUCHER_INCL_TAX,
+            _('amount voucher (reduce the subtotal incl. tax by this amount)')),
+        (PERCENTAGE_VOUCHER,
+            _('percentage voucher (reduce the subtotal by this percentage)')),
+        (MEANS_OF_PAYMENT,
+            _('means of payment (applies to total, does not change subtotal nor tax)')),
         )
 
     #: You can add and remove options at will, except for 'all': This option
@@ -63,17 +69,22 @@ class DiscountBase(models.Model):
         super(DiscountBase, self).save(*args, **kwargs)
 
     def clean(self):
-        if self.type == self.PERCENTAGE:
+        if self.type == self.PERCENTAGE_VOUCHER:
             if self.currency or self.tax_class:
                 raise ValidationError(_('Percentage discounts cannot have currency and tax class set.'))
-        elif self.type == self.AMOUNT_EXCL_TAX:
+        elif self.type == self.AMOUNT_VOUCHER_EXCL_TAX:
             if not self.currency:
                 raise ValidationError(_('Amount discounts excl. tax need a currency.'))
             if self.tax_class:
                 raise ValidationError(_('Amount discounts excl. tax cannot have tax class set.'))
-        elif self.type == self.AMOUNT_INCL_TAX:
+        elif self.type == self.AMOUNT_VOUCHER_INCL_TAX:
             if not (self.currency and self.tax_class):
                 raise ValidationError(_('Amount discounts incl. tax need a currency and a tax class.'))
+        elif self.type == self.MEANS_OF_PAYMENT:
+            if not self.currency:
+                raise ValidationError(_('Means of payment need a currency.'))
+            if self.tax_class:
+                raise ValidationError(_('Means of payment cannot have tax class set.'))
         else:
             raise ValidationError(_('Unknown discount type.'))
 
@@ -106,12 +117,14 @@ class DiscountBase(models.Model):
         if not items:
             return
 
-        if self.type == self.AMOUNT_EXCL_TAX:
+        if self.type == self.AMOUNT_VOUCHER_EXCL_TAX:
             self._apply_amount_discount(order, items, tax_included=False)
-        elif self.type == self.AMOUNT_INCL_TAX:
+        elif self.type == self.AMOUNT_VOUCHER_INCL_TAX:
             self._apply_amount_discount(order, items, tax_included=True)
-        elif self.type == self.PERCENTAGE:
+        elif self.type == self.PERCENTAGE_VOUCHER:
             self._apply_percentage_discount(order, items)
+        elif self.type == self.MEANS_OF_PAYMENT:
+            self._apply_means_of_payment(order, items)
         else:
             raise NotImplementedError, 'Unknown discount type %s' % self.type
 
@@ -141,6 +154,9 @@ class DiscountBase(models.Model):
 
         for item in eligible_items:
             item._line_item_discount += item.discounted_subtotal_excl_tax / items_subtotal * discount
+
+    def _apply_means_of_payment(self, order, items):
+        self._apply_amount_discount(order, items, tax_included=False)
 
     def _apply_percentage_discount(self, order, items):
         """
@@ -200,8 +216,10 @@ class Discount(DiscountBase):
         if self.allowed_uses and self.used >= self.allowed_uses:
             messages.append(_('Allowed uses for this discount has already been reached.'))
 
-        if self.type in (self.AMOUNT_EXCL_TAX, self.AMOUNT_INCL_TAX) and \
-                self.currency != order.currency:
+        if (self.currency != order.currency and self.type in (
+                self.AMOUNT_VOUCHER_EXCL_TAX,
+                self.AMOUNT_VOUCHER_INCL_TAX,
+                self.MEANS_OF_PAYMENT)):
             messages.append(_('Discount and order currencies do not match.'))
 
         if messages:

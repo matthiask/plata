@@ -11,8 +11,9 @@ PLATA_PRICE_INCLUDES_TAX = getattr(settings, 'PLATA_PRICE_INCLUDES_TAX', True)
 #: responsability.
 PLATA_ORDER_PROCESSORS = getattr(settings, 'PLATA_ORDER_PROCESSORS', [
     'plata.shop.processors.InitializeOrderProcessor',
-    'plata.shop.processors.DiscountProcessor',
+    'plata.shop.processors.SubtotalDiscountProcessor',
     'plata.shop.processors.TaxProcessor',
+    'plata.shop.processors.MeansOfPaymentDiscountProcessor',
     'plata.shop.processors.ItemSummationProcessor',
     'plata.shop.processors.ZeroShippingProcessor',
     'plata.shop.processors.OrderSummationProcessor',

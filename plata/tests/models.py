@@ -207,7 +207,7 @@ class ModelTest(PlataTest):
 
         discount = Discount.objects.create(
             is_active=False,
-            type=Discount.PERCENTAGE,
+            type=Discount.PERCENTAGE_VOUCHER,
             code='asdf',
             name='Percentage discount',
             value=30)
@@ -257,7 +257,7 @@ class ModelTest(PlataTest):
         self.assertAlmostEqual(order.total, Decimal('639.20'))
 
         discount = Discount.objects.create(
-            type=Discount.AMOUNT_INCL_TAX,
+            type=Discount.AMOUNT_VOUCHER_INCL_TAX,
             code='asdf',
             name='Amount discount',
             value=Decimal('50.00'),
@@ -357,7 +357,7 @@ class ModelTest(PlataTest):
         p2.save()
 
         d = Discount(
-            type=Discount.PERCENTAGE,
+            type=Discount.PERCENTAGE_VOUCHER,
             name='Some discount',
             code='asdf',
             value=Decimal('30'),
@@ -412,7 +412,7 @@ class ModelTest(PlataTest):
         self.assertAlmostEqual(order.total, Decimal('239.70'))
 
         Discount.objects.create(
-            type=Discount.PERCENTAGE,
+            type=Discount.PERCENTAGE_VOUCHER,
             name='Percentage',
             code='perc20',
             value=Decimal('20.00'),
@@ -424,7 +424,7 @@ class ModelTest(PlataTest):
 
         # Add unsaved discount
         Discount(
-            type=Discount.AMOUNT_INCL_TAX,
+            type=Discount.AMOUNT_VOUCHER_INCL_TAX,
             name='Amount incl. tax',
             code='amount_incl_20',
             value=Decimal('20.00'),
@@ -466,7 +466,7 @@ class ModelTest(PlataTest):
         self.assertAlmostEqual(order.total, Decimal('440.00'))
 
         discount = Discount(
-            type=Discount.PERCENTAGE,
+            type=Discount.PERCENTAGE_VOUCHER,
             name='Sonderrabatt Kleid',
             value=Decimal('20.00'),
             code='1234code',
@@ -509,7 +509,7 @@ class ModelTest(PlataTest):
         order.modify_item(p2, 1)
 
         discount = Discount(
-            type=Discount.AMOUNT_INCL_TAX,
+            type=Discount.AMOUNT_VOUCHER_INCL_TAX,
             name='Sonderrabatt Venice',
             value=Decimal('20.00'),
             code='1234code',
@@ -543,7 +543,7 @@ class ModelTest(PlataTest):
         order.modify_item(p, 120)
 
         discount = Discount.objects.create(
-            type=Discount.AMOUNT_EXCL_TAX,
+            type=Discount.AMOUNT_VOUCHER_EXCL_TAX,
             name='Discount',
             value=532,
             code='1234code',
@@ -569,7 +569,7 @@ class ModelTest(PlataTest):
         self.assertAlmostEqual(order.total, Decimal('79.90'))
 
         Discount.objects.create(
-            type=Discount.AMOUNT_INCL_TAX,
+            type=Discount.AMOUNT_VOUCHER_INCL_TAX,
             name='Discount',
             value='100',
             code='1234code',
@@ -699,7 +699,7 @@ class ModelTest(PlataTest):
         self.assertAlmostEqual(order.total, Decimal('598.85'))
 
         discount = Discount.objects.create(
-            type=Discount.AMOUNT_INCL_TAX,
+            type=Discount.AMOUNT_VOUCHER_INCL_TAX,
             code='asdf',
             name='Amount discount',
             value=Decimal('50.00'),
@@ -731,7 +731,7 @@ class ModelTest(PlataTest):
         self.assertAlmostEqual(order.total, Decimal('639.20') + 8)
 
         discount = Discount.objects.create(
-            type=Discount.AMOUNT_INCL_TAX,
+            type=Discount.AMOUNT_VOUCHER_INCL_TAX,
             code='d2',
             name='d2',
             value=Decimal('640.00'),
@@ -843,14 +843,14 @@ class ModelTest(PlataTest):
 
         discount = Discount.objects.create(
             is_active=True,
-            type=Discount.PERCENTAGE,
+            type=Discount.PERCENTAGE_VOUCHER,
             code='asdf',
             name='Percentage discount',
             value=30)
 
         discount.save() # should not raise
 
-        discount.type = Discount.AMOUNT_EXCL_TAX
+        discount.type = Discount.AMOUNT_VOUCHER_EXCL_TAX
         self.assertRaises(ValidationError, lambda: discount.save())
 
         discount.currency = 'CHF'
@@ -859,7 +859,7 @@ class ModelTest(PlataTest):
         discount.tax_class = self.tax_class
         self.assertRaises(ValidationError, lambda: discount.save())
 
-        discount.type = Discount.AMOUNT_INCL_TAX
+        discount.type = Discount.AMOUNT_VOUCHER_INCL_TAX
         discount.save() # should not raise
 
         discount.currency = None
@@ -868,7 +868,7 @@ class ModelTest(PlataTest):
         discount.type = 42
         self.assertRaises(ValidationError, lambda: discount.save())
 
-        discount.type = Discount.AMOUNT_INCL_TAX
+        discount.type = Discount.AMOUNT_VOUCHER_INCL_TAX
         discount.currency = 'EUR'
         discount.save()
 
@@ -882,45 +882,7 @@ class ModelTest(PlataTest):
 
         discount.add_to(order) # should not raise
 
-    def test_26_amount_coupon_incl_tax(self):
-        """Test coupons"""
-        tax_class, tax_class_germany, tax_class_something = self.create_tax_classes()
-
-        product = Product.objects.create(
-            name='Ein Paar Hosen',
-            )
-
-        product.prices.create(
-            currency='CHF',
-            tax_class=tax_class,
-            _unit_price=Decimal('100.00'),
-            tax_included=True,
-            )
-
-        order = self.create_order()
-
-        normal1 = order.modify_item(product, 1)
-
-        order.recalculate_total()
-        # We use ROUND_HALF_UP now
-        self.assertAlmostEqual(order.total, Decimal('100'))
-
-        discount = Discount.objects.create(
-            type=Discount.PREPAID,
-            code='asdf',
-            name='Amount discount',
-            value=Decimal('20.00'),
-            is_active=True,
-            tax_class=tax_class,
-            currency='CHF',
-            )
-        discount.add_to(order)
-        order.recalculate_total()
-
-        # We use ROUND_HALF_UP now
-        self.assertAlmostEqual(order.total, Decimal('87.6'))
-
-    def test_27_discounts(self):
+    def test_26_discounts(self):
         """Discount testing reloaded"""
         tax_class, tax_class_germany, tax_class_something = self.create_tax_classes()
 
@@ -942,28 +904,35 @@ class ModelTest(PlataTest):
         order.recalculate_total()
         self.assertAlmostEqual(order.total, Decimal('100'))
 
+        # Discount for which real money has been paid. Tax applies to
+        # full order total
         discount = Discount.objects.create(
-            type=Discount.PREPAID,
+            type=Discount.MEANS_OF_PAYMENT,
             code='asdf',
             name='Amount discount',
             value=Decimal('20.00'),
             is_active=True,
-            tax_class=tax_class,
             currency='CHF',
             )
         discount.add_to(order)
         order.recalculate_total()
 
-        # Pre-paid discount -- tax still applies to undiscounted value
         self.assertAlmostEqual(order.total, Decimal('80.00'))
-        self.assertAlmostEqual(order.subtotal, Decimal('100.00') / Decimal('1.076') - Decimal('20.00'))
-
-        # Change something on the discount
-        discount.before_tax = True # TODO implement this
-        discount.add_to(order)
-        order.recalculate_total()
+        self.assertAlmostEqual(order.subtotal, Decimal('100.00'))
+        self.assertAlmostEqual(order.tax,
+            Decimal('100.00') - Decimal('100.00') / (1 + tax_class.rate / 100),
+            places=2)
 
         # Voucher from a magazine or something -- tax only applies to
         # discounted value
+        discount.type = Discount.AMOUNT_VOUCHER_INCL_TAX
+        discount.tax_class = tax_class
+        discount.save()
+        discount.add_to(order)
+        order.recalculate_total()
+
         self.assertAlmostEqual(order.total, Decimal('80.00'))
-        self.assertAlmostEqual(order.subtotal, Decimal('80.00') / Decimal('1.076'))
+        self.assertAlmostEqual(order.subtotal, Decimal('100.00'))
+        self.assertAlmostEqual(order.tax,
+            Decimal('80.00') - Decimal('80.00') / (1 + tax_class.rate / 100),
+            places=2)
