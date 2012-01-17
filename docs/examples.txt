@@ -1,0 +1,43 @@
+.. _examples:
+
+========
+Examples
+========
+
+Plata's repository contains a few example projects, which are used both
+to demonstrate specific features and allow experimentation.
+
+The purpose of each example project will be briefly described in the
+following.
+
+
+``simple`` example
+==================
+
+This example strives to be the simplest shop implementation with Plata
+while still following best practice.
+
+
+``custom`` example
+==================
+
+The custom example demonstrates how the bundled contact model might be
+replaced with a custom model -- in this case, the replacement model only
+has one address record, not two addresses, one for shipping and one for
+billing.
+
+
+``staggered`` example
+=====================
+
+This example demonstrates how a staggered (or "tiered") price scheme
+might be implemented outside of Plata's core.
+
+
+``oneprice`` example
+====================
+
+This example demonstrates how a product model might be made even simpler:
+By extending ``ProductBase`` and ``PriceBase`` at the same time, all
+product related information is kept in one Django model. This (obviously)
+means that each product can only have one price.

@@ -27,6 +27,7 @@ Contents
    settings
    taxes_and_discounts
    contracts
+   examples
 
 
 API Documentation
