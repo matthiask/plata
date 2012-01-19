@@ -35,7 +35,7 @@ class Product(ProductBase):
 
         possible = self.prices.filter(
             currency=currency,
-            from_quantity__lte=(orderitem.quantity if orderitem else 0))
+            from_quantity__lte=(orderitem.quantity if orderitem else 1))
 
         try:
             return possible.order_by('-from_quantity')[0]
@@ -46,7 +46,7 @@ class Product(ProductBase):
 class ProductPrice(PriceBase):
     product = models.ForeignKey(Product, verbose_name=_('product'),
         related_name='prices')
-    from_quantity = models.IntegerField(_('From quantity'), default=0)
+    from_quantity = models.IntegerField(_('From quantity'), default=1)
 
     class Meta:
         get_latest_by = 'id'
