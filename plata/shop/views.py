@@ -14,6 +14,7 @@ from django.template import RequestContext
 from django.utils.translation import ugettext as _
 
 import plata
+from plata.shop import forms as shop_forms
 from plata.shop import signals
 
 
@@ -278,66 +279,8 @@ class Shop(object):
     def checkout_form(self, request, order):
         """Returns the address form used in the first checkout step"""
 
-        class CheckoutForm(forms.ModelForm):
-            class Meta:
-                fields = ['notes', 'email', 'shipping_same_as_billing']
-                fields.extend('billing_%s' % f for f in self.order_model.ADDRESS_FIELDS)
-                fields.extend('shipping_%s' % f for f in self.order_model.ADDRESS_FIELDS)
-                model = self.order_model
-
-            def __init__(self, *args, **kwargs):
-                contact = kwargs.pop('contact')
-                self.request = kwargs.pop('request')
-                shop = kwargs.pop('shop')
-
-                self.REQUIRED_ADDRESS_FIELDS = shop.contact_model.ADDRESS_FIELDS[:]
-                self.REQUIRED_ADDRESS_FIELDS.remove('company')
-
-                if contact:
-                    initial = {}
-                    if contact:
-                        initial['email'] = contact.user.email
-                        initial['shipping_same_as_billing'] = contact.shipping_same_as_billing
-                        for f in contact.ADDRESS_FIELDS:
-                            initial['billing_%s' % f] = getattr(contact, 'billing_%s' % f)
-                            initial['shipping_%s' % f] = getattr(contact, 'shipping_%s' % f)
-
-                    kwargs['initial'] = initial
-
-                super(CheckoutForm, self).__init__(*args, **kwargs)
-
-                if not contact:
-                    self.fields['create_account'] = forms.BooleanField(
-                        label=_('create account'),
-                        required=False, initial=True)
-
-            def clean(self):
-                data = self.cleaned_data
-
-                if not data.get('shipping_same_as_billing'):
-                    for f in self.REQUIRED_ADDRESS_FIELDS:
-                        field = 'shipping_%s' % f
-                        if not data.get(field):
-                            self._errors[field] = self.error_class([
-                                _('This field is required.')])
-
-                email = data.get('email')
-                create_account = data.get('create_account')
-
-                if email:
-                    users = list(User.objects.filter(email=email))
-
-                    if users:
-                        if self.request.user not in users:
-                            if self.request.user.is_authenticated():
-                                self._errors['email'] = self.error_class([
-                                    _('This e-mail address belongs to a different account.')])
-                            else:
-                                self._errors['email'] = self.error_class([
-                                    _('This e-mail address might belong to you, but we cannot know for sure because you are not authenticated yet.')])
-
-                return data
-
+        # Only import plata.contact if necessary and if this method isn't overridden
+        from plata.contact.forms import CheckoutForm
         return CheckoutForm
 
     def checkout(self, request, order):
@@ -423,28 +366,7 @@ class Shop(object):
 
     def discounts_form(self, request, order):
         """Returns the discount form"""
-        class DiscountForm(forms.Form):
-            code = forms.CharField(label=_('code'), max_length=30, required=False)
-
-            def __init__(self, *args, **kwargs):
-                self.order = kwargs.pop('order')
-                self.discount_model = kwargs.pop('discount_model')
-                super(DiscountForm, self).__init__(*args, **kwargs)
-
-            def clean_code(self):
-                code = self.cleaned_data.get('code')
-                if not code:
-                    return self.cleaned_data
-
-                try:
-                    discount = self.discount_model.objects.get(code=code)
-                except self.discount_model.DoesNotExist:
-                    raise forms.ValidationError(_('This code does not validate'))
-
-                discount.validate(self.order)
-                self.cleaned_data['discount'] = discount
-                return code
-        return DiscountForm
+        return shop_forms.DiscountForm
 
     def discounts(self, request, order):
         """Handles the discount code entry page"""
@@ -479,28 +401,7 @@ class Shop(object):
 
     def confirmation_form(self, request, order):
         """Returns the confirmation and payment module selection form"""
-        class ConfirmationForm(forms.Form):
-            terms_and_conditions = forms.BooleanField(
-                label=_('I accept the terms and conditions.'),
-                required=True)
-
-            def __init__(self, *args, **kwargs):
-                self.order = kwargs.pop('order')
-                payment_modules = kwargs.pop('payment_modules')
-
-                super(ConfirmationForm, self).__init__(*args, **kwargs)
-
-                self.fields['payment_method'] = forms.ChoiceField(
-                    label=_('Payment method'),
-                    choices=[('', '----------')] + [
-                        (m.__module__, m.name) for m in payment_modules],
-                    )
-
-            def clean(self):
-                data = super(ConfirmationForm, self).clean()
-                order.validate(order.VALIDATE_ALL)
-                return data
-        return ConfirmationForm
+        return shop_forms.ConfirmationForm
 
     def confirmation(self, request, order):
         """
