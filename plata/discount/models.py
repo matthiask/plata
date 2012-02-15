@@ -8,9 +8,8 @@ from django.db.models import ObjectDoesNotExist, Q
 from django.utils.translation import ugettext_lazy as _
 
 import plata
-from plata.fields import CurrencyField
+from plata.fields import CurrencyField, JSONField
 from plata.shop.models import TaxClass, Order
-from plata.utils import JSONFieldDescriptor
 
 
 class DiscountBase(models.Model):
@@ -54,9 +53,8 @@ class DiscountBase(models.Model):
     tax_class = models.ForeignKey(TaxClass, verbose_name=_('tax class'),
         blank=True, null=True, help_text=_('Only required for amount discounts incl. tax.'))
 
-    config_json = models.TextField(_('configuration'), blank=True,
+    config = JSONField(_('configuration'), blank=True,
         help_text=_('If you edit this field directly, changes below will be ignored.'))
-    config = JSONFieldDescriptor('config_json')
 
     class Meta:
         abstract = True

@@ -11,8 +11,7 @@ from django.db.models import F, ObjectDoesNotExist, Sum, Q
 from django.utils.translation import ugettext_lazy as _
 
 import plata
-from plata.fields import CurrencyField
-from plata.utils import JSONFieldDescriptor
+from plata.fields import CurrencyField, JSONField
 
 
 logger = logging.getLogger('plata.shop.order')
@@ -140,9 +139,8 @@ class Order(BillingShippingAddress):
 
     notes = models.TextField(_('notes'), blank=True)
 
-    data_json = models.TextField(_('data'), blank=True,
+    data = JSONField(_('data'), blank=True,
         help_text=_('JSON-encoded additional data about the order payment.'))
-    data = JSONFieldDescriptor('data_json')
 
     class Meta:
         verbose_name = _('order')
@@ -411,9 +409,8 @@ class OrderItem(models.Model):
     _line_item_tax = models.DecimalField(_('line item tax'),
         max_digits=18, decimal_places=10, default=0)
 
-    data_json = models.TextField(_('data'), blank=True,
+    data = JSONField(_('data'), blank=True,
         help_text=_('JSON-encoded additional data about the order payment.'))
-    data = JSONFieldDescriptor('data_json')
 
     class Meta:
         ordering = ('product',)
@@ -542,9 +539,8 @@ class OrderPayment(models.Model):
 
     notes = models.TextField(_('notes'), blank=True)
 
-    data_json = models.TextField(_('data'), blank=True,
+    data = JSONField(_('data'), blank=True,
         help_text=_('JSON-encoded additional data about the order payment.'))
-    data = JSONFieldDescriptor('data_json')
 
     class Meta:
         ordering = ('-timestamp',)
