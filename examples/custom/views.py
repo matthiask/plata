@@ -8,13 +8,39 @@ from django.utils.translation import ugettext as _
 from django.views.generic import  list_detail
 
 from plata.discount.models import Discount
+from plata.shop import forms as shop_forms
 from plata.shop.views import Shop
 from plata.shop.models import Order
 
 from custom.models import Contact, Product
 
 
-shop = Shop(Contact, Order, Discount)
+class CustomShop(Shop):
+    def checkout_form(self, request, order):
+        class CheckoutForm(shop_forms.BaseCheckoutForm):
+            class Meta:
+                fields = ['email'] + ['billing_%s' % f for f in Contact.ADDRESS_FIELDS]
+                model = self.order_model
+
+            def __init__(self, *args, **kwargs):
+                contact = kwargs.get('contact')
+
+                if contact:
+                    initial = {}
+                    for f in contact.ADDRESS_FIELDS:
+                        initial['billing_%s' % f] = getattr(contact, f)
+                        kwargs['initial'] = initial
+
+                super(CheckoutForm, self).__init__(*args, **kwargs)
+
+                if not contact:
+                    self.fields['create_account'] = forms.BooleanField(
+                        label=_('create account'),
+                        required=False, initial=True)
+
+        return CheckoutForm
+
+shop = CustomShop(Contact, Order, Discount)
 
 
 def product_list(request):

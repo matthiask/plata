@@ -34,8 +34,8 @@ class Contact(BillingShippingAddress):
 
     - ``Contact.objects.create_from_order`` has to exist, and should fill in
       contact details from the order
-    - ``Contact.ADDRESS_FIELDS`` should exist; if it does not you'll have to
-      override ``Shop.checkout_form``
+    - You probably have to override ``Shop.checkout_form`` too - this method
+      probably won't work for your custom contact model
     """
 
     user = models.OneToOneField(User, verbose_name=_('user'),
