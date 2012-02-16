@@ -81,6 +81,13 @@ follows here::
             verbose_name_plural = _('prices')
 
 
+Plata has to know the location of your shop model, because it is referenced
+f.e. in the product ``ForeignKey`` of order items. If the product model exists
+in the ``myapp`` Django application, add the following setting::
+
+    PLATA_SHOP_PRODUCT = 'myapp.Product'
+
+
 Adding the modules to ``INSTALLED_APPS``
 ----------------------------------------
 
