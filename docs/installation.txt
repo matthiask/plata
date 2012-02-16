@@ -118,7 +118,7 @@ This class implements cart handling, the checkout process and handing control
 to the payment modules when the order has been confirmed. There should exist
 exactly one Shop instance in your site (for now).
 
-The Shop class requires four models and makes certain assumptions about them.
+The Shop class requires three models and makes certain assumptions about them.
 The aim is to reduce the set of assumptions made or at least make them
 either configurable or overridable.
 
@@ -147,6 +147,11 @@ anywhere using::
     import plata
     shop = plata.shop_instance()
 
+The ``Shop`` class instantiation may be in ``myapp.urls`` or ``myapp.views``
+or somewhere similar, it's recommended to put the statement into the ``views.py``
+file because the ``Shop`` class mainly offers views (besides a few helper
+functions.)
+
 
 Adding views and configuring URLs
 ---------------------------------
@@ -164,8 +169,18 @@ Generic views using ``plata.shop_instance()`` could look like this::
     from django.views import generic
 
     import plata
+    from plata.contact.models import Contact
+    from plata.discount.models import Discount
+    from plata.shop.models import Order
+    from plata.shop.views import Shop
+
     from myapp.models import Product
 
+    shop = Shop(
+        contact_model=Contact,
+        order_model=Order,
+        discount_model=Discount,
+        )
 
     product_list = generic.ListView.as_view(
         queryset=Product.objects.all(),
@@ -186,7 +201,7 @@ Generic views using ``plata.shop_instance()`` could look like this::
             form = OrderItemForm(request.POST)
 
             if form.is_valid():
-                shop = plata.shop_instance()
+                # Referencing the shop object instantiated above
                 order = shop.order_from_request(request, create=True)
                 try:
                     order.modify_item(product, form.cleaned_data.get('quantity'))
