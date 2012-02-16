@@ -41,7 +41,7 @@ that's the code you need::
     from django.db.models import Q
     from django.utils.translation import ugettext_lazy as _
     from plata.discount.models import DiscountBase
-    from yourapp.models import Category
+    from myapp.models import Category
 
     DiscountBase.CONFIG_OPTIONS.append(('only_categories', {
         'title': _('Only products from selected categories'),
@@ -64,7 +64,7 @@ cart status)::
     from django.db.models import Q
     from django.utils.translation import ugettext_lazy as _
     from plata.discount.models import DiscountBase
-    from yourapp.models import Category
+    from myapp.models import Category
 
     DiscountBase.CONFIG_OPTIONS.append(('only_multiple', {
         'title': _('Only products which will be bought several times'),

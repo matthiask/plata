@@ -84,7 +84,7 @@ Adding the modules to ``INSTALLED_APPS``
 
     INSTALLED_APPS = (
         ...
-        'yourapp',
+        'myapp',
         'plata',
         'plata.contact', # Not strictly required (contact model can be exchanged)
         'plata.discount',
@@ -153,7 +153,7 @@ Generic views using ``plata.shop_instance()`` could look like this::
     from django.views import generic
 
     import plata
-    from yourapp.models import Product
+    from myapp.models import Product
 
 
     product_list = generic.ListView.as_view(
