@@ -100,8 +100,6 @@ Adding the modules to ``INSTALLED_APPS``
         'plata.contact', # Not strictly required (contact model can be exchanged)
         'plata.discount',
         'plata.payment',
-        'plata.product', # Does nothing
-        'plata.product.stock', # Accurate stock tracking, not required
         'plata.shop',
         ...
         )
