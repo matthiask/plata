@@ -86,7 +86,6 @@ PAYPAL = {
 TEST_RUNNER = 'tests.test_runner.CoverageRunner'
 COVERAGE_MODULES = [
     'plata',
-    'plata.compat',
     'plata.contact.admin',
     'plata.contact.models',
     'plata.context_processors',
