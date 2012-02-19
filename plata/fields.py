@@ -87,6 +87,11 @@ class JSONField(models.TextField):
 
         return value
 
+    def value_from_object(self, obj):
+        return json.dumps(super(JSONField, self).value_from_object(obj),
+            cls=DjangoJSONEncoder, use_decimal=True)
+
+
 try:
     from south.modelsinspector import add_introspection_rules
 
