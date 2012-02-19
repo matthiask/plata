@@ -339,15 +339,17 @@ class Shop(object):
                     else:
                         user = request.user
 
-                    contact = self.contact_model.objects.create_from_order(
-                        order, user=user)
-
+                    contact = self.contact_model(user=user)
                     order.user = user
 
                     signals.contact_created.send(sender=self, user=user,
                         contact=contact, password=password)
 
                 order.save()
+
+                if contact:
+                    contact.update_from_order(order, request=request)
+                    contact.save()
 
                 return redirect('plata_shop_discounts')
         else:

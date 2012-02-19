@@ -42,18 +42,6 @@ class ProductPrice(PriceBase):
         verbose_name_plural = _('prices')
 
 
-class ContactManager(models.Manager):
-    def create_from_order(self, order, user):
-        contact = self.model(user=user)
-
-        for field in self.model.ADDRESS_FIELDS:
-            f = 'billing_' + field
-            setattr(contact, field, getattr(order, f))
-
-        contact.save()
-        return contact
-
-
 class Contact(models.Model):
     ADDRESS_FIELDS = ['company', 'first_name', 'last_name', 'address',
         'zip_code', 'city', 'country']
@@ -70,7 +58,10 @@ class Contact(models.Model):
     city = models.CharField(_('city'), max_length=100)
     country = models.CharField(_('country'), max_length=3, blank=True)
 
-    objects = ContactManager()
-
     def __unicode__(self):
         return unicode(self.user)
+
+    def update_from_order(self, order, request=None):
+        for field in self.ADDRESS_FIELDS:
+            f = 'billing_' + field
+            setattr(self, field, getattr(order, f))
