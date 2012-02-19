@@ -525,6 +525,7 @@ class ViewTest(PlataTest):
         contact = Contact.objects.get()
         # First name should be updated in checkout processing
         self.assertEqual(contact.billing_first_name, 'Fritz')
+        self.assertEqual(unicode(contact), 'else@example.com') # Username
 
         # Order should be assigned to contact
         self.assertEqual(Order.objects.count(), 1)
@@ -655,6 +656,7 @@ class ViewTest(PlataTest):
             }), '/order/success/')
 
         self.client.get('/order/new/')
+        self.client.get('/order/new/') # Should not do anything the second time
         self.client.post(p1.get_absolute_url(), {'quantity': 1})
         self.assertContains(self.client.post('/discounts/', {
             'code': new_discount.code,

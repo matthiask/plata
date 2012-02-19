@@ -153,6 +153,8 @@ class ProcessorBase(object):
                         type__in=(discount_model.AMOUNT_VOUCHER_EXCL_TAX, discount_model.AMOUNT_VOUCHER_INCL_TAX),
                         ).order_by('type')[0]
                 except IndexError:
+                    # XXX: Remaining discount will be applicable to ALL products,
+                    # not sure if this behavior is correct...
                     discount = None
 
                 signal_kwargs['remaining_discount'] = discount_model.objects.create(
