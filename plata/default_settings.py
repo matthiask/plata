@@ -3,6 +3,8 @@ from decimal import Decimal
 from django.conf import settings
 
 #: Are prices shown with tax included or not? (Defaults to ``True``)
+#: Please note that this setting is purely presentational and has no
+#: influence on the values stored in the database.
 PLATA_PRICE_INCLUDES_TAX = getattr(settings, 'PLATA_PRICE_INCLUDES_TAX', True)
 
 #: List of order processors
