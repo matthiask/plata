@@ -523,8 +523,8 @@ class ViewTest(PlataTest):
         self.assertEqual(len(mail.outbox), 0)
 
         contact = Contact.objects.get()
-        # First name should not be overwritten from checkout processing
-        self.assertEqual(contact.billing_first_name, 'Hans')
+        # First name should be updated in checkout processing
+        self.assertEqual(contact.billing_first_name, 'Fritz')
 
         # Order should be assigned to contact
         self.assertEqual(Order.objects.count(), 1)
@@ -617,7 +617,7 @@ class ViewTest(PlataTest):
             name='Testname',
             type=Discount.AMOUNT_VOUCHER_INCL_TAX,
             value=1000,
-            config_json='{"all":{}}',
+            config='{"all":{}}',
             tax_class=self.tax_class,
             currency='CHF',
             )

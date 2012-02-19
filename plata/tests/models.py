@@ -706,7 +706,7 @@ class ModelTest(PlataTest):
             is_active=True,
             tax_class=self.tax_class_germany,
             currency='CAD',
-            config_json='{"products": {"products": [%d]}}' % p1.id,
+            config='{"products": {"products": [%d]}}' % p1.id,
             )
         discount.add_to(order)
         order.recalculate_total()

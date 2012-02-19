@@ -160,7 +160,7 @@ class ProcessorBase(object):
                     type=self.shop.discount_model.AMOUNT_VOUCHER_EXCL_TAX,
                     value=order.discount_remaining,
                     currency=order.currency,
-                    config_json=getattr(discount, 'config_json', '{"all": {}}'),
+                    config=getattr(discount, 'config', '{"all": {}}'),
                     allowed_uses=1,
                     )
 

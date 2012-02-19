@@ -249,7 +249,7 @@ class Discount(DiscountBase):
             value=self.value,
             currency=self.currency,
             tax_class=self.tax_class,
-            config_json=self.config_json,
+            config=self.config,
             )
 
         if recalculate:

@@ -20,7 +20,8 @@ class JSONFormField(forms.fields.CharField):
         if value:
             try:
                 # Run the value through JSON so we can normalize formatting and at least learn about malformed data:
-                value = json.dumps(json.loads(value), cls=DjangoJSONEncoder)
+                value = json.dumps(json.loads(value, use_decimal=True),
+                    cls=DjangoJSONEncoder, use_decimal=True)
             except ValueError:
                 raise forms.ValidationError("Invalid JSON data!")
 
@@ -51,7 +52,7 @@ class JSONField(models.TextField):
                 return {}
 
             try:
-                return json.loads(value)
+                return json.loads(value, use_decimal=True)
             except ValueError:
                 logging.getLogger("plata.fields").exception("Unable to deserialize store JSONField data: %s", value)
                 return {}
@@ -80,7 +81,7 @@ class JSONField(models.TextField):
             return ""
 
         if isinstance(value, dict):
-            value = json.dumps(value, cls=DjangoJSONEncoder)
+            value = json.dumps(value, cls=DjangoJSONEncoder, use_decimal=True)
 
         assert isinstance(value, basestring)
 

@@ -64,7 +64,7 @@ class DiscountAdminForm(forms.ModelForm):
     def clean(self):
         data = self.cleaned_data
 
-        if 'config_json' in self.changed_data:
+        if 'config' in self.changed_data:
             return data
 
         selected = data.get('config_options', [])
@@ -82,7 +82,7 @@ class DiscountAdminForm(forms.ModelForm):
             config_options[s] = option_item
 
         self.instance.config = jsonize(config_options)
-        data['config_json'] = self.instance.config_json
+        data['config'] = self.instance.config
         return data
 
 
@@ -90,14 +90,14 @@ class DiscountAdmin(admin.ModelAdmin):
     form = DiscountAdminForm
     list_display = ('name', 'type', 'is_active', 'code', 'value')
     list_filter = ('type', 'is_active')
-    search_fields = ('name', 'code', 'config_json')
+    search_fields = ('name', 'code', 'config')
 
     def get_fieldsets(self, request, obj=None):
         fieldsets = super(DiscountAdmin, self).get_fieldsets(request, obj)
-        fieldsets[0][1]['fields'].remove('config_json')
+        fieldsets[0][1]['fields'].remove('config')
 
         fieldsets.append((_('Raw configuration'), {
-            'fields': ('config_json',),
+            'fields': ('config',),
             'classes': ('collapse',),
             }))
         fieldsets.append((_('Configuration'), {

@@ -57,7 +57,7 @@ class OrderPaymentAdmin(admin.ModelAdmin):
     list_filter = ('status', 'payment_module_key')
     raw_id_fields = ('order',)
     search_fields = ('amount', 'payment_module', 'payment_method', 'transaction_id',
-        'notes', 'data_json')
+        'notes', 'data')
 
     notes_short = lambda self, obj: (len(obj.notes) > 50) and obj.notes[:40]+'...' or obj.notes
     notes_short.short_description = _('notes')
