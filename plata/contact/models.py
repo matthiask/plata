@@ -35,8 +35,6 @@ class Contact(BillingShippingAddress):
         verbose_name = _('contact')
         verbose_name_plural = _('contacts')
 
-    objects = ContactManager()
-
     def __unicode__(self):
         return unicode(self.user)
 

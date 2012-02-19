@@ -111,8 +111,9 @@ replaced with a different model. The following fields and methods are
 mandatory:
 
 * ``Contact.user``: ``ForeignKey`` or ``OneToOneField`` to ``auth.User``.
-* ``Contact.objects.create_from_order(self, order, user)``: Returns a
-  contact instance filled in with information from the checkout form.
+* ``Contact.update_from_order(self, order, request=None)``: Updates the
+  contact instance with data from the passed order (and from the optional
+  request).
 * ``Contact.ADDRESS_FIELDS``: A list of fields which are available as
   billing and/or shipping address fields.
 
