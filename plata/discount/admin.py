@@ -16,6 +16,9 @@ class DiscountAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(DiscountAdminForm, self).__init__(*args, **kwargs)
 
+        self.fields['config'].required = False # Seems to be necessary because of
+                                               # the custom validation
+
         self.fields['config_options'] = forms.MultipleChoiceField(
             choices=((key, cfg.get('title', key)) for key, cfg in self._meta.model.CONFIG_OPTIONS),
             label=_('Configuration options'),
