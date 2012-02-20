@@ -106,6 +106,7 @@ class ModelTest(PlataTest):
         self.assertAlmostEqual(item.unit_price, item_price / tax_factor)
         self.assertAlmostEqual(item.line_item_discount, 0 / tax_factor)
         self.assertAlmostEqual(item.discounted_subtotal, item.discounted_subtotal_excl_tax)
+        self.assertAlmostEqual(price.unit_price, item_price / tax_factor)
 
         self.assertRaises(NotImplementedError, lambda: order.shipping)
 
