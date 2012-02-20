@@ -374,14 +374,18 @@ class Shop(object):
         """Handles the discount code entry page"""
         DiscountForm = self.discounts_form(request, order)
 
-        kwargs = {'order': order, 'discount_model': self.discount_model}
+        kwargs = {
+            'order': order,
+            'discount_model': self.discount_model,
+            'request': request,
+            'shop': self,
+            }
 
         if request.method == 'POST':
             form = DiscountForm(request.POST, **kwargs)
 
             if form.is_valid():
-                if 'discount' in form.cleaned_data:
-                    form.cleaned_data['discount'].add_to(order)
+                form.save()
 
                 if 'proceed' in request.POST:
                     return redirect('plata_shop_confirmation')
@@ -414,24 +418,19 @@ class Shop(object):
         """
         order.recalculate_total()
 
-        payment_modules = self.get_payment_modules(request)
-        payment_module_dict = dict((m.__module__, m) for m in payment_modules)
-
         ConfirmationForm = self.confirmation_form(request, order)
 
-        kwargs = {'order': order, 'payment_modules': payment_modules}
+        kwargs = {
+            'order': order,
+            'request': request,
+            'shop': self,
+            }
 
         if request.method == 'POST':
             form = ConfirmationForm(request.POST, **kwargs)
 
             if form.is_valid():
-                order.update_status(self.order_model.CONFIRMED, 'Confirmation given')
-                signals.order_confirmed.send(sender=self, order=order)
-
-                payment_module_dict = dict((m.__module__, m) for m in payment_modules)
-                payment_module = payment_module_dict[form.cleaned_data['payment_method']]
-
-                return payment_module.process_order_confirmed(request, order)
+                return form.process_confirmation()
         else:
             form = ConfirmationForm(**kwargs)
 

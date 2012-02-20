@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
+from plata.shop import signals
+
 
 class BaseCheckoutForm(forms.ModelForm):
     """
@@ -42,6 +44,9 @@ class DiscountForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.order = kwargs.pop('order')
         self.discount_model = kwargs.pop('discount_model')
+        request = kwargs.pop('request') # Unused
+        shop = kwargs.pop('shop') # Unused
+
         super(DiscountForm, self).__init__(*args, **kwargs)
 
     def clean_code(self):
@@ -58,6 +63,13 @@ class DiscountForm(forms.Form):
         self.cleaned_data['discount'] = discount
         return code
 
+    def save(self):
+        """
+        Save the discount (or do nothing if no discount code has been given)
+        """
+        if 'discount' in self.cleaned_data:
+            self.cleaned_data['discount'].add_to(self.order)
+
 
 class ConfirmationForm(forms.Form):
     terms_and_conditions = forms.BooleanField(
@@ -66,17 +78,31 @@ class ConfirmationForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.order = kwargs.pop('order')
-        payment_modules = kwargs.pop('payment_modules')
+        self.request = kwargs.pop('request')
+        self.shop = kwargs.pop('shop')
+        self.payment_modules = self.shop.get_payment_modules(self.request)
 
         super(ConfirmationForm, self).__init__(*args, **kwargs)
 
         self.fields['payment_method'] = forms.ChoiceField(
             label=_('Payment method'),
             choices=[('', '----------')] + [
-                (m.__module__, m.name) for m in payment_modules],
+                (m.__module__, m.name) for m in self.payment_modules],
             )
 
     def clean(self):
         data = super(ConfirmationForm, self).clean()
         self.order.validate(self.order.VALIDATE_ALL)
         return data
+
+    def process_confirmation(self):
+        """
+        Process the successful order submission
+        """
+        self.order.update_status(self.order.CONFIRMED, 'Confirmation given')
+        signals.order_confirmed.send(sender=self.shop, order=self.order)
+
+        payment_module = dict((m.__module__, m)
+            for m in self.payment_modules)[self.cleaned_data['payment_method']]
+
+        return payment_module.process_order_confirmed(self.request, self.order)
