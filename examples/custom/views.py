@@ -15,29 +15,33 @@ from plata.shop.models import Order
 from custom.models import Contact, Product
 
 
+class CheckoutForm(shop_forms.BaseCheckoutForm):
+    class Meta:
+        fields = ['email'] + ['billing_%s' % f for f in Contact.ADDRESS_FIELDS]
+        model = Order
+
+    def __init__(self, *args, **kwargs):
+        shop = kwargs.get('shop')
+        request = kwargs.get('request')
+        contact = shop.contact_from_user(request.user)
+
+        if contact:
+            initial = {}
+            for f in contact.ADDRESS_FIELDS:
+                initial['billing_%s' % f] = getattr(contact, f)
+                kwargs['initial'] = initial
+            initial['email'] = contact.user.email
+
+        super(CheckoutForm, self).__init__(*args, **kwargs)
+
+        if not contact:
+            self.fields['create_account'] = forms.BooleanField(
+                label=_('create account'),
+                required=False, initial=True)
+
+
 class CustomShop(Shop):
     def checkout_form(self, request, order):
-        class CheckoutForm(shop_forms.BaseCheckoutForm):
-            class Meta:
-                fields = ['email'] + ['billing_%s' % f for f in Contact.ADDRESS_FIELDS]
-                model = self.order_model
-
-            def __init__(self, *args, **kwargs):
-                contact = kwargs.get('contact')
-
-                if contact:
-                    initial = {}
-                    for f in contact.ADDRESS_FIELDS:
-                        initial['billing_%s' % f] = getattr(contact, f)
-                        kwargs['initial'] = initial
-
-                super(CheckoutForm, self).__init__(*args, **kwargs)
-
-                if not contact:
-                    self.fields['create_account'] = forms.BooleanField(
-                        label=_('create account'),
-                        required=False, initial=True)
-
         return CheckoutForm
 
 shop = CustomShop(Contact, Order, Discount)
