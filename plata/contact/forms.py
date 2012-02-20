@@ -14,11 +14,15 @@ class CheckoutForm(shop_forms.BaseCheckoutForm):
         model = Order
 
     def __init__(self, *args, **kwargs):
-        contact = kwargs.get('contact')
+        # BaseCheckoutForm.__init__ needs the following kwargs too, because
+        # of this we do not pop() them here
         shop = kwargs.get('shop')
+        request = kwargs.get('request')
 
         self.REQUIRED_ADDRESS_FIELDS = shop.contact_model.ADDRESS_FIELDS[:]
         self.REQUIRED_ADDRESS_FIELDS.remove('company')
+
+        contact = shop.contact_from_user(request.user)
 
         if contact:
             initial = {

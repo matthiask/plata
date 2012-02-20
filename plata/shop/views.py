@@ -306,13 +306,11 @@ class Shop(object):
             order.update_status(self.order_model.CHECKOUT, 'Checkout process started')
 
         OrderForm = self.checkout_form(request, order)
-        contact = self.contact_from_user(request.user)
 
         orderform_kwargs = {
             'prefix': 'order',
             'instance': order,
             'request': request,
-            'contact': contact,
             'shop': self,
             }
 
@@ -320,37 +318,7 @@ class Shop(object):
             orderform = OrderForm(request.POST, **orderform_kwargs)
 
             if orderform.is_valid():
-                order = orderform.save(commit=False)
-
-                if contact:
-                    order.user = contact.user
-                elif request.user.is_authenticated():
-                    order.user = request.user
-
-                if orderform.cleaned_data.get('create_account') and not contact:
-                    password = None
-                    email = orderform.cleaned_data.get('email')
-
-                    if not request.user.is_authenticated():
-                        password = User.objects.make_random_password()
-                        user = User.objects.create_user(email, email, password)
-                        user = auth.authenticate(username=email, password=password)
-                        auth.login(request, user)
-                    else:
-                        user = request.user
-
-                    contact = self.contact_model(user=user)
-                    order.user = user
-
-                    signals.contact_created.send(sender=self, user=user,
-                        contact=contact, password=password)
-
-                order.save()
-
-                if contact:
-                    contact.update_from_order(order, request=request)
-                    contact.save()
-
+                orderform.save()
                 return redirect('plata_shop_discounts')
         else:
             orderform = OrderForm(**orderform_kwargs)

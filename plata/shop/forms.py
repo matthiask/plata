@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib import auth
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
@@ -11,8 +12,7 @@ class BaseCheckoutForm(forms.ModelForm):
     """
 
     def __init__(self, *args, **kwargs):
-        contact = kwargs.pop('contact')
-        shop = kwargs.pop('shop')
+        self.shop = kwargs.pop('shop')
         self.request = kwargs.pop('request')
 
         super(BaseCheckoutForm, self).__init__(*args, **kwargs)
@@ -36,6 +36,45 @@ class BaseCheckoutForm(forms.ModelForm):
                             _('This e-mail address might belong to you, but we cannot know for sure because you are not authenticated yet.')])
 
         return data
+
+    def save(self):
+        """
+        Save the order, create or update the contact information (if available)
+        and return the saved order instance
+        """
+        order = super(BaseCheckoutForm, self).save(commit=False)
+        contact = self.shop.contact_from_user(self.request.user)
+
+        if contact:
+            order.user = contact.user
+        elif self.request.user.is_authenticated():
+            order.user = request.user
+
+        if self.cleaned_data.get('create_account') and not contact:
+            password = None
+            email = self.cleaned_data.get('email')
+
+            if not self.request.user.is_authenticated():
+                password = User.objects.make_random_password()
+                user = User.objects.create_user(email, email, password)
+                user = auth.authenticate(username=email, password=password)
+                auth.login(self.request, user)
+            else:
+                user = request.user
+
+            contact = self.shop.contact_model(user=user)
+            order.user = user
+
+            signals.contact_created.send(sender=self.shop, user=user,
+                contact=contact, password=password)
+
+        order.save()
+
+        if contact:
+            contact.update_from_order(order, request=self.request)
+            contact.save()
+
+        return order
 
 
 class DiscountForm(forms.Form):
