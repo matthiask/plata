@@ -45,6 +45,7 @@ class Contact(BillingShippingAddress):
         """
 
         self.currency = order.currency
+        self.shipping_same_as_billing = order.shipping_same_as_billing
 
         for field in self.ADDRESS_FIELDS:
             f = 'shipping_' + field
@@ -52,5 +53,3 @@ class Contact(BillingShippingAddress):
 
             f = 'billing_' + field
             setattr(self, f, getattr(order, f))
-
-        self.shipping_same_as_billing = order.shipping_same_as_billing
