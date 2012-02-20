@@ -48,7 +48,7 @@ class BaseCheckoutForm(forms.ModelForm):
         if contact:
             order.user = contact.user
         elif self.request.user.is_authenticated():
-            order.user = request.user
+            order.user = self.request.user
 
         if self.cleaned_data.get('create_account') and not contact:
             password = None
@@ -60,7 +60,7 @@ class BaseCheckoutForm(forms.ModelForm):
                 user = auth.authenticate(username=email, password=password)
                 auth.login(self.request, user)
             else:
-                user = request.user
+                user = self.request.user
 
             contact = self.shop.contact_model(user=user)
             order.user = user
