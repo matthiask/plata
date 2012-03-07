@@ -50,6 +50,15 @@ API Documentation
    api/settings
 
 
+Releases
+========
+
+.. toctree::
+   :maxdepth: 1
+
+   releases/1.1
+
+
 Indices and tables
 ==================
 

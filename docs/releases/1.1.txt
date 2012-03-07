@@ -1,0 +1,35 @@
+==================================
+Plata 1.1 release notes (upcoming)
+==================================
+
+
+Backwards-incompatible changes
+==============================
+
+Order status addition
+---------------------
+
+The order status "confirmed" was confusingly named; what it really meant
+all the time is that the order can be considered paid. Whether an order is
+confirmed or not depends on the shop owner's definitions.
+
+Because of this the existing ``Order.CONFIRMED`` status has been renamed
+to ``Order.PAID``, ``Order.CONFIRMED`` has been added as a new order status
+coming after ``Order.PAID``. Plata only knows about ``Order.PAID`` and never
+changes an order to ``COMPLETED`` itself.
+
+To update your installations to Plata v1.1, you'll have to make the following
+changes:
+
+* Instead of ``order.is_completed()`` you might want to test for
+  ``order.is_paid()`` now.
+
+* The shop signal ``order_completed`` has been renamed to ``order_paid``. Signal
+  handlers receive the same arguments as before.
+
+* The email template used in the ``SendInvoiceHandler`` has been renamed to
+  ``order_paid.txt``.
+
+* If you wrote your own payment modules, the method you'll want to call at the
+  end is now named ``order_paid``, not ``order_completed`` anymore. Apart from
+  the renaming the signature of the function has not changed.
