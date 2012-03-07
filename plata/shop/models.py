@@ -100,7 +100,7 @@ class Order(BillingShippingAddress):
         (CART, _('Is a cart')),
         (CHECKOUT, _('Checkout process started')),
         (CONFIRMED, _('Order has been confirmed')),
-        (PAID, _('Order has been paid.')),
+        (PAID, _('Order has been paid')),
         (COMPLETED, _('Order has been completed')),
         )
 
