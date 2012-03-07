@@ -482,7 +482,6 @@ class OrderStatus(models.Model):
     notes = models.TextField(_('notes'), blank=True)
 
     class Meta:
-        get_latest_by = 'created'
         ordering = ('created', 'id')
         verbose_name = _('order status')
         verbose_name_plural = _('order statuses')
