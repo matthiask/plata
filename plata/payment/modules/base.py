@@ -122,25 +122,25 @@ class ProcessorBase(object):
                 },
             **kwargs)
 
-    def order_completed(self, order, payment=None):
+    def order_paid(self, order, payment=None):
         """
         Call this when payment has been confirmed
 
         This method does the following:
 
-        - Sets order status to ``COMPLETED``.
+        - Sets order status to ``PAID``.
         - Create a amount discount if amount discounts were used in this order
           and the order total does not use up the discount yet. The discount object
-          is passed as ``remaining_discount`` to the ``order_completed`` signal.
+          is passed as ``remaining_discount`` to the ``order_paid`` signal.
           It is your responsability to do something with the discount (and
           communicating the code to the customer).
         - Clears pending payments which aren't interesting anymore anyway.
         """
 
-        if order.status < order.COMPLETED:
+        if order.status < order.PAID:
             logger.info('Order %s has been completely paid for using %s' % (
                 order, self.name))
-            order.update_status(order.COMPLETED, 'Order has been completed')
+            order.update_status(order.PAID, 'Order has been paid')
 
             signal_kwargs = dict(sender=self, order=order, payment=payment)
 
@@ -166,7 +166,7 @@ class ProcessorBase(object):
                     allowed_uses=1,
                     )
 
-            signals.order_completed.send(**signal_kwargs)
+            signals.order_paid.send(**signal_kwargs)
         self.clear_pending_payments(order)
 
     def already_paid(self, order):
@@ -175,13 +175,13 @@ class ProcessorBase(object):
         is already paid for (f.e. because an amount discount has been used which
         covers the order).
         """
-        if not order.is_completed():
+        if not order.is_paid():
             logger.info('Order %s is already completely paid' % order)
 
             if plata.settings.PLATA_STOCK_TRACKING:
                 self.create_transactions(order, _('sale'),
                     type=StockTransaction.SALE, negative=True)
 
-            self.order_completed(order)
+            self.order_paid(order)
 
         return redirect('plata_order_success')

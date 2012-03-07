@@ -93,12 +93,14 @@ class Order(BillingShippingAddress):
     CART = 10
     CHECKOUT = 20
     CONFIRMED = 30
-    COMPLETED = 40
+    PAID = 40
+    COMPLETED = 50
 
     STATUS_CHOICES = (
         (CART, _('Is a cart')),
         (CHECKOUT, _('Checkout process started')),
         (CONFIRMED, _('Order has been confirmed')),
+        (PAID, _('Order has been paid.')),
         (COMPLETED, _('Order has been completed')),
         )
 
@@ -151,7 +153,7 @@ class Order(BillingShippingAddress):
 
     def save(self, *args, **kwargs):
         """Sequential order IDs for completed orders."""
-        if not self._order_id and self.status >= self.COMPLETED:
+        if not self._order_id and self.status >= self.PAID:
             try:
                 order = Order.objects.exclude(_order_id='').order_by('-_order_id')[0]
                 latest = int(re.sub(r'[^0-9]', '', order._order_id))
@@ -220,6 +222,10 @@ class Order(BillingShippingAddress):
     def is_confirmed(self):
         return self.status >= self.CONFIRMED
     is_confirmed.boolean = True
+
+    def is_paid(self):
+        return self.status >= self.PAID
+    is_paid.boolean = True
 
     def is_completed(self):
         return self.status >= self.COMPLETED

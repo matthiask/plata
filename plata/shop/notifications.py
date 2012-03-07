@@ -6,7 +6,7 @@ of writing your own handlers for the three important signals:
   process
 - ``order_confirmed``: The order has been confirmed, a payment method has
   been selected
-- ``order_completed``: The order is fully paid
+- ``order_paid``: The order is fully paid
 
 A real-world example follows::
 
@@ -22,7 +22,7 @@ A real-world example follows::
             except:
                 pass
 
-            invoice_message = self.create_email_message('plata/notifications/order_completed.txt',
+            invoice_message = self.create_email_message('plata/notifications/order_paid.txt',
                 order=order,
                 **kwargs)
             invoice_message.attach(order.order_id + '.pdf', self.invoice_pdf(order), 'application/pdf')
@@ -49,7 +49,7 @@ A real-world example follows::
     shop_signals.contact_created.connect(
         notifications.ContactCreatedHandler(),
         weak=False)
-    shop_signals.order_completed.connect(
+    shop_signals.order_paid.connect(
         RRRevolveEmailHandler(),
         weak=False)
 """
@@ -148,13 +148,13 @@ class SendInvoiceHandler(EmailHandler):
 
     Usage::
 
-        signals.order_completed.connect(
+        signals.order_paid.connect(
             SendInvoiceHandler(always_bcc=['owner@example.com']),
             weak=False)
     """
 
     def message(self, sender, order, **kwargs):
-        message = self.create_email_message('plata/notifications/order_completed.txt',
+        message = self.create_email_message('plata/notifications/order_paid.txt',
             order=order,
             **kwargs)
 
@@ -172,7 +172,7 @@ class SendPackingSlipHandler(EmailHandler):
 
     Usage::
 
-        signals.order_completed.connect(
+        signals.order_paid.connect(
             SendPackingSlipHandler(always_to=['warehouse@example.com']),
             weak=False)
     """
@@ -191,10 +191,10 @@ from plata.shop import notifications, signals as shop_signals
 shop_signals.contact_created.connect(
     notifications.ContactCreatedHandler(always_bcc=[]),
     weak=False)
-shop_signals.order_completed.connect(
+shop_signals.order_paid.connect(
     notifications.SendInvoiceHandler(always_bcc=[]),
     weak=False)
-shop_signals.order_completed.connect(
+shop_signals.order_paid.connect(
     notifications.SendPackingSlipHandler(
         always_to=[],
         always_bcc=[]),

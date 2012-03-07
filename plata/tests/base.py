@@ -14,10 +14,10 @@ from plata.shop.models import TaxClass, Order
 signals.contact_created.connect(
     notifications.ContactCreatedHandler(always_bcc=['shop@example.com']),
     weak=False)
-signals.order_completed.connect(
+signals.order_paid.connect(
     notifications.SendInvoiceHandler(always_bcc=['shop@example.com']),
     weak=False)
-signals.order_completed.connect(
+signals.order_paid.connect(
     notifications.SendPackingSlipHandler(
         always_to=['shipping@example.com'],
         always_bcc=['shop@example.com']),
