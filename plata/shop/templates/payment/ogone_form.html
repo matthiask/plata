@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block content %}
+<h1>{% trans "Payment" %}</h1>
+
+<p>{% trans "You will be forwarded to Ogone for payment now." %}</p>
+
+<form method="post" action="https://secure.ogone.com/ncol/{{ form_params.mode }}/orderstandard.asp" id="ogoneform">
+<input type="hidden" name="PSPID" value="{{ form_params.PSPID }}" />
+<input type="hidden" name="orderID" value="{{ form_params.orderID }}" />
+<input type="hidden" name="amount" value="{{ form_params.amount }}" />
+<input type="hidden" name="currency" value="{{ form_params.currency }}" />
+<input type="hidden" name="language" value="{{ locale }}" />
+<input type="hidden" name="CN" value="{{ form_params.CN }}" />
+<input type="hidden" name="EMAIL" value="{{ order.email }}" />
+<input type="hidden" name="ownerZIP" value="{{ order.billing_zip_code }}" />
+<input type="hidden" name="owneraddress" value="{{ order.billing_address }}" />
+<input type="hidden" name="ownertown" value="{{ order.billing_city }}" />
+<input type="hidden" name="accepturl" value="{{ form_params.accepturl }}" />
+<input type="hidden" name="declineurl" value="{{ form_params.declineurl }}" />
+<input type="hidden" name="exceptionurl" value="{{ form_params.exceptionurl }}" />
+<input type="hidden" name="cancelurl" value="{{ form_params.cancelurl }}" />
+<input type="hidden" name="SHASign" value="{{ form_params.SHASign }}" />
+
+<input type="submit" value="{% trans "Pay now" %}" />
+</form>
+
+<script type="text/javascript">
+window.setTimeout(function(){
+    document.getElementById('ogoneform').submit();
+}, 1000);
+</script>
+{% endblock %}
