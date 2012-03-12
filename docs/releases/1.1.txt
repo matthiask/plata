@@ -33,3 +33,9 @@ changes:
 * If you wrote your own payment modules, the method you'll want to call at the
   end is now named ``order_paid``, not ``order_completed`` anymore. Apart from
   the renaming the signature of the function has not changed.
+
+
+Notable features
+================
+
+* Ogone is now a supported payment service provider (PSP).
