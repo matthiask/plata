@@ -128,11 +128,12 @@ class PaymentProcessor(ProcessorBase):
         # create hash
         value_strings = [u'{0}={1}{2}'.format(key.upper(), value, OGONE['SHA1_IN'])
                             for key, value in form_params.items()]
-        hash_string = sha1(u''.join(sorted(value_strings))).hexdigest()
+        hash_string = u''.join(sorted(value_strings))
+        encoded_hash_string = sha1(hash_string.encode('utf-8')).hexdigest()
 
         # add hash and additional params
         form_params.update({
-            'SHASign': hash_string.upper(),
+            'SHASign': encoded_hash_string.upper(),
             'mode': OGONE['LIVE'] and 'prod' or 'test',
         })
 
