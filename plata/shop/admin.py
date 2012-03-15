@@ -62,7 +62,7 @@ class OrderAdmin(admin.ModelAdmin):
             bits.append(u'<a href="%s">%s</a>' % (url, _('Invoice')))
         except NoReverseMatch:
             pass
-        print bits
+
         return u', '.join(bits)
     additional_info.allow_tags = True
     additional_info.short_description = _('add. info')
