@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.core.urlresolvers import NoReverseMatch, reverse
 from django.utils.translation import ugettext_lazy as _
 
 from plata.discount.models import AppliedDiscount
@@ -33,7 +34,7 @@ class OrderAdmin(admin.ModelAdmin):
         )
     inlines = [OrderItemInline, AppliedDiscountInline, OrderStatusInline]
     list_display = ('admin_order_id', 'created', 'user', 'status', 'total',
-        'balance_remaining', 'is_paid')
+        'balance_remaining', 'is_paid', 'additional_info')
     list_filter = ('status',)
     ordering = ['-created']
     raw_id_fields = ('user',)
@@ -46,6 +47,25 @@ class OrderAdmin(admin.ModelAdmin):
         return instance.order_id
     admin_order_id.short_description = _('order ID')
     admin_order_id.admin_order_field = '_order_id'
+
+    def additional_info(self, instance):
+        bits = []
+
+        try:
+            url = reverse('order_packing_slip_pdf', kwargs={'order_id': instance.id})
+            bits.append(u'<a href="%s">%s</a>' % (url, _('Packing slip')))
+        except NoReverseMatch:
+            pass
+
+        try:
+            url = reverse('order_invoice_pdf', kwargs={'order_id': instance.id})
+            bits.append(u'<a href="%s">%s</a>' % (url, _('Invoice')))
+        except NoReverseMatch:
+            pass
+        print bits
+        return u', '.join(bits)
+    additional_info.allow_tags = True
+    additional_info.short_description = _('add. info')
 
 admin.site.register(models.Order, OrderAdmin)
 
