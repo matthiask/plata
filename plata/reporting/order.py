@@ -113,7 +113,7 @@ class OrderReport(object):
             ], (12*cm, 4.4*cm), self.pdf.style.tableHead)
 
         self.pdf.spacer()
-        if self.order.is_paid:
+        if self.order.is_paid():
             try:
                 payment = self.order.payments.authorized()[0]
             except IndexError:
