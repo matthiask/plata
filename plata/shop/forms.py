@@ -50,7 +50,8 @@ class BaseCheckoutForm(forms.ModelForm):
         elif self.request.user.is_authenticated():
             order.user = self.request.user
 
-        if self.cleaned_data.get('create_account') and not contact:
+        if (self.cleaned_data.get('create_account') and not contact) or (
+                not contact and self.request.user.is_authenticated()):
             password = None
             email = self.cleaned_data.get('email')
 
