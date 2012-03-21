@@ -21,8 +21,10 @@ changes an order to ``COMPLETED`` itself.
 To update your installations to Plata v1.1, you'll have to make the following
 changes:
 
-* Instead of ``order.is_completed()`` you might want to test for
-  ``order.is_paid()`` now.
+* The method ``order.is_completed()`` has been removed. Either check for
+  ``order.is_paid()`` (which only looks at the balance remaining, not at the
+  order status) or check for ``order.status >= order.PAID`` yourself. For
+  consistency, the method ``order.is_confirmed()`` has been removed too.
 
 * The shop signal ``order_completed`` has been renamed to ``order_paid``. Signal
   handlers receive the same arguments as before.
@@ -39,3 +41,25 @@ Notable features
 ================
 
 * Ogone is now a supported payment service provider (PSP).
+
+* Users with a login are not asked whether they want to create a contact,
+  this is done automatically. The checkout form is initialized with the
+  values form the user model, too.
+
+* If URLs named ``'order_packing_slip_pdf'`` and ``'order_invoice_pdf'``
+  are reversible using only a keyword argument ``order_id`` (which only
+  consists of a number, it is the primary key of the order model), a
+  column with PDF links is automatically added to the orders list in the
+  Django admin panel.
+
+
+Bugfixes
+========
+
+* ``Order.status`` cannot be edited directly through the admin interface
+  anymore. Add a new order status model if you need to manually change
+  the order status.
+
+* The PDF generation code actually checks whether an order is paid for now.
+  Previously, it only checked whether a method named ``is_paid()`` existed
+  on the order (which was always the case).
