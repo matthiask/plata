@@ -90,10 +90,16 @@ class BillingShippingAddress(models.Model):
 
 class Order(BillingShippingAddress):
     """The main order model. Used for carts and orders alike."""
+    #: Order object is a cart.
     CART = 10
+    #: Checkout process has started.
     CHECKOUT = 20
+    #: Order has been confirmed, but it not (completely) paid for yet.
     CONFIRMED = 30
+    #: Order has been completely paid for.
     PAID = 40
+    #: Order has been completed. Plata itself never sets this state,
+    #: it is only meant for use by the shop owners.
     COMPLETED = 50
 
     STATUS_CHOICES = (
