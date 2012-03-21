@@ -29,7 +29,7 @@ def cart_not_empty(order, request, **kwargs):
 
 def order_confirmed(order, request, **kwargs):
     """Redirect to confirmation or already paid view if the order is already confirmed"""
-    if order and order.status_is_confirmed():
+    if order and order.status >= order.CONFIRMED:
         if order.is_paid():
             return redirect('plata_order_success')
         messages.warning(request,

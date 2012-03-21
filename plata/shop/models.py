@@ -219,18 +219,6 @@ class Order(BillingShippingAddress):
         return self.balance_remaining <= 0
     is_paid.boolean = True
 
-    def status_is_confirmed(self):
-        return self.status >= self.CONFIRMED
-    status_is_confirmed.boolean = True
-
-    def status_is_paid(self):
-        return self.status >= self.PAID
-    status_is_paid.boolean = True
-
-    def status_is_completed(self):
-        return self.status >= self.COMPLETED
-    status_is_completed.boolean = True
-
 
     VALIDATE_BASE = 10
     VALIDATE_CART = 20
