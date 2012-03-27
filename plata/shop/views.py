@@ -216,7 +216,7 @@ class Shop(object):
         except self.contact_model.DoesNotExist:
             return None
 
-    def get_context(self, request, context):
+    def get_context(self, request, context, **kwargs):
         """
         Helper method returning a ``RequestContext``. Override this if you
         need additional context variables.
@@ -226,6 +226,7 @@ class Shop(object):
             'base_template': self.base_template,
             })
         instance.update(context)
+        instance.update(kwargs)
         return instance
 
     def cart(self, request, order):
