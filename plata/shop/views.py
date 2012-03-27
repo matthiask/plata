@@ -9,8 +9,7 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import get_callable, reverse
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect
-from django.shortcuts import redirect, render_to_response
-from django.template import RequestContext
+from django.shortcuts import redirect, render
 from django.utils.translation import ugettext as _
 
 import plata
@@ -218,16 +217,21 @@ class Shop(object):
 
     def get_context(self, request, context, **kwargs):
         """
-        Helper method returning a ``RequestContext``. Override this if you
+        Helper method returning a context dict. Override this if you
         need additional context variables.
         """
-        instance = RequestContext(request)
-        instance.update({
+        ctx = {
             'base_template': self.base_template,
-            })
-        instance.update(context)
-        instance.update(kwargs)
-        return instance
+            }
+        ctx.update(context)
+        ctx.update(kwargs)
+        return ctx
+
+    def render(self, request, template, context):
+        """
+        Helper which just passes everything on to ``django.shortcuts.render``
+        """
+        return render(request, template, context)
 
     def cart(self, request, order):
         """Shopping cart view"""
@@ -284,12 +288,12 @@ class Shop(object):
         """Renders a cart-is-empty page"""
         context.update({'empty': True})
 
-        return render_to_response('plata/shop_cart.html',
+        return self.render(request, 'plata/shop_cart.html',
             self.get_context(request, context))
 
     def render_cart(self, request, context):
         """Renders the shopping cart"""
-        return render_to_response('plata/shop_cart.html',
+        return self.render(request, 'plata/shop_cart.html',
             self.get_context(request, context))
 
     def checkout_form(self, request, order):
@@ -348,7 +352,7 @@ class Shop(object):
 
     def render_checkout(self, request, context):
         """Renders the checkout page"""
-        return render_to_response('plata/shop_checkout.html',
+        return self.render(request, 'plata/shop_checkout.html',
             self.get_context(request, context))
 
     def discounts_form(self, request, order):
@@ -388,7 +392,7 @@ class Shop(object):
 
     def render_discounts(self, request, context):
         """Renders the discount code entry page"""
-        return render_to_response('plata/shop_discounts.html',
+        return self.render(request, 'plata/shop_discounts.html',
             self.get_context(request, context))
 
     def confirmation_form(self, request, order):
@@ -430,7 +434,7 @@ class Shop(object):
 
     def render_confirmation(self, request, context):
         """Renders the confirmation page"""
-        return render_to_response('plata/shop_confirmation.html',
+        return self.render(request, 'plata/shop_confirmation.html',
             self.get_context(request, context))
 
     def order_success(self, request):
@@ -445,7 +449,7 @@ class Shop(object):
             # to keep the completed order around anymore.
             self.set_order_on_request(request, order=None)
 
-        return render_to_response('plata/shop_order_success.html',
+        return self.render(request, 'plata/shop_order_success.html',
             self.get_context(request, {
                 'order': order,
                 'progress': 'success',
@@ -457,7 +461,7 @@ class Shop(object):
 
         logger.warn('Order payment failure for %s' % order)
 
-        return render_to_response('plata/shop_order_payment_failure.html',
+        return self.render(request, 'plata/shop_order_payment_failure.html',
             self.get_context(request, {
                 'order': order,
                 'progress': 'failure',

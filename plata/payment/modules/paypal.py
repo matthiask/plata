@@ -16,8 +16,6 @@ import urllib
 
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseForbidden
-from django.shortcuts import render_to_response
-from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 
 from plata.payment.modules.base import ProcessorBase
@@ -57,13 +55,13 @@ class PaymentProcessor(ProcessorBase):
         else:
             PP_URL = "https://www.sandbox.paypal.com/cgi-bin/webscr"
 
-        return render_to_response('payment/paypal_form.html', {
+        return self.shop.render(request, 'payment/paypal_form.html', {
             'order': order,
             'payment': payment,
             'HTTP_HOST': request.META.get('HTTP_HOST'),
             'post_url': PP_URL,
             'business': PAYPAL['BUSINESS'],
-            }, context_instance=RequestContext(request))
+            })
 
     def ipn(self, request):
         request.encoding = 'windows-1252'

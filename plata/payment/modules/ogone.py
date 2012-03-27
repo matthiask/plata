@@ -20,8 +20,6 @@ import logging
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseForbidden
-from django.shortcuts import render_to_response
-from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _, get_language, to_locale
 
 from plata.payment.modules.base import ProcessorBase
@@ -137,12 +135,12 @@ class PaymentProcessor(ProcessorBase):
             'mode': OGONE['LIVE'] and 'prod' or 'test',
         })
 
-        return render_to_response('payment/ogone_form.html', {
+        return self.shop.render(request, 'payment/ogone_form.html', {
             'order': order,
             'HTTP_HOST': request.META.get('HTTP_HOST'),
             'form_params': form_params,
             'locale': form_params['language'],
-            }, context_instance=RequestContext(request))
+            })
 
     def ipn(self, request):
         OGONE = settings.OGONE
