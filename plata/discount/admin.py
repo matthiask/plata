@@ -94,6 +94,7 @@ class DiscountAdmin(admin.ModelAdmin):
     list_display = ('name', 'type', 'is_active', 'valid_from',
         'valid_until', 'code', 'value')
     list_filter = ('type', 'is_active')
+    ordering = ('-valid_from',)
     search_fields = ('name', 'code', 'config')
 
     def get_fieldsets(self, request, obj=None):
