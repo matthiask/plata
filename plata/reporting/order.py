@@ -113,6 +113,8 @@ class OrderReport(object):
             ], (12*cm, 4.4*cm), self.pdf.style.tableHead)
 
         self.pdf.spacer()
+
+    def payment(self):
         if self.order.is_paid():
             try:
                 payment = self.order.payments.authorized()[0]
@@ -146,6 +148,7 @@ def invoice_pdf(pdf, order):
     report.title()
     report.items_with_prices()
     report.summary()
+    report.payment()
 
     pdf.generate()
 
