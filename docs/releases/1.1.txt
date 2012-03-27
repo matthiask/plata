@@ -52,6 +52,19 @@ Notable features
   column with PDF links is automatically added to the orders list in the
   Django admin panel.
 
+* The main :class:`~plata.shop.views.Shop` object gained an additional
+  argument, ``base_template``, which can be used to specify a different
+  base template than ``base.html`` which should be used in all
+  checkout-related templates.
+
+* Payment-related information is handled in its own method inside
+  :class:`~plata.reporting.order.OrderReport` now, meaning that it is
+  easier to override aspects of it in your shop.
+
+* All rendering is done through a new method on the main shop view,
+  :meth:`~plata.shop.views.Shop.render(self, request, context)`, making
+  it straightforward to customize the rendering for all steps.
+
 
 Bugfixes
 ========
