@@ -12,6 +12,7 @@ admin.site.register(models.Contact,
             models.Contact.address_fields('shipping_')}),
         (_('Additional fields'), {'fields': ('notes',)}),
         ),
+    raw_id_fields=('user',),
     search_fields=(['user__first_name', 'user__last_name', 'user__email'] +
         models.Contact.address_fields('billing_') +
         models.Contact.address_fields('shipping_')
