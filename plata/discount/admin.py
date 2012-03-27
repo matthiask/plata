@@ -91,7 +91,8 @@ class DiscountAdminForm(forms.ModelForm):
 
 class DiscountAdmin(admin.ModelAdmin):
     form = DiscountAdminForm
-    list_display = ('name', 'type', 'is_active', 'code', 'value')
+    list_display = ('name', 'type', 'is_active', 'valid_from',
+        'valid_until', 'code', 'value')
     list_filter = ('type', 'is_active')
     search_fields = ('name', 'code', 'config')
 
