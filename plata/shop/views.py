@@ -233,7 +233,9 @@ class Shop(object):
         """Shopping cart view"""
 
         if not order or not order.items.count():
-            return self.render_cart_empty(request, {})
+            return self.render_cart_empty(request, {
+                'progress': 'cart',
+                })
 
         OrderItemFormset = inlineformset_factory(
             self.order_model,
@@ -275,6 +277,7 @@ class Shop(object):
         return self.render_cart(request, {
             'order': order,
             'orderitemformset': formset,
+            'progress': 'cart',
             })
 
     def render_cart_empty(self, request, context):
@@ -340,6 +343,7 @@ class Shop(object):
             'order': order,
             'loginform': loginform,
             'orderform': orderform,
+            'progress': 'checkout',
             })
 
     def render_checkout(self, request, context):
@@ -379,6 +383,7 @@ class Shop(object):
         return self.render_discounts(request, {
             'order': order,
             'form': form,
+            'progress': 'discounts',
             })
 
     def render_discounts(self, request, context):
@@ -420,6 +425,7 @@ class Shop(object):
             'form': form,
             'confirmed': request.GET.get('confirmed', False), # Whether the order had
                                                               # already been confirmed
+            'progress': 'confirmation',
             })
 
     def render_confirmation(self, request, context):
@@ -442,6 +448,7 @@ class Shop(object):
         return render_to_response('plata/shop_order_success.html',
             self.get_context(request, {
                 'order': order,
+                'progress': 'success',
                 }))
 
     def order_payment_failure(self, request):
@@ -453,6 +460,7 @@ class Shop(object):
         return render_to_response('plata/shop_order_payment_failure.html',
             self.get_context(request, {
                 'order': order,
+                'progress': 'failure',
                 }))
 
     def order_new(self, request):
