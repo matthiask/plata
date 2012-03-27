@@ -30,14 +30,16 @@ class OrderReport(object):
         self.pdf.address(self.order.addresses()[address_key])
         self.pdf.next_frame()
 
-    def title(self):
+    def title(self, title=None):
         self.pdf.p(u'%s: %s' % (
             capfirst(_('order date')),
             self.order.confirmed and self.order.confirmed.strftime('%d.%m.%Y') or _('Not confirmed yet'),
             ))
         self.pdf.spacer(3*mm)
 
-        self.pdf.h1(_('Order %s') % self.order.order_id)
+        if not title:
+            title = _('Order')
+        self.pdf.h1(u'%s %s' % (title, self.order.order_id))
         self.pdf.hr()
 
     def items_without_prices(self):
