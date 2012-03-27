@@ -92,8 +92,11 @@ class Shop(object):
         )
     """
 
+    #: The base template used in all default checkout templates
+    base_template = 'base.html'
+
     def __init__(self, contact_model, order_model, discount_model,
-            default_currency=None):
+            default_currency=None, **kwargs):
         self.contact_model = contact_model
         self.order_model = order_model
         self.orderitem_model = self.order_model.items.related.model
@@ -103,6 +106,12 @@ class Shop(object):
         # Globally register the instance so that it can be accessed from
         # everywhere using plata.shop_instance()
         plata.register(self)
+
+        for key, value in kwargs.items():
+            if not hasattr(self, key):
+                raise TypeError('%s() received an invalid keyword %r' % (
+                    self.__class__.__name__, key))
+            setattr(self, key, value)
 
     @property
     def urls(self):
@@ -213,6 +222,9 @@ class Shop(object):
         need additional context variables.
         """
         instance = RequestContext(request)
+        instance.update({
+            'base_template': self.base_template,
+            })
         instance.update(context)
         return instance
 
