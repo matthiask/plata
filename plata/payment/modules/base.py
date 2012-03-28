@@ -175,7 +175,7 @@ class ProcessorBase(object):
         is already paid for (f.e. because an amount discount has been used which
         covers the order).
         """
-        if not order.is_paid():
+        if order.status < order.PAID:
             logger.info('Order %s is already completely paid' % order)
 
             if plata.settings.PLATA_STOCK_TRACKING:

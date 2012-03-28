@@ -40,7 +40,7 @@ class PaymentProcessor(ProcessorBase):
     def process_order_confirmed(self, request, order):
         PAYPAL = settings.PAYPAL
 
-        if order.is_paid():
+        if not order.balance_remaining:
             return self.already_paid(order)
 
         logger.info('Processing order %s using Paypal' % order)
