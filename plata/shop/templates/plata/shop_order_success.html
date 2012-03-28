@@ -5,7 +5,7 @@
 {% block title %}{% trans "Order successful" %} - {{ block.super }}{% endblock %}
 
 {% block content %}
-{% if order.is_paid %}
+{% if not order.balance_remaining %}
     <h1>Vielen Dank für Ihre Bestellung.</h1>
     {# TODO this isn't correct for cash on delivery <h1>{% trans "Order has been fully paid." %}</h1> #}
 {% else %}

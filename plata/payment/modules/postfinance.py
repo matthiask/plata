@@ -203,7 +203,7 @@ class PaymentProcessor(ProcessorBase):
                 self.create_transactions(order, _('sale'),
                     type=StockTransaction.SALE, negative=True, payment=payment)
 
-            if order.is_paid():
+            if not order.balance_remaining:
                 self.order_paid(order, payment=payment)
 
             return HttpResponse('OK')

@@ -34,7 +34,7 @@ class OrderAdmin(admin.ModelAdmin):
         )
     inlines = [OrderItemInline, AppliedDiscountInline, OrderStatusInline]
     list_display = ('admin_order_id', 'created', 'user', 'status', 'total',
-        'balance_remaining', 'is_paid', 'additional_info')
+        'balance_remaining', 'admin_is_paid', 'additional_info')
     list_filter = ('status',)
     ordering = ['-created']
     raw_id_fields = ('user',)
@@ -42,6 +42,11 @@ class OrderAdmin(admin.ModelAdmin):
     search_fields = (['_order_id', 'email', 'total', 'notes'] +
         models.Order.address_fields('billing_') +
         models.Order.address_fields('shipping_'))
+
+    def admin_is_paid(self, instance):
+        return not instance.balance_remaining
+    admin_is_paid.short_description = _('is paid')
+    admin_is_paid.boolean = True
 
     def admin_order_id(self, instance):
         return instance.order_id

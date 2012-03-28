@@ -117,7 +117,7 @@ class OrderReport(object):
         self.pdf.spacer()
 
     def payment(self):
-        if self.order.is_paid():
+        if not self.order.balance_remaining:
             try:
                 payment = self.order.payments.authorized()[0]
             except IndexError:

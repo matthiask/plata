@@ -222,8 +222,13 @@ class Order(BillingShippingAddress):
         return (self.total - self.paid).quantize(Decimal('0.00'))
 
     def is_paid(self):
+        import warnings
+        warnings.warn(
+            'Order.is_paid() has been deprecated because its name is misleading. '
+            'Test for `order.status >= order.PAID` or `not order.balance_remaining '
+            'yourself.',
+            DeprecationWarning)
         return self.balance_remaining <= 0
-    is_paid.boolean = True
 
 
     VALIDATE_BASE = 10

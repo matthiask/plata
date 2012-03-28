@@ -29,7 +29,7 @@ def cart_not_empty(order, request, **kwargs):
 def order_confirmed(order, request, **kwargs):
     """Redirect to confirmation or already paid view if the order is already confirmed"""
     if order and order.status >= order.CONFIRMED:
-        if order.is_paid():
+        if not order.balance_remaining:
             return redirect('plata_order_success')
         messages.warning(request,
             _('You have already confirmed this order earlier, but it is not fully paid for yet.'))
@@ -444,7 +444,7 @@ class Shop(object):
         if not order:
             return self.order_new(request)
 
-        if order.is_paid():
+        if not order.balance_remaining:
             # Create a new, empty order right away. It makes no sense
             # to keep the completed order around anymore.
             self.set_order_on_request(request, order=None)

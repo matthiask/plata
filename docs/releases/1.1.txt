@@ -22,9 +22,13 @@ To update your installations to Plata v1.1, you'll have to make the following
 changes:
 
 * The method ``order.is_completed()`` has been removed. Either check for
-  ``order.is_paid()`` (which only looks at the balance remaining, not at the
+  ``not order.balance_remaining`` (which only looks at the balance, not at the
   order status) or check for ``order.status >= order.PAID`` yourself. For
   consistency, the method ``order.is_confirmed()`` has been removed too.
+
+* ``order.is_paid()`` has been deprecated and will be removed in the next
+  release. Use ``order.status >= order.PAID`` or ``not order.balance_remaining``
+  directly to clearly communicate your intentions instead.
 
 * The shop signal ``order_completed`` has been renamed to ``order_paid``. Signal
   handlers receive the same arguments as before.
