@@ -9,6 +9,7 @@ Plata supports the following means of payment:
 * :ref:`payment_cod`
 * :ref:`payment_paypal`
 * :ref:`payment_postfinance`
+* :ref:`payment_ogone`
 
 
 .. _payment_cod:
@@ -54,4 +55,25 @@ This module implements payments using SHA-1 hash validation with the simpler
 SHA-1 IN hashing algorithm.
 
 The default server to server notification URL is ``payment/postfinance/ipn/``;
+the base path is defined by where you added ``shop.urls``.
+
+
+.. _payment_ogone:
+
+Ogone
+=====
+
+The Ogone payment module requires the following configuration values::
+
+    OGONE = {
+        'LIVE': False,
+        'PSPID': 'exampleShopID',
+        'SHA1_IN': '<shared secret>',
+        'SHA1_OUT': '<shared secret>',
+        }
+
+This module implements payments using SHA-1 hash validation with the simpler
+SHA-1 IN hashing algorithm.
+
+The default server to server notification URL is ``payment/ogone/ipn/``;
 the base path is defined by where you added ``shop.urls``.

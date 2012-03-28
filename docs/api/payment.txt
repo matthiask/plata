@@ -33,3 +33,11 @@ Postfinance support
    :members:
    :noindex:
 
+
+Ogone support
+-------------
+
+.. automodule:: plata.payment.modules.ogone
+   :members:
+   :noindex:
+
