@@ -380,7 +380,12 @@ class ViewTest(PlataTest):
         order = Order.objects.get(pk=1)
         assert order.is_paid()
 
-        self.assertEqual(StockTransaction.objects.count(), 2)
+        self.assertEqual(
+            set((
+                StockTransaction.PURCHASE,
+                StockTransaction.SALE,
+                StockTransaction.PAYMENT_PROCESS_RESERVATION,
+            )), set(StockTransaction.objects.values_list('type', flat=True)))
 
     def test_08_checkout_preexisting_user(self):
         """Test checkout behavior using already existing user without contact"""
