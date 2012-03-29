@@ -16,7 +16,9 @@ import urllib
 
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseForbidden
+from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
+from django.views.decorators.csrf import csrf_exempt
 
 from plata.payment.modules.base import ProcessorBase
 from plata.product.stock.models import StockTransaction
@@ -24,6 +26,8 @@ from plata.shop.models import OrderPayment
 
 
 logger = logging.getLogger('plata.payment.paypal')
+
+csrf_exempt_m = method_decorator(csrf_exempt)
 
 
 class PaymentProcessor(ProcessorBase):
@@ -63,6 +67,7 @@ class PaymentProcessor(ProcessorBase):
             'business': PAYPAL['BUSINESS'],
             })
 
+    @csrf_exempt_m
     def ipn(self, request):
         request.encoding = 'windows-1252'
         PAYPAL = settings.PAYPAL
@@ -146,4 +151,3 @@ class PaymentProcessor(ProcessorBase):
         except Exception, e:
             logger.error('IPN: Processing failure %s' % unicode(e))
             raise
-    ipn.csrf_exempt = True
