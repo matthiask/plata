@@ -195,7 +195,9 @@ class Shop(object):
                 order = self.order_model.objects.create(
                     currency=getattr(contact, 'currency', self.default_currency(request)),
                     user=getattr(contact, 'user',
-                        request.user if request.user.is_authenticated() else None))
+                        request.user if request.user.is_authenticated() else None),
+                    language_code=getattr(request, 'LANGUAGE_CODE', ''),
+                    )
 
                 self.set_order_on_request(request, order)
                 return order

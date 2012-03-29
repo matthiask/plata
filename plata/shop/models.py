@@ -114,6 +114,8 @@ class Order(BillingShippingAddress):
     confirmed = models.DateTimeField(_('confirmed'), blank=True, null=True)
     user = models.ForeignKey(User, blank=True, null=True,
         verbose_name=_('user'), related_name='orders')
+    language_code = models.CharField(_('language'), max_length=10,
+        default='')
     status = models.PositiveIntegerField(_('status'), choices=STATUS_CHOICES,
         default=CART)
 
