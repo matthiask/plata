@@ -69,6 +69,10 @@ Notable features
   :meth:`~plata.shop.views.Shop.render(self, request, context)`, making
   it straightforward to customize the rendering for all steps.
 
+* The order model has a new field ``language_code``. When the order is
+  created in ``shop.order_from_request(request, create=True)`` this field
+  is filled with the current language for your convenience.
+
 
 Bugfixes
 ========
