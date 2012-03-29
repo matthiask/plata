@@ -115,7 +115,7 @@ class Order(BillingShippingAddress):
     user = models.ForeignKey(User, blank=True, null=True,
         verbose_name=_('user'), related_name='orders')
     language_code = models.CharField(_('language'), max_length=10,
-        default='')
+        default='', blank=True)
     status = models.PositiveIntegerField(_('status'), choices=STATUS_CHOICES,
         default=CART)
 
