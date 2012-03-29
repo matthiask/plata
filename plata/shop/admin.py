@@ -23,7 +23,8 @@ class OrderStatusInline(admin.TabularInline):
 class OrderAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     fieldsets = (
-        (None, {'fields': ('created', 'confirmed', 'user', 'email', 'status')}),
+        (None, {'fields': ('created', 'confirmed', 'user', 'email',
+            'language_code', 'status')}),
         (_('Billing address'), {'fields': models.Order.address_fields('billing_')}),
         (_('Shipping address'), {'fields': ['shipping_same_as_billing'] +\
             models.Order.address_fields('shipping_')}),
