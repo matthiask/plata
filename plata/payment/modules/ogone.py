@@ -20,7 +20,9 @@ import logging
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseForbidden
+from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _, get_language, to_locale
+from django.views.decorators.csrf import csrf_exempt
 
 from plata.payment.modules.base import ProcessorBase
 from plata.product.stock.models import StockTransaction
@@ -28,6 +30,8 @@ from plata.shop.models import OrderPayment
 
 
 logger = logging.getLogger('plata.payment.ogone')
+
+csrf_exempt_m = method_decorator(csrf_exempt)
 
 
 # Copied from ogone test account backend
@@ -82,7 +86,7 @@ class PaymentProcessor(ProcessorBase):
         from django.conf.urls.defaults import patterns, url
 
         return patterns('',
-            url(r'^payment/ogone/ipn/$', self.ipn, name='plata_payment_ogon_ipn'),
+            url(r'^payment/ogone/ipn/$', self.ipn, name='plata_payment_ogone_ipn'),
             )
 
     def process_order_confirmed(self, request, order):
@@ -142,6 +146,7 @@ class PaymentProcessor(ProcessorBase):
             'locale': form_params['language'],
             })
 
+    @csrf_exempt_m
     def ipn(self, request):
         OGONE = settings.OGONE
 
@@ -221,4 +226,3 @@ class PaymentProcessor(ProcessorBase):
         except Exception, e:
             logger.error('IPN: Processing failure %s' % unicode(e))
             raise
-    ipn.csrf_exempt = True
