@@ -59,7 +59,7 @@ def checkout_process_decorator(*checks):
     def _dec(fn):
         def _fn(request, *args, **kwargs):
             shop = plata.shop_instance()
-            order = shop.order_from_request(request, create=False)
+            order = shop.order_from_request(request)
 
             for check in checks:
                 r = check(order=order, shop=shop, request=request)
