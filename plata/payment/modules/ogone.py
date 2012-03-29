@@ -168,8 +168,8 @@ class PaymentProcessor(ProcessorBase):
 
             value_strings = [u'{0}={1}{2}'.format(key.upper(), value, OGONE['SHA1_OUT'])
                                 for key, value in request.POST.iteritems()
-                                    if not key == 'SHASIGN']
-            sha1_out = sha1(u''.join(sorted(value_strings))).hexdigest()
+                                    if value and not key == 'SHASIGN']
+            sha1_out = sha1((u''.join(sorted(value_strings))).encode('utf-8')).hexdigest()
 
             if sha1_out.lower() != SHASIGN.lower():
                 logger.error('IPN: Invalid hash in %s' % parameters_repr)
