@@ -13,22 +13,10 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.CharField')(default='', max_length=10),
                       keep_default=False)
 
-
-        # Changing field 'OrderItem.product'
-        db.alter_column('shop_orderitem', 'product_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['simple.Product'], null=True, on_delete=models.SET_NULL))
-
-        # Changing field 'OrderItem.tax_class'
-        db.alter_column('shop_orderitem', 'tax_class_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['shop.TaxClass'], null=True, on_delete=models.SET_NULL))
     def backwards(self, orm):
         # Deleting field 'Order.language_code'
         db.delete_column('shop_order', 'language_code')
 
-
-        # Changing field 'OrderItem.product'
-        db.alter_column('shop_orderitem', 'product_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['simple.Product'], null=True))
-
-        # Changing field 'OrderItem.tax_class'
-        db.alter_column('shop_orderitem', 'tax_class_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['shop.TaxClass'], null=True))
     models = {
         'auth.group': {
             'Meta': {'object_name': 'Group'},
