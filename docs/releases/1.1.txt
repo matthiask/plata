@@ -71,7 +71,11 @@ Notable features
 
 * The order model has a new field ``language_code``. When the order is
   created in ``shop.order_from_request(request, create=True)`` this field
-  is filled with the current language for your convenience.
+  is filled with the current language for your convenience. The PDF
+  generation code and the e-mail notification handlers automatically
+  activate the language set on the order; if you provide your own
+  signal handlers and/or PDF generation methods, you have to do this
+  yourself.
 
 
 Bugfixes
