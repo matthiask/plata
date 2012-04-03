@@ -62,6 +62,7 @@ import StringIO
 from django.contrib.sites.models import Site
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
+from django.utils.translation import activate
 
 import plata
 from plata.shop import signals
@@ -154,6 +155,9 @@ class SendInvoiceHandler(EmailHandler):
     """
 
     def message(self, sender, order, **kwargs):
+        if order.language_code:
+            activate(order.language_code)
+
         message = self.create_email_message('plata/notifications/order_paid.txt',
             order=order,
             **kwargs)
@@ -178,6 +182,9 @@ class SendPackingSlipHandler(EmailHandler):
     """
 
     def message(self, sender, order, **kwargs):
+        if order.language_code:
+            activate(order.language_code)
+
         message = self.create_email_message('plata/notifications/packing_slip.txt',
             order=order,
             **kwargs)

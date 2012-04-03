@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from django.core.urlresolvers import get_callable
 from django.utils.text import capfirst
-from django.utils.translation import ugettext as _
+from django.utils.translation import activate, ugettext as _
 
 from pdfdocument.document import cm, mm
 from pdfdocument.elements import create_stationery_fn
@@ -14,6 +14,9 @@ class OrderReport(object):
     def __init__(self, pdf, order):
         self.pdf = pdf
         self.order = order
+
+        if order.language_code:
+            activate(order.language_code)
 
     def init_letter(self):
         self.pdf.init_letter(page_fn=create_stationery_fn(
