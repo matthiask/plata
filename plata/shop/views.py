@@ -26,7 +26,7 @@ def cart_not_empty(order, request, **kwargs):
         messages.warning(request, _('Cart is empty.'))
         return HttpResponseRedirect(reverse('plata_shop_cart'))
 
-def order_confirmed(order, request, **kwargs):
+def order_already_confirmed(order, request, **kwargs):
     """Redirect to confirmation or already paid view if the order is already confirmed"""
     if order and order.status >= order.CONFIRMED:
         if not order.balance_remaining:
@@ -51,7 +51,7 @@ def checkout_process_decorator(*checks):
     """
     Calls all passed checkout process decorators in turn::
 
-        @checkout_process_decorator(order_confirmed, order_cart_validates)
+        @checkout_process_decorator(order_already_confirmed, order_cart_validates)
         def mymethod(self...):
             # Whatever
     """
@@ -124,21 +124,24 @@ class Shop(object):
         from django.conf.urls.defaults import patterns, url
         return patterns('',
             url(r'^cart/$',
-                checkout_process_decorator(order_confirmed)(self.cart),
+                checkout_process_decorator(order_already_confirmed)(self.cart),
                 name='plata_shop_cart'),
-            url(r'^checkout/$',
-                checkout_process_decorator(cart_not_empty, order_confirmed, order_cart_validates)(self.checkout),
-                name='plata_shop_checkout'),
-            url(r'^discounts/$',
-                checkout_process_decorator(cart_not_empty, order_confirmed, order_cart_validates)(self.discounts),
-                name='plata_shop_discounts'),
-            url(r'^confirmation/$',
-                checkout_process_decorator(cart_not_empty, order_cart_validates)(self.confirmation),
-                name='plata_shop_confirmation'),
+            url(r'^checkout/$', checkout_process_decorator(
+                    cart_not_empty, order_already_confirmed, order_cart_validates,
+                )(self.checkout), name='plata_shop_checkout'),
+            url(r'^discounts/$', checkout_process_decorator(
+                    cart_not_empty, order_already_confirmed, order_cart_validates,
+                )(self.discounts), name='plata_shop_discounts'),
+            url(r'^confirmation/$', checkout_process_decorator(
+                    cart_not_empty, order_cart_validates,
+                 )(self.confirmation), name='plata_shop_confirmation'),
 
-            url(r'^order/success/$', self.order_success, name='plata_order_success'),
-            url(r'^order/payment_failure/$', self.order_payment_failure, name='plata_order_payment_failure'),
-            url(r'^order/new/$', self.order_new, name='plata_order_new'),
+            url(r'^order/success/$',
+                self.order_success, name='plata_order_success'),
+            url(r'^order/payment_failure/$',
+                self.order_payment_failure, name='plata_order_payment_failure'),
+            url(r'^order/new/$',
+                self.order_new, name='plata_order_new'),
             )
 
     def get_payment_urls(self):

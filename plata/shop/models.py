@@ -257,9 +257,17 @@ class Order(BillingShippingAddress):
         return self.balance_remaining <= 0
 
 
+    #: This validator is always called; basic consistency checks such as whether the
+    #: currencies in the order match should be added here.
     VALIDATE_BASE = 10
+    #: A cart which fails the criteria added to the ``VALIDATE_CART`` group isn't
+    #: considered a valid cart and the user cannot proceed to the checkout form.
+    #: Stuff such as stock checking, minimal order total checking, or maximal items
+    #: checking might be added here.
     VALIDATE_CART = 20
-    VALIDATE_CHECKOUT = 30
+    #: This should not be used while registering a validator, it's mostly useful as
+    #: an argument to :meth:`~plata.shop.models.Order.validate` when you want to
+    #: run all validators.
     VALIDATE_ALL = 100
 
     VALIDATORS = {}
