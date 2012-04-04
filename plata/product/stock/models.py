@@ -263,7 +263,10 @@ def update_items_in_stock(instance, **kwargs):
 
 
 def validate_order_stock_available(order):
-    """Check whether enough stock is available for all selected products"""
+    """
+    Check whether enough stock is available for all selected products,
+    taking into account payment process reservations.
+    """
     for item in order.items.select_related('product'):
         if item.quantity > StockTransaction.objects.items_in_stock(item.product,
                 exclude_order=order,
