@@ -77,6 +77,15 @@ Notable features
   signal handlers and/or PDF generation methods, you have to do this
   yourself.
 
+* The stock transaction app has been converted to south too now. The
+  initial migration should be applied with ``--fake`` if you are already
+  using stock tracking::
+
+      ./manage.py migrate stock 0001 --fake
+
+* Stock transactions have been made more useful on their own; if possible,
+  the name, sku and line item price fields are filled in automatically.
+
 
 Bugfixes
 ========
