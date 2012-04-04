@@ -470,12 +470,12 @@ class Shop(object):
 
         order.payments.pending().delete()
 
-        if order.payments.exists():
-            # There are processed or authorized order payments around!
-            messages.warning(request, _('The order already has payments, cannot unlock order.'))
+        if order.payments.authorized().exists():
+            # There authorized order payments around!
+            messages.warning(request, _('Payment failed, please try again.'))
         elif order.status > order.CHECKOUT and order.status < order.PAID:
             order.update_status(order.CHECKOUT, 'Order payment failure, going back to checkout')
-            messages.info(request, _('You can continue editing your order and try again.'))
+            messages.info(request, _('Payment failed; you can continue editing your order and try again.'))
 
         return self.render(request, 'plata/shop_order_payment_failure.html',
             self.get_context(request, {
