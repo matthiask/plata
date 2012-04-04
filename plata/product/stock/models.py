@@ -24,6 +24,7 @@ from django.db.models import Sum, Q, signals
 from django.utils.translation import ugettext_lazy as _, ugettext
 
 import plata
+from plata.fields import CurrencyField
 from plata.shop.models import Order, OrderPayment
 
 
@@ -152,6 +153,11 @@ class StockTransactionManager(models.Manager):
                 type=type,
                 change=item.quantity * factor,
                 order=order,
+                name=item.name,
+                sku=item.sku,
+                line_item_price=item._line_item_price,
+                line_item_discount=item._line_item_discount,
+                line_item_tax=item._line_item_tax,
                 **kwargs)
 
 
@@ -228,6 +234,17 @@ class StockTransaction(models.Model):
         on_delete=models.SET_NULL)
 
     notes = models.TextField(_('notes'), blank=True)
+
+    # There are purely informative fields; not required in any way
+    # (but very useful for analysis down the road)
+    name = models.CharField(_('name'), max_length=100, blank=True)
+    sku = models.CharField(_('SKU'), max_length=100, blank=True)
+    line_item_price = models.DecimalField(_('line item price'),
+        max_digits=18, decimal_places=10, blank=True, null=True)
+    line_item_discount = models.DecimalField(_('line item discount'),
+        max_digits=18, decimal_places=10, blank=True, null=True)
+    line_item_tax = models.DecimalField(_('line item tax'),
+        max_digits=18, decimal_places=10, blank=True, null=True)
 
     class Meta:
         ordering = ['-id']
