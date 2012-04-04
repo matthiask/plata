@@ -223,8 +223,7 @@ class StockTransaction(models.Model):
     order = models.ForeignKey(Order, blank=True, null=True,
         related_name='stock_transactions', verbose_name=_('order'))
     payment = models.ForeignKey(OrderPayment, blank=True, null=True,
-        related_name='stock_transactions', verbose_name=_('order payment'),
-        on_delete=models.SET_NULL)
+        related_name='stock_transactions', verbose_name=_('order payment'))
 
     notes = models.TextField(_('notes'), blank=True)
 
