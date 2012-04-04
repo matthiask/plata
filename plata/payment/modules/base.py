@@ -87,10 +87,13 @@ class ProcessorBase(object):
         Clear pending payments
         """
         logger.info('Clearing pending payments on %s' % order)
-        order.payments.pending().delete()
 
         if plata.settings.PLATA_STOCK_TRACKING:
-            order.stock_transactions.filter(type=StockTransaction.PAYMENT_PROCESS_RESERVATION).delete()
+            for transaction in order.stock_transactions.filter(
+                    type=StockTransaction.PAYMENT_PROCESS_RESERVATION):
+                transaction.delete()
+
+        order.payments.pending().delete()
 
     def create_pending_payment(self, order):
         """
