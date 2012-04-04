@@ -324,8 +324,8 @@ class Shop(object):
         else:
             loginform = None
 
-        if order.status < self.order_model.CHECKOUT:
-            order.update_status(self.order_model.CHECKOUT, 'Checkout process started')
+        if order.status < order.CHECKOUT:
+            order.update_status(order.CHECKOUT, 'Checkout process started')
 
         OrderForm = self.checkout_form(request, order)
 
@@ -468,9 +468,14 @@ class Shop(object):
                     type=order.stock_transactions.model.PAYMENT_PROCESS_RESERVATION):
                 transaction.delete()
 
-        # TODO: The order should be unlocked here; otherwise the message on the
-        # payment failure page is incorrect
-        # "You can continue editing your order and try again." (No, you can't.)
+        order.payments.pending().delete()
+
+        if order.payments.exists():
+            # There are processed or authorized order payments around!
+            messages.warning(request, _('The order already has payments, cannot unlock order.'))
+        elif order.status > order.CHECKOUT and order.status < order.PAID:
+            order.update_status(order.CHECKOUT, 'Order payment failure, going back to checkout')
+            messages.info(request, _('You can continue editing your order and try again.'))
 
         return self.render(request, 'plata/shop_order_payment_failure.html',
             self.get_context(request, {

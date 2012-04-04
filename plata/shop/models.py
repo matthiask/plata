@@ -495,6 +495,9 @@ class OrderStatus(models.Model):
         self.order.status = self.status
         if self.status >= Order.CONFIRMED and not self.order.confirmed:
             self.order.confirmed = datetime.now()
+        elif self.status < Order.CONFIRMED:
+            # Ensure that the confirmed date is not set
+            self.order.confirmed = None
         self.order.save()
 
 

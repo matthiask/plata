@@ -284,13 +284,14 @@ class ViewTest(PlataTest):
         self.assertContains(response, '721735bc3876094bb7e5ff075de8411d85494a66')
 
         self.assertEqual(StockTransaction.objects.count(), 2)
-        self.assertEqual(Order.objects.count(), 1)
+        self.assertEqual(Order.objects.get().status, Order.CONFIRMED)
         self.assertEqual(OrderPayment.objects.count(), 1)
 
         self.client.get('/order/payment_failure/')
         # payment process reservation should have been removed now,
         # this does not change anything else though
         self.assertEqual(StockTransaction.objects.count(), 1)
+        self.assertEqual(Order.objects.get().status, Order.CHECKOUT)
 
         self.assertContains(self.client.post('/payment/postfinance/ipn/', {
             }), 'Missing data', status_code=403)
