@@ -463,6 +463,11 @@ class Shop(object):
 
         logger.warn('Order payment failure for %s' % order)
 
+        if plata.settings.PLATA_STOCK_TRACKING:
+            for transaction in order.stock_transactions.filter(
+                    type=order.stock_transactions.model.PAYMENT_PROCESS_RESERVATION):
+                transaction.delete()
+
         return self.render(request, 'plata/shop_order_payment_failure.html',
             self.get_context(request, {
                 'order': order,
