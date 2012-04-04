@@ -461,7 +461,7 @@ class Shop(object):
         """Handles order payment failures"""
         order = self.order_from_request(request)
 
-        logger.warn('Order payment failure for %s' % order)
+        logger.warn('Order payment failure for %s' % order.order_id)
 
         if plata.settings.PLATA_STOCK_TRACKING:
             for transaction in order.stock_transactions.filter(
@@ -473,6 +473,7 @@ class Shop(object):
         if order.payments.authorized().exists():
             # There authorized order payments around!
             messages.warning(request, _('Payment failed, please try again.'))
+            logger.warn('Order %s is already partially paid, but payment failed anyway!' % order.order_id)
         elif order.status > order.CHECKOUT and order.status < order.PAID:
             order.update_status(order.CHECKOUT, 'Order payment failure, going back to checkout')
             messages.info(request, _('Payment failed; you can continue editing your order and try again.'))
