@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-04 13:15+0200\n"
+"POT-Creation-Date: 2012-04-04 14:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -63,7 +63,7 @@ msgstr "Erstellt"
 msgid "Preferred currency."
 msgstr "Bevorzugte Währung."
 
-#: contact/models.py:32 product/stock/models.py:56 product/stock/models.py:229
+#: contact/models.py:32 product/stock/models.py:56 product/stock/models.py:228
 #: reporting/order.py:142 shop/admin.py:90 shop/models.py:150
 #: shop/models.py:483 shop/models.py:546
 msgid "notes"
@@ -123,7 +123,7 @@ msgid "Exclude sale prices"
 msgstr "Ausverkaufspreise ausschliessen"
 
 #: discount/models.py:46 product/stock/models.py:55
-#: product/stock/models.py:233 shop/models.py:27 shop/models.py:390
+#: product/stock/models.py:232 shop/models.py:27 shop/models.py:390
 msgid "name"
 msgstr "Name"
 
@@ -271,12 +271,12 @@ msgstr "Angewendeter Rabatt"
 msgid "applied discounts"
 msgstr "Angewendete Rabatte"
 
-#: payment/modules/base.py:118
+#: payment/modules/base.py:124
 #, python-format
 msgid "%(stage)s: %(order)s processed by %(payment_module)s"
 msgstr "%(stage)s: %(order)s bearbeitet von %(payment_module)s"
 
-#: payment/modules/base.py:182 payment/modules/cod.py:38
+#: payment/modules/base.py:187 payment/modules/cod.py:38
 #: payment/modules/ogone.py:219 payment/modules/paypal.py:143
 #: payment/modules/postfinance.py:208 product/stock/models.py:207
 msgid "sale"
@@ -397,33 +397,33 @@ msgstr "Negative Werte für Verkäufe, Ausleihen und andere Abgänge verwenden."
 msgid "order payment"
 msgstr "Bezahlung"
 
-#: product/stock/models.py:234 reporting/order.py:50 reporting/order.py:65
+#: product/stock/models.py:233 reporting/order.py:50 reporting/order.py:65
 #: reporting/product.py:91 shop/models.py:391
 msgid "SKU"
 msgstr "Artikel-Nr."
 
-#: product/stock/models.py:235 reporting/order.py:69 shop/models.py:408
+#: product/stock/models.py:234 reporting/order.py:69 shop/models.py:408
 #: shop/templates/plata/shop_cart.html:21
 msgid "line item price"
 msgstr "Einzelpostenpreis"
 
-#: product/stock/models.py:237 shop/models.py:411
+#: product/stock/models.py:236 shop/models.py:411
 msgid "line item discount"
 msgstr "Rabatt auf Einzelposten"
 
-#: product/stock/models.py:239 shop/models.py:416
+#: product/stock/models.py:238 shop/models.py:416
 msgid "line item tax"
 msgstr "Steuer auf Einzelposten"
 
-#: product/stock/models.py:244
+#: product/stock/models.py:243
 msgid "stock transaction"
 msgstr "Lagerbestands-Transaktion"
 
-#: product/stock/models.py:245
+#: product/stock/models.py:244
 msgid "stock transactions"
 msgstr "Lagerbestands-Transaktionen"
 
-#: product/stock/models.py:272
+#: product/stock/models.py:274
 #, python-format
 msgid "Not enough stock available for %s."
 msgstr "Nicht genug Lagerbestand für %s."
@@ -992,6 +992,10 @@ msgstr "Neue Bestellung erstellen"
 #: shop/templates/plata/shop_order_success.html:5
 msgid "Order successful"
 msgstr "Bestellung erfolgreich"
+
+#: shop/templates/plata/shop_order_success.html:9
+msgid "Thank you for shopping with us!"
+msgstr "Vielen Dank, dass Sie bei uns eingekauft haben!"
 
 #: shop/templates/plata/shop_order_success.html:13
 msgid "Order has been partially paid."

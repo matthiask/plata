@@ -468,6 +468,10 @@ class Shop(object):
                     type=order.stock_transactions.model.PAYMENT_PROCESS_RESERVATION):
                 transaction.delete()
 
+        # TODO: The order should be unlocked here; otherwise the message on the
+        # payment failure page is incorrect
+        # "You can continue editing your order and try again." (No, you can't.)
+
         return self.render(request, 'plata/shop_order_payment_failure.html',
             self.get_context(request, {
                 'order': order,

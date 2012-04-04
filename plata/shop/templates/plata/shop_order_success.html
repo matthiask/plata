@@ -6,8 +6,8 @@
 
 {% block content %}
 {% if not order.balance_remaining %}
-    <h1>Vielen Dank für Ihre Bestellung.</h1>
-    {# TODO this isn't correct for cash on delivery <h1>{% trans "Order has been fully paid." %}</h1> #}
+    <h1>{% trans "Thank you for shopping with us!" %}</h1>
+    {# TODO this isn't correct for cash on delivery #}
 {% else %}
     {% if order.paid %}
         <h1>{% trans "Order has been partially paid." %}</h1>

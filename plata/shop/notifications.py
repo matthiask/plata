@@ -10,6 +10,11 @@ of writing your own handlers for the three important signals:
 
 A real-world example follows::
 
+    from django.utils.translation import activate
+
+    from plata.shop import notifications, signals as shop_signals
+
+
     class EmailHandler(notifications.BaseHandler):
         ALWAYS = ['shopadmin@example.com']
         SHIPPING = ['warehouse@example.com']
@@ -21,6 +26,9 @@ A real-world example follows::
                     cash_on_delivery = True
             except:
                 pass
+
+            if order.language_code:
+                activate(order.language_code)
 
             invoice_message = self.create_email_message('plata/notifications/order_paid.txt',
                 order=order,
@@ -50,7 +58,7 @@ A real-world example follows::
         notifications.ContactCreatedHandler(),
         weak=False)
     shop_signals.order_paid.connect(
-        RRRevolveEmailHandler(),
+        EmailHandler(),
         weak=False)
 """
 

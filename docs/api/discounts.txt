@@ -4,11 +4,3 @@ Discounts
 .. automodule:: plata.discount.models
    :members:
    :noindex:
-
-
-``django.contrib.admin`` support
---------------------------------
-
-.. automodule:: plata.discount.admin
-   :members:
-   :noindex:

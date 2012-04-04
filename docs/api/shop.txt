@@ -36,11 +36,3 @@ Notifications
 .. automodule:: plata.shop.notifications
    :members:
    :noindex:
-
-
-``django.contrib.admin`` support
---------------------------------
-
-.. automodule:: plata.shop.admin
-   :members:
-   :noindex:

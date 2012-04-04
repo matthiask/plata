@@ -75,10 +75,13 @@ class ProcessorBase(object):
 
     def process_order_confirmed(self, request, order):
         """
-        Process order confirmation
+        This is the initial entry point of payment modules and is called when
+        the user has selected a payment module and accepted the terms and
+        conditions of the shop.
 
-        Must return a response which is presented to the user (e.g. a
-        form with hidden values redirecting to the PSP)
+        Must return a response which is presented to the user, i.e. a form with
+        hidden values forwarding the user to the PSP or a redirect to the success
+        page if no further processing is needed.
         """
         raise NotImplementedError
 
@@ -127,16 +130,13 @@ class ProcessorBase(object):
 
     def order_paid(self, order, payment=None):
         """
-        Call this when payment has been confirmed
+        Call this when the order has been fully paid for
 
         This method does the following:
 
         - Sets order status to ``PAID``.
-        - Create a amount discount if amount discounts were used in this order
-          and the order total does not use up the discount yet. The discount object
-          is passed as ``remaining_discount`` to the ``order_paid`` signal.
-          It is your responsability to do something with the discount (and
-          communicating the code to the customer).
+        - Calculates the remaining discount amount (if any) and calls the
+          ``order_paid`` signal.
         - Clears pending payments which aren't interesting anymore anyway.
         """
 
@@ -175,8 +175,10 @@ class ProcessorBase(object):
     def already_paid(self, order):
         """
         Handles the case where a payment module is selected but the order
-        is already paid for (f.e. because an amount discount has been used which
-        covers the order).
+        is already completely paid for (f.e. because an amount discount has been
+        used which covers the order).
+
+        Does nothing if the order **status** is ``PAID`` already.
         """
         if order.status < order.PAID:
             logger.info('Order %s is already completely paid' % order)
