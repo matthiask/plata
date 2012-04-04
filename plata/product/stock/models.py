@@ -86,42 +86,57 @@ class StockTransactionManager(models.Manager):
                 notes=ugettext('New period'),
                 )
 
-    def _expired(self):
-        # 15 minutes expiration time for payment process reservations
-        reservation_expiration = datetime.now() - timedelta(minutes=15)
-
-        return Q(type=self.model.PAYMENT_PROCESS_RESERVATION) & Q(created__lt=reservation_expiration)
+    def reservations(self, product):
+        """
+        Return the number of items currently reserved because of payment
+        processing.
+        """
+        return self.filter(
+            period=Period.objects.current(),
+            product=product,
+            type=self.model.PAYMENT_PROCESS_RESERVATION,
+            created__lt=datetime.now() - timedelta(seconds=15*60),
+            ).aggregate(items=Sum('change')).get('items') or 0
 
     def stock(self):
         """
-        Return all valid stock transactions (currently all transactions except
-        those of type ``PAYMENT_PROCESS_RESERVATION`` older than 15 minutes)
+        Return all stock transactions relevant for the items in stock calculation.
+
+        Currently these are all transactions of the current period except those of
+        type ``PAYMENT_PROCESS_RESERVATION``.
         """
 
-        return self.filter(period=Period.objects.current()).filter(~self._expired())
+        return self.filter(period=Period.objects.current()).exclude(
+            type=self.model.PAYMENT_PROCESS_RESERVATION)
 
-    def expired(self):
-        """
-        Return all expired stock transactions (currently only transactions of type
-        ``PAYMENT_PROCESS_RESERVATION`` older than 15 minutes)
-        """
-
-        return self.filter(period=Period.objects.current()).filter(self._expired())
-
-    def items_in_stock(self, product, update=False, exclude_order=None):
+    def items_in_stock(self, product, update=False, exclude_order=None,
+            include_reservations=False):
         """
         Determine the items in stock for the given product variation,
         optionally updating the ``items_in_stock`` field in the database.
 
         If ``exclude_order`` is given, ``update`` is always switched off
         and transactions from the given order aren't taken into account.
+
+        If ``include_reservations`` is ``True``, ``update`` is always
+        switched off.
         """
 
-        queryset = self.stock().filter(product=product)
+        queryset = self.filter(
+            period=Period.objects.current(),
+            product=product)
 
         if exclude_order:
             update = False
             queryset = queryset.filter(Q(order__isnull=True) | ~Q(order=exclude_order))
+
+        if include_reservations:
+            update = False
+            queryset = queryset.exclude(
+                type=self.model.PAYMENT_PROCESS_RESERVATION,
+                created__lt=datetime.now() - timedelta(seconds=15*60))
+        else:
+            queryset = queryset.exclude(type=self.model.PAYMENT_PROCESS_RESERVATION)
 
         count = queryset.aggregate(items=Sum('change')).get('items') or 0
 
@@ -273,9 +288,10 @@ def update_items_in_stock(instance, **kwargs):
 
 def validate_order_stock_available(order):
     """Check whether enough stock is available for all selected products"""
-    for item in order.items.all().select_related('product'):
+    for item in order.items.select_related('product'):
         if item.quantity > StockTransaction.objects.items_in_stock(item.product,
-                exclude_order=order):
+                exclude_order=order,
+                include_reservations=True):
             raise ValidationError(_('Not enough stock available for %s.') % item.product,
                 code='insufficient_stock')
 

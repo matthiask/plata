@@ -599,14 +599,32 @@ class ViewTest(PlataTest):
         """Test payment process reservation expiration"""
         p1 = self.create_product(stock=10)
 
+        self.assertEqual(
+            p1.__class__.objects.get(pk=p1.pk).items_in_stock,
+            10)
+
         p1.stock_transactions.create(
             type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
             change=-7)
 
-        self.assertEqual(StockTransaction.objects.items_in_stock(p1), 3)
+        # Payment process reservation stock transactions should not modify
+        # the items_in_stock field
+        self.assertEqual(
+            p1.__class__.objects.get(pk=p1.pk).items_in_stock,
+            10)
+
+        self.assertEqual(StockTransaction.objects.items_in_stock(p1), 10)
+        self.assertEqual(StockTransaction.objects.items_in_stock(p1,
+            include_reservations=True), 3)
+
         StockTransaction.objects.update(created=datetime.now()-timedelta(minutes=10))
-        self.assertEqual(StockTransaction.objects.items_in_stock(p1), 3)
+        self.assertEqual(StockTransaction.objects.items_in_stock(p1), 10)
+        self.assertEqual(StockTransaction.objects.items_in_stock(p1,
+            include_reservations=True), 3)
+
         StockTransaction.objects.update(created=datetime.now()-timedelta(minutes=20))
+        self.assertEqual(StockTransaction.objects.items_in_stock(p1,
+            include_reservations=True), 10)
         self.assertEqual(StockTransaction.objects.items_in_stock(p1), 10)
 
         order = self.create_order()

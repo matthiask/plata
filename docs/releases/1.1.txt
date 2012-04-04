@@ -97,3 +97,11 @@ Bugfixes
 * The PDF generation code actually checks whether an order is paid for now.
   Previously, it only checked whether a method named ``is_paid()`` existed
   on the order (which was always the case).
+
+* Previously, stock transactions of type ``PAYMENT_PROCESS_RESERVATION``
+  influenced the ``items_in_stock`` field on products even after the
+  reservation period was over. This happened because the stock is not
+  automatically recalculated when 15 minutes have passed. Plata is smarter
+  now and only takes the payment process reservation stock transactions
+  into account when validating the order (respectively the cart) during
+  the checkout process.
