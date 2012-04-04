@@ -39,8 +39,8 @@ class PeriodManager(models.Manager):
             return self.filter(start__lte=datetime.now()).order_by('-start')[0]
         except IndexError:
             return self.create(
-                name='Automatically created',
-                notes='Automatically created because no period existed yet.')
+                name=ugettext('Automatically created'),
+                notes=ugettext('Automatically created because no period existed yet.'))
 
 
 class Period(models.Model):
