@@ -1,13 +1,19 @@
 import logging
+import simplejson as json
 
 from django import forms
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
-from django.utils import simplejson as json
 from django.utils.functional import curry
 from django.utils.translation import ugettext_lazy as _
 
 import plata
+
+
+try:
+    json.dumps([42], use_decimal=True)
+except TypeError:
+    raise Exception('simplejson>=2.1 with support for use_decimal required.')
 
 
 #: Field offering all defined currencies

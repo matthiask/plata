@@ -1,13 +1,6 @@
 from django.db.models import Model
 
 
-try:
-    from django.utils import simplejson
-    simplejson.dumps([42], use_decimal=True)
-except TypeError:
-    raise Exception('simplejson>=2.1 with support for use_decimal required.')
-
-
 def jsonize(v):
     """
     Convert the discount configuration into a state in which it can be
