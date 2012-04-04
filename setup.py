@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 
+from distutils.core import setup
 import os
-from setuptools import setup, find_packages
+import setuplib
 
-import plata
+packages, package_data = setuplib.find_packages('plata')
 
 setup(name='Plata',
-    version=plata.__version__,
+    version=__import__('plata').__version__,
     description='Plata - the lean and mean Django-based Shop',
     long_description=open(os.path.join(os.path.dirname(__file__), 'README.rst')).read(),
     author='Matthias Kestenholz',
@@ -14,6 +15,8 @@ setup(name='Plata',
     url='https://github.com/matthiask/plata/',
     license='BSD License',
     platforms=['OS Independent'],
+    packages=packages,
+    package_data=package_data,
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
@@ -26,7 +29,4 @@ setup(name='Plata',
         'Topic :: Software Development',
         'Topic :: Software Development :: Libraries :: Application Frameworks',
     ],
-    packages=find_packages(),
-    include_package_data=True,
-    zip_safe=False,
 )
