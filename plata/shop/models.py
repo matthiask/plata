@@ -173,13 +173,16 @@ class Order(BillingShippingAddress):
 
     @property
     def order_id(self):
+        """
+        Returns ``_order_id`` (if it has been set) or a generic ID for this order.
+        """
         if self._order_id:
             return self._order_id
         return u'No. %d' % self.id
 
     def recalculate_total(self, save=True):
         """
-        Recalculate totals, discounts, taxes.
+        Recalculates totals, discounts, taxes.
         """
 
         items = list(self.items.all())
@@ -197,15 +200,27 @@ class Order(BillingShippingAddress):
 
     @property
     def subtotal(self):
+        """
+        Returns the order subtotal.
+        """
+        # TODO: What about shipping?
         return sum((item.subtotal for item in self.items.all()), Decimal('0.00')).quantize(Decimal('0.00'))
 
     @property
     def discount(self):
+        """
+        Returns the discount total.
+        """
+        # TODO: What about shipping?
         return (sum((item.subtotal for item in self.items.all()), Decimal('0.00')) -
             sum((item.discounted_subtotal for item in self.items.all()), Decimal('0.00'))).quantize(Decimal('0.00'))
 
     @property
     def shipping(self):
+        """
+        Returns the shipping cost, with or without tax depending on the
+        ``PLATA_PRICE_INCLUDES_TAX`` setting.
+        """
         if plata.settings.PLATA_PRICE_INCLUDES_TAX:
             if self.shipping_cost is None:
                 return None
@@ -217,10 +232,19 @@ class Order(BillingShippingAddress):
 
     @property
     def tax(self):
+        """
+        Returns the tax total for this order, meaning tax on order items and tax
+        on shipping.
+        """
         return (self.items_tax + self.shipping_tax).quantize(Decimal('0.00'))
 
     @property
     def balance_remaining(self):
+        """
+        Returns the balance which needs to be paid by the customer to fully pay
+        this order. This value is not necessarily the same as the order total,
+        because there can be more than one order payment in principle.
+        """
         return (self.total - self.paid).quantize(Decimal('0.00'))
 
     def is_paid(self):
@@ -243,7 +267,7 @@ class Order(BillingShippingAddress):
     @classmethod
     def register_validator(cls, validator, group):
         """
-        Register another order validator in a validation group
+        Registers another order validator in a validation group
 
         A validator is a callable accepting an order (and only an order).
 
@@ -258,7 +282,7 @@ class Order(BillingShippingAddress):
 
     def validate(self, group):
         """
-        Validate this order
+        Validates this order
 
         The argument determines which order validators are called:
 
@@ -274,12 +298,14 @@ class Order(BillingShippingAddress):
 
     def modify_item(self, product, relative=None, absolute=None, recalculate=True):
         """
-        Update order with the given product
+        Updates order with the given product
 
         - ``relative`` or ``absolute``: Add/subtract or define order item amount exactly
         - ``recalculate``: Recalculate order after cart modification (defaults to ``True``)
 
-        Return OrderItem instance
+        Returns the ``OrderItem`` instance; if quantity is zero, the order item instance
+        is deleted, the ``pk`` attribute set to ``None`` but the order item is returned
+        anway.
         """
 
         assert (relative is None) != (absolute is None), 'One of relative or absolute must be provided.'
