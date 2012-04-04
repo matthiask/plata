@@ -408,7 +408,7 @@ class OrderItem(models.Model):
     _line_item_price = models.DecimalField(_('line item price'),
         max_digits=18, decimal_places=10, default=0,
         help_text=_('Line item price excl. tax'))
-    _line_item_discount = models.DecimalField(_('discount'),
+    _line_item_discount = models.DecimalField(_('line item discount'),
         max_digits=18, decimal_places=10,
         blank=True, null=True,
         help_text=_('Discount excl. tax'))
