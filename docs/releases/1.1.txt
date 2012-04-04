@@ -104,4 +104,15 @@ Bugfixes
   automatically recalculated when 15 minutes have passed. Plata is smarter
   now and only takes the payment process reservation stock transactions
   into account when validating the order (respectively the cart) during
-  the checkout process.
+  the checkout process. A few stock transaction manager methods have been
+  removed during the refactoring because their functionality does not
+  match Plata's own behavior anymore:
+
+  * ``StockTransaction.objects.stock()``
+  * ``StockTransaction.objects.expired()``
+  * ``StockTransaction.objects._expired()`` (this method was meant for
+    internal use only anyway)
+
+  If you need their functionality, you should have a closer look at
+  ``StockTransaction.objects.items_in_stock`` first (especially the
+  new argument, ``include_reservations``).

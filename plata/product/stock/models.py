@@ -86,29 +86,6 @@ class StockTransactionManager(models.Manager):
                 notes=ugettext('New period'),
                 )
 
-    def reservations(self, product):
-        """
-        Return the number of items currently reserved because of payment
-        processing.
-        """
-        return self.filter(
-            period=Period.objects.current(),
-            product=product,
-            type=self.model.PAYMENT_PROCESS_RESERVATION,
-            created__lt=datetime.now() - timedelta(seconds=15*60),
-            ).aggregate(items=Sum('change')).get('items') or 0
-
-    def stock(self):
-        """
-        Return all stock transactions relevant for the items in stock calculation.
-
-        Currently these are all transactions of the current period except those of
-        type ``PAYMENT_PROCESS_RESERVATION``.
-        """
-
-        return self.filter(period=Period.objects.current()).exclude(
-            type=self.model.PAYMENT_PROCESS_RESERVATION)
-
     def items_in_stock(self, product, update=False, exclude_order=None,
             include_reservations=False):
         """
