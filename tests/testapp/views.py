@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.views import generic
 
 import plata
-from tests.models import Product
+from testapp.models import Product
 
 
 product_list = generic.ListView.as_view(
