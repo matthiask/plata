@@ -1,4 +1,4 @@
-# Django settings for tests project.
+# Django settings for testapp project.
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -56,8 +56,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 
-ROOT_URLCONF = 'tests.urls'
-WSGI_APPLICATION = 'tests.wsgi.application'
+ROOT_URLCONF = 'testapp.urls'
+WSGI_APPLICATION = 'testapp.wsgi.application'
 
 TEMPLATE_DIRS = (
 )
@@ -71,7 +71,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
 
-    'tests',
+    'testapp',
     'plata',
     'plata.contact', # Not strictly required (contact model can be exchanged)
     'plata.discount',
@@ -81,7 +81,7 @@ INSTALLED_APPS = (
     'plata.shop',
 )
 
-PLATA_SHOP_PRODUCT = 'tests.Product'
+PLATA_SHOP_PRODUCT = 'testapp.Product'
 PLATA_STOCK_TRACKING = True
 POSTFINANCE = {
     'PSPID': 'plataTEST',
@@ -95,7 +95,7 @@ PAYPAL = {
     'LIVE': False,
     }
 
-TEST_RUNNER = 'tests.test_runner.CoverageRunner'
+TEST_RUNNER = 'testapp.test_runner.CoverageRunner'
 COVERAGE_MODULES = [
     'plata',
     'plata.contact.admin',
@@ -124,9 +124,9 @@ COVERAGE_MODULES = [
     'plata.shop.signals',
     'plata.shop.templatetags.plata_tags',
     'plata.shop.views',
-    #'plata.tests.admin',
-    #'plata.tests.base',
-    #'plata.tests.models',
-    #'plata.tests.views',
+    #'plata.testapp.admin',
+    #'plata.testapp.base',
+    #'plata.testapp.models',
+    #'plata.testapp.views',
     'plata.utils',
 ]
