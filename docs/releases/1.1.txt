@@ -101,6 +101,9 @@ Order validation
 
 * The unused order validation group ``VALIDATE_CHECKOUT`` has been removed.
 
+* The validator group ``VALIDATE_CART`` is run at the cart level too, but
+  validation errors are shown as warnings instead.
+
 
 Notable features
 ================
