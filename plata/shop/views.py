@@ -45,7 +45,20 @@ def order_cart_validates(order, request, **kwargs):
     except ValidationError, e:
         for message in e.messages:
             messages.error(request, message)
-        return HttpResponseRedirect(reverse('plata_shop_cart'))
+        return HttpResponseRedirect(reverse('plata_shop_cart') + '?e=1')
+
+def order_cart_warnings(order, request, **kwargs):
+    """Show warnings in cart, but don't redirect (meant as a replacement for
+    ``order_cart_validates``, but usable on the cart view itself)"""
+    if request.method != 'GET' or request.GET.get('e'):
+        return
+
+    try:
+        order.validate(order.VALIDATE_CART)
+    except ValidationError, e:
+        for message in e.messages:
+            messages.warning(request, message)
+
 
 def checkout_process_decorator(*checks):
     """
@@ -123,9 +136,9 @@ class Shop(object):
     def get_shop_urls(self):
         from django.conf.urls.defaults import patterns, url
         return patterns('',
-            url(r'^cart/$',
-                checkout_process_decorator(order_already_confirmed)(self.cart),
-                name='plata_shop_cart'),
+            url(r'^cart/$', checkout_process_decorator(
+                    order_already_confirmed, order_cart_warnings,
+                )(self.cart), name='plata_shop_cart'),
             url(r'^checkout/$', checkout_process_decorator(
                     cart_not_empty, order_already_confirmed, order_cart_validates,
                 )(self.checkout), name='plata_shop_checkout'),
