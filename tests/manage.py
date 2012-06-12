@@ -3,6 +3,7 @@ import os, sys
 
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "testapp.settings")
+    os.environ.setdefault("PLATA_RUN_TESTS", "1")
 
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
