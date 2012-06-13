@@ -50,7 +50,7 @@ def order_cart_validates(order, request, **kwargs):
 def order_cart_warnings(order, request, **kwargs):
     """Show warnings in cart, but don't redirect (meant as a replacement for
     ``order_cart_validates``, but usable on the cart view itself)"""
-    if request.method != 'GET' or request.GET.get('e'):
+    if request.method != 'GET' or request.GET.get('e') or not order:
         return
 
     try:
