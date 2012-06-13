@@ -2,7 +2,6 @@ import logging
 import simplejson as json
 
 from django import forms
-from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.utils.functional import curry
 from django.utils.translation import ugettext_lazy as _
@@ -27,7 +26,7 @@ class JSONFormField(forms.fields.CharField):
             try:
                 # Run the value through JSON so we can normalize formatting and at least learn about malformed data:
                 value = json.dumps(json.loads(value, use_decimal=True),
-                    cls=DjangoJSONEncoder, use_decimal=True)
+                    use_decimal=True)
             except ValueError:
                 raise forms.ValidationError("Invalid JSON data!")
 
@@ -87,7 +86,7 @@ class JSONField(models.TextField):
             return ""
 
         if isinstance(value, dict):
-            value = json.dumps(value, cls=DjangoJSONEncoder, use_decimal=True)
+            value = json.dumps(value, use_decimal=True)
 
         assert isinstance(value, basestring)
 
@@ -95,7 +94,7 @@ class JSONField(models.TextField):
 
     def value_from_object(self, obj):
         return json.dumps(super(JSONField, self).value_from_object(obj),
-            cls=DjangoJSONEncoder, use_decimal=True)
+            use_decimal=True)
 
 
 try:
