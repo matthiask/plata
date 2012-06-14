@@ -1,5 +1,6 @@
 import plata
 
+
 def plata_context(request):
     """
     Adds a few variables from Plata to the context if they are available:
@@ -10,11 +11,8 @@ def plata_context(request):
     """
 
     shop = plata.shop_instance()
-    if not shop:
-        return {}
-
     return {'plata': {
         'shop': shop,
         'order': shop.order_from_request(request),
         'contact': shop.contact_from_user(request.user),
-        }}
+        }} if shop else {}
