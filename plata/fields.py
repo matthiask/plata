@@ -59,7 +59,8 @@ class JSONField(models.TextField):
             try:
                 return json.loads(value, use_decimal=True)
             except ValueError:
-                logging.getLogger("plata.fields").exception("Unable to deserialize store JSONField data: %s", value)
+                logging.getLogger("plata.fields").exception(
+                    "Unable to deserialize stored JSONField data: %s", value)
                 return {}
         else:
             assert value is None
