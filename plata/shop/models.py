@@ -644,7 +644,8 @@ class PriceBase(models.Model):
     tax_included = models.BooleanField(_('tax included'),
         help_text=_('Is tax included in given unit price?'),
         default=plata.settings.PLATA_PRICE_INCLUDES_TAX)
-    tax_class = models.ForeignKey(TaxClass, verbose_name=_('tax class'))
+    tax_class = models.ForeignKey(TaxClass, verbose_name=_('tax class'),
+                                  related_name='+')
 
     def __unicode__(self):
         return u'%s %.2f' % (self.currency, self.unit_price)
