@@ -24,15 +24,11 @@ which you can download using the Git_ version control system::
 
     $ git clone git://github.com/matthiask/plata.git
 
-Plata requires a version of simplejson_ >=2.1 because older versions cannot
-serialize decimal values, only floats.
-
 In addition, you will need PDFDocument_ if you want to generate PDFs.
 
 .. _Django: http://www.djangoproject.com/
 .. _Git: http://git-scm.com/
 .. _PDFDocument: http://github.com/matthiask/pdfdocument
-.. _simplejson: http://pypi.python.org/pypi/simplejson/
 
 
 Configuration
