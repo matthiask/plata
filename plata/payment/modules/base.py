@@ -4,9 +4,7 @@ from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 
 import plata
-from plata.product.stock.models import StockTransaction
 from plata.shop import signals
-
 
 logger = logging.getLogger('plata.payment')
 
@@ -90,8 +88,8 @@ class ProcessorBase(object):
         Clear pending payments
         """
         logger.info('Clearing pending payments on %s' % order)
-
         if plata.settings.PLATA_STOCK_TRACKING:
+            StockTransaction = plata.stock_model()
             for transaction in order.stock_transactions.filter(
                     type=StockTransaction.PAYMENT_PROCESS_RESERVATION):
                 transaction.delete()
@@ -119,7 +117,7 @@ class ProcessorBase(object):
 
         if not plata.settings.PLATA_STOCK_TRACKING:
             return
-
+        StockTransaction = plata.stock_model()
         StockTransaction.objects.bulk_create(order,
             notes=_('%(stage)s: %(order)s processed by %(payment_module)s') % {
                 'stage': stage,
@@ -184,6 +182,7 @@ class ProcessorBase(object):
             logger.info('Order %s is already completely paid' % order)
 
             if plata.settings.PLATA_STOCK_TRACKING:
+                StockTransaction = plata.stock_model()
                 self.create_transactions(order, _('sale'),
                     type=StockTransaction.SALE, negative=True)
 

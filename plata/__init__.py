@@ -53,3 +53,14 @@ def product_model():
     """
     from django.db.models import loading
     return loading.get_model(*settings.PLATA_SHOP_PRODUCT.split('.'))
+
+
+def stock_model():
+    """
+    Return the stock transaction model definded by the ``PLATA_STOCK_TRACKING_MODEL``
+    setting or None in case stock transactions are turned off.
+    """
+    if not settings.PLATA_STOCK_TRACKING:
+        return None
+    from django.db.models import loading
+    return loading.get_model(*settings.PLATA_STOCK_TRACKING_MODEL.split('.'))
