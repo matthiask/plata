@@ -204,6 +204,9 @@ class Shop(object):
             if order_pk is None:
                 raise ValueError("no order in session")
             return self.order_model.objects.get(pk=order_pk)
+        except AttributeError:
+            # request has no session
+            return None
         except (ValueError, self.order_model.DoesNotExist):
             if create:
                 contact = self.contact_from_user(request.user)
