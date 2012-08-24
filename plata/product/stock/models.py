@@ -217,6 +217,7 @@ class StockTransaction(models.Model):
     created = models.DateTimeField(_('created'), default=datetime.now)
     product = models.ForeignKey(plata.settings.PLATA_SHOP_PRODUCT,
         related_name='stock_transactions', verbose_name=_('product'))
+        # XXX add on_delete=models.SET_NULL here?
     type = models.PositiveIntegerField(_('type'), choices=TYPE_CHOICES)
     change = models.IntegerField(_('change'),
         help_text=_('Use negative numbers for sales, lendings and other outgoings.'))
@@ -254,6 +255,9 @@ class StockTransaction(models.Model):
     def save(self, *args, **kwargs):
         if not self.period_id:
             self.period = Period.objects.current()
+
+        if self.product and hasattr(self.product, 'handle_stock_transaction'):
+            self.product.handle_stock_transaction(self)
 
         super(StockTransaction, self).save(*args, **kwargs)
 
