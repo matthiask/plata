@@ -1,6 +1,5 @@
-from decimal import Decimal
-import json
 import logging
+import simplejson as json
 
 from django import forms
 from django.db import models
@@ -10,15 +9,15 @@ from django.utils.translation import ugettext_lazy as _
 import plata
 
 
+try:
+    json.dumps([42], use_decimal=True)
+except TypeError:
+    raise Exception('simplejson>=2.1 with support for use_decimal required.')
+
+
 #: Field offering all defined currencies
 CurrencyField = curry(models.CharField, _('currency'), max_length=3, choices=zip(
     plata.settings.CURRENCIES, plata.settings.CURRENCIES))
-
-
-def _encode_decimal(obj):
-    if isinstance(obj, Decimal):
-        return str(obj)
-    raise TypeError('Try yourself.')
 
 
 class JSONFormField(forms.fields.CharField):
@@ -26,9 +25,8 @@ class JSONFormField(forms.fields.CharField):
         if value:
             try:
                 # Run the value through JSON so we can normalize formatting and at least learn about malformed data:
-                value = json.dumps(
-                    json.loads(value, parse_float=Decimal),
-                    default=_encode_decimal)
+                value = json.dumps(json.loads(value, use_decimal=True),
+                    use_decimal=True)
             except ValueError:
                 raise forms.ValidationError("Invalid JSON data!")
 
@@ -59,7 +57,7 @@ class JSONField(models.TextField):
                 return {}
 
             try:
-                return json.loads(value, parse_float=Decimal)
+                return json.loads(value, use_decimal=True)
             except ValueError:
                 logging.getLogger("plata.fields").exception(
                     "Unable to deserialize stored JSONField data: %s", value)
@@ -89,16 +87,15 @@ class JSONField(models.TextField):
             return ""
 
         if isinstance(value, dict):
-            value = json.dumps(value, default=_encode_decimal)
+            value = json.dumps(value, use_decimal=True)
 
         assert isinstance(value, basestring)
 
         return value
 
     def value_from_object(self, obj):
-        return json.dumps(
-            super(JSONField, self).value_from_object(obj),
-            default=_encode_decimal)
+        return json.dumps(super(JSONField, self).value_from_object(obj),
+            use_decimal=True)
 
 
 try:
