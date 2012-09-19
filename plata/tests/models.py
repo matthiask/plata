@@ -12,7 +12,7 @@ import plata
 from plata.discount.models import Discount, DiscountBase
 from plata.product.stock.models import Period, StockTransaction
 import plata.reporting.order
-from plata.shop.models import Order
+from plata.shop.models import Order, OrderItem, OrderStatus, OrderPayment
 
 from plata.tests.base import PlataTest
 
@@ -937,3 +937,19 @@ class ModelTest(PlataTest):
         self.assertAlmostEqual(order.tax,
             Decimal('80.00') - Decimal('80.00') / (1 + tax_class.rate / 100),
             places=2)
+
+    def test_27_unicode_representations(self):
+        product = self.create_product()
+        order = self.create_order()
+        orderitem = self.create_orderitem(product, order)
+        self.assertEqual(unicode(orderitem),
+                         u'1 of Test Product 1')
+        orderstatus = OrderStatus.objects.create(order=order, status=Order.PAID)
+        self.assertEqual(unicode(orderstatus),
+                         u'Status Order has been paid for O-000000001')
+        orderpayment = OrderPayment.objects.create(
+            order=order, currency=100, amount=1, authorized=date.today())
+        self.assertEqual(unicode(orderpayment),
+                         u'Authorized of 100 1.00 for O-000000001')
+
+
