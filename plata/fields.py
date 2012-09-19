@@ -1,8 +1,9 @@
+import datetime
+import decimal
 import logging
 import simplejson as json
 
 from django import forms
-from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.utils.functional import curry
 from django.utils.translation import ugettext_lazy as _
@@ -21,13 +22,38 @@ CurrencyField = curry(models.CharField, _('currency'), max_length=3, choices=zip
     plata.settings.CURRENCIES, plata.settings.CURRENCIES))
 
 
+def json_encode_default(o):
+    # See "Date Time String Format" in the ECMA-262 specification.
+    import datetime
+    if isinstance(o, datetime.datetime):
+        r = o.isoformat()
+        if o.microsecond:
+            r = r[:23] + r[26:]
+        if r.endswith('+00:00'):
+            r = r[:-6] + 'Z'
+        return r
+    elif isinstance(o, datetime.date):
+        return o.isoformat()
+    elif isinstance(o, datetime.time):
+        if is_aware(o):
+            raise ValueError("JSON can't represent timezone-aware times.")
+        r = o.isoformat()
+        if o.microsecond:
+            r = r[:12]
+        return r
+    elif isinstance(o, decimal.Decimal):
+        return str(o)
+
+    raise TypeError, 'Cannot encode %r' % o
+
+
 class JSONFormField(forms.fields.CharField):
     def clean(self, value, *args, **kwargs):
         if value:
             try:
                 # Run the value through JSON so we can normalize formatting and at least learn about malformed data:
                 value = json.dumps(json.loads(value, use_decimal=True),
-                    cls=DjangoJSONEncoder, use_decimal=True)
+                    default=json_encode_default, use_decimal=True)
             except ValueError:
                 raise forms.ValidationError("Invalid JSON data!")
 
@@ -87,7 +113,8 @@ class JSONField(models.TextField):
             return ""
 
         if isinstance(value, dict):
-            value = json.dumps(value, cls=DjangoJSONEncoder, use_decimal=True)
+            value = json.dumps(value, default=json_encode_default,
+                use_decimal=True)
 
         assert isinstance(value, basestring)
 
@@ -95,7 +122,7 @@ class JSONField(models.TextField):
 
     def value_from_object(self, obj):
         return json.dumps(super(JSONField, self).value_from_object(obj),
-            cls=DjangoJSONEncoder, use_decimal=True)
+            default=json_encode_default, use_decimal=True)
 
 
 try:
