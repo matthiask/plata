@@ -1,13 +1,14 @@
 {% extends base_template|default:"base.html" %}
 
 {% load i18n plata_tags %}
+{% load url from future %}
 
 {% block title %}{% trans "Order payment failure" %} - {{ block.super }}{% endblock %}
 
 {% block content %}
 <h1>{% trans "Order payment failure" %}</h1>
 
-<button type="button" onclick="window.location.href='{% url plata_shop_cart %}'">{% trans "Cart" %}</button>
+<button type="button" onclick="window.location.href='{% url "plata_shop_cart" %}'">{% trans "Cart" %}</button>
 
-<button type="button" onclick="window.location.href='{% url plata_order_new %}'">{% trans "Create new order" %}</button>
+<button type="button" onclick="window.location.href='{% url "plata_order_new" %}'">{% trans "Create new order" %}</button>
 {% endblock %}

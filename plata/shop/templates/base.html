@@ -1,5 +1,6 @@
 <html>
 {% load i18n %}
+{% load url from future %}
 <head>
 <title>{% block title %}Plata{% endblock %}</title>
 <style type="text/css">
@@ -102,7 +103,7 @@ table td {
 {% endblock %}
 
 <hr />
-<a href="{% url plata_shop_cart %}">{% trans "Go to cart" %}</a>
+<a href="{% url "plata_shop_cart" %}">{% trans "Go to cart" %}</a>
 <hr />
 <h2>{% trans "That's what we know about you:" %}</h2>
 <table>
@@ -124,10 +125,10 @@ table td {
                 {% endfor %}
             </ul>
             {% if plata.order.id %}
-            {% url plata_reporting_invoice_pdf plata.order.id as invoice_url %}
+            {% url "plata_reporting_invoice_pdf" plata.order.id as invoice_url %}
             {% if invoice_url %}<a href="{{ invoice_url }}">Invoice</a>{% endif %}
             {% endif %}
-            {% url plata_reporting_product_xls as product_xls_url %}
+            {% url "plata_reporting_product_xls" as product_xls_url %}
             {% if product_xls_url %}<a href="{{ product_xls_url }}">Products</a>{% endif %}
         </td>
     </tr>

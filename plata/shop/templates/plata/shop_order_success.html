@@ -1,6 +1,7 @@
 {% extends base_template|default:"base.html" %}
 
 {% load i18n plata_tags %}
+{% load url from future %}
 
 {% block title %}{% trans "Order successful" %} - {{ block.super }}{% endblock %}
 
@@ -19,5 +20,5 @@
 
 {% include "plata/_order_overview.html" %}
 
-<button type="button" onclick="window.location.href='{% url plata_order_new %}'">{% trans "Create new order" %}</button>
+<button type="button" onclick="window.location.href='{% url "plata_order_new" %}'">{% trans "Create new order" %}</button>
 {% endblock %}

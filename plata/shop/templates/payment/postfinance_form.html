@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% load i18n %}
+{% load url from future %}
 
 {% block content %}
 <h1>{% trans "Payment" %}</h1>
@@ -21,10 +22,10 @@
 <input type="hidden" name="ownertown" value="{{ order.billing_city }}" />
 <input type="hidden" name="ownercty" value="{{ order.billing_country }}" />
 
-<input type="hidden" name="accepturl" value="http://{{ HTTP_HOST }}{% url plata_order_success %}" />
-<input type="hidden" name="declineurl" value="http://{{ HTTP_HOST }}{% url plata_order_payment_failure %}" />
-<input type="hidden" name="exceptionurl" value="http://{{ HTTP_HOST }}{% url plata_order_payment_failure %}" />
-<input type="hidden" name="cancelurl" value="http://{{ HTTP_HOST }}{% url plata_order_payment_failure %}" />
+<input type="hidden" name="accepturl" value="http://{{ HTTP_HOST }}{% url "plata_order_success" %}" />
+<input type="hidden" name="declineurl" value="http://{{ HTTP_HOST }}{% url "plata_order_payment_failure" %}" />
+<input type="hidden" name="exceptionurl" value="http://{{ HTTP_HOST }}{% url "plata_order_payment_failure" %}" />
+<input type="hidden" name="cancelurl" value="http://{{ HTTP_HOST }}{% url "plata_order_payment_failure" %}" />
 
 <input type="submit" value="{% trans "Pay now" %}" />
 </form>
