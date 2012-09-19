@@ -939,11 +939,11 @@ class ModelTest(PlataTest):
             places=2)
 
     def test_27_unicode_representations(self):
-        product = self.create_product()
+        product = Product.objects.create(name='Test Product',)
         order = self.create_order()
         orderitem = self.create_orderitem(product, order)
         self.assertEqual(unicode(orderitem),
-                         u'1 of Test Product 1')
+                         u'1 of Test Product')
         orderstatus = OrderStatus.objects.create(order=order, status=Order.PAID)
         self.assertEqual(unicode(orderstatus),
                          u'Status Order has been paid for O-000000001')
