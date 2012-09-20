@@ -90,7 +90,7 @@ class BillingShippingAddress(models.Model):
 
 class Order(BillingShippingAddress):
     """The main order model. Used for carts and orders alike."""
-    #: Order object is a cart.
+    #: Order object is in cart.
     CART = 10
     #: Checkout process has started.
     CHECKOUT = 20
@@ -103,7 +103,7 @@ class Order(BillingShippingAddress):
     COMPLETED = 50
 
     STATUS_CHOICES = (
-        (CART, _('Is a cart')),
+        (CART, _('Is in cart')),
         (CHECKOUT, _('Checkout process started')),
         (CONFIRMED, _('Order has been confirmed')),
         (PAID, _('Order has been paid')),
@@ -460,7 +460,7 @@ class OrderItem(models.Model):
         verbose_name_plural = _('order items')
 
     def __unicode__(self):
-        return u'%s of %s' % (self.quantity, self.product)
+        return u'%s %s %s' % (self.quantity, _('of'), self.product)
 
     @property
     def unit_price(self):
@@ -522,7 +522,8 @@ class OrderStatus(models.Model):
         verbose_name_plural = _('order statuses')
 
     def __unicode__(self):
-        return u'Status %s for %s' % (self.get_status_display(), self.order)
+        return u'%s %s %s %s' % (_('Status'), self.get_status_display(),
+                                 _('for'), self.order)
 
     def save(self, *args, **kwargs):
         super(OrderStatus, self).save(*args, **kwargs)
@@ -593,10 +594,12 @@ class OrderPayment(models.Model):
     objects = OrderPaymentManager()
 
     def __unicode__(self):
-        return u'%s of %s %.2f for %s' % (
-            self.authorized and u'Authorized' or u'Not authorized',
+        return u'%s %s %s %.2f %s %s' % (
+            self.authorized and _(u'Authorized') or _(u'Not authorized'),
+            _('of'),
             self.currency,
             self.amount,
+            _('for'),
             self.order,
             )
 
