@@ -90,7 +90,7 @@ class BillingShippingAddress(models.Model):
 
 class Order(BillingShippingAddress):
     """The main order model. Used for carts and orders alike."""
-    #: Order object is a cart.
+    #: Order object is in cart.
     CART = 10
     #: Checkout process has started.
     CHECKOUT = 20
@@ -103,7 +103,7 @@ class Order(BillingShippingAddress):
     COMPLETED = 50
 
     STATUS_CHOICES = (
-        (CART, _('Is a cart')),
+        (CART, _('Is in cart')),
         (CHECKOUT, _('Checkout process started')),
         (CONFIRMED, _('Order has been confirmed')),
         (PAID, _('Order has been paid')),
