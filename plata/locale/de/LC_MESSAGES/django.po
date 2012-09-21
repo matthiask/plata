@@ -3,22 +3,21 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-04 14:48+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2012-09-21 10:20+0200\n"
+"PO-Revision-Date: 2012-09-21 10:21+0100\n"
+"Last-Translator: Henning Kage <henning.kage@googlemail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.5.3\n"
 
-#: fields.py:20
+#: fields.py:21
 msgid "currency"
 msgstr "Währung"
 
@@ -55,7 +54,7 @@ msgid "date of birth"
 msgstr "Geburtsdatum"
 
 #: contact/models.py:29 product/stock/models.py:217 shop/models.py:113
-#: shop/models.py:481
+#: shop/models.py:516
 msgid "created"
 msgstr "Erstellt"
 
@@ -65,7 +64,7 @@ msgstr "Bevorzugte Währung."
 
 #: contact/models.py:32 product/stock/models.py:56 product/stock/models.py:228
 #: reporting/order.py:142 shop/admin.py:90 shop/models.py:150
-#: shop/models.py:483 shop/models.py:546
+#: shop/models.py:518 shop/models.py:586
 msgid "notes"
 msgstr "Bemerkungen"
 
@@ -123,7 +122,7 @@ msgid "Exclude sale prices"
 msgstr "Ausverkaufspreise ausschliessen"
 
 #: discount/models.py:46 product/stock/models.py:55
-#: product/stock/models.py:232 shop/models.py:27 shop/models.py:390
+#: product/stock/models.py:232 shop/models.py:27 shop/models.py:424
 msgid "name"
 msgstr "Name"
 
@@ -139,8 +138,8 @@ msgstr "Wert"
 msgid "Only required for amount discounts."
 msgstr "Nur bei Betragsrabatten notwendig."
 
-#: discount/models.py:53 shop/models.py:35 shop/models.py:403
-#: shop/models.py:610
+#: discount/models.py:53 shop/models.py:35 shop/models.py:437
+#: shop/models.py:650
 msgid "tax class"
 msgstr "Steuerklasse"
 
@@ -251,7 +250,7 @@ msgid "Discount and order currencies do not match."
 msgstr "Währungs- und Bestellungswährung sind unterschiedlich."
 
 #: discount/models.py:293 product/stock/models.py:224 shop/models.py:156
-#: shop/models.py:527
+#: shop/models.py:567
 msgid "order"
 msgstr "Bestellung"
 
@@ -380,7 +379,7 @@ msgid "outgoing"
 msgstr "Abgang"
 
 #: product/stock/models.py:219 reporting/order.py:51 reporting/order.py:66
-#: reporting/product.py:90 shop/models.py:387
+#: reporting/product.py:90 shop/models.py:421
 #: shop/templates/plata/shop_cart.html:18
 msgid "product"
 msgstr "Produkt"
@@ -393,25 +392,25 @@ msgstr "Änderung"
 msgid "Use negative numbers for sales, lendings and other outgoings."
 msgstr "Negative Werte für Verkäufe, Ausleihen und andere Abgänge verwenden."
 
-#: product/stock/models.py:226 shop/models.py:553
+#: product/stock/models.py:226 shop/models.py:593
 msgid "order payment"
 msgstr "Bezahlung"
 
 #: product/stock/models.py:233 reporting/order.py:50 reporting/order.py:65
-#: reporting/product.py:91 shop/models.py:391
+#: reporting/product.py:91 shop/models.py:425
 msgid "SKU"
 msgstr "Artikel-Nr."
 
-#: product/stock/models.py:234 reporting/order.py:69 shop/models.py:408
+#: product/stock/models.py:234 reporting/order.py:69 shop/models.py:442
 #: shop/templates/plata/shop_cart.html:21
 msgid "line item price"
 msgstr "Einzelpostenpreis"
 
-#: product/stock/models.py:236 shop/models.py:411
+#: product/stock/models.py:236 shop/models.py:445
 msgid "line item discount"
 msgstr "Rabatt auf Einzelposten"
 
-#: product/stock/models.py:238 shop/models.py:416
+#: product/stock/models.py:238 shop/models.py:450
 msgid "line item tax"
 msgstr "Steuer auf Einzelposten"
 
@@ -436,16 +435,16 @@ msgstr "Bestelldatum"
 msgid "Not confirmed yet"
 msgstr "Noch nicht bestätigt"
 
-#: reporting/order.py:44 shop/templates/base.html:118
+#: reporting/order.py:44 shop/templates/base.html:119
 msgid "Order"
 msgstr "Bestellung"
 
-#: reporting/order.py:52 reporting/order.py:67 shop/models.py:393
+#: reporting/order.py:52 reporting/order.py:67 shop/models.py:427
 #: shop/templates/plata/shop_cart.html:20
 msgid "quantity"
 msgstr "Menge"
 
-#: reporting/order.py:68 shop/models.py:396 shop/models.py:606
+#: reporting/order.py:68 shop/models.py:430 shop/models.py:646
 #: shop/templates/plata/shop_cart.html:19
 msgid "unit price"
 msgstr "Einheitspreis"
@@ -630,7 +629,7 @@ msgstr "bestätigt"
 msgid "language"
 msgstr "Sprache"
 
-#: shop/models.py:119 shop/models.py:482 shop/models.py:529
+#: shop/models.py:119 shop/models.py:517 shop/models.py:569
 msgid "status"
 msgstr "Status"
 
@@ -670,11 +669,11 @@ msgstr "Bezahlt"
 msgid "This much has been paid already."
 msgstr "Soviel wurde schon bezahlt."
 
-#: shop/models.py:152 shop/models.py:419 shop/models.py:548
+#: shop/models.py:152 shop/models.py:453 shop/models.py:588
 msgid "data"
 msgstr "Daten"
 
-#: shop/models.py:153 shop/models.py:420 shop/models.py:549
+#: shop/models.py:153 shop/models.py:454 shop/models.py:589
 msgid "JSON-encoded additional data about the order payment."
 msgstr "JSON-encodierte zusätzliche Angaben über die Bezahlung."
 
@@ -682,137 +681,160 @@ msgstr "JSON-encodierte zusätzliche Angaben über die Bezahlung."
 msgid "orders"
 msgstr "Bestellungen"
 
-#: shop/models.py:288
+#: shop/models.py:322
 msgid "Cannot modify order once it has been confirmed."
 msgstr "Kann bestätigte Bestellung nicht mehr verändern."
 
-#: shop/models.py:351
+#: shop/models.py:385
 msgid "Cannot proceed to checkout without order items."
 msgstr ""
 "Kann Bestellprozess nicht starten, wenn keine Einzelposten gewählt wurden."
 
-#: shop/models.py:376
+#: shop/models.py:410
 msgid "Order contains more than one currency."
 msgstr "Die Bestellung enthält mehr als eine Währung"
 
-#: shop/models.py:398
+#: shop/models.py:432
 msgid "Unit price excl. tax"
 msgstr "Einheitspreis ohne MwSt"
 
-#: shop/models.py:399
+#: shop/models.py:433
 msgid "unit tax"
 msgstr "Steuer pro Einheit"
 
-#: shop/models.py:402
+#: shop/models.py:436
 msgid "tax rate"
 msgstr "MwSt-Rate"
 
-#: shop/models.py:406
+#: shop/models.py:440
 msgid "is sale"
 msgstr "ist im Ausverkauf"
 
-#: shop/models.py:410
+#: shop/models.py:444
 msgid "Line item price excl. tax"
 msgstr "Einzelpostenpreis ohne MwSt"
 
-#: shop/models.py:414
+#: shop/models.py:448
 msgid "Discount excl. tax"
 msgstr "Rabatt exkl. MwSt"
 
-#: shop/models.py:425
+#: shop/models.py:459
 msgid "order item"
 msgstr "Einzelposten"
 
-#: shop/models.py:426
+#: shop/models.py:460
 msgid "order items"
 msgstr "Einzelposten"
 
-#: shop/models.py:487
+#: shop/models.py:463
+#, python-format
+msgid "%(quantity)s of %(product)s"
+msgstr "%(quantity)s von %(product)s"
+
+#: shop/models.py:522
 msgid "order status"
 msgstr "Bestellstatus"
 
-#: shop/models.py:488
+#: shop/models.py:523
 msgid "order statuses"
 msgstr "Bestellstatusse"
 
-#: shop/models.py:522
+#: shop/models.py:526
+#, python-format
+msgid "Status %(status)s for %(order)s"
+msgstr "Status %(status)s für %(order)s"
+
+#: shop/models.py:562
 msgid "pending"
 msgstr "hängig"
 
-#: shop/models.py:523
+#: shop/models.py:563
 msgid "processed"
 msgstr "verarbeitet"
 
-#: shop/models.py:524 shop/models.py:543
+#: shop/models.py:564 shop/models.py:583
 msgid "authorized"
 msgstr "authorisiert"
 
-#: shop/models.py:528
+#: shop/models.py:568
 msgid "timestamp"
 msgstr "Zeitstempel"
 
-#: shop/models.py:533
+#: shop/models.py:573
 msgid "amount"
 msgstr "Betrag"
 
-#: shop/models.py:534
+#: shop/models.py:574
 msgid "payment module key"
 msgstr "Bezahlungsmodul-Key"
 
-#: shop/models.py:535
+#: shop/models.py:575
 msgid "Machine-readable identifier for the payment module used."
 msgstr "Maschinenlesbare Kennung des verwendeten Bezahlungsmoduls."
 
-#: shop/models.py:536
+#: shop/models.py:576
 msgid "payment module"
 msgstr "Bezahlungsmodul"
 
-#: shop/models.py:537
+#: shop/models.py:577
 msgid "For example 'Cash on delivery', 'PayPal', ..."
 msgstr "Z.B. 'Rechnung', 'PayPal', ..."
 
-#: shop/models.py:538
+#: shop/models.py:578
 msgid "payment method"
 msgstr "Bezahlungsmethode"
 
-#: shop/models.py:539
+#: shop/models.py:579
 msgid "For example 'MasterCard', 'VISA' or some other card."
 msgstr "Z.B. 'MasterCard', 'VISA' oder irgendeine andere Karte."
 
-#: shop/models.py:540
+#: shop/models.py:580
 msgid "transaction ID"
 msgstr "Transaktions-Nr."
 
-#: shop/models.py:541
+#: shop/models.py:581
 msgid "Unique ID identifying this payment in the foreign system."
 msgstr "Eindeutige Identifikationsnr. dieser Bezahlung beim Zahlungsanbieter."
 
-#: shop/models.py:544
+#: shop/models.py:584
 msgid "Point in time when payment has been authorized."
 msgstr "Zeitpunkt wann diese Bezahlung authorisiert wurde."
 
-#: shop/models.py:554
+#: shop/models.py:594
 msgid "order payments"
 msgstr "Bezahlungen"
 
-#: shop/models.py:579
+#: shop/models.py:599
+#, python-format
+msgid "%(authorized)s of %(currency)s %(amount).2f for %(order)s"
+msgstr "%(authorized)s von %(currency)s %(amount).2f für %(order)s"
+
+#: shop/models.py:600
+msgid "Authorized"
+msgstr "Authorisiert"
+
+#: shop/models.py:601
+msgid "Not authorized"
+msgstr "Nicht authorisiert"
+
+#: shop/models.py:619
 #, python-format
 msgid "Currency of payment %s does not match."
 msgstr "Währung der Bezahlung %s ist unterschiedlich."
 
-#: shop/models.py:602
+#: shop/models.py:642
 msgid "price"
 msgstr "Preis"
 
-#: shop/models.py:603
+#: shop/models.py:643
 msgid "prices"
 msgstr "Preise"
 
-#: shop/models.py:607
+#: shop/models.py:647
 msgid "tax included"
 msgstr "MwSt enthalten"
 
-#: shop/models.py:608
+#: shop/models.py:648
 msgid "Is tax included in given unit price?"
 msgstr "Ist die MwSt im angegebenen Einheitspreis enthalten?"
 
@@ -828,9 +850,20 @@ msgstr ""
 "Sie haben diese Bestellung bereits früher bestätigt, aber sie ist noch nicht "
 "vollständig bezahlt."
 
-#: shop/views.py:275
+#: shop/views.py:278
 msgid "The cart has been updated."
 msgstr "Der Warenkorb wurde aktualisiert."
+
+#: shop/views.py:478
+msgid "Payment failed, please try again."
+msgstr ""
+
+#: shop/views.py:482
+#, fuzzy
+msgid "Payment failed; you can continue editing your order and try again."
+msgstr ""
+"Sie können Ihre Bestellung weiterbearbeiten und nachher nochmals einen "
+"Versuch starten."
 
 #: shop/templates/_form_errors.html:3
 msgid "Please correct the following errors:"
@@ -848,41 +881,41 @@ msgstr "Formularfehler"
 msgid "show all"
 msgstr "Alle anzeigen"
 
-#: shop/templates/base.html:86
+#: shop/templates/base.html:87
 msgid "Home"
 msgstr "Startseite"
 
-#: shop/templates/base.html:87 shop/templates/product/product_detail.html:5
+#: shop/templates/base.html:88 shop/templates/product/product_detail.html:5
 #: shop/templates/product/product_list.html:5
 #: shop/templates/product/product_list.html:8
 msgid "Products"
 msgstr "Produkte"
 
-#: shop/templates/base.html:88 shop/templates/plata/shop_cart.html:5
+#: shop/templates/base.html:89 shop/templates/plata/shop_cart.html:5
 #: shop/templates/plata/shop_cart.html:11
-#: shop/templates/plata/shop_order_payment_failure.html:12
+#: shop/templates/plata/shop_order_payment_failure.html:11
 msgid "Cart"
 msgstr "Warenkorb"
 
-#: shop/templates/base.html:105
+#: shop/templates/base.html:106
 msgid "Go to cart"
 msgstr "Zum Warenkorb"
 
-#: shop/templates/base.html:107
+#: shop/templates/base.html:108
 msgid "That's what we know about you:"
 msgstr "Folgendes wissen wir über Dich:"
 
-#: shop/templates/base.html:110
+#: shop/templates/base.html:111
 msgid "User"
 msgstr "Benutzer"
 
-#: shop/templates/base.html:114
+#: shop/templates/base.html:115
 msgid "Contact"
 msgstr "Kontakt"
 
 #: shop/templates/payment/ogone_form.html:6
-#: shop/templates/payment/paypal_form.html:6
-#: shop/templates/payment/postfinance_form.html:6
+#: shop/templates/payment/paypal_form.html:7
+#: shop/templates/payment/postfinance_form.html:7
 msgid "Payment"
 msgstr "Bezahlung"
 
@@ -891,19 +924,19 @@ msgid "You will be forwarded to Ogone for payment now."
 msgstr "Sie werden für die Zahlungsabwicklung zu Ogone weitergeleitet."
 
 #: shop/templates/payment/ogone_form.html:27
-#: shop/templates/payment/postfinance_form.html:29
+#: shop/templates/payment/postfinance_form.html:30
 msgid "Pay now"
 msgstr "Jetzt bezahlen"
 
-#: shop/templates/payment/paypal_form.html:8
+#: shop/templates/payment/paypal_form.html:9
 msgid "You will be forwarded to Paypal for payment now."
 msgstr "Sie werden für die Zahlungsabwicklung zu Paypal weitergeleitet."
 
-#: shop/templates/payment/paypal_form.html:56
+#: shop/templates/payment/paypal_form.html:57
 msgid "Purchase Items"
 msgstr "Produkte bestellen"
 
-#: shop/templates/payment/postfinance_form.html:8
+#: shop/templates/payment/postfinance_form.html:9
 msgid "You will be forwarded to Postfinance for payment now."
 msgstr "Sie werden für die Zahlungsabwicklung zu Postfinance weitergeleitet."
 
@@ -973,39 +1006,33 @@ msgstr "Gutschein hinzufügen"
 msgid "Proceed to confirmation"
 msgstr "Weiter zur Bestätigung"
 
-#: shop/templates/plata/shop_order_payment_failure.html:5
-#: shop/templates/plata/shop_order_payment_failure.html:8
+#: shop/templates/plata/shop_order_payment_failure.html:6
+#: shop/templates/plata/shop_order_payment_failure.html:9
 msgid "Order payment failure"
 msgstr "Bezahlungsfehler"
 
-#: shop/templates/plata/shop_order_payment_failure.html:10
-msgid "You can continue editing your order and try again."
-msgstr ""
-"Sie können Ihre Bestellung weiterbearbeiten und nachher nochmals einen "
-"Versuch starten."
-
-#: shop/templates/plata/shop_order_payment_failure.html:14
-#: shop/templates/plata/shop_order_success.html:22
+#: shop/templates/plata/shop_order_payment_failure.html:13
+#: shop/templates/plata/shop_order_success.html:23
 msgid "Create new order"
 msgstr "Neue Bestellung erstellen"
 
-#: shop/templates/plata/shop_order_success.html:5
+#: shop/templates/plata/shop_order_success.html:6
 msgid "Order successful"
 msgstr "Bestellung erfolgreich"
 
-#: shop/templates/plata/shop_order_success.html:9
+#: shop/templates/plata/shop_order_success.html:10
 msgid "Thank you for shopping with us!"
 msgstr "Vielen Dank, dass Sie bei uns eingekauft haben!"
 
-#: shop/templates/plata/shop_order_success.html:13
+#: shop/templates/plata/shop_order_success.html:14
 msgid "Order has been partially paid."
 msgstr "Bestellung wurde teilweise bezahlt."
 
-#: shop/templates/plata/shop_order_success.html:15
+#: shop/templates/plata/shop_order_success.html:16
 msgid "Order has been confirmed."
 msgstr "Bestellung wurde bestätigt."
 
-#: shop/templates/plata/shop_order_success.html:17
+#: shop/templates/plata/shop_order_success.html:18
 msgid ""
 "As soon as we receive a confirmation from the payment provider, you'll be "
 "sent a confirmation e-mail."
@@ -1016,6 +1043,10 @@ msgstr ""
 #: shop/templates/product/product_detail.html:23
 msgid "Add to cart"
 msgstr "Zum Warenkorb hinzufügen"
+
+#, fuzzy
+#~ msgid "Status"
+#~ msgstr "Status"
 
 #~ msgid "Order %s"
 #~ msgstr "Bestellung %s"

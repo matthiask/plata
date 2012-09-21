@@ -8,7 +8,7 @@ import plata
 from plata.contact.models import Contact
 from plata.product.stock.models import StockTransaction
 from plata.shop import notifications, signals
-from plata.shop.models import TaxClass, Order
+from plata.shop.models import TaxClass, Order, OrderItem
 
 
 signals.contact_created.connect(
@@ -79,6 +79,11 @@ class PlataTest(TestCase):
             user=contact.user if contact else None,
             currency='CHF',
             )
+
+    def create_orderitem(self, product, order):
+        return OrderItem.objects.create(product=product, order=order,
+                                        quantity=1, _unit_price=0,
+                                        _unit_tax=0, tax_rate=0)
 
     def create_tax_classes(self):
         self.tax_class, created = TaxClass.objects.get_or_create(
