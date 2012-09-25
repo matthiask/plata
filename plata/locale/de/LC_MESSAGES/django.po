@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-09-21 10:20+0200\n"
-"PO-Revision-Date: 2012-09-21 10:21+0100\n"
+"PO-Revision-Date: 2012-09-25 10:06+0200\n"
 "Last-Translator: Henning Kage <henning.kage@googlemail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -25,7 +25,7 @@ msgstr "Währung"
 #: shop/templates/plata/_order_overview.html:3
 #: shop/templates/plata/shop_checkout.html:33
 msgid "Billing address"
-msgstr "Rechungsadresse"
+msgstr "Rechnungsadresse"
 
 #: contact/admin.py:11 shop/admin.py:29
 #: shop/templates/plata/_order_overview.html:6
