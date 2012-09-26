@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import get_callable, reverse
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponseRedirect
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect as django_redirect, render
 from django.utils.translation import ugettext as _
 
 import plata
@@ -30,7 +30,7 @@ def order_already_confirmed(order, request, **kwargs):
     """Redirect to confirmation or already paid view if the order is already confirmed"""
     if order and order.status >= order.CONFIRMED:
         if not order.balance_remaining:
-            return redirect('plata_order_success')
+            return django_redirect('plata_order_success')
         messages.warning(request,
             _('You have already confirmed this order earlier, but it is not fully paid for yet.'))
         return HttpResponseRedirect(reverse('plata_shop_confirmation') + '?confirmed=1')
@@ -238,6 +238,13 @@ class Shop(object):
         """
         return render(request, template, context)
 
+    def redirect(self, url_name):
+        """
+        Hook for customizing the redirect function when used as application
+        content
+        """
+        return django_redirect(url_name)
+
     def cart(self, request, order):
         """Shopping cart view"""
 
@@ -278,7 +285,7 @@ class Shop(object):
                     messages.success(request, _('The cart has been updated.'))
 
                 if 'checkout' in request.POST:
-                    return redirect('plata_shop_checkout')
+                    return self.redirect('plata_shop_checkout')
                 return HttpResponseRedirect('.')
         else:
             formset = OrderItemFormset(instance=order)
@@ -344,7 +351,7 @@ class Shop(object):
 
             if orderform.is_valid():
                 orderform.save()
-                return redirect('plata_shop_discounts')
+                return self.redirect('plata_shop_discounts')
         else:
             orderform = OrderForm(**orderform_kwargs)
 
@@ -382,7 +389,7 @@ class Shop(object):
                 form.save()
 
                 if 'proceed' in request.POST:
-                    return redirect('plata_shop_confirmation')
+                    return self.redirect('plata_shop_confirmation')
                 return HttpResponseRedirect('.')
         else:
             form = DiscountForm(**kwargs)
