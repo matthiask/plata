@@ -1,8 +1,6 @@
 from django import forms, template
 from django.template.loader import render_to_string
 
-import plata
-
 register = template.Library()
 
 
@@ -30,37 +28,50 @@ def form_items(form):
         }) for field in form)
 
 
+def render_form_item(item, additional_classes, **kwargs):
+
+    if kwargs.get('form_class', None):
+        item.field.widget.attrs['class'] = kwargs['form_class']
+    if kwargs.get('placeholder', None):
+        item.field.widget.attrs['placeholder'] = kwargs['placeholder']
+
+    return {
+        'item': item,
+        'additional_classes': additional_classes,
+        'is_checkbox': isinstance(item.field.widget, forms.CheckboxInput),
+        'type_class': _type_class(item),
+        }
+
 @register.inclusion_tag('_form_item.html')
-def form_item(item, additional_classes=None):
+def form_item(item, additional_classes=None, **kwargs):
     """
     Helper for easy displaying of form items::
 
         {% for field in form %}{% form_item field %}{% endfor %}
     """
-
-    return {
-        'item': item,
-        'additional_classes': additional_classes,
-        'is_checkbox': isinstance(item.field.widget, forms.CheckboxInput),
-        'type_class': _type_class(item),
-        }
+    return render_form_item(item, additional_classes, **kwargs)
 
 
 @register.inclusion_tag('_form_item_plain.html')
-def form_item_plain(item, additional_classes=None):
+def form_item_plain(item, additional_classes=None, **kwargs):
     """
     Helper for easy displaying of form items without any additional
     tags (table cells or paragraphs) or labels::
 
-        {% form_item_plain field %}
+        {% form_item_plain field form_class="input-small" placeholder=_("Email") %}
     """
+    return render_form_item(item, additional_classes, **kwargs)
 
-    return {
-        'item': item,
-        'additional_classes': additional_classes,
-        'is_checkbox': isinstance(item.field.widget, forms.CheckboxInput),
-        'type_class': _type_class(item),
-        }
+
+@register.inclusion_tag('_form_item_terms.html')
+def form_item_terms(item, additional_classes=None, **kwargs):
+    """
+    Helper for easy displaying of a checkbox with a link as part of the label.
+    Usually used for terms and conditions links and a checkbox widget::
+
+        {% form_item_terms field %}
+    """
+    return render_form_item(item, additional_classes, **kwargs)
 
 
 @register.tag
