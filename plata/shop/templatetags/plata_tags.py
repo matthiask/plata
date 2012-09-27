@@ -1,7 +1,6 @@
 from django import forms, template
 from django.template.loader import render_to_string
-
-import plata
+from django.utils.translation import ugettext
 
 register = template.Library()
 
@@ -31,12 +30,14 @@ def form_items(form):
 
 
 @register.inclusion_tag('_form_item.html')
-def form_item(item, additional_classes=None):
+def form_item(item, additional_classes=None, form_class=None):
     """
     Helper for easy displaying of form items::
 
         {% for field in form %}{% form_item field %}{% endfor %}
     """
+    if form_class:
+        item.field.widget.attrs['class'] = form_class
 
     return {
         'item': item,
@@ -47,13 +48,18 @@ def form_item(item, additional_classes=None):
 
 
 @register.inclusion_tag('_form_item_plain.html')
-def form_item_plain(item, additional_classes=None):
+def form_item_plain(item, additional_classes=None, form_class=None,
+                    placeholder=None):
     """
     Helper for easy displaying of form items without any additional
     tags (table cells or paragraphs) or labels::
 
-        {% form_item_plain field %}
+        {% form_item_plain field form_class="input-small" placeholder="Email" %}
     """
+    if form_class:
+        item.field.widget.attrs['class'] = form_class
+    if placeholder:
+        item.field.widget.attrs['placeholder'] = ugettext(placeholder)
 
     return {
         'item': item,
@@ -62,6 +68,23 @@ def form_item_plain(item, additional_classes=None):
         'type_class': _type_class(item),
         }
 
+
+@register.inclusion_tag('_form_item_tc.html')
+def form_item_tc(item, additional_classes=None, form_class=None):
+    """
+    Helper for easy displaying of a checkbox with a link as part of the label.
+    Usually used for terms and conditions links and a checkbox widget::
+
+        {% form_item_tc field %}
+    """
+    if form_class:
+        item.field.widget.attrs['class'] = form_class
+
+    return {
+        'item': item,
+        'additional_classes': additional_classes,
+        'type_class': _type_class(item),
+        }
 
 @register.tag
 def form_errors(parser, token):
