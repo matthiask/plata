@@ -1,6 +1,5 @@
 import logging
 
-from django.shortcuts import redirect as django_redirect
 from django.utils.translation import ugettext_lazy as _
 
 import plata
@@ -63,10 +62,6 @@ class ProcessorBase(object):
         """
         from django.conf.urls.defaults import patterns
         return patterns('')
-
-    def redirect(self, url_name):
-        """ Redirect hook for use with application content """
-        return django_redirect(url_name)
 
     def enabled_for_request(self, request):
         """
@@ -193,4 +188,4 @@ class ProcessorBase(object):
 
             self.order_paid(order)
 
-        return self.redirect('plata_order_success')
+        return self.shop.redirect('plata_order_success')

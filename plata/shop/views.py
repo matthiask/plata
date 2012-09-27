@@ -7,7 +7,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import get_callable, reverse
-from django.forms.models import inlineformset_factory
+from django.forms.models import inlineformset_factory, ModelForm
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect as django_redirect, render
 from django.utils.translation import ugettext as _
@@ -22,15 +22,17 @@ logger = logging.getLogger('plata.shop.views')
 
 def cart_not_empty(order, request, **kwargs):
     """Redirect to cart if later in checkout process and cart empty"""
+    shop = kwargs.get('shop')
     if not order or not order.items.count():
         messages.warning(request, _('Cart is empty.'))
-        return HttpResponseRedirect(reverse('plata_shop_cart'))
+        return shop.redirect('plata_shop_cart')
 
 def order_already_confirmed(order, request, **kwargs):
     """Redirect to confirmation or already paid view if the order is already confirmed"""
+    shop = kwargs.get('shop')
     if order and order.status >= order.CONFIRMED:
         if not order.balance_remaining:
-            return django_redirect('plata_order_success')
+            return shop.redirect('plata_order_success')
         messages.warning(request,
             _('You have already confirmed this order earlier, but it is not fully paid for yet.'))
         return HttpResponseRedirect(reverse('plata_shop_confirmation') + '?confirmed=1')
@@ -43,9 +45,10 @@ def order_cart_validates(order, request, **kwargs):
     try:
         order.validate(order.VALIDATE_CART)
     except ValidationError, e:
+        shop = kwargs.get('shop')
         for message in e.messages:
             messages.error(request, message)
-        return HttpResponseRedirect(reverse('plata_shop_cart'))
+        return shop.redirect('plata_shop_cart')
 
 def checkout_process_decorator(*checks):
     """
@@ -256,6 +259,7 @@ class Shop(object):
         OrderItemFormset = inlineformset_factory(
             self.order_model,
             self.orderitem_model,
+            form = getattr(self, 'form', ModelForm),
             extra=0,
             fields=('quantity',),
             )

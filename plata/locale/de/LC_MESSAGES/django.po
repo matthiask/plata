@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-21 10:20+0200\n"
+"POT-Creation-Date: 2012-09-27 09:29+0200\n"
 "PO-Revision-Date: 2012-09-25 10:06+0200\n"
 "Last-Translator: Henning Kage <henning.kage@googlemail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -270,12 +270,12 @@ msgstr "Angewendeter Rabatt"
 msgid "applied discounts"
 msgstr "Angewendete Rabatte"
 
-#: payment/modules/base.py:124
+#: payment/modules/base.py:123
 #, python-format
 msgid "%(stage)s: %(order)s processed by %(payment_module)s"
 msgstr "%(stage)s: %(order)s bearbeitet von %(payment_module)s"
 
-#: payment/modules/base.py:187 payment/modules/cod.py:38
+#: payment/modules/base.py:186 payment/modules/cod.py:38
 #: payment/modules/ogone.py:219 payment/modules/paypal.py:143
 #: payment/modules/postfinance.py:208 product/stock/models.py:207
 msgid "sale"
@@ -404,7 +404,7 @@ msgstr "Artikel-Nr."
 #: product/stock/models.py:234 reporting/order.py:69 shop/models.py:442
 #: shop/templates/plata/shop_cart.html:21
 msgid "line item price"
-msgstr "Einzelpostenpreis"
+msgstr "Gesamtpreis"
 
 #: product/stock/models.py:236 shop/models.py:445
 msgid "line item discount"
@@ -838,11 +838,11 @@ msgstr "MwSt enthalten"
 msgid "Is tax included in given unit price?"
 msgstr "Ist die MwSt im angegebenen Einheitspreis enthalten?"
 
-#: shop/views.py:26
+#: shop/views.py:27
 msgid "Cart is empty."
 msgstr "Warenkorb ist leer."
 
-#: shop/views.py:35
+#: shop/views.py:37
 msgid ""
 "You have already confirmed this order earlier, but it is not fully paid for "
 "yet."
@@ -850,15 +850,15 @@ msgstr ""
 "Sie haben diese Bestellung bereits früher bestätigt, aber sie ist noch nicht "
 "vollständig bezahlt."
 
-#: shop/views.py:278
+#: shop/views.py:288
 msgid "The cart has been updated."
 msgstr "Der Warenkorb wurde aktualisiert."
 
-#: shop/views.py:478
+#: shop/views.py:488
 msgid "Payment failed, please try again."
 msgstr ""
 
-#: shop/views.py:482
+#: shop/views.py:492
 #, fuzzy
 msgid "Payment failed; you can continue editing your order and try again."
 msgstr ""
@@ -1193,11 +1193,11 @@ msgstr "Zum Warenkorb hinzufügen"
 #~ msgstr "Keine Produkte von %(variation)s an Lager."
 
 #~ msgid ""
-#~ "Only %(stock)s items for %(variation)s available; you already have "
-#~ "%(quantity)s in your order."
+#~ "Only %(stock)s items for %(variation)s available; you already have %"
+#~ "(quantity)s in your order."
 #~ msgstr ""
-#~ "Nur %(stock)s Produkte von %(variation)s verfügbar; Sie haben schon "
-#~ "%(quantity)s in Ihrer Bestellung."
+#~ "Nur %(stock)s Produkte von %(variation)s verfügbar; Sie haben schon %"
+#~ "(quantity)s in Ihrer Bestellung."
 
 #~ msgid "Only %(stock)s items for %(variation)s available."
 #~ msgstr "Nur %(stock)s Produkte von %(variation)s verfügbar."
