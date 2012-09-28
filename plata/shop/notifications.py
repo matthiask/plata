@@ -72,8 +72,8 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.utils.translation import activate
 
-import plata
-from plata.shop import signals
+#import plata
+#from plata.shop import signals
 
 
 class BaseHandler(object):
