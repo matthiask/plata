@@ -443,7 +443,6 @@ class Shop(object):
             'confirmed': request.GET.get('confirmed', False), # Whether the order had
                                                               # already been confirmed
             'progress': 'confirmation',
-            'tax_included': plata.settings.PLATA_PRICE_INCLUDES_TAX,
             })
 
     def render_confirmation(self, request, context):
