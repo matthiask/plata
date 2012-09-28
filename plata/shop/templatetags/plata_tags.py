@@ -119,7 +119,8 @@ class FormErrorsNode(template.Node):
             else:
                 formset_list.append(i)
 
-            if getattr(i, 'errors', None) or getattr(i, 'non_field_errors', lambda:None)():
+            if (getattr(i, 'errors', None) and not i.errors == [{}]) \
+                    or getattr(i, 'non_field_errors', lambda:None)():
                 errors = True
 
         if not errors:
