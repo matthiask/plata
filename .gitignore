@@ -5,6 +5,7 @@
 /secrets.py
 .DS_Store
 ._*
+*.mo
 plata.db
 plata.log
 /docs/_build

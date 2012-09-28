@@ -1,0 +1,4 @@
+<tr class="{{ additional_classes|default_if_none:"" }} {% if item.field.required %}required {% endif %}{% if item.errors %}invalid {% endif %} {{ type_class }}">
+    <th><label for="{{ item.auto_id }}">I agree to the </label><a href="/"> target="_blank">Terms and conditions</a>.</th>
+    <td>{{ item }}{% if item.field.help_text %}<p class="help">{{ item.field.help_text }}</p>{% endif %}</td>
+</tr>
