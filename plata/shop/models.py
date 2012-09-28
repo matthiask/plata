@@ -460,7 +460,8 @@ class OrderItem(models.Model):
         verbose_name_plural = _('order items')
 
     def __unicode__(self):
-        return u'%s of %s' % (self.quantity, self.product)
+        return _(u'%(quantity)s of %(product)s') % {'quantity': self.quantity,
+                                                    'product': self.product}
 
     @property
     def unit_price(self):
@@ -522,7 +523,9 @@ class OrderStatus(models.Model):
         verbose_name_plural = _('order statuses')
 
     def __unicode__(self):
-        return u'Status %s for %s' % (self.get_status_display(), self.order)
+        return (_(u'Status %(status)s for %(order)s') % {
+            'status': self.get_status_display(),
+            'order': self.order})
 
     def save(self, *args, **kwargs):
         super(OrderStatus, self).save(*args, **kwargs)
@@ -593,12 +596,12 @@ class OrderPayment(models.Model):
     objects = OrderPaymentManager()
 
     def __unicode__(self):
-        return u'%s of %s %.2f for %s' % (
-            self.authorized and u'Authorized' or u'Not authorized',
-            self.currency,
-            self.amount,
-            self.order,
-            )
+        return (_(u'%(authorized)s of %(currency)s %(amount).2f for %(order)s')
+                % {'authorized': self.authorized and _(u'Authorized')
+                        or _(u'Not authorized'),
+                   'currency': self.currency,
+                   'amount': self.amount,
+                   'order': self.order})
 
     def _recalculate_paid(self):
         paid = OrderPayment.objects.authorized().filter(

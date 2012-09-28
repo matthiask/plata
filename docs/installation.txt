@@ -256,3 +256,26 @@ your ``settings.py``, adjusting the logfile path::
     plata_logging_handler.setFormatter(plata_logging_formatter)
     plata_logger.addHandler(plata_logging_handler)
 
+
+Implementing the shop as FeinCMS application content
+----------------------------------------------------
+
+To use the shop as application content you have to
+overwrite the ``render`` and ``redirect`` methods on your shop class.
+Take a look at this example in ``myshop.views``::
+
+    from feincms.content.application.models import app_reverse
+    from plata.shop.views import Shop
+
+    class CustomShop(Shop):
+
+        def render(self, request, template, context):
+            """ render for application content """
+            return template, context
+
+        def redirect(self, url_name):
+            return redirect(app_reverse(url_name, 'myshop.urls'))
+
+        base_template = 'site_base.html'
+
+    shop = CustomShop(Contact, Order, Discount)

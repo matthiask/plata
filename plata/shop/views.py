@@ -7,9 +7,9 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import get_callable, reverse
-from django.forms.models import inlineformset_factory
+from django.forms.models import ModelForm, inlineformset_factory
 from django.http import HttpResponseRedirect
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect as django_redirect, render
 from django.utils.translation import ugettext as _
 
 import plata
@@ -20,22 +20,24 @@ from plata.shop import signals
 logger = logging.getLogger('plata.shop.views')
 
 
-def cart_not_empty(order, request, **kwargs):
+def cart_not_empty(order, shop, request, **kwargs):
     """Redirect to cart if later in checkout process and cart empty"""
     if not order or not order.items.count():
         messages.warning(request, _('Cart is empty.'))
-        return HttpResponseRedirect(reverse('plata_shop_cart'))
+        return shop.redirect('plata_shop_cart')
 
-def order_already_confirmed(order, request, **kwargs):
+
+def order_already_confirmed(order, shop, request, **kwargs):
     """Redirect to confirmation or already paid view if the order is already confirmed"""
     if order and order.status >= order.CONFIRMED:
         if not order.balance_remaining:
-            return redirect('plata_order_success')
+            return shop.redirect('plata_order_success')
         messages.warning(request,
             _('You have already confirmed this order earlier, but it is not fully paid for yet.'))
         return HttpResponseRedirect(reverse('plata_shop_confirmation') + '?confirmed=1')
 
-def order_cart_validates(order, request, **kwargs):
+
+def order_cart_validates(order, shop, request, **kwargs):
     """Redirect to cart if stock is insufficient and display an error message"""
     if request.method != 'GET':
         return
@@ -45,7 +47,8 @@ def order_cart_validates(order, request, **kwargs):
     except ValidationError, e:
         for message in e.messages:
             messages.error(request, message)
-        return HttpResponseRedirect(reverse('plata_shop_cart') + '?e=1')
+        return shop.redirect('plata_shop_cart_invalid')
+
 
 def order_cart_warnings(order, request, **kwargs):
     """Show warnings in cart, but don't redirect (meant as a replacement for
@@ -58,6 +61,7 @@ def order_cart_warnings(order, request, **kwargs):
     except ValidationError, e:
         for message in e.messages:
             messages.warning(request, message)
+        return shop.redirect('plata_shop_cart')
 
 
 def checkout_process_decorator(*checks):
@@ -139,6 +143,9 @@ class Shop(object):
             url(r'^cart/$', checkout_process_decorator(
                     order_already_confirmed, order_cart_warnings,
                 )(self.cart), name='plata_shop_cart'),
+            url(r'^cart/?e=1$', checkout_process_decorator(
+                    order_already_confirmed, order_cart_warnings,
+                )(self.cart), name='plata_shop_cart_invalid'),
             url(r'^checkout/$', checkout_process_decorator(
                     cart_not_empty, order_already_confirmed, order_cart_validates,
                 )(self.checkout), name='plata_shop_checkout'),
@@ -251,6 +258,13 @@ class Shop(object):
         """
         return render(request, template, context)
 
+    def redirect(self, url_name, *args, **kwargs):
+        """
+        Hook for customizing the redirect function when used as application
+        content
+        """
+        return django_redirect(url_name, *args, **kwargs)
+
     def cart(self, request, order):
         """Shopping cart view"""
 
@@ -262,6 +276,7 @@ class Shop(object):
         OrderItemFormset = inlineformset_factory(
             self.order_model,
             self.orderitem_model,
+            form = getattr(self, 'form', ModelForm),
             extra=0,
             fields=('quantity',),
             )
@@ -291,7 +306,7 @@ class Shop(object):
                     messages.success(request, _('The cart has been updated.'))
 
                 if 'checkout' in request.POST:
-                    return redirect('plata_shop_checkout')
+                    return self.redirect('plata_shop_checkout')
                 return HttpResponseRedirect('.')
         else:
             formset = OrderItemFormset(instance=order)
@@ -357,7 +372,7 @@ class Shop(object):
 
             if orderform.is_valid():
                 orderform.save()
-                return redirect('plata_shop_discounts')
+                return self.redirect('plata_shop_discounts')
         else:
             orderform = OrderForm(**orderform_kwargs)
 
@@ -395,7 +410,7 @@ class Shop(object):
                 form.save()
 
                 if 'proceed' in request.POST:
-                    return redirect('plata_shop_confirmation')
+                    return self.redirect('plata_shop_confirmation')
                 return HttpResponseRedirect('.')
         else:
             form = DiscountForm(**kwargs)

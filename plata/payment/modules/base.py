@@ -1,6 +1,5 @@
 import logging
 
-from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 
 import plata
@@ -189,4 +188,4 @@ class ProcessorBase(object):
 
             self.order_paid(order)
 
-        return redirect('plata_order_success')
+        return self.shop.redirect('plata_order_success')

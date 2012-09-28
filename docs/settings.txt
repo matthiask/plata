@@ -37,7 +37,7 @@ Settings
   If you use :class:`~plata.shop.processors.FixedAmountShippingProcessor`,
   you should fill in the cost incl. tax and tax rate here.
 
-  Defaults to ``{'cost': Decimal('8.00'), 'tax': Decimal('7.6')}``
+  Defaults to ``{'cost': Decimal('8.00'), 'tax': Decimal('8.0')}``
 
 
 ``PLATA_REPORTING_STATIONERY``:
