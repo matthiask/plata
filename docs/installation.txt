@@ -234,6 +234,20 @@ Next, you need to add the Shop's URLs to your URLconf::
     )
 
 
+The context processor
+---------------------
+
+You can add ``plata.context_processors.plata_context`` to your ``settings.TEMPLATE_CONTEXT_PROCESSORS``.
+This will add the following variables to your template context if they are available:
+
+    * ``plata.shop``: The current :class:`plata.shop.views.Shop` instance
+    * ``plata.order``: The current order
+    * ``plata.contact``: The current contact instance
+    * ``plata.price_includes_tax``: Whether prices include tax or not
+
+Alternatively you can also just overwrite the ``get_context`` method in your shop class.
+
+
 Setting up logging
 ------------------
 
