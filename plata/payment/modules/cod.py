@@ -39,4 +39,4 @@ class PaymentProcessor(ProcessorBase):
             type=StockTransaction.SALE, negative=True, payment=payment)
         self.order_paid(order, payment=payment)
 
-        return self.redirect('plata_order_success')
+        return self.shop.redirect('plata_order_success')
