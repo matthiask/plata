@@ -222,7 +222,7 @@ Generic views using ``plata.shop_instance()`` could look like this::
 
 Next, you need to add the Shop's URLs to your URLconf::
 
-    from django.conf.urls.defaults import *
+    from django.conf.urls import *
     from myapp.views import shop
 
     urlpatterns = patterns('',

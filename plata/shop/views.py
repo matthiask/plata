@@ -138,7 +138,7 @@ class Shop(object):
         return self.get_shop_urls() + self.get_payment_urls()
 
     def get_shop_urls(self):
-        from django.conf.urls.defaults import patterns, url
+        from django.conf.urls import patterns, url
         return patterns('',
             url(r'^cart/$', checkout_process_decorator(
                     order_already_confirmed, order_cart_warnings,
@@ -165,7 +165,7 @@ class Shop(object):
             )
 
     def get_payment_urls(self):
-        from django.conf.urls.defaults import patterns, url, include
+        from django.conf.urls import patterns, url, include
         urls = [url(r'', include(module.urls)) for module in self.get_payment_modules()]
         return patterns('', *urls)
 
