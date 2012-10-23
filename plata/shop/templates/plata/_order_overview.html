@@ -38,20 +38,32 @@
 
 <h2>{% trans "Total" %}</h2>
 <table>
-<tr>
-    <th>{% trans "subtotal"|capfirst %}</th>
-    <td>{{ order.currency }} {{ order.subtotal|floatformat:2 }}</td>
-</tr>
-<tr>
-    <th>{% trans "discount"|capfirst %}</th>
-    <td>{{ order.currency }} {{ order.discount|floatformat:2 }}</td>
-</tr>
-<tr>
-    <th>{% trans "tax"|capfirst %}</th>
-    <td>{{ order.currency }} {{ order.tax|floatformat:2 }}</td>
-</tr>
-<tr>
-    <th>{% trans "total"|capfirst %}</th>
-    <td>{{ order.currency }} {{ order.total|floatformat:2 }}</td>
-</tr>
+    {% if order.discount or not price_includes_tax %}
+    <tr>
+        <th>{% trans "subtotal"|capfirst %}</th>
+        <td>{{ order.currency }} {{ order.subtotal|floatformat:2 }}</td>
+    </tr>
+    {% endif %}
+    {% if order.discount %}
+    <tr>
+        <th>{% trans "discount"|capfirst %}</th>
+        <td>{{ order.currency }} {{ order.discount|floatformat:2 }}</td>
+    </tr>
+    {% endif %}
+    {% if not price_includes_tax %}
+    <tr>
+        <th>{% trans "tax"|capfirst %}</th>
+        <td>{{ order.currency }} {{ order.tax|floatformat:2 }}</td>
+    </tr>
+    {% endif %}
+    <tr>
+        <th>{% trans "total"|capfirst %}</th>
+        <td><strong>{{ order.currency }} {{ order.total|floatformat:2 }}</strong></td>
+    </tr>
+    {% if price_includes_tax %}
+    <tr>
+        <td>{% trans "of which tax"|capfirst %}</td>
+        <td>{{ order.currency }} {{ order.tax|floatformat:2 }}</td>
+    </tr>
+    {% endif %}
 </table>

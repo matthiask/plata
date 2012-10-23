@@ -12,6 +12,8 @@ class Product(ProductBase, PriceBase):
     This product model is a price too, which means that only one price
     can exist. The administration interface is even simpler when following
     this approach.
+
+    Be aware that {{ product.get_price }} returns the name now.
     """
 
     is_active = models.BooleanField(_('is active'), default=True)

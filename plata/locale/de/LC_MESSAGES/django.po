@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-27 09:29+0200\n"
+"POT-Creation-Date: 2012-10-03 17:26+0200\n"
 "PO-Revision-Date: 2012-09-25 10:06+0200\n"
 "Last-Translator: Henning Kage <henning.kage@googlemail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -220,7 +220,7 @@ msgid "number of times already used"
 msgstr "Anzahl schon durchgeführte Verwendungen"
 
 #: discount/models.py:196 reporting/order.py:89
-#: shop/templates/plata/_order_overview.html:46
+#: shop/templates/plata/_order_overview.html:49
 msgid "discount"
 msgstr "Rabatt"
 
@@ -302,23 +302,23 @@ msgstr "Paypal"
 msgid "Postfinance"
 msgstr "Postfinance"
 
-#: product/stock/admin.py:9
+#: product/stock/admin.py:11
 msgid "initial stock"
 msgstr "Initialbestand"
 
-#: product/stock/admin.py:10
+#: product/stock/admin.py:13
 msgid "purchases and sales"
 msgstr "Ankäufe und Verkäufe"
 
-#: product/stock/admin.py:11
+#: product/stock/admin.py:15
 msgid "stock management"
 msgstr "Lagerbestands-Management"
 
-#: product/stock/admin.py:12
+#: product/stock/admin.py:17
 msgid "generic warehousing"
 msgstr "Generisches Lagerwesen"
 
-#: product/stock/admin.py:13
+#: product/stock/admin.py:19
 msgid "internal use"
 msgstr "interne Verwendung"
 
@@ -450,7 +450,7 @@ msgid "unit price"
 msgstr "Einheitspreis"
 
 #: reporting/order.py:85 shop/models.py:127
-#: shop/templates/plata/_order_overview.html:42
+#: shop/templates/plata/_order_overview.html:43
 msgid "subtotal"
 msgstr "Zwischensumme"
 
@@ -459,7 +459,7 @@ msgid "shipping"
 msgstr "Lieferung"
 
 #: reporting/order.py:98 shop/models.py:143
-#: shop/templates/plata/_order_overview.html:54
+#: shop/templates/plata/_order_overview.html:60
 msgid "total"
 msgstr "Total"
 
@@ -545,9 +545,13 @@ msgstr "Dieser Code ist ungültig"
 msgid "I accept the terms and conditions."
 msgstr "Ich akzeptiere die Allgemeinen Geschäftsbedingungen."
 
-#: shop/forms.py:128
+#: shop/forms.py:130 shop/forms.py:135
 msgid "Payment method"
 msgstr "Bezahlungsmethode"
+
+#: shop/forms.py:136
+msgid "Please select a payment method"
+msgstr "Bitte Bezahlungsmethode auswählen"
 
 #: shop/models.py:28
 msgid "rate"
@@ -838,11 +842,11 @@ msgstr "MwSt enthalten"
 msgid "Is tax included in given unit price?"
 msgstr "Ist die MwSt im angegebenen Einheitspreis enthalten?"
 
-#: shop/views.py:27
+#: shop/views.py:23
 msgid "Cart is empty."
 msgstr "Warenkorb ist leer."
 
-#: shop/views.py:37
+#: shop/views.py:33
 msgid ""
 "You have already confirmed this order earlier, but it is not fully paid for "
 "yet."
@@ -850,20 +854,19 @@ msgstr ""
 "Sie haben diese Bestellung bereits früher bestätigt, aber sie ist noch nicht "
 "vollständig bezahlt."
 
-#: shop/views.py:288
+#: shop/views.py:286
 msgid "The cart has been updated."
 msgstr "Der Warenkorb wurde aktualisiert."
 
-#: shop/views.py:488
+#: shop/views.py:486
 msgid "Payment failed, please try again."
-msgstr ""
+msgstr "Die Bezahlung ist fehlgeschlagen. Bitte versuchen Sie es noch einmal."
 
-#: shop/views.py:492
-#, fuzzy
+#: shop/views.py:490
 msgid "Payment failed; you can continue editing your order and try again."
 msgstr ""
-"Sie können Ihre Bestellung weiterbearbeiten und nachher nochmals einen "
-"Versuch starten."
+"Die Bezahlung ist fehlgeschlagen. Sie können Ihre Bestellung weiterbearbeiten "
+"und nachher nochmals einen Bezahlversuch starten."
 
 #: shop/templates/_form_errors.html:3
 msgid "Please correct the following errors:"
@@ -950,9 +953,13 @@ msgstr "Rabatte"
 msgid "No discounts"
 msgstr "Keine Rabatte"
 
-#: shop/templates/plata/_order_overview.html:50
+#: shop/templates/plata/_order_overview.html:55
 msgid "tax"
 msgstr "MwSt"
+
+#: shop/templates/plata/_order_overview.html:65
+msgid "of which tax"
+msgstr ""
 
 #: shop/templates/plata/shop_cart.html:9
 msgid "Cart is empty!"
