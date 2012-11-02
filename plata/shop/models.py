@@ -530,7 +530,9 @@ class OrderStatus(models.Model):
     def save(self, *args, **kwargs):
         super(OrderStatus, self).save(*args, **kwargs)
         self.order.status = self.status
-        if self.status >= Order.CONFIRMED and not self.order.confirmed:
+        if self.status == Order.CONFIRMED:
+            self.order.confirmed = datetime.now()
+        elif self.status > Order.CONFIRMED and not self.order.confirmed:
             self.order.confirmed = datetime.now()
         elif self.status < Order.CONFIRMED:
             # Ensure that the confirmed date is not set
