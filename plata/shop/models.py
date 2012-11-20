@@ -341,7 +341,7 @@ class Order(BillingShippingAddress):
             try:
                 price = product.get_price(currency=self.currency, orderitem=item)
             except ObjectDoesNotExist:
-                logger.error('No price could be found for %s with currency %s' % (
+                logger.error(u'No price could be found for %s with currency %s' % (
                     product, self.currency))
                 raise
 
