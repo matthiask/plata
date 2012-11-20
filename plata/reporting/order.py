@@ -126,7 +126,7 @@ class OrderReport(object):
             except IndexError:
                 payment = None
 
-            if payment:
+            if payment and payment.payment_method:
                 self.pdf.p(_('Already paid for with %(payment_method)s (Transaction %(transaction)s).') % {
                     'payment_method': payment.payment_method,
                     'transaction': payment.transaction_id,
