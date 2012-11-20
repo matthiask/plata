@@ -21,9 +21,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
 
 from plata.payment.modules.base import ProcessorBase
-from plata.product.stock.models import StockTransaction
 from plata.shop.models import OrderPayment
-
+import plata
 
 logger = logging.getLogger('plata.payment.paypal')
 
@@ -50,9 +49,11 @@ class PaymentProcessor(ProcessorBase):
         logger.info('Processing order %s using Paypal' % order)
 
         payment = self.create_pending_payment(order)
-        self.create_transactions(order, _('payment process reservation'),
-            type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
-            negative=True, payment=payment)
+        if plata.settings.PLATA_STOCK_TRACKING:
+            StockTransaction = plata.stock_model()
+            self.create_transactions(order, _('payment process reservation'),
+                type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
+                negative=True, payment=payment)
 
         if PAYPAL['LIVE']:
             PP_URL = "https://www.paypal.com/cgi-bin/webscr"
@@ -139,7 +140,8 @@ class PaymentProcessor(ProcessorBase):
 
                 logger.info('IPN: Successfully processed IPN request for %s' % order)
 
-                if payment.authorized:
+                if payment.authorized and plata.settings.PLATA_STOCK_TRACKING:
+                    StockTransaction = plata.stock_model()
                     self.create_transactions(order, _('sale'),
                         type=StockTransaction.SALE, negative=True, payment=payment)
 

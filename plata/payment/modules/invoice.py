@@ -1,5 +1,5 @@
 """
-Payment module for cash on delivery handling
+Payment module for invoice handling
 
 Automatically completes every order passed.
 """
@@ -14,19 +14,18 @@ import plata
 from plata.payment.modules.base import ProcessorBase
 from plata.shop.models import OrderPayment
 
-
-logger = logging.getLogger('plata.payment.cod')
+logger = logging.getLogger('plata.payment.invoice')
 
 
 class PaymentProcessor(ProcessorBase):
-    key = 'cod'
-    default_name = _('Cash on delivery')
+    key = 'invoice'
+    default_name = _('Invoice')
 
     def process_order_confirmed(self, request, order):
-        if not order.balance_remaining:
+        if order.is_paid():
             return self.already_paid(order)
 
-        logger.info('Processing order %s using COD' % order)
+        logger.info('Processing order %s using Invoice' % order)
 
         payment = self.create_pending_payment(order)
 
@@ -41,4 +40,4 @@ class PaymentProcessor(ProcessorBase):
                 type=StockTransaction.SALE, negative=True, payment=payment)
         self.order_paid(order, payment=payment)
 
-        return self.shop.redirect('plata_order_success')
+        return redirect('plata_order_success')

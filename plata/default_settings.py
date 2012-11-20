@@ -60,6 +60,7 @@ PLATA_REPORTING_ADDRESSLINE = getattr(settings, 'PLATA_REPORTING_ADDRESSLINE', '
 #: ``'plata.product.stock'`` has to be included in ``INSTALLED_APPS`` for this
 #: to work.
 PLATA_STOCK_TRACKING = getattr(settings, 'PLATA_STOCK_TRACKING', False)
+PLATA_STOCK_TRACKING_MODEL = getattr(settings, 'PLATA_STOCK_TRACKING_MODEL', 'stock.StockTransaction')
 
 #: All available currencies. Use ISO 4217 currency codes in this list only.
 CURRENCIES = getattr(settings, 'CURRENCIES', ('CHF', 'EUR', 'USD', 'CAD'))

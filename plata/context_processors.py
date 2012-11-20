@@ -15,6 +15,6 @@ def plata_context(request):
     return {'plata': {
         'shop': shop,
         'order': shop.order_from_request(request),
-        'contact': shop.contact_from_user(request.user),
+        'contact': shop.contact_from_user(request.user) if hasattr(request, 'user') else None,
         'price_includes_tax': plata.settings.PLATA_PRICE_INCLUDES_TAX,
         }} if shop else {}
