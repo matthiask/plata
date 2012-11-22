@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import get_callable, reverse
 from django.forms.models import ModelForm, inlineformset_factory
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, reverse_url
+from django.shortcuts import render
 from django.utils.translation import ugettext as _
 
 import plata
@@ -263,7 +263,7 @@ class Shop(object):
         """
         Hook for customizing the reverse function
         """
-        return reverse_url(url_name, *args, **kwargs)
+        return reverse(url_name, *args, **kwargs)
 
     def redirect(self, url_name, *args, **kwargs):
         """
