@@ -61,7 +61,7 @@ def order_cart_warnings(order, request, **kwargs):
     except ValidationError, e:
         for message in e.messages:
             messages.warning(request, message)
-        return shop.redirect('plata_shop_cart')
+        return plata.shop_instance().redirect('plata_shop_cart_invalid')
 
 
 def checkout_process_decorator(*checks):
@@ -143,7 +143,7 @@ class Shop(object):
             url(r'^cart/$', checkout_process_decorator(
                     order_already_confirmed, order_cart_warnings,
                 )(self.cart), name='plata_shop_cart'),
-            url(r'^cart/?e=1$', checkout_process_decorator(
+            url(r'^cart/\?e=1$', checkout_process_decorator(
                     order_already_confirmed, order_cart_warnings,
                 )(self.cart), name='plata_shop_cart_invalid'),
             url(r'^checkout/$', checkout_process_decorator(
