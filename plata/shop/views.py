@@ -50,7 +50,7 @@ def order_cart_validates(order, shop, request, **kwargs):
         return shop.redirect('plata_shop_cart_invalid')
 
 
-def order_cart_warnings(order, request, **kwargs):
+def order_cart_warnings(order, shop, request, **kwargs):
     """Show warnings in cart, but don't redirect (meant as a replacement for
     ``order_cart_validates``, but usable on the cart view itself)"""
     if request.method != 'GET' or request.GET.get('e') or not order:
@@ -61,7 +61,7 @@ def order_cart_warnings(order, request, **kwargs):
     except ValidationError, e:
         for message in e.messages:
             messages.warning(request, message)
-        return plata.shop_instance().redirect('plata_shop_cart_invalid')
+        return shop.redirect('plata_shop_cart_invalid')
 
 
 def checkout_process_decorator(*checks):
