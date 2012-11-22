@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import get_callable, reverse
 from django.forms.models import ModelForm, inlineformset_factory
 from django.http import HttpResponseRedirect
-from django.shortcuts import redirect as django_redirect, render
+from django.shortcuts import render, reverse_url
 from django.utils.translation import ugettext as _
 
 import plata
@@ -34,7 +34,8 @@ def order_already_confirmed(order, shop, request, **kwargs):
             return shop.redirect('plata_order_success')
         messages.warning(request,
             _('You have already confirmed this order earlier, but it is not fully paid for yet.'))
-        return HttpResponseRedirect(reverse('plata_shop_confirmation') + '?confirmed=1')
+        return HttpResponseRedirect(
+            shop.reverse_url('plata_shop_confirmation') + '?confirmed=1')
 
 
 def order_cart_validates(order, shop, request, **kwargs):
@@ -47,7 +48,8 @@ def order_cart_validates(order, shop, request, **kwargs):
     except ValidationError, e:
         for message in e.messages:
             messages.error(request, message)
-        return shop.redirect('plata_shop_cart_invalid')
+        return HttpResponseRedirect(
+            shop.reverse_url('plata_shop_cart') + '?e=1')
 
 
 def order_cart_warnings(order, shop, request, **kwargs):
@@ -61,7 +63,6 @@ def order_cart_warnings(order, shop, request, **kwargs):
     except ValidationError, e:
         for message in e.messages:
             messages.warning(request, message)
-        return shop.redirect('plata_shop_cart_invalid')
 
 
 def checkout_process_decorator(*checks):
@@ -143,9 +144,6 @@ class Shop(object):
             url(r'^cart/$', checkout_process_decorator(
                     order_already_confirmed, order_cart_warnings,
                 )(self.cart), name='plata_shop_cart'),
-            url(r'^cart/\?e=1$', checkout_process_decorator(
-                    order_already_confirmed, order_cart_warnings,
-                )(self.cart), name='plata_shop_cart_invalid'),
             url(r'^checkout/$', checkout_process_decorator(
                     cart_not_empty, order_already_confirmed, order_cart_validates,
                 )(self.checkout), name='plata_shop_checkout'),
@@ -261,12 +259,19 @@ class Shop(object):
         """
         return render(request, template, context)
 
+    def reverse_url(self, url_name, *args, **kwargs):
+        """
+        Hook for customizing the reverse function
+        """
+        return reverse_url(url_name, *args, **kwargs)
+
     def redirect(self, url_name, *args, **kwargs):
         """
         Hook for customizing the redirect function when used as application
         content
         """
-        return django_redirect(url_name, *args, **kwargs)
+        return HttpResponseRedirect(
+            self.reverse_url(url_name, *args, **kwargs))
 
     def cart(self, request, order):
         """Shopping cart view"""
