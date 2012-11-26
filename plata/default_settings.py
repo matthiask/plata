@@ -45,7 +45,7 @@ PLATA_PAYMENT_MODULE_NAMES = getattr(settings, 'PLATA_PAYMENT_MODULE_NAMES', {})
 #: The cost must be specified with tax included.
 PLATA_SHIPPING_FIXEDAMOUNT = getattr(settings, 'PLATA_SHIPPING_FIXEDAMOUNT', {
     'cost': Decimal('8.00'),
-    'tax': Decimal('8.0'),
+    'tax': Decimal('7.6'),
     })
 
 #: Stationery for invoice and packing slip PDF generation
