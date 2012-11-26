@@ -5,7 +5,7 @@ from django.db.models import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext as _
-from django.views.generic import  list_detail
+from django.views import generic
 
 from plata.contact.models import Contact
 from plata.discount.models import Discount
@@ -18,11 +18,10 @@ from simple.models import Product
 shop = Shop(Contact, Order, Discount)
 
 
-def product_list(request):
-    return list_detail.object_list(request,
-        queryset=Product.objects.filter(is_active=True),
-        template_name='product/product_list.html',
-        )
+product_list = generic.ListView.as_view(
+    queryset=Product.objects.filter(is_active=True),
+    template_name='product/product_list.html',
+    )
 
 
 class OrderItemForm(forms.Form):
