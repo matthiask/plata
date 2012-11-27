@@ -53,3 +53,28 @@ can use ``./manage.py convert_to_south`` on each Plata app and you're done.
    ``migrations``. By using ``migrations`` you're telling South that this
    folder contains migrations for the ``yourapp`` app, and this **will**
    confuse South.
+
+
+.. _migrations_upgrading:
+
+Upgrading instructions
+======================
+
+From v1.1 to v1.2
+-----------------
+
+Run the following commands in the SQL shell::
+
+    ./manage.py dbshell
+    DELETE FROM south_migrationhistory WHERE app_name='contact';
+    DELETE FROM south_migrationhistory WHERE app_name='discount';
+    DELETE FROM south_migrationhistory WHERE app_name='stock';
+    DELETE FROM south_migrationhistory WHERE app_name='shop';
+
+Add the SOUTH_MIGRATION_MODULES`` setting above, and run the following
+commands::
+
+    ./manage.py convert_to_south contact
+    ./manage.py convert_to_south discount
+    ./manage.py convert_to_south stock
+    ./manage.py convert_to_south shop
