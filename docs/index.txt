@@ -28,6 +28,7 @@ Contents
    contracts
    taxes
    discounts
+   migrations
    examples
 
 

@@ -67,8 +67,11 @@ def checkout_process_decorator(*checks):
     Calls all passed checkout process decorators in turn::
 
         @checkout_process_decorator(order_already_confirmed, order_cart_validates)
-        def mymethod(self...):
-            # Whatever
+
+    All checkout process decorators are called with the order, the shop
+    instance and the request as keyword arguments. In the future, additional
+    keywords might be added, your decorators should accept ``**kwargs`` as
+    well for future compatibility.
     """
 
     def _dec(fn):
