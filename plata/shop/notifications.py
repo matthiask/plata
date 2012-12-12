@@ -117,7 +117,8 @@ class EmailHandler(BaseHandler):
         if self.always_bcc:
             email.bcc += list(self.always_bcc)
 
-        email.send()
+        # TODO log this, or send a replacement email to the shop owner
+        email.send(fail_silently=False)
 
 
 class ContactCreatedHandler(EmailHandler):
