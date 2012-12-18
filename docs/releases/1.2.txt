@@ -1,0 +1,17 @@
+==================================
+Plata 1.2 release notes (upcoming)
+==================================
+
+Welcome to Plata 1.2!
+
+
+Backwards-incompatible changes
+==============================
+
+
+Notable features
+================
+
+
+Bugfixes
+========
