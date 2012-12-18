@@ -11,6 +11,16 @@ Backwards-incompatible changes
 South migrations removal
 ------------------------
 
+Plata does not include database migrations for South (anymore). The reason for
+that is that Django (and by extension, South) does not support the concept of
+lazy foreign keys. Because you're free to choose any model as product for Plata
+(configurable using ``PLATA_SHOP_PRODUCT``) we do not know beforehand, how the
+database constraints for the order item product foreign key should look
+beforehand.
+
+Upgrade instructions and further informations are available in
+:ref:`migrations`.
+
 
 Django compatibility
 --------------------
