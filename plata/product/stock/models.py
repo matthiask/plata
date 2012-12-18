@@ -260,6 +260,7 @@ class StockTransaction(models.Model):
             self.product.handle_stock_transaction(self)
 
         super(StockTransaction, self).save(*args, **kwargs)
+    save.alters_data = True
 
 
 def update_items_in_stock(instance, **kwargs):

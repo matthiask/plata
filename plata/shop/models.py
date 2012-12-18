@@ -170,6 +170,7 @@ class Order(BillingShippingAddress):
 
             self._order_id = 'O-%09d' % (latest + 1)
         super(Order, self).save(*args, **kwargs)
+    save.alters_data = True
 
     @property
     def order_id(self):
@@ -538,6 +539,7 @@ class OrderStatus(models.Model):
             # Ensure that the confirmed date is not set
             self.order.confirmed = None
         self.order.save()
+    save.alters_data = True
 
 
 class OrderPaymentManager(models.Manager):
@@ -620,10 +622,12 @@ class OrderPayment(models.Model):
         if self.currency != self.order.currency:
             self.order.notes += u'\n' + _('Currency of payment %s does not match.') % self
             self.order.save()
+    save.alters_data = True
 
     def delete(self, *args, **kwargs):
         super(OrderPayment, self).delete(*args, **kwargs)
         self._recalculate_paid()
+    delete.alters_data = True
 
 
 class PriceBase(models.Model):
