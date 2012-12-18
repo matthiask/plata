@@ -8,10 +8,42 @@ Welcome to Plata 1.2!
 Backwards-incompatible changes
 ==============================
 
+South migrations removal
+------------------------
+
+
+Django compatibility
+--------------------
+
+Plata is developed and tested with Django 1.4 and the upcoming 1.5.
+
 
 Notable features
 ================
 
+* The shop view now comes with two additional methods, ``redirect`` and
+  ``reverse_url`` which can be used to customize the URL reversal process which
+  is especially useful with namespaced URLs.
+
+* The Django model used for stock tracking can be changed using the new
+  ``PLATA_STOCK_TRACKING_MODEL`` setting.
+
+* The product foreign key on stock transactions now has ``on_delete=SET_NULL``
+  set as well.
+
+* If the method ``Product.handle_stock_transaction`` exists, it is called
+  when saving stock transactions providing the opportunity for filling in
+  additional fields.
+
+* Tax classes no longer have reverse foreign keys to prices. That means that
+  having more than one price model in a project is now fully supported.
+
 
 Bugfixes
 ========
+
+* The plata context processor does not crash anymore when there is no
+  session.
+
+* The shop does not crash anymore during checkout if email sending fails for
+  some reason.
