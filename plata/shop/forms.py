@@ -9,7 +9,6 @@ except ImportError, e:
 
 from django.utils.translation import ugettext_lazy as _
 
-
 from plata.shop import signals
 
 
