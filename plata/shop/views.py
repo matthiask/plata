@@ -299,9 +299,12 @@ class Shop(object):
                 # checks in modify_item must be performed.
                 for form in formset.forms:
                     if formset.can_delete and formset._should_delete_form(form):
-                        order.modify_item(form.instance.product,
-                            absolute=0,
-                            recalculate=False)
+                        if order.is_confirmed():
+                            raise ValidationError(
+                                _('Cannot modify order once it has been confirmed.'),
+                                code='order_sealed')
+
+                        form.instance.delete()
                         changed = True
                     elif form.has_changed():
                         # TODO crashes if instance.product is None.

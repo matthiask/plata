@@ -310,6 +310,13 @@ class Order(BillingShippingAddress):
             for validator in self.VALIDATORS[g]:
                 validator(self)
 
+    def is_confirmed(self):
+        """
+        Returns ``True`` if this order has already been confirmed and therefore
+        cannot be modified anymore.
+        """
+        return self.status >= self.CONFIRMED
+
     def modify_item(self, product, relative=None, absolute=None, recalculate=True):
         """
         Updates order with the given product
@@ -324,7 +331,7 @@ class Order(BillingShippingAddress):
 
         assert (relative is None) != (absolute is None), 'One of relative or absolute must be provided.'
 
-        if self.status >= self.CONFIRMED:
+        if self.is_confirmed():
             raise ValidationError(_('Cannot modify order once it has been confirmed.'),
                 code='order_sealed')
 
