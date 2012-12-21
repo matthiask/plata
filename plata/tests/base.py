@@ -88,9 +88,15 @@ class PlataTest(TestCase):
             )
 
     def create_orderitem(self, product, order):
-        return OrderItem.objects.create(product=product, order=order,
-                                        quantity=1, _unit_price=0,
-                                        _unit_tax=0, tax_rate=0)
+        item = OrderItem(
+            product=product,
+            order=order,
+            quantity=1,
+            _unit_price=0,
+            _unit_tax=0,
+            tax_rate=0)
+        product.handle_order_item(item)
+        return item
 
     def create_tax_classes(self):
         self.tax_class, created = TaxClass.objects.get_or_create(
