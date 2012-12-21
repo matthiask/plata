@@ -304,6 +304,7 @@ class Shop(object):
                             recalculate=False)
                         changed = True
                     elif form.has_changed():
+                        # TODO crashes if instance.product is None.
                         order.modify_item(form.instance.product,
                             absolute=form.cleaned_data['quantity'],
                             recalculate=False)
