@@ -466,8 +466,10 @@ class OrderItem(models.Model):
         verbose_name_plural = _('order items')
 
     def __unicode__(self):
-        return _(u'%(quantity)s of %(product)s') % {'quantity': self.quantity,
-                                                    'product': self.product}
+        return _(u'%(quantity)s of %(name)s') % {
+            'quantity': self.quantity,
+            'name': self.name,
+            }
 
     @property
     def unit_price(self):
