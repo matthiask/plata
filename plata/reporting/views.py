@@ -16,12 +16,7 @@ def product_xls(request):
     """
     Returns an XLS containing product information
     """
-    output = StringIO.StringIO()
-    workbook = plata.reporting.product.product_xls()
-    workbook.save(output)
-    response = HttpResponse(output.getvalue(), mimetype='application/vnd.ms-excel')
-    response['Content-Disposition'] = 'attachment; filename=products.xls'
-    return response
+    return plata.reporting.product.product_xls().to_response('products.xlsx')
 
 
 @staff_member_required
