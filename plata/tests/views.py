@@ -4,7 +4,13 @@ import re
 from datetime import datetime, timedelta
 
 from django.conf import settings
-from django.contrib.auth.models import User
+
+try:
+  from django.contrib.auth import get_user_model
+  User = get_user_model()
+except ImportError, e:
+  from django.contrib.auth.models import User
+
 from django.core import mail
 from django.core.exceptions import ValidationError
 
@@ -37,7 +43,8 @@ class ViewTest(PlataTest):
 
     def test_02_authenticated_user_has_contact(self):
         """Test shop.contact_from_user works correctly"""
-        user = User.objects.create_user('test', 'test@example.com', 'testing')
+        user = User.objects.create_user('test', 'test@example.com',
+            'testing')
         self.client.login(username='test', password='testing')
 
         contact = Contact.objects.create(user=user)

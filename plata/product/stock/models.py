@@ -217,7 +217,7 @@ class StockTransaction(models.Model):
     created = models.DateTimeField(_('created'), default=datetime.now)
     product = models.ForeignKey(plata.settings.PLATA_SHOP_PRODUCT,
         related_name='stock_transactions', verbose_name=_('product'),
-        on_delete=models.SET_NULL)
+        on_delete=models.SET_NULL, null=True)
     type = models.PositiveIntegerField(_('type'), choices=TYPE_CHOICES)
     change = models.IntegerField(_('change'),
         help_text=_('Use negative numbers for sales, lendings and other outgoings.'))
