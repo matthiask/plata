@@ -1,4 +1,3 @@
-from datetime import date, datetime
 from decimal import Decimal
 import logging
 import re
@@ -13,6 +12,7 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import get_callable
 from django.db import models
 from django.db.models import F, ObjectDoesNotExist, Sum, Q
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 import plata
@@ -115,7 +115,7 @@ class Order(BillingShippingAddress):
         (COMPLETED, _('Order has been completed')),
         )
 
-    created = models.DateTimeField(_('created'), default=datetime.now)
+    created = models.DateTimeField(_('created'), default=timezone.now)
     confirmed = models.DateTimeField(_('confirmed'), blank=True, null=True)
     user = models.ForeignKey(User, blank=True, null=True,
         verbose_name=_('user'), related_name='orders')
@@ -528,7 +528,7 @@ class OrderStatus(models.Model):
     """
 
     order = models.ForeignKey(Order, related_name='statuses')
-    created = models.DateTimeField(_('created'), default=datetime.now)
+    created = models.DateTimeField(_('created'), default=timezone.now)
     status = models.PositiveIntegerField(_('status'), max_length=20, choices=Order.STATUS_CHOICES)
     notes = models.TextField(_('notes'), blank=True)
 
@@ -546,9 +546,9 @@ class OrderStatus(models.Model):
         super(OrderStatus, self).save(*args, **kwargs)
         self.order.status = self.status
         if self.status == Order.CONFIRMED:
-            self.order.confirmed = datetime.now()
+            self.order.confirmed = timezone.now()
         elif self.status > Order.CONFIRMED and not self.order.confirmed:
-            self.order.confirmed = datetime.now()
+            self.order.confirmed = timezone.now()
         elif self.status < Order.CONFIRMED:
             # Ensure that the confirmed date is not set
             self.order.confirmed = None
@@ -583,7 +583,7 @@ class OrderPayment(models.Model):
         )
 
     order = models.ForeignKey(Order, verbose_name=_('order'), related_name='payments')
-    timestamp = models.DateTimeField(_('timestamp'), default=datetime.now)
+    timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)
     status = models.PositiveIntegerField(_('status'), choices=STATUS_CHOICES,
         default=PENDING)
 

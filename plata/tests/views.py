@@ -1,7 +1,7 @@
 import os
 import re
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.conf import settings
 
@@ -13,6 +13,7 @@ except ImportError, e:
 
 from django.core import mail
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 import plata
 from plata.contact.models import Contact
@@ -630,12 +631,12 @@ class ViewTest(PlataTest):
         self.assertEqual(StockTransaction.objects.items_in_stock(p1,
             include_reservations=True), 3)
 
-        StockTransaction.objects.update(created=datetime.now()-timedelta(minutes=10))
+        StockTransaction.objects.update(created=timezone.now()-timedelta(minutes=10))
         self.assertEqual(StockTransaction.objects.items_in_stock(p1), 10)
         self.assertEqual(StockTransaction.objects.items_in_stock(p1,
             include_reservations=True), 3)
 
-        StockTransaction.objects.update(created=datetime.now()-timedelta(minutes=20))
+        StockTransaction.objects.update(created=timezone.now()-timedelta(minutes=20))
         self.assertEqual(StockTransaction.objects.items_in_stock(p1,
             include_reservations=True), 10)
         self.assertEqual(StockTransaction.objects.items_in_stock(p1), 10)
@@ -644,7 +645,7 @@ class ViewTest(PlataTest):
         order.modify_item(p1, relative=5)
         order.validate(order.VALIDATE_ALL)
 
-        StockTransaction.objects.update(created=datetime.now()-timedelta(minutes=10))
+        StockTransaction.objects.update(created=timezone.now()-timedelta(minutes=10))
         self.assertRaises(ValidationError, order.validate, order.VALIDATE_ALL)
 
     def test_14_remaining_discount(self):

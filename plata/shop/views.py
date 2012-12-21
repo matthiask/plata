@@ -8,7 +8,7 @@ from django.core.urlresolvers import get_callable, reverse
 from django.forms.models import ModelForm, inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.utils.translation import ugettext as _
+from django.utils.translation import get_language, ugettext as _
 
 import plata
 from plata.shop import forms as shop_forms
@@ -220,7 +220,7 @@ class Shop(object):
                     currency=getattr(contact, 'currency', self.default_currency(request)),
                     user=getattr(contact, 'user',
                         request.user if request.user.is_authenticated() else None),
-                    language_code=getattr(request, 'LANGUAGE_CODE', ''),
+                    language_code=get_language(),
                     )
 
                 self.set_order_on_request(request, order)

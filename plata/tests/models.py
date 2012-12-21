@@ -5,6 +5,7 @@ import StringIO
 from django import forms
 from django.core.exceptions import ValidationError
 from django.db.models import Q
+from django.utils import timezone
 
 from pdfdocument.document import PDFDocument
 
@@ -327,7 +328,7 @@ class ModelTest(PlataTest):
         order = Order.objects.get(pk=order.pk)
         self.assertAlmostEqual(order.paid, 0)
 
-        payment.authorized = datetime.now()
+        payment.authorized = timezone.now()
         payment.save()
 
         order = Order.objects.get(pk=order.pk)
@@ -599,7 +600,7 @@ class ModelTest(PlataTest):
         self.assertAlmostEqual(order.balance_remaining, Decimal('79.90') * 3)
 
         payment.transaction_id = '1234' # Not strictly required
-        payment.authorized = datetime.now()
+        payment.authorized = timezone.now()
         payment.save()
 
         order = Order.objects.get(pk=order.pk)
@@ -608,7 +609,7 @@ class ModelTest(PlataTest):
         order.payments.create(
             currency=order.currency,
             amount=Decimal('139.70'),
-            authorized=datetime.now(),
+            authorized=timezone.now(),
             )
 
         order = Order.objects.get(pk=order.pk)
@@ -627,18 +628,20 @@ class ModelTest(PlataTest):
 
         period = Period.objects.create(
             name='Period 1',
-            start=datetime.now(),
+            start=timezone.now(),
             )
         # Create a period which has been superceeded by Period 1
         Period.objects.create(
             name='Period 0',
-            start=datetime(2000, 1, 1, 0, 0),
+            start=timezone.make_aware(datetime(2000, 1, 1, 0, 0),
+                timezone.get_default_timezone()),
             )
 
         # Create a period in the far future
         Period.objects.create(
             name='Period 2',
-            start=datetime(2100, 1, 1, 0, 0),
+            start=timezone.make_aware(datetime(2100, 1, 1, 0, 0),
+                timezone.get_default_timezone()),
             )
 
         s = StockTransaction.objects.create(

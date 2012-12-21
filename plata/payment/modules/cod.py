@@ -4,10 +4,10 @@ Payment module for cash on delivery handling
 Automatically completes every order passed.
 """
 
-from datetime import datetime
 import logging
 
 from django.shortcuts import redirect
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 import plata
@@ -31,7 +31,7 @@ class PaymentProcessor(ProcessorBase):
         payment = self.create_pending_payment(order)
 
         payment.status = OrderPayment.AUTHORIZED
-        payment.authorized = datetime.now()
+        payment.authorized = timezone.now()
         payment.save()
         order = order.reload()
 
