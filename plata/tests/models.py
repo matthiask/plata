@@ -955,4 +955,28 @@ class ModelTest(PlataTest):
         self.assertEqual(unicode(orderpayment),
                          u'Authorized of 100 1.00 for O-000000001')
 
+    def test_28_order_items_without_products(self):
+        """Test order items where the product foreign key is NULL"""
+        tax_class, tax_class_germany, tax_class_something = self.create_tax_classes()
+        product = self.create_product()
+        product.prices.create(
+            currency='CHF',
+            tax_class=tax_class,
+            _unit_price=Decimal('100.00'),
+            tax_included=True,
+            )
 
+        order = self.create_order()
+        item = order.modify_item(product, absolute=5)
+        self.assertAlmostEqual(order.total, Decimal('500.00'))
+        item.product = None
+        item.save()
+        order.recalculate_total()
+        self.assertAlmostEqual(order.total, Decimal('500.00'))
+
+        # Modifying the price and adding products again does not change the old
+        # order item
+        product.prices.update(_unit_price=Decimal('50.00'))
+        order.modify_item(product, absolute=3)
+        self.assertAlmostEqual(order.total, Decimal('650.00'))
+        self.assertEqual(order.items.count(), 2)
