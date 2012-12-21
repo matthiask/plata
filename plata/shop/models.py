@@ -3,7 +3,12 @@ from decimal import Decimal
 import logging
 import re
 
-from django.contrib.auth.models import User
+try:
+  from django.contrib.auth import get_user_model
+  User = get_user_model()
+except ImportError, e:
+  from django.contrib.auth.models import User
+
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import get_callable
 from django.db import models
