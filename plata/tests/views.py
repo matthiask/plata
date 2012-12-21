@@ -257,7 +257,7 @@ class ViewTest(PlataTest):
         self.assertEqual(self.client.get('/reporting/packing_slip_pdf/%s/' % order.id)['Content-Type'],
             'application/pdf')
         self.assertEqual(self.client.get('/reporting/product_xls/')['Content-Type'],
-            'application/vnd.ms-excel')
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
     def test_05_creation(self):
         """Test creation of orders through the shop object"""
