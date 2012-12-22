@@ -16,12 +16,13 @@ Follow these steps to enable this module:
   account ``items_in_stock``.
 """
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.core.exceptions import (FieldError, ImproperlyConfigured,
     ValidationError)
 from django.db import models
 from django.db.models import Sum, Q, signals
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _, ugettext
 
 import plata
@@ -36,7 +37,7 @@ class PeriodManager(models.Manager):
         """
 
         try:
-            return self.filter(start__lte=datetime.now()).order_by('-start')[0]
+            return self.filter(start__lte=timezone.now()).order_by('-start')[0]
         except IndexError:
             return self.create(
                 name=ugettext('Automatically created'),
@@ -54,7 +55,7 @@ class Period(models.Model):
 
     name = models.CharField(_('name'), max_length=100)
     notes = models.TextField(_('notes'), blank=True)
-    start = models.DateTimeField(_('start'), default=datetime.now,
+    start = models.DateTimeField(_('start'), default=timezone.now,
         help_text=_('Period starts at this time. May also be a future date.'))
 
     class Meta:
@@ -111,7 +112,7 @@ class StockTransactionManager(models.Manager):
             update = False
             queryset = queryset.exclude(
                 type=self.model.PAYMENT_PROCESS_RESERVATION,
-                created__lt=datetime.now() - timedelta(seconds=15*60))
+                created__lt=timezone.now() - timedelta(seconds=15*60))
         else:
             queryset = queryset.exclude(type=self.model.PAYMENT_PROCESS_RESERVATION)
 
@@ -214,10 +215,10 @@ class StockTransaction(models.Model):
 
     period = models.ForeignKey(Period, default=Period.objects.current,
         related_name='stock_transactions', verbose_name=_('period'))
-    created = models.DateTimeField(_('created'), default=datetime.now)
+    created = models.DateTimeField(_('created'), default=timezone.now)
     product = models.ForeignKey(plata.settings.PLATA_SHOP_PRODUCT,
-        related_name='stock_transactions', verbose_name=_('product'))
-        # XXX add on_delete=models.SET_NULL here?
+        related_name='stock_transactions', verbose_name=_('product'),
+        on_delete=models.SET_NULL, null=True)
     type = models.PositiveIntegerField(_('type'), choices=TYPE_CHOICES)
     change = models.IntegerField(_('change'),
         help_text=_('Use negative numbers for sales, lendings and other outgoings.'))
@@ -260,6 +261,7 @@ class StockTransaction(models.Model):
             self.product.handle_stock_transaction(self)
 
         super(StockTransaction, self).save(*args, **kwargs)
+    save.alters_data = True
 
 
 def update_items_in_stock(instance, **kwargs):

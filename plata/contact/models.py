@@ -1,7 +1,11 @@
-from datetime import datetime
+try:
+  from django.contrib.auth import get_user_model
+  User = get_user_model()
+except ImportError, e:
+  from django.contrib.auth.models import User
 
-from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 from plata.fields import CurrencyField
@@ -26,7 +30,7 @@ class Contact(BillingShippingAddress):
         related_name='contactuser')
 
     dob = models.DateField(_('date of birth'), blank=True, null=True)
-    created = models.DateTimeField(_('created'), default=datetime.now)
+    created = models.DateTimeField(_('created'), default=timezone.now)
 
     currency = CurrencyField(help_text=_('Preferred currency.'))
     notes = models.TextField(_('notes'), blank=True)

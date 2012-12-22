@@ -114,6 +114,8 @@ class ProcessorBase(object):
         to ``StockTransaction.objects.bulk_create``.
         """
 
+        # TODO remove this check now that create_transactions is only called
+        # when PLATA_STOCK_TRACKING = True ?
         if not plata.settings.PLATA_STOCK_TRACKING:
             return
         StockTransaction = plata.stock_model()

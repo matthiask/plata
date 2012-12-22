@@ -9,13 +9,13 @@ Needs the following settings to work correctly::
         }
 """
 
-from datetime import datetime
 from decimal import Decimal
 import logging
 import urllib
 
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseForbidden
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
@@ -132,7 +132,7 @@ class PaymentProcessor(ProcessorBase):
                 payment.payment_method = payment.payment_module
 
                 if parameters['payment_status'] == 'Completed':
-                    payment.authorized = datetime.now()
+                    payment.authorized = timezone.now()
                     payment.status = OrderPayment.AUTHORIZED
 
                 payment.save()

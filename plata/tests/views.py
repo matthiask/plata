@@ -1,12 +1,19 @@
 import os
 import re
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.conf import settings
-from django.contrib.auth.models import User
+
+try:
+  from django.contrib.auth import get_user_model
+  User = get_user_model()
+except ImportError, e:
+  from django.contrib.auth.models import User
+
 from django.core import mail
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 import plata
 from plata.contact.models import Contact
@@ -37,7 +44,8 @@ class ViewTest(PlataTest):
 
     def test_02_authenticated_user_has_contact(self):
         """Test shop.contact_from_user works correctly"""
-        user = User.objects.create_user('test', 'test@example.com', 'testing')
+        user = User.objects.create_user('test', 'test@example.com',
+            'testing')
         self.client.login(username='test', password='testing')
 
         contact = Contact.objects.create(user=user)
@@ -249,7 +257,7 @@ class ViewTest(PlataTest):
         self.assertEqual(self.client.get('/reporting/packing_slip_pdf/%s/' % order.id)['Content-Type'],
             'application/pdf')
         self.assertEqual(self.client.get('/reporting/product_xls/')['Content-Type'],
-            'application/vnd.ms-excel')
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
     def test_05_creation(self):
         """Test creation of orders through the shop object"""
@@ -623,12 +631,12 @@ class ViewTest(PlataTest):
         self.assertEqual(StockTransaction.objects.items_in_stock(p1,
             include_reservations=True), 3)
 
-        StockTransaction.objects.update(created=datetime.now()-timedelta(minutes=10))
+        StockTransaction.objects.update(created=timezone.now()-timedelta(minutes=10))
         self.assertEqual(StockTransaction.objects.items_in_stock(p1), 10)
         self.assertEqual(StockTransaction.objects.items_in_stock(p1,
             include_reservations=True), 3)
 
-        StockTransaction.objects.update(created=datetime.now()-timedelta(minutes=20))
+        StockTransaction.objects.update(created=timezone.now()-timedelta(minutes=20))
         self.assertEqual(StockTransaction.objects.items_in_stock(p1,
             include_reservations=True), 10)
         self.assertEqual(StockTransaction.objects.items_in_stock(p1), 10)
@@ -637,7 +645,7 @@ class ViewTest(PlataTest):
         order.modify_item(p1, relative=5)
         order.validate(order.VALIDATE_ALL)
 
-        StockTransaction.objects.update(created=datetime.now()-timedelta(minutes=10))
+        StockTransaction.objects.update(created=timezone.now()-timedelta(minutes=10))
         self.assertRaises(ValidationError, order.validate, order.VALIDATE_ALL)
 
     def test_14_remaining_discount(self):

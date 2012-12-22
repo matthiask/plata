@@ -8,7 +8,7 @@ from django.core.urlresolvers import get_callable, reverse
 from django.forms.models import ModelForm, inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.utils.translation import ugettext as _
+from django.utils.translation import get_language, ugettext as _
 
 import plata
 from plata.shop import forms as shop_forms
@@ -220,7 +220,7 @@ class Shop(object):
                     currency=getattr(contact, 'currency', self.default_currency(request)),
                     user=getattr(contact, 'user',
                         request.user if request.user.is_authenticated() else None),
-                    language_code=getattr(request, 'LANGUAGE_CODE', ''),
+                    language_code=get_language(),
                     )
 
                 self.set_order_on_request(request, order)
@@ -299,11 +299,15 @@ class Shop(object):
                 # checks in modify_item must be performed.
                 for form in formset.forms:
                     if formset.can_delete and formset._should_delete_form(form):
-                        order.modify_item(form.instance.product,
-                            absolute=0,
-                            recalculate=False)
+                        if order.is_confirmed():
+                            raise ValidationError(
+                                _('Cannot modify order once it has been confirmed.'),
+                                code='order_sealed')
+
+                        form.instance.delete()
                         changed = True
                     elif form.has_changed():
+                        # TODO crashes if instance.product is None.
                         order.modify_item(form.instance.product,
                             absolute=form.cleaned_data['quantity'],
                             recalculate=False)

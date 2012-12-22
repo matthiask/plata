@@ -65,6 +65,7 @@ class DiscountBase(models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()
         super(DiscountBase, self).save(*args, **kwargs)
+    save.alters_data = True
 
     def clean(self):
         if self.type == self.PERCENTAGE_VOUCHER:

@@ -1,13 +1,18 @@
-from datetime import date, datetime
 from decimal import Decimal
 import logging
 import re
 
-from django.contrib.auth.models import User
+try:
+  from django.contrib.auth import get_user_model
+  User = get_user_model()
+except ImportError, e:
+  from django.contrib.auth.models import User
+
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import get_callable
 from django.db import models
 from django.db.models import F, ObjectDoesNotExist, Sum, Q
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
 import plata
@@ -110,7 +115,7 @@ class Order(BillingShippingAddress):
         (COMPLETED, _('Order has been completed')),
         )
 
-    created = models.DateTimeField(_('created'), default=datetime.now)
+    created = models.DateTimeField(_('created'), default=timezone.now)
     confirmed = models.DateTimeField(_('confirmed'), blank=True, null=True)
     user = models.ForeignKey(User, blank=True, null=True,
         verbose_name=_('user'), related_name='orders')
@@ -170,6 +175,7 @@ class Order(BillingShippingAddress):
 
             self._order_id = 'O-%09d' % (latest + 1)
         super(Order, self).save(*args, **kwargs)
+    save.alters_data = True
 
     @property
     def order_id(self):
@@ -304,6 +310,13 @@ class Order(BillingShippingAddress):
             for validator in self.VALIDATORS[g]:
                 validator(self)
 
+    def is_confirmed(self):
+        """
+        Returns ``True`` if this order has already been confirmed and therefore
+        cannot be modified anymore.
+        """
+        return self.status >= self.CONFIRMED
+
     def modify_item(self, product, relative=None, absolute=None, recalculate=True):
         """
         Updates order with the given product
@@ -318,7 +331,7 @@ class Order(BillingShippingAddress):
 
         assert (relative is None) != (absolute is None), 'One of relative or absolute must be provided.'
 
-        if self.status >= self.CONFIRMED:
+        if self.is_confirmed():
             raise ValidationError(_('Cannot modify order once it has been confirmed.'),
                 code='order_sealed')
 
@@ -460,8 +473,10 @@ class OrderItem(models.Model):
         verbose_name_plural = _('order items')
 
     def __unicode__(self):
-        return _(u'%(quantity)s of %(product)s') % {'quantity': self.quantity,
-                                                    'product': self.product}
+        return _(u'%(quantity)s of %(name)s') % {
+            'quantity': self.quantity,
+            'name': self.name,
+            }
 
     @property
     def unit_price(self):
@@ -513,7 +528,7 @@ class OrderStatus(models.Model):
     """
 
     order = models.ForeignKey(Order, related_name='statuses')
-    created = models.DateTimeField(_('created'), default=datetime.now)
+    created = models.DateTimeField(_('created'), default=timezone.now)
     status = models.PositiveIntegerField(_('status'), max_length=20, choices=Order.STATUS_CHOICES)
     notes = models.TextField(_('notes'), blank=True)
 
@@ -531,13 +546,14 @@ class OrderStatus(models.Model):
         super(OrderStatus, self).save(*args, **kwargs)
         self.order.status = self.status
         if self.status == Order.CONFIRMED:
-            self.order.confirmed = datetime.now()
+            self.order.confirmed = timezone.now()
         elif self.status > Order.CONFIRMED and not self.order.confirmed:
-            self.order.confirmed = datetime.now()
+            self.order.confirmed = timezone.now()
         elif self.status < Order.CONFIRMED:
             # Ensure that the confirmed date is not set
             self.order.confirmed = None
         self.order.save()
+    save.alters_data = True
 
 
 class OrderPaymentManager(models.Manager):
@@ -567,7 +583,7 @@ class OrderPayment(models.Model):
         )
 
     order = models.ForeignKey(Order, verbose_name=_('order'), related_name='payments')
-    timestamp = models.DateTimeField(_('timestamp'), default=datetime.now)
+    timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)
     status = models.PositiveIntegerField(_('status'), choices=STATUS_CHOICES,
         default=PENDING)
 
@@ -620,10 +636,12 @@ class OrderPayment(models.Model):
         if self.currency != self.order.currency:
             self.order.notes += u'\n' + _('Currency of payment %s does not match.') % self
             self.order.save()
+    save.alters_data = True
 
     def delete(self, *args, **kwargs):
         super(OrderPayment, self).delete(*args, **kwargs)
         self._recalculate_paid()
+    delete.alters_data = True
 
 
 class PriceBase(models.Model):
