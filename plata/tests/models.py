@@ -980,3 +980,41 @@ class ModelTest(PlataTest):
         order.modify_item(product, absolute=3)
         self.assertAlmostEqual(order.total, Decimal('650.00'))
         self.assertEqual(order.items.count(), 2)
+
+    def test_29_product_with_several_orderitems(self):
+        """The same product several times in the same cart"""
+
+        tax_class, tax_class_germany, tax_class_something = self.create_tax_classes()
+        product = self.create_product()
+        product.prices.create(
+            currency='CHF',
+            tax_class=tax_class,
+            _unit_price=Decimal('100.00'),
+            tax_included=True,
+            )
+
+        order = self.create_order()
+        order.modify_item(product, relative=1)
+        self.assertEqual(order.items.count(), 1)
+        order.modify_item(product, relative=1, force_new=False)
+        self.assertEqual(order.items.count(), 1)
+        order.modify_item(product, relative=1, force_new=True)
+        self.assertEqual(order.items.count(), 2)
+        any_item = order.modify_item(product, relative=1, force_new=True)
+        self.assertEqual(order.items.count(), 3)
+
+        # Now that we have the same product in the cart several times, fail
+        # when neither item nor force_new are given.
+        self.assertRaises(
+            ValidationError,
+            order.modify_item,
+            product,
+            relative=1,
+            force_new=False,
+            )
+        self.assertEqual(order.items.count(), 3)
+
+        # Verify that it works if the item is passed directly
+        order.modify_item(product, relative=10, item=any_item)
+        self.assertEqual(order.items.count(), 3)
+        self.assertEqual(any_item.quantity, 11)

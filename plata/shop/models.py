@@ -335,7 +335,7 @@ class Order(BillingShippingAddress):
         return self.status >= self.CONFIRMED
 
     def modify_item(self, product, relative=None, absolute=None,
-            recalculate=True, data=None):
+            recalculate=True, data=None, item=None, force_new=False):
         """
         Updates order with the given product
 
@@ -346,6 +346,11 @@ class Order(BillingShippingAddress):
         - ``data``: Additional data for the order item; replaces the contents of
           the JSON field if it is not ``None``. Pass an empty dictionary if you
           want to reset the contents.
+        - ``item``: The order item which should be modified. Will be
+          automatically detected using the product if unspecified.
+        - ``force_new``: Force the creation of a new order item, even if the
+          product exists already in the cart (especially useful if the product
+          is configurable).
 
         Returns the ``OrderItem`` instance; if quantity is zero, the order item
         instance is deleted, the ``pk`` attribute set to ``None`` but the order
@@ -354,15 +359,32 @@ class Order(BillingShippingAddress):
 
         assert ((relative is None) != (absolute is None),
             'One of relative or absolute must be provided.')
+        assert (force_new and (item is None),
+            'Cannot set item and force_new at the same time.')
 
         if self.is_confirmed():
             raise ValidationError(
                 _('Cannot modify order once it has been confirmed.'),
                 code='order_sealed')
 
-        try:
-            item = self.items.get(product=product)
-        except self.items.model.DoesNotExist:
+        if item is None and not force_new:
+            try:
+                item = self.items.get(product=product)
+            except self.items.model.DoesNotExist:
+                # Ok, product does not exist in cart yet.
+                pass
+            except self.items.model.MultipleObjectsReturned:
+                # Oops. Product already exists several times. Stay on the safe
+                # side and add a new one instead of trying to modify another.
+                # TODO maybe coalesce items when handle_orderitem() sets the same
+                # SKU for two products?
+                if not force_new:
+                    raise ValidationError(
+                        _('The product already exists several times in the'
+                            ' cart, and neither item nor force_new were'
+                            ' given.'))
+
+        if item is None:
             item = self.items.model(
                 order=self,
                 product=product,
@@ -503,7 +525,6 @@ class OrderItem(models.Model):
 
     class Meta:
         ordering = ('product',)
-        unique_together = (('order', 'product'),)
         verbose_name = _('order item')
         verbose_name_plural = _('order items')
 
