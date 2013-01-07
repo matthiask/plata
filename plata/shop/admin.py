@@ -31,7 +31,7 @@ class OrderAdmin(admin.ModelAdmin):
         (_('Order items'), {'fields': ('items_subtotal', 'items_discount', 'items_tax')}),
         (_('Shipping'), {'fields': ('shipping_cost', 'shipping_discount', 'shipping_tax')}),
         (_('Total'), {'fields': ('currency', 'total', 'paid')}),
-        (_('Additional fields'), {'fields': ('notes',)}),
+        (_('Additional fields'), {'fields': ('notes', 'data')}),
         )
     inlines = [OrderItemInline, AppliedDiscountInline, OrderStatusInline]
     list_display = ('admin_order_id', 'created', 'user', 'status', 'total',
