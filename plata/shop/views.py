@@ -310,7 +310,9 @@ class Shop(object):
                         # TODO crashes if instance.product is None.
                         order.modify_item(form.instance.product,
                             absolute=form.cleaned_data['quantity'],
-                            recalculate=False)
+                            recalculate=False,
+                            item=form.instance,
+                            )
                         changed = True
 
                 if changed:
