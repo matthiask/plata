@@ -33,7 +33,8 @@ class TaxClass(models.Model):
     rate = models.DecimalField(_('rate'), max_digits=10, decimal_places=2,
         help_text=_('Tax rate in percent.'))
     priority = models.PositiveIntegerField(_('priority'), default=0,
-        help_text = _('Used to order the tax classes in the administration interface.'))
+        help_text=_('Used to order the tax classes in the'
+            ' administration interface.'))
 
     class Meta:
         ordering = ['-priority']
@@ -60,14 +61,19 @@ class BillingShippingAddress(models.Model):
     billing_city = models.CharField(_('city'), max_length=100)
     billing_country = models.CharField(_('country'), max_length=3, blank=True)
 
-    shipping_same_as_billing = models.BooleanField(_('shipping address equals billing address'),
+    shipping_same_as_billing = models.BooleanField(
+        _('shipping address equals billing address'),
         default=True)
 
-    shipping_company = models.CharField(_('company'), max_length=100, blank=True)
-    shipping_first_name = models.CharField(_('first name'), max_length=100, blank=True)
-    shipping_last_name = models.CharField(_('last name'), max_length=100, blank=True)
+    shipping_company = models.CharField(_('company'), max_length=100,
+        blank=True)
+    shipping_first_name = models.CharField(_('first name'), max_length=100,
+        blank=True)
+    shipping_last_name = models.CharField(_('last name'), max_length=100,
+        blank=True)
     shipping_address = models.TextField(_('address'), blank=True)
-    shipping_zip_code = models.CharField(_('ZIP code'), max_length=50, blank=True)
+    shipping_zip_code = models.CharField(_('ZIP code'), max_length=50,
+        blank=True)
     shipping_city = models.CharField(_('city'), max_length=100, blank=True)
     shipping_country = models.CharField(_('country'), max_length=3, blank=True)
 
@@ -79,12 +85,15 @@ class BillingShippingAddress(models.Model):
         Return a ``dict`` containing a billing and a shipping address, taking
         into account the value of the ``shipping_same_as_billing`` flag
         """
-        billing = dict((f, getattr(self, 'billing_%s' % f)) for f in self.ADDRESS_FIELDS)
+        billing = dict(
+            (f, getattr(self, 'billing_%s' % f)) for f in self.ADDRESS_FIELDS)
 
         if self.shipping_same_as_billing:
             shipping = billing
         else:
-            shipping = dict((f, getattr(self, 'shipping_%s' % f)) for f in self.ADDRESS_FIELDS)
+            shipping = dict(
+                (f, getattr(self, 'shipping_%s' % f))
+                for f in self.ADDRESS_FIELDS)
 
         return {'billing': billing, 'shipping': shipping}
 
@@ -168,7 +177,8 @@ class Order(BillingShippingAddress):
         """Sequential order IDs for completed orders."""
         if not self._order_id and self.status >= self.PAID:
             try:
-                order = Order.objects.exclude(_order_id='').order_by('-_order_id')[0]
+                order = Order.objects.exclude(_order_id='').order_by(
+                    '-_order_id')[0]
                 latest = int(re.sub(r'[^0-9]', '', order._order_id))
             except (IndexError, ValueError):
                 latest = 0
@@ -180,7 +190,8 @@ class Order(BillingShippingAddress):
     @property
     def order_id(self):
         """
-        Returns ``_order_id`` (if it has been set) or a generic ID for this order.
+        Returns ``_order_id`` (if it has been set) or a generic ID for this
+        order.
         """
         if self._order_id:
             return self._order_id
@@ -210,7 +221,9 @@ class Order(BillingShippingAddress):
         Returns the order subtotal.
         """
         # TODO: What about shipping?
-        return sum((item.subtotal for item in self.items.all()), Decimal('0.00')).quantize(Decimal('0.00'))
+        return sum(
+            (item.subtotal for item in self.items.all()),
+            Decimal('0.00')).quantize(Decimal('0.00'))
 
     @property
     def discount(self):
@@ -218,8 +231,11 @@ class Order(BillingShippingAddress):
         Returns the discount total.
         """
         # TODO: What about shipping?
-        return (sum((item.subtotal for item in self.items.all()), Decimal('0.00')) -
-            sum((item.discounted_subtotal for item in self.items.all()), Decimal('0.00'))).quantize(Decimal('0.00'))
+        return (
+            sum((item.subtotal for item in self.items.all()), Decimal('0.00'))
+            - sum((item.discounted_subtotal for item in self.items.all()),
+                Decimal('0.00'))
+            ).quantize(Decimal('0.00'))
 
     @property
     def shipping(self):
@@ -233,7 +249,8 @@ class Order(BillingShippingAddress):
 
             return self.shipping_cost - self.shipping_discount + self.shipping_tax
         else:
-            logger.error('Shipping calculation with PLATA_PRICE_INCLUDES_TAX=False is not implemented yet')
+            logger.error('Shipping calculation with'
+                ' PLATA_PRICE_INCLUDES_TAX=False is not implemented yet')
             raise NotImplementedError
 
     @property
@@ -256,24 +273,24 @@ class Order(BillingShippingAddress):
     def is_paid(self):
         import warnings
         warnings.warn(
-            'Order.is_paid() has been deprecated because its name is misleading. '
-            'Test for `order.status >= order.PAID` or `not order.balance_remaining '
-            'yourself.',
+            'Order.is_paid() has been deprecated because its name is'
+            ' misleading. Test for `order.status >= order.PAID` or'
+            ' `not order.balance_remaining yourself.',
             DeprecationWarning)
         return self.balance_remaining <= 0
 
 
-    #: This validator is always called; basic consistency checks such as whether the
-    #: currencies in the order match should be added here.
+    #: This validator is always called; basic consistency checks such as
+    #: whether the currencies in the order match should be added here.
     VALIDATE_BASE = 10
-    #: A cart which fails the criteria added to the ``VALIDATE_CART`` group isn't
-    #: considered a valid cart and the user cannot proceed to the checkout form.
-    #: Stuff such as stock checking, minimal order total checking, or maximal items
-    #: checking might be added here.
+    #: A cart which fails the criteria added to the ``VALIDATE_CART`` group
+    #: isn't considered a valid cart and the user cannot proceed to the checkout
+    #: form. Stuff such as stock checking, minimal order total checking, or
+    #: maximal items checking might be added here.
     VALIDATE_CART = 20
-    #: This should not be used while registering a validator, it's mostly useful as
-    #: an argument to :meth:`~plata.shop.models.Order.validate` when you want to
-    #: run all validators.
+    #: This should not be used while registering a validator, it's mostly
+    #: useful as an argument to :meth:`~plata.shop.models.Order.validate` when
+    #: you want to run all validators.
     VALIDATE_ALL = 100
 
     VALIDATORS = {}
@@ -322,21 +339,25 @@ class Order(BillingShippingAddress):
         """
         Updates order with the given product
 
-        - ``relative`` or ``absolute``: Add/subtract or define order item amount exactly
-        - ``recalculate``: Recalculate order after cart modification (defaults to ``True``)
+        - ``relative`` or ``absolute``: Add/subtract or define order item amount
+          exactly
+        - ``recalculate``: Recalculate order after cart modification (defaults
+          to ``True``)
         - ``data``: Additional data for the order item; replaces the contents of
           the JSON field if it is not ``None``. Pass an empty dictionary if you
           want to reset the contents.
 
-        Returns the ``OrderItem`` instance; if quantity is zero, the order item instance
-        is deleted, the ``pk`` attribute set to ``None`` but the order item is returned
-        anway.
+        Returns the ``OrderItem`` instance; if quantity is zero, the order item
+        instance is deleted, the ``pk`` attribute set to ``None`` but the order
+        item is returned anyway.
         """
 
-        assert (relative is None) != (absolute is None), 'One of relative or absolute must be provided.'
+        assert ((relative is None) != (absolute is None),
+            'One of relative or absolute must be provided.')
 
         if self.is_confirmed():
-            raise ValidationError(_('Cannot modify order once it has been confirmed.'),
+            raise ValidationError(
+                _('Cannot modify order once it has been confirmed.'),
                 code='order_sealed')
 
         try:
@@ -356,10 +377,13 @@ class Order(BillingShippingAddress):
 
         if item.quantity > 0:
             try:
-                price = product.get_price(currency=self.currency, orderitem=item)
+                price = product.get_price(
+                    currency=self.currency,
+                    orderitem=item)
             except ObjectDoesNotExist:
-                logger.error(u'No price could be found for %s with currency %s' % (
-                    product, self.currency))
+                logger.error(
+                    u'No price could be found for %s with currency %s' % (
+                        product, self.currency))
                 raise
 
             if data is not None:
@@ -402,7 +426,8 @@ class Order(BillingShippingAddress):
 
         if status >= Order.CHECKOUT:
             if not self.items.count():
-                raise ValidationError(_('Cannot proceed to checkout without order items.'),
+                raise ValidationError(
+                    _('Cannot proceed to checkout without order items.'),
                     code='order_empty')
 
         logger.info('Promoting %s to status %s' % (self, status))
@@ -417,7 +442,8 @@ class Order(BillingShippingAddress):
         """
         Return this order instance, reloaded from the database
 
-        Used f.e. inside the payment processors when adding new payment records etc.
+        Used f.e. inside the payment processors when adding new payment records
+        etc.
         """
 
         return self.__class__._default_manager.get(pk=self.id)
@@ -438,7 +464,8 @@ class OrderItem(models.Model):
     """Single order line item"""
 
     order = models.ForeignKey(Order, related_name='items')
-    product = models.ForeignKey(plata.settings.PLATA_SHOP_PRODUCT, verbose_name=_('product'),
+    product = models.ForeignKey(plata.settings.PLATA_SHOP_PRODUCT,
+        verbose_name=_('product'),
         blank=True, null=True, on_delete=models.SET_NULL)
 
     name = models.CharField(_('name'), max_length=100, blank=True)
@@ -453,7 +480,8 @@ class OrderItem(models.Model):
     _unit_tax = models.DecimalField(_('unit tax'),
         max_digits=18, decimal_places=10)
 
-    tax_rate = models.DecimalField(_('tax rate'), max_digits=10, decimal_places=2)
+    tax_rate = models.DecimalField(_('tax rate'),
+        max_digits=10, decimal_places=2)
     tax_class = models.ForeignKey(TaxClass, verbose_name=_('tax class'),
         blank=True, null=True, on_delete=models.SET_NULL)
 
@@ -536,7 +564,8 @@ class OrderStatus(models.Model):
 
     order = models.ForeignKey(Order, related_name='statuses')
     created = models.DateTimeField(_('created'), default=timezone.now)
-    status = models.PositiveIntegerField(_('status'), max_length=20, choices=Order.STATUS_CHOICES)
+    status = models.PositiveIntegerField(_('status'), max_length=20,
+        choices=Order.STATUS_CHOICES)
     notes = models.TextField(_('notes'), blank=True)
 
     class Meta:
@@ -589,20 +618,25 @@ class OrderPayment(models.Model):
         (AUTHORIZED, _('authorized')),
         )
 
-    order = models.ForeignKey(Order, verbose_name=_('order'), related_name='payments')
+    order = models.ForeignKey(Order, verbose_name=_('order'),
+        related_name='payments')
     timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)
     status = models.PositiveIntegerField(_('status'), choices=STATUS_CHOICES,
         default=PENDING)
 
     currency = CurrencyField()
     amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2)
-    payment_module_key = models.CharField(_('payment module key'), max_length=20,
+    payment_module_key = models.CharField(_('payment module key'),
+        max_length=20,
         help_text=_('Machine-readable identifier for the payment module used.'))
-    payment_module = models.CharField(_('payment module'), max_length=50, blank=True,
+    payment_module = models.CharField(_('payment module'), max_length=50,
+        blank=True,
         help_text=_('For example \'Cash on delivery\', \'PayPal\', ...'))
-    payment_method = models.CharField(_('payment method'), max_length=50, blank=True,
+    payment_method = models.CharField(_('payment method'), max_length=50,
+        blank=True,
         help_text=_('For example \'MasterCard\', \'VISA\' or some other card.'))
-    transaction_id = models.CharField(_('transaction ID'), max_length=50, blank=True,
+    transaction_id = models.CharField(_('transaction ID'), max_length=50,
+        blank=True,
         help_text=_('Unique ID identifying this payment in the foreign system.'))
 
     authorized = models.DateTimeField(_('authorized'), blank=True, null=True,
@@ -641,7 +675,8 @@ class OrderPayment(models.Model):
         self._recalculate_paid()
 
         if self.currency != self.order.currency:
-            self.order.notes += u'\n' + _('Currency of payment %s does not match.') % self
+            self.order.notes += (
+                u'\n' + _('Currency of payment %s does not match.') % self)
             self.order.save()
     save.alters_data = True
 
@@ -670,7 +705,8 @@ class PriceBase(models.Model):
         verbose_name_plural = _('prices')
 
     currency = CurrencyField()
-    _unit_price = models.DecimalField(_('unit price'), max_digits=18, decimal_places=10)
+    _unit_price = models.DecimalField(_('unit price'),
+        max_digits=18, decimal_places=10)
     tax_included = models.BooleanField(_('tax included'),
         help_text=_('Is tax included in given unit price?'),
         default=plata.settings.PLATA_PRICE_INCLUDES_TAX)
@@ -688,7 +724,7 @@ class PriceBase(models.Model):
         item._unit_tax = self.unit_tax
         item.tax_rate = self.tax_class.rate
         item.tax_class = self.tax_class
-        item.is_sale = False # Hardcoded; add an is_sale like in the ``Price`` class below
+        item.is_sale = False  # Hardcoded; override in your own price class
 
     @property
     def unit_tax(self):
