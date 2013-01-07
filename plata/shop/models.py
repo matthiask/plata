@@ -317,12 +317,16 @@ class Order(BillingShippingAddress):
         """
         return self.status >= self.CONFIRMED
 
-    def modify_item(self, product, relative=None, absolute=None, recalculate=True):
+    def modify_item(self, product, relative=None, absolute=None,
+            recalculate=True, data=None):
         """
         Updates order with the given product
 
         - ``relative`` or ``absolute``: Add/subtract or define order item amount exactly
         - ``recalculate``: Recalculate order after cart modification (defaults to ``True``)
+        - ``data``: Additional data for the order item; replaces the contents of
+          the JSON field if it is not ``None``. Pass an empty dictionary if you
+          want to reset the contents.
 
         Returns the ``OrderItem`` instance; if quantity is zero, the order item instance
         is deleted, the ``pk`` attribute set to ``None`` but the order item is returned
@@ -357,6 +361,9 @@ class Order(BillingShippingAddress):
                 logger.error(u'No price could be found for %s with currency %s' % (
                     product, self.currency))
                 raise
+
+            if data is not None:
+                item.data = data
 
             price.handle_order_item(item)
             product.handle_order_item(item)
