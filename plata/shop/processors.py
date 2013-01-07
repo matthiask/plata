@@ -24,7 +24,21 @@ class ProcessorBase(object):
     def add_tax_details(self, tax_details, tax_rate, price, discount, tax_amount):
         """
         Add tax details grouped by tax_rate. Especially useful if orders
-        potentially use more than one tax class.
+        potentially use more than one tax class. These values are not used for
+        the order total calculation -- they are only needed to show the tax
+        amount for different tax rates if this is necessary for your invoices.
+
+        - ``tax_details``: The tax details dict, most often stored as
+          ``order.data['tax_details'] = tax_details.items()``
+        - ``tax_rate``: The tax rate of the current entry
+        - ``price``: The price excl. tax
+        - ``discount``: The discount amount (will be subtracted from the price
+          before applying the tax)
+        - ``tax_amount``: The exact amount; a bit redundant because this could
+          be calculated using the values above as well
+
+        See the taxes documentation or the standard invoice PDF generation code
+        if you need to know more about the use of these values.
         """
 
         zero = Decimal('0.00')
