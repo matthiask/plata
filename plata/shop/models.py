@@ -357,10 +357,10 @@ class Order(BillingShippingAddress):
         item is returned anyway.
         """
 
-        assert ((relative is None) != (absolute is None),
-            'One of relative or absolute must be provided.')
-        assert (force_new and (item is None),
-            'Cannot set item and force_new at the same time.')
+        assert (relative is None) != (absolute is None),\
+            'One of relative or absolute must be provided.'
+        assert not (force_new and item),\
+            'Cannot set item and force_new at the same time.'
 
         if self.is_confirmed():
             raise ValidationError(
