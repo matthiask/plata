@@ -23,15 +23,29 @@ class OrderStatusInline(admin.TabularInline):
 class OrderAdmin(admin.ModelAdmin):
     date_hierarchy = 'created'
     fieldsets = (
-        (None, {'fields': ('created', 'confirmed', 'user', 'email',
-            'language_code', 'status')}),
-        (_('Billing address'), {'fields': models.Order.address_fields('billing_')}),
-        (_('Shipping address'), {'fields': ['shipping_same_as_billing'] +\
-            models.Order.address_fields('shipping_')}),
-        (_('Order items'), {'fields': ('items_subtotal', 'items_discount', 'items_tax')}),
-        (_('Shipping'), {'fields': ('shipping_cost', 'shipping_discount', 'shipping_tax')}),
-        (_('Total'), {'fields': ('currency', 'total', 'paid')}),
-        (_('Additional fields'), {'fields': ('notes', 'data')}),
+        (None, {
+            'fields': ('created', 'confirmed', 'user', 'email',
+                'language_code', 'status'),
+            }),
+        (_('Billing address'), {
+            'fields': models.Order.address_fields('billing_'),
+            }),
+        (_('Shipping address'), {
+            'fields': (['shipping_same_as_billing']
+                + models.Order.address_fields('shipping_')),
+            }),
+        (_('Order items'), {
+            'fields': ('items_subtotal', 'items_discount', 'items_tax'),
+            }),
+        (_('Shipping'), {
+            'fields': ('shipping_cost', 'shipping_discount', 'shipping_tax'),
+            }),
+        (_('Total'), {
+            'fields': ('currency', 'total', 'paid'),
+            }),
+        (_('Additional fields'), {
+            'fields': ('notes', 'data'),
+            }),
         )
     inlines = [OrderItemInline, AppliedDiscountInline, OrderStatusInline]
     list_display = ('admin_order_id', 'created', 'user', 'status', 'total',
@@ -75,25 +89,24 @@ class OrderAdmin(admin.ModelAdmin):
     additional_info.allow_tags = True
     additional_info.short_description = _('add. info')
 
-admin.site.register(models.Order, OrderAdmin)
-
 
 class OrderPaymentAdmin(admin.ModelAdmin):
     date_hierarchy = 'timestamp'
-    list_display = ('order', 'timestamp', 'currency', 'amount', 'status', 'authorized',
-        'payment_module_key', 'notes_short')
+    list_display = ('order', 'timestamp', 'currency', 'amount', 'status',
+        'authorized', 'payment_module_key', 'notes_short')
     list_display_links = ('timestamp',)
     list_filter = ('status', 'payment_module_key')
     raw_id_fields = ('order',)
-    search_fields = ('amount', 'payment_module', 'payment_method', 'transaction_id',
-        'notes', 'data')
+    search_fields = ('amount', 'payment_module', 'payment_method',
+        'transaction_id', 'notes', 'data')
 
-    notes_short = lambda self, obj: (len(obj.notes) > 50) and obj.notes[:40]+'...' or obj.notes
+    notes_short = lambda self, obj: (
+        obj.notes[:40]+'...' if len(obj.notes) > 50 else obj.notes)
     notes_short.short_description = _('notes')
 
+
+admin.site.register(models.Order, OrderAdmin)
 admin.site.register(models.OrderPayment, OrderPaymentAdmin)
-
-
 admin.site.register(models.TaxClass,
     list_display=('name', 'rate', 'priority'),
     list_editable=('rate', 'priority'),

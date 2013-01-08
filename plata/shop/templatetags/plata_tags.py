@@ -11,7 +11,8 @@ def _type_class(item):
         return 'checkbox'
     elif isinstance(item.field.widget, forms.DateInput):
         return 'date'
-    elif isinstance(item.field.widget, (forms.RadioSelect, forms.CheckboxSelectMultiple)):
+    elif isinstance(item.field.widget, (
+            forms.RadioSelect, forms.CheckboxSelectMultiple)):
         return 'list'
     return ''
 
@@ -108,7 +109,8 @@ class FormErrorsNode(template.Node):
             else:
                 formset_list.append(i)
 
-            if getattr(i, 'errors', None) or getattr(i, 'non_field_errors', lambda:None)():
+            if (getattr(i, 'errors', None)
+                    or getattr(i, 'non_field_errors', lambda:None)()):
                 errors = True
 
         if not errors:

@@ -47,19 +47,22 @@ class TaxClass(models.Model):
 
 class BillingShippingAddress(models.Model):
     """
-    Abstract base class for all models storing a billing and a shipping address
+    Abstract base class for all models storing a billing and a shipping
+    address
     """
 
     ADDRESS_FIELDS = ['company', 'first_name', 'last_name', 'address',
         'zip_code', 'city', 'country']
 
-    billing_company = models.CharField(_('company'), max_length=100, blank=True)
+    billing_company = models.CharField(_('company'), max_length=100,
+        blank=True)
     billing_first_name = models.CharField(_('first name'), max_length=100)
     billing_last_name = models.CharField(_('last name'), max_length=100)
     billing_address = models.TextField(_('address'))
     billing_zip_code = models.CharField(_('ZIP code'), max_length=50)
     billing_city = models.CharField(_('city'), max_length=100)
-    billing_country = models.CharField(_('country'), max_length=3, blank=True)
+    billing_country = models.CharField(_('country'), max_length=3,
+        blank=True)
 
     shipping_same_as_billing = models.BooleanField(
         _('shipping address equals billing address'),
@@ -75,7 +78,8 @@ class BillingShippingAddress(models.Model):
     shipping_zip_code = models.CharField(_('ZIP code'), max_length=50,
         blank=True)
     shipping_city = models.CharField(_('city'), max_length=100, blank=True)
-    shipping_country = models.CharField(_('country'), max_length=3, blank=True)
+    shipping_country = models.CharField(_('country'), max_length=3,
+        blank=True)
 
     class Meta:
         abstract = True
@@ -247,7 +251,8 @@ class Order(BillingShippingAddress):
             if self.shipping_cost is None:
                 return None
 
-            return self.shipping_cost - self.shipping_discount + self.shipping_tax
+            return (self.shipping_cost - self.shipping_discount
+                + self.shipping_tax)
         else:
             logger.error('Shipping calculation with'
                 ' PLATA_PRICE_INCLUDES_TAX=False is not implemented yet')
@@ -256,17 +261,17 @@ class Order(BillingShippingAddress):
     @property
     def tax(self):
         """
-        Returns the tax total for this order, meaning tax on order items and tax
-        on shipping.
+        Returns the tax total for this order, meaning tax on order items and
+        tax on shipping.
         """
         return (self.items_tax + self.shipping_tax).quantize(Decimal('0.00'))
 
     @property
     def balance_remaining(self):
         """
-        Returns the balance which needs to be paid by the customer to fully pay
-        this order. This value is not necessarily the same as the order total,
-        because there can be more than one order payment in principle.
+        Returns the balance which needs to be paid by the customer to fully
+        pay this order. This value is not necessarily the same as the order
+        total, because there can be more than one order payment in principle.
         """
         return (self.total - self.paid).quantize(Decimal('0.00'))
 
@@ -284,13 +289,13 @@ class Order(BillingShippingAddress):
     #: whether the currencies in the order match should be added here.
     VALIDATE_BASE = 10
     #: A cart which fails the criteria added to the ``VALIDATE_CART`` group
-    #: isn't considered a valid cart and the user cannot proceed to the checkout
-    #: form. Stuff such as stock checking, minimal order total checking, or
-    #: maximal items checking might be added here.
+    #: isn't considered a valid cart and the user cannot proceed to the
+    #: checkout form. Stuff such as stock checking, minimal order total
+    #: checking, or maximal items checking might be added here.
     VALIDATE_CART = 20
     #: This should not be used while registering a validator, it's mostly
-    #: useful as an argument to :meth:`~plata.shop.models.Order.validate` when
-    #: you want to run all validators.
+    #: useful as an argument to :meth:`~plata.shop.models.Order.validate`
+    #: when you want to run all validators.
     VALIDATE_ALL = 100
 
     VALIDATORS = {}
@@ -329,8 +334,8 @@ class Order(BillingShippingAddress):
 
     def is_confirmed(self):
         """
-        Returns ``True`` if this order has already been confirmed and therefore
-        cannot be modified anymore.
+        Returns ``True`` if this order has already been confirmed and
+        therefore cannot be modified anymore.
         """
         return self.status >= self.CONFIRMED
 
@@ -339,22 +344,22 @@ class Order(BillingShippingAddress):
         """
         Updates order with the given product
 
-        - ``relative`` or ``absolute``: Add/subtract or define order item amount
-          exactly
-        - ``recalculate``: Recalculate order after cart modification (defaults
-          to ``True``)
-        - ``data``: Additional data for the order item; replaces the contents of
-          the JSON field if it is not ``None``. Pass an empty dictionary if you
-          want to reset the contents.
+        - ``relative`` or ``absolute``: Add/subtract or define order item
+          amount exactly
+        - ``recalculate``: Recalculate order after cart modification
+          (defaults to ``True``)
+        - ``data``: Additional data for the order item; replaces the contents
+          of the JSON field if it is not ``None``. Pass an empty dictionary
+          if you want to reset the contents.
         - ``item``: The order item which should be modified. Will be
           automatically detected using the product if unspecified.
         - ``force_new``: Force the creation of a new order item, even if the
-          product exists already in the cart (especially useful if the product
-          is configurable).
+          product exists already in the cart (especially useful if the
+          product is configurable).
 
-        Returns the ``OrderItem`` instance; if quantity is zero, the order item
-        instance is deleted, the ``pk`` attribute set to ``None`` but the order
-        item is returned anyway.
+        Returns the ``OrderItem`` instance; if quantity is zero, the order
+        item instance is deleted, the ``pk`` attribute set to ``None`` but
+        the order item is returned anyway.
         """
 
         assert (relative is None) != (absolute is None),\
@@ -374,8 +379,9 @@ class Order(BillingShippingAddress):
                 # Ok, product does not exist in cart yet.
                 pass
             except self.items.model.MultipleObjectsReturned:
-                # Oops. Product already exists several times. Stay on the safe
-                # side and add a new one instead of trying to modify another.
+                # Oops. Product already exists several times. Stay on the
+                # safe side and add a new one instead of trying to modify
+                # another.
                 if not force_new:
                     raise ValidationError(
                         _('The product already exists several times in the'
@@ -462,8 +468,8 @@ class Order(BillingShippingAddress):
         """
         Return this order instance, reloaded from the database
 
-        Used f.e. inside the payment processors when adding new payment records
-        etc.
+        Used f.e. inside the payment processors when adding new payment
+        records etc.
         """
 
         return self.__class__._default_manager.get(pk=self.id)
@@ -472,7 +478,8 @@ class Order(BillingShippingAddress):
 def validate_order_currencies(order):
     """Check whether order contains more than one or an invalid currency"""
     currencies = set(order.items.values_list('currency', flat=True))
-    if currencies and (len(currencies) > 1 or order.currency not in currencies):
+    if (currencies
+            and (len(currencies) > 1 or order.currency not in currencies)):
         raise ValidationError(_('Order contains more than one currency.'),
             code='multiple_currency')
 
@@ -644,19 +651,23 @@ class OrderPayment(models.Model):
         default=PENDING)
 
     currency = CurrencyField()
-    amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2)
+    amount = models.DecimalField(_('amount'),
+        max_digits=10, decimal_places=2)
     payment_module_key = models.CharField(_('payment module key'),
         max_length=20,
-        help_text=_('Machine-readable identifier for the payment module used.'))
+        help_text=_('Machine-readable identifier for the payment module'
+            ' used.'))
     payment_module = models.CharField(_('payment module'), max_length=50,
         blank=True,
         help_text=_('For example \'Cash on delivery\', \'PayPal\', ...'))
     payment_method = models.CharField(_('payment method'), max_length=50,
         blank=True,
-        help_text=_('For example \'MasterCard\', \'VISA\' or some other card.'))
+        help_text=_('For example \'MasterCard\', \'VISA\' or some other'
+            ' card.'))
     transaction_id = models.CharField(_('transaction ID'), max_length=50,
         blank=True,
-        help_text=_('Unique ID identifying this payment in the foreign system.'))
+        help_text=_('Unique ID identifying this payment in the foreign'
+            ' system.'))
 
     authorized = models.DateTimeField(_('authorized'), blank=True, null=True,
         help_text=_('Point in time when payment has been authorized.'))
@@ -674,12 +685,15 @@ class OrderPayment(models.Model):
     objects = OrderPaymentManager()
 
     def __unicode__(self):
-        return (_(u'%(authorized)s of %(currency)s %(amount).2f for %(order)s')
-                % {'authorized': self.authorized and _(u'Authorized')
-                        or _(u'Not authorized'),
-                   'currency': self.currency,
-                   'amount': self.amount,
-                   'order': self.order})
+        return (
+            _(u'%(authorized)s of %(currency)s %(amount).2f for %(order)s')
+            % {
+                'authorized': self.authorized and _(u'Authorized')
+                    or _(u'Not authorized'),
+                'currency': self.currency,
+                'amount': self.amount,
+                'order': self.order,
+                 })
 
     def _recalculate_paid(self):
         paid = OrderPayment.objects.authorized().filter(
@@ -709,9 +723,9 @@ class PriceBase(models.Model):
     """
     Price for a given product, currency, tax class and time period
 
-    Prices should not be changed or deleted but replaced by more recent prices.
-    (Deleting old prices does not hurt, but the price history cannot be
-    reconstructed anymore if you'd need it.)
+    Prices should not be changed or deleted but replaced by more recent
+    prices. (Deleting old prices does not hurt, but the price history cannot
+    be reconstructed anymore if you'd need it.)
 
     The concrete implementation needs to provide a foreign key to the
     product model.

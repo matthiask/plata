@@ -30,14 +30,17 @@ A real-world example follows::
             if order.language_code:
                 activate(order.language_code)
 
-            invoice_message = self.create_email_message('plata/notifications/order_paid.txt',
+            invoice_message = self.create_email_message(
+                'plata/notifications/order_paid.txt',
                 order=order,
                 **kwargs)
-            invoice_message.attach(order.order_id + '.pdf', self.invoice_pdf(order), 'application/pdf')
+            invoice_message.attach(order.order_id + '.pdf',
+                self.invoice_pdf(order), 'application/pdf')
             invoice_message.to.append(order.email)
             invoice_message.bcc.extend(self.ALWAYS)
 
-            packing_slip_message = self.create_email_message('plata/notifications/packing_slip.txt',
+            packing_slip_message = self.create_email_message(
+                'plata/notifications/packing_slip.txt',
                 order=order,
                 **kwargs)
             packing_slip_message.attach(
@@ -100,7 +103,8 @@ class BaseHandler(object):
         return ctx
 
     def create_email_message(self, template_name, **kwargs):
-        email = render_to_string(template_name, self.context(kwargs)).splitlines()
+        email = render_to_string(
+            template_name, self.context(kwargs)).splitlines()
         return EmailMessage(subject=email[0], body=u'\n'.join(email[2:]))
 
 
@@ -140,7 +144,8 @@ class ContactCreatedHandler(EmailHandler):
     """
 
     def message(self, sender, contact, **kwargs):
-        message = self.create_email_message('plata/notifications/contact_created.txt',
+        message = self.create_email_message(
+            'plata/notifications/contact_created.txt',
             contact=contact,
             **kwargs)
         message.to.append(contact.user.email)
@@ -150,8 +155,8 @@ class ContactCreatedHandler(EmailHandler):
 class SendInvoiceHandler(EmailHandler):
     """
     Send an e-mail with attached invoice to the customer after successful
-    order completion, optionally BCC'ing the addresses passed as ``always_bcc``
-    to the handler upon initialization.
+    order completion, optionally BCC'ing the addresses passed as
+    ``always_bcc`` to the handler upon initialization.
 
     Usage::
 
@@ -164,12 +169,14 @@ class SendInvoiceHandler(EmailHandler):
         if order.language_code:
             activate(order.language_code)
 
-        message = self.create_email_message('plata/notifications/order_paid.txt',
+        message = self.create_email_message(
+            'plata/notifications/order_paid.txt',
             order=order,
             **kwargs)
 
         message.to.append(order.email)
-        message.attach('invoice-%09d.pdf' % order.id, self.invoice_pdf(order), 'application/pdf')
+        message.attach('invoice-%09d.pdf' % order.id,
+            self.invoice_pdf(order), 'application/pdf')
         return message
 
 
@@ -191,10 +198,12 @@ class SendPackingSlipHandler(EmailHandler):
         if order.language_code:
             activate(order.language_code)
 
-        message = self.create_email_message('plata/notifications/packing_slip.txt',
+        message = self.create_email_message(
+            'plata/notifications/packing_slip.txt',
             order=order,
             **kwargs)
-        message.attach('packing-slip-%09d.pdf' % order.id, self.packing_slip_pdf(order), 'application/pdf')
+        message.attach('packing-slip-%09d.pdf' % order.id,
+            self.packing_slip_pdf(order), 'application/pdf')
         return message
 
 

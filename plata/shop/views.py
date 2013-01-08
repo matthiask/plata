@@ -25,18 +25,24 @@ def cart_not_empty(order, shop, request, **kwargs):
 
 
 def order_already_confirmed(order, shop, request, **kwargs):
-    """Redirect to confirmation or already paid view if the order is already confirmed"""
+    """
+    Redirect to confirmation or already paid view if the order is already
+    confirmed
+    """
     if order and order.status >= order.CONFIRMED:
         if not order.balance_remaining:
             return shop.redirect('plata_order_success')
         messages.warning(request,
-            _('You have already confirmed this order earlier, but it is not fully paid for yet.'))
+            _('You have already confirmed this order earlier, but it is not'
+                ' fully paid for yet.'))
         return HttpResponseRedirect(
             shop.reverse_url('plata_shop_confirmation') + '?confirmed=1')
 
 
 def order_cart_validates(order, shop, request, **kwargs):
-    """Redirect to cart if stock is insufficient and display an error message"""
+    """
+    Redirect to cart if stock is insufficient and display an error message
+    """
     if request.method != 'GET':
         return
 
@@ -66,7 +72,8 @@ def checkout_process_decorator(*checks):
     """
     Calls all passed checkout process decorators in turn::
 
-        @checkout_process_decorator(order_already_confirmed, order_cart_validates)
+        @checkout_process_decorator(order_already_confirmed,
+            order_cart_validates)
 
     All checkout process decorators are called with the order, the shop
     instance and the request as keyword arguments. In the future, additional
@@ -143,46 +150,58 @@ class Shop(object):
         return patterns('',
             url(r'^cart/$', checkout_process_decorator(
                     order_already_confirmed, order_cart_warnings,
-                )(self.cart), name='plata_shop_cart'),
+                )(self.cart),
+                name='plata_shop_cart'),
             url(r'^checkout/$', checkout_process_decorator(
-                    cart_not_empty, order_already_confirmed, order_cart_validates,
-                )(self.checkout), name='plata_shop_checkout'),
+                cart_not_empty, order_already_confirmed, order_cart_validates,
+                )(self.checkout),
+                name='plata_shop_checkout'),
             url(r'^discounts/$', checkout_process_decorator(
-                    cart_not_empty, order_already_confirmed, order_cart_validates,
-                )(self.discounts), name='plata_shop_discounts'),
+                cart_not_empty, order_already_confirmed, order_cart_validates,
+                )(self.discounts),
+                name='plata_shop_discounts'),
             url(r'^confirmation/$', checkout_process_decorator(
                     cart_not_empty, order_cart_validates,
-                 )(self.confirmation), name='plata_shop_confirmation'),
+                )(self.confirmation),
+                name='plata_shop_confirmation'),
 
             url(r'^order/success/$',
-                self.order_success, name='plata_order_success'),
+                self.order_success,
+                name='plata_order_success'),
             url(r'^order/payment_failure/$',
-                self.order_payment_failure, name='plata_order_payment_failure'),
+                self.order_payment_failure,
+                name='plata_order_payment_failure'),
             url(r'^order/new/$',
-                self.order_new, name='plata_order_new'),
+                self.order_new,
+                name='plata_order_new'),
             )
 
     def get_payment_urls(self):
         from django.conf.urls import patterns, url, include
-        urls = [url(r'', include(module.urls)) for module in self.get_payment_modules()]
+        urls = [url(r'', include(module.urls))
+            for module in self.get_payment_modules()]
         return patterns('', *urls)
 
     def get_payment_modules(self, request=None):
         """
-        Import and return all payment modules defined in ``PLATA_PAYMENT_MODULES``
-        If request is given only aplicable modules are loaded.
+        Import and return all payment modules defined in
+        ``PLATA_PAYMENT_MODULES``
+
+        If request is given only applicable modules are loaded.
         """
-        all_modules = [get_callable(module)(self) for module in plata.settings.PLATA_PAYMENT_MODULES]
+        all_modules = [get_callable(module)(self)
+            for module in plata.settings.PLATA_PAYMENT_MODULES]
         if not request:
             return all_modules
-        return filter(lambda item: item.enabled_for_request(request), all_modules)
+        return [module for module in all_modules
+            if module.enabled_for_request(request)]
 
     def default_currency(self, request=None):
         """
         Return the default currency for instantiating new orders
 
-        Override this with your own implementation if you have a multi-currency
-        shop with auto-detection of currencies.
+        Override this with your own implementation if you have a
+        multi-currency shop with auto-detection of currencies.
         """
         return self._default_currency or plata.settings.CURRENCIES[0]
 
@@ -199,8 +218,8 @@ class Shop(object):
 
     def order_from_request(self, request, create=False):
         """
-        Instantiate the order instance for the current session. Optionally creates
-        a new order instance if ``create=True``.
+        Instantiate the order instance for the current session. Optionally
+        creates a new order instance if ``create=True``.
 
         Returns ``None`` if unable to find an offer.
         """
@@ -217,9 +236,11 @@ class Shop(object):
                 contact = self.contact_from_user(request.user)
 
                 order = self.order_model.objects.create(
-                    currency=getattr(contact, 'currency', self.default_currency(request)),
+                    currency=getattr(contact, 'currency',
+                        self.default_currency(request)),
                     user=getattr(contact, 'user',
-                        request.user if request.user.is_authenticated() else None),
+                        request.user if request.user.is_authenticated()
+                        else None),
                     language_code=get_language(),
                     )
 
@@ -356,7 +377,8 @@ class Shop(object):
     def checkout_form(self, request, order):
         """Returns the address form used in the first checkout step"""
 
-        # Only import plata.contact if necessary and if this method isn't overridden
+        # Only import plata.contact if necessary and if this method isn't
+        # overridden
         from plata.contact.forms import CheckoutForm
         return CheckoutForm
 
@@ -364,7 +386,8 @@ class Shop(object):
         """Handles the first step of the checkout process"""
         if not request.user.is_authenticated():
             if request.method == 'POST' and '_login' in request.POST:
-                loginform = AuthenticationForm(data=request.POST, prefix='login')
+                loginform = AuthenticationForm(data=request.POST,
+                    prefix='login')
 
                 if loginform.is_valid():
                     user = loginform.get_user()
@@ -458,10 +481,11 @@ class Shop(object):
 
     def confirmation(self, request, order):
         """
-        Handles the order confirmation and payment module selection checkout step
+        Handles the order confirmation and payment module selection checkout
+        step
 
-        Hands off processing to the selected payment module if confirmation was
-        successful.
+        Hands off processing to the selected payment module if confirmation
+        was successful.
         """
         order.recalculate_total()
 
@@ -484,8 +508,8 @@ class Shop(object):
         return self.render_confirmation(request, {
             'order': order,
             'form': form,
-            'confirmed': request.GET.get('confirmed', False), # Whether the order had
-                                                              # already been confirmed
+            # Whether the order had already been confirmed.
+            'confirmed': request.GET.get('confirmed', False),
             'progress': 'confirmation',
             })
 
@@ -495,7 +519,10 @@ class Shop(object):
             self.get_context(request, context))
 
     def order_success(self, request):
-        """Handles order successes (e.g. when an order has been successfully paid for)"""
+        """
+        Handles order successes (e.g. when an order has been successfully
+        paid for)
+        """
         order = self.order_from_request(request)
 
         if not order:
@@ -519,8 +546,10 @@ class Shop(object):
         logger.warn('Order payment failure for %s' % order.order_id)
 
         if plata.settings.PLATA_STOCK_TRACKING:
+            StockTransaction = plata.stock_model()
+
             for transaction in order.stock_transactions.filter(
-                    type=order.stock_transactions.model.PAYMENT_PROCESS_RESERVATION):
+                    type=StockTransaction.PAYMENT_PROCESS_RESERVATION):
                 transaction.delete()
 
         order.payments.pending().delete()
@@ -528,10 +557,14 @@ class Shop(object):
         if order.payments.authorized().exists():
             # There authorized order payments around!
             messages.warning(request, _('Payment failed, please try again.'))
-            logger.warn('Order %s is already partially paid, but payment failed anyway!' % order.order_id)
+            logger.warn('Order %s is already partially paid, but payment'
+                ' failed anyway!' % order.order_id)
         elif order.status > order.CHECKOUT and order.status < order.PAID:
-            order.update_status(order.CHECKOUT, 'Order payment failure, going back to checkout')
-            messages.info(request, _('Payment failed; you can continue editing your order and try again.'))
+            order.update_status(order.CHECKOUT,
+                'Order payment failure, going back to checkout')
+            messages.info(request,
+                _('Payment failed; you can continue editing your order and'
+                    ' try again.'))
 
         return self.render(request, 'plata/shop_order_payment_failure.html',
             self.get_context(request, {

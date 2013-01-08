@@ -38,7 +38,8 @@ PLATA_PAYMENT_MODULES = getattr(settings, 'PLATA_PAYMENT_MODULES', [
 #:     PLATA_PAYMENT_MODULE_NAMES = {
 #:         'paypal': 'PayPal and Credit Cards',
 #:     }
-PLATA_PAYMENT_MODULE_NAMES = getattr(settings, 'PLATA_PAYMENT_MODULE_NAMES', {})
+PLATA_PAYMENT_MODULE_NAMES = getattr(settings, 'PLATA_PAYMENT_MODULE_NAMES',
+    {})
 
 #: ``FixedAmountShippingProcessor`` example configuration
 #:
@@ -53,17 +54,21 @@ PLATA_REPORTING_STATIONERY = getattr(settings, 'PLATA_REPORTING_STATIONERY',
     'pdfdocument.elements.ExampleStationery')
 
 #: PDF address line
-PLATA_REPORTING_ADDRESSLINE = getattr(settings, 'PLATA_REPORTING_ADDRESSLINE', '')
+PLATA_REPORTING_ADDRESSLINE = getattr(settings, 'PLATA_REPORTING_ADDRESSLINE',
+    '')
 
 #: Transactional stock tracking
 #:
-#: ``'plata.product.stock'`` has to be included in ``INSTALLED_APPS`` for this
-#: to work.
+#: ``'plata.product.stock'`` has to be included in ``INSTALLED_APPS`` for
+#: this to work.
 PLATA_STOCK_TRACKING = getattr(settings, 'PLATA_STOCK_TRACKING', False)
-PLATA_STOCK_TRACKING_MODEL = getattr(settings, 'PLATA_STOCK_TRACKING_MODEL', 'stock.StockTransaction')
+PLATA_STOCK_TRACKING_MODEL = getattr(settings, 'PLATA_STOCK_TRACKING_MODEL',
+    'stock.StockTransaction')
 
 #: All available currencies. Use ISO 4217 currency codes in this list only.
 CURRENCIES = getattr(settings, 'CURRENCIES', ('CHF', 'EUR', 'USD', 'CAD'))
 
-#: Target of order item product foreign key (Defaults to ``'product.Product'``)
-PLATA_SHOP_PRODUCT = getattr(settings, 'PLATA_SHOP_PRODUCT', 'product.Product')
+#: Target of order item product foreign key (Defaults to
+#: ``'product.Product'``)
+PLATA_SHOP_PRODUCT = getattr(settings, 'PLATA_SHOP_PRODUCT',
+    'product.Product')
