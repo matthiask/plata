@@ -125,6 +125,9 @@ class ViewTest(PlataTest):
             })
         self.assertEqual(order.items.count(), 2)
 
+        # TODO test what happens when a product has been deleted from the
+        # shop in the meantime (and orderitem.product = None)
+
         self.assertEqual(Order.objects.get().status, Order.CART)
         self.assertRedirects(self.client.post('/cart/', {
             'checkout': True,

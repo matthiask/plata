@@ -22,13 +22,17 @@ Upgrade instructions and further informations are available in
 :ref:`migrations`.
 
 
-Product uniqueness in the cart
-------------------------------
+Cart handling changes
+---------------------
 
 Products do not have to be unique in a cart or an order anymore. This change
 allows more flexibility in product models, for example the implementation of
 configurable products where an article (i.e. a copmuter) can be bought with
 different combinations of upgrades.
+
+Additionally, if a product is deleted from the inventory, the cart view
+removes the order item and notifies the user. The behavior for orders in or
+after the checkout process has not been changed.
 
 
 Django compatibility

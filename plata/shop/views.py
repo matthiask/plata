@@ -298,16 +298,26 @@ class Shop(object):
                 # We cannot directly save the formset, because the additional
                 # checks in modify_item must be performed.
                 for form in formset.forms:
-                    if formset.can_delete and formset._should_delete_form(form):
+                    if not form.instance.product_id:
+                        form.instance.delete()
+                        messages.warning(request,
+                            _('%(name)s has been removed from the inventory'
+                            ' and from your cart as well.') % {
+                                'name': form.instance.name,
+                                })
+                        changed = True
+
+                    elif (formset.can_delete
+                            and formset._should_delete_form(form)):
                         if order.is_confirmed():
-                            raise ValidationError(
-                                _('Cannot modify order once it has been confirmed.'),
+                            raise ValidationError(_('Cannot modify order once'
+                                ' it has been confirmed.'),
                                 code='order_sealed')
 
                         form.instance.delete()
                         changed = True
+
                     elif form.has_changed():
-                        # TODO crashes if instance.product is None.
                         order.modify_item(form.instance.product,
                             absolute=form.cleaned_data['quantity'],
                             recalculate=False,
