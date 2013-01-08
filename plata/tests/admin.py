@@ -116,3 +116,16 @@ class AdminTest(PlataTest):
             })
         self.assertRedirects(self.client.post('/admin/discount/discount/3/', discount_data),
             '/admin/discount/discount/')
+
+    def test_02_orders(self):
+        self.create_product()
+        order = self.create_order()
+        self.login()
+
+        orders = self.client.get('/admin/shop/order/')
+
+        # Order item and list filter
+        self.assertContains(orders, 'Is a cart', count=2)
+        self.assertContains(orders, '/invoice_pdf/%d/' % order.id, count=1)
+        self.assertContains(orders, '/packing_slip_pdf/%d/' % order.id,
+            count=1)
