@@ -1018,3 +1018,29 @@ class ModelTest(PlataTest):
         order.modify_item(product, relative=10, item=any_item)
         self.assertEqual(order.items.count(), 3)
         self.assertEqual(any_item.quantity, 11)
+
+    def test_30_serialization(self):
+        """Test the serialization capabilities of the JSON field code"""
+
+        order = self.create_order()
+
+        def _compare(data):
+            order.data = data
+            order.save()
+            reloaded_order = Order.objects.get(pk=order.pk)
+            self.assertEqual(data, reloaded_order.data)
+
+        _compare({
+            'the_answer': 42,
+            'the_cost': Decimal('37.50'),
+            })
+
+        """
+        TODO this always fails currently, because datetimes aren't
+        unserialized :-(
+
+        _compare({
+            'now': datetime.now(),
+            'now_tz': timezone.now(),
+            })
+        """
