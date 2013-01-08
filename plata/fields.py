@@ -41,8 +41,6 @@ def json_encode_default(o):
         if o.microsecond:
             r = r[:12]
         return r
-    elif isinstance(o, decimal.Decimal):
-        return str(o)
 
     raise TypeError, 'Cannot encode %r' % o
 
