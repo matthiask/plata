@@ -1,4 +1,5 @@
 import logging
+import warnings
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -114,9 +115,13 @@ class ProcessorBase(object):
         to ``StockTransaction.objects.bulk_create``.
         """
 
-        # TODO remove this check now that create_transactions is only called
-        # when PLATA_STOCK_TRACKING = True ?
         if not plata.settings.PLATA_STOCK_TRACKING:
+            warnings.warn('StockTransaction.objects.create_transactions'
+                ' currently has no effect when PLATA_STOCK_TRACKING = False.'
+                ' This will change in the future. Change your code to only'
+                ' call create_transactions when'
+                ' plata.settings.PLATA_STOCK_TRACKING = True',
+                DeprecationWarning, stacklevel=2)
             return
         StockTransaction = plata.stock_model()
         StockTransaction.objects.bulk_create(order,
