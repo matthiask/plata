@@ -31,10 +31,13 @@ class CheckoutForm(shop_forms.BaseCheckoutForm):
                 }
 
             for f in contact.ADDRESS_FIELDS:
-                initial['billing_%s' % f] = getattr(contact, 'billing_%s' % f)
-                initial['shipping_%s' % f] = getattr(contact, 'shipping_%s' % f)
+                initial['billing_%s' % f] = getattr(contact,
+                    'billing_%s' % f)
+                initial['shipping_%s' % f] = getattr(contact,
+                    'shipping_%s' % f)
 
             kwargs['initial'] = initial
+
         elif request.user.is_authenticated():
             kwargs['initial'] = {
                 'email': request.user.email,

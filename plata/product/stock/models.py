@@ -4,16 +4,16 @@ Exact, transactional stock tracking for Plata
 
 Follow these steps to enable this module:
 
-- Ensure your product model has an ``items_in_stock`` field with the following
-  definiton::
+- Ensure your product model has an ``items_in_stock`` field with the
+  following definiton::
 
       items_in_stock = models.IntegerField(default=0)
 
 - Add ``'plata.product.stock'`` to ``INSTALLED_APPS``.
-- Set ``PLATA_STOCK_TRACKING = True`` to enable stock tracking in the checkout
-  and payment processes.
-- Optionally modify your add-to-cart forms on product detail pages to take into
-  account ``items_in_stock``.
+- Set ``PLATA_STOCK_TRACKING = True`` to enable stock tracking in the
+  checkout and payment processes.
+- Optionally modify your add-to-cart forms on product detail pages to take
+  into account ``items_in_stock``.
 """
 
 from datetime import timedelta
@@ -37,20 +37,23 @@ class PeriodManager(models.Manager):
         """
 
         try:
-            return self.filter(start__lte=timezone.now()).order_by('-start')[0]
+            return self.filter(start__lte=timezone.now()).order_by(
+                '-start')[0]
         except IndexError:
             return self.create(
                 name=ugettext('Automatically created'),
-                notes=ugettext('Automatically created because no period existed yet.'))
+                notes=ugettext(
+                    'Automatically created because no period existed yet.'))
 
 
 class Period(models.Model):
     """
     A period in which stock changes are tracked
 
-    You might want to create a new period every year and create initial amount
-    transactions for every variation. ``StockTransaction.objects.open_new_period``
-    does this automatically.
+    You might want to create a new period every year and create initial
+    amount transactions for every variation.
+
+    ``StockTransaction.objects.open_new_period`` does this automatically.
     """
 
     name = models.CharField(_('name'), max_length=100)
@@ -106,7 +109,8 @@ class StockTransactionManager(models.Manager):
 
         if exclude_order:
             update = False
-            queryset = queryset.filter(Q(order__isnull=True) | ~Q(order=exclude_order))
+            queryset = queryset.filter(
+                Q(order__isnull=True) | ~Q(order=exclude_order))
 
         if include_reservations:
             update = False
@@ -114,7 +118,8 @@ class StockTransactionManager(models.Manager):
                 type=self.model.PAYMENT_PROCESS_RESERVATION,
                 created__lt=timezone.now() - timedelta(seconds=15*60))
         else:
-            queryset = queryset.exclude(type=self.model.PAYMENT_PROCESS_RESERVATION)
+            queryset = queryset.exclude(
+                type=self.model.PAYMENT_PROCESS_RESERVATION)
 
         count = queryset.aggregate(items=Sum('change')).get('items') or 0
 
@@ -124,8 +129,9 @@ class StockTransactionManager(models.Manager):
             product.items_in_stock = count
 
         if update:
-            product_model._default_manager.filter(id=getattr(product, 'pk', product)).update(
-                items_in_stock=count)
+            product_model._default_manager.filter(
+                id=getattr(product, 'pk', product)
+                ).update(items_in_stock=count)
 
         return count
 
@@ -167,24 +173,26 @@ class StockTransaction(models.Model):
     - ``StockTransaction.CORRECTION``: Use this for any errors
     - ``StockTransaction.PURCHASE``: Product purchase from a supplier
     - ``StockTransaction.SALE``: Sales, f.e. through the webshop
-    - ``StockTransaction.RETURNS``: Returned products (from lending or whatever)
+    - ``StockTransaction.RETURNS``: Returned products (i.e. from lending)
     - ``StockTransaction.RESERVATION``: Reservations
     - ``StockTransaction.INCOMING``: Generic warehousing
     - ``StockTransaction.OUTGOING``: Generic warehousing
     - ``StockTransaction.PAYMENT_PROCESS_RESERVATION``: Product reservation
       during payment process
 
-    Most of these types do not have a significance to Plata. The exceptions are:
+    Most of these types do not have a significance to Plata. The exceptions
+    are:
 
     - ``INITIAL`` transactions are created by ``open_new_period``
     - ``SALE`` transactions are created when orders are confirmed
-    - ``PAYMENT_PROCESS_RESERVATION`` transactions are created by payment modules
-      which send the user to a different domain for payment data entry (f.e. PayPal).
-      These transactions are also special in that they are only valid for
-      15 minutes. After 15 minutes, other customers are able to put the product
-      in their cart and proceed to checkout again. This time period is a security
-      measure against customers buying products at the same time which cannot
-      be delivered afterwards because stock isn't available.
+    - ``PAYMENT_PROCESS_RESERVATION`` transactions are created by payment
+      modules which send the user to a different domain for payment data
+      entry (f.e. PayPal). These transactions are also special in that they
+      are only valid for 15 minutes. After 15 minutes, other customers are
+      able to put the product in their cart and proceed to checkout again.
+      This time period is a security measure against customers buying
+      products at the same time which cannot be delivered afterwards because
+      stock isn't available.
     """
 
     INITIAL = 10
@@ -221,7 +229,8 @@ class StockTransaction(models.Model):
         on_delete=models.SET_NULL, null=True)
     type = models.PositiveIntegerField(_('type'), choices=TYPE_CHOICES)
     change = models.IntegerField(_('change'),
-        help_text=_('Use negative numbers for sales, lendings and other outgoings.'))
+        help_text=_('Use negative numbers for sales, lendings and other'
+            ' outgoings.'))
     order = models.ForeignKey(Order, blank=True, null=True,
         related_name='stock_transactions', verbose_name=_('order'))
     payment = models.ForeignKey(OrderPayment, blank=True, null=True,
@@ -274,11 +283,13 @@ def validate_order_stock_available(order):
     taking into account payment process reservations.
     """
     for item in order.items.select_related('product'):
-        if item.quantity > StockTransaction.objects.items_in_stock(item.product,
+        if item.quantity > StockTransaction.objects.items_in_stock(
+                item.product,
                 exclude_order=order,
                 include_reservations=True):
-            raise ValidationError(_('Not enough stock available for %s.') % item.product,
-                code='insufficient_stock')
+            raise ValidationError(_('Not enough stock available for %s.') % (
+                item.product,
+                ), code='insufficient_stock')
 
 
 if plata.settings.PLATA_STOCK_TRACKING:
@@ -287,9 +298,14 @@ if plata.settings.PLATA_STOCK_TRACKING:
         product_model._meta.get_field('items_in_stock')
     except models.FieldDoesNotExist:
         raise ImproperlyConfigured(
-            'Product model %r must have a field named `items_in_stock`' % product_model)
+            'Product model %r must have a field named `items_in_stock`' % (
+                product_model,
+                ))
 
-    signals.post_delete.connect(update_items_in_stock, sender=StockTransaction)
-    signals.post_save.connect(update_items_in_stock, sender=StockTransaction)
+    signals.post_delete.connect(update_items_in_stock,
+        sender=StockTransaction)
+    signals.post_save.connect(update_items_in_stock,
+        sender=StockTransaction)
 
-    Order.register_validator(validate_order_stock_available, Order.VALIDATE_CART)
+    Order.register_validator(validate_order_stock_available,
+        Order.VALIDATE_CART)

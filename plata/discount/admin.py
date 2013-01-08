@@ -16,11 +16,14 @@ class DiscountAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(DiscountAdminForm, self).__init__(*args, **kwargs)
 
-        self.fields['config'].required = False # Seems to be necessary because of
-                                               # the custom validation
+        # Seems to be necessary because of the custom validation
+        self.fields['config'].required = False
+
+        choices = [(key, cfg.get('title', key)) for key, cfg
+            in self._meta.model.CONFIG_OPTIONS]
 
         self.fields['config_options'] = forms.MultipleChoiceField(
-            choices=((key, cfg.get('title', key)) for key, cfg in self._meta.model.CONFIG_OPTIONS),
+            choices=choices,
             label=_('Configuration options'),
             help_text=_('Save and continue editing to configure options.'),
             )
@@ -56,13 +59,14 @@ class DiscountAdminForm(forms.ModelForm):
             for k, f in cfg.get('form_fields', []):
                 self.fields['%s_%s' % (s, k)] = f
 
-                # Set initial value if we have one already in the configuration
+                # Set initial value if we have one in the configuration
                 if k in self.instance.config.get(s, {}):
                     f.initial = self.instance.config[s].get(k)
 
                 fieldset[1]['fields'].append('%s_%s' % (s, k))
 
-            _discount_admin_state._plata_discount_config_fieldsets.append(fieldset)
+            _discount_admin_state._plata_discount_config_fieldsets.append(
+                fieldset)
 
     def clean(self):
         data = self.cleaned_data
@@ -109,7 +113,8 @@ class DiscountAdmin(admin.ModelAdmin):
             'fields': ('config_options',),
             }))
 
-        fieldsets.extend(_discount_admin_state._plata_discount_config_fieldsets)
+        fieldsets.extend(
+            _discount_admin_state._plata_discount_config_fieldsets)
         del _discount_admin_state._plata_discount_config_fieldsets
 
         return fieldsets

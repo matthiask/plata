@@ -51,10 +51,12 @@ class DiscountBase(models.Model):
     currency = CurrencyField(blank=True, null=True,
         help_text=_('Only required for amount discounts.'))
     tax_class = models.ForeignKey(TaxClass, verbose_name=_('tax class'),
-        blank=True, null=True, help_text=_('Only required for amount discounts incl. tax.'))
+        blank=True, null=True,
+        help_text=_('Only required for amount discounts incl. tax.'))
 
     config = JSONField(_('configuration'), blank=True,
-        help_text=_('If you edit this field directly, changes below will be ignored.'))
+        help_text=_('If you edit this field directly, changes below will be'
+            ' ignored.'))
 
     class Meta:
         abstract = True
@@ -70,20 +72,28 @@ class DiscountBase(models.Model):
     def clean(self):
         if self.type == self.PERCENTAGE_VOUCHER:
             if self.currency or self.tax_class:
-                raise ValidationError(_('Percentage discounts cannot have currency and tax class set.'))
+                raise ValidationError(
+                    _('Percentage discounts cannot have currency and tax'
+                        ' class set.'))
         elif self.type == self.AMOUNT_VOUCHER_EXCL_TAX:
             if not self.currency:
-                raise ValidationError(_('Amount discounts excl. tax need a currency.'))
+                raise ValidationError(
+                    _('Amount discounts excl. tax need a currency.'))
             if self.tax_class:
-                raise ValidationError(_('Amount discounts excl. tax cannot have tax class set.'))
+                raise ValidationError(
+                    _('Amount discounts excl. tax cannot have tax class'
+                        ' set.'))
         elif self.type == self.AMOUNT_VOUCHER_INCL_TAX:
             if not (self.currency and self.tax_class):
-                raise ValidationError(_('Amount discounts incl. tax need a currency and a tax class.'))
+                raise ValidationError(
+                    _('Amount discounts incl. tax need a currency and a tax'
+                        ' class.'))
         elif self.type == self.MEANS_OF_PAYMENT:
             if not self.currency:
                 raise ValidationError(_('Means of payment need a currency.'))
             if self.tax_class:
-                raise ValidationError(_('Means of payment cannot have tax class set.'))
+                raise ValidationError(
+                    _('Means of payment cannot have tax class set.'))
         else:
             raise ValidationError(_('Unknown discount type.'))
 
@@ -106,9 +116,11 @@ class DiscountBase(models.Model):
             cfg = dict(self.CONFIG_OPTIONS)[key]
 
             if 'product_query' in cfg:
-                products = products.filter(cfg['product_query'](**parameters))
+                products = products.filter(
+                    cfg['product_query'](**parameters))
             if 'orderitem_query' in cfg:
-                orderitems = orderitems.filter(cfg['orderitem_query'](**parameters))
+                orderitems = orderitems.filter(
+                    cfg['orderitem_query'](**parameters))
 
         return products.filter(id__in=orderitems.values('product_id'))
 
@@ -134,16 +146,19 @@ class DiscountBase(models.Model):
         Aggregates remaining discount (if discount is bigger than order total)
         """
 
-        eligible_products = self._eligible_products(order, items).values_list('id', flat=True)
-        eligible_items = [item for item in items if item.product_id in eligible_products]
+        eligible_products = self._eligible_products(order, items).values_list(
+            'id', flat=True)
+        eligible_items = [item for item in items
+            if item.product_id in eligible_products]
 
         if tax_included:
             discount = self.value / (1 + self.tax_class.rate/100)
         else:
             discount = self.value
 
-        items_subtotal = sum([item.discounted_subtotal_excl_tax for item in eligible_items],
-            Decimal('0.00'))
+        items_subtotal = sum([
+            item.discounted_subtotal_excl_tax for item in eligible_items
+            ], Decimal('0.00'))
 
         # Don't allow bigger discounts than the items subtotal
         if discount > items_subtotal:
@@ -152,7 +167,8 @@ class DiscountBase(models.Model):
             discount = items_subtotal
 
         for item in eligible_items:
-            item._line_item_discount += item.discounted_subtotal_excl_tax / items_subtotal * discount
+            item._line_item_discount += (
+                item.discounted_subtotal_excl_tax / items_subtotal * discount)
 
     def _apply_means_of_payment(self, order, items):
         self._apply_amount_discount(order, items, tax_included=False)
@@ -162,7 +178,8 @@ class DiscountBase(models.Model):
         Apply percentage discount evenly to all eligible order items
         """
 
-        eligible_products = self._eligible_products(order, items).values_list('id', flat=True)
+        eligible_products = self._eligible_products(order, items).values_list(
+            'id', flat=True)
 
         factor = self.value / 100
 
@@ -170,11 +187,14 @@ class DiscountBase(models.Model):
             if item.product_id not in eligible_products:
                 continue
 
-            item._line_item_discount += item.discounted_subtotal_excl_tax * factor
+            item._line_item_discount += (
+                item.discounted_subtotal_excl_tax * factor)
 
 
 # Nearly all letters and digits, excluding those which can be easily confounded
-RANDOM_CODE_CHARACTERS = '23456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'
+RANDOM_CODE_CHARACTERS = ('23456789abcdefghijkmnopqrstuvwxyz'
+    'ABCDEFGHJKLMNPQRSTUVWXYZ')
+
 
 def generate_random_code():
     return u''.join(random.sample(RANDOM_CODE_CHARACTERS, 10))
@@ -190,7 +210,8 @@ class Discount(DiscountBase):
 
     allowed_uses = models.IntegerField(_('number of allowed uses'),
         blank=True, null=True,
-        help_text=_('Leave empty if there is no limit on the number of uses of this discount.'))
+        help_text=_('Leave empty if there is no limit on the number of uses'
+            ' of this discount.'))
     used = models.IntegerField(_('number of times already used'), default=0)
 
     class Meta:
@@ -199,7 +220,7 @@ class Discount(DiscountBase):
 
     def validate(self, order):
         """
-        Validate whether this discount can be applied at all on the given order
+        Validate whether this discount can be applied on the given order
         """
 
         messages = []
@@ -213,7 +234,8 @@ class Discount(DiscountBase):
             messages.append(_('Discount is expired.'))
 
         if self.allowed_uses and self.used >= self.allowed_uses:
-            messages.append(_('Allowed uses for this discount has already been reached.'))
+            messages.append(
+                _('Allowed uses for this discount has already been reached.'))
 
         if (self.currency != order.currency and self.type in (
                 self.AMOUNT_VOUCHER_EXCL_TAX,
@@ -230,8 +252,8 @@ class Discount(DiscountBase):
         """
         Add discount to passed order
 
-        Removes the previous discount if a discount with this code has already
-        been added to the order before.
+        Removes the previous discount if a discount with this code has
+        already been added to the order before.
         """
 
         self.validate(order)
@@ -239,7 +261,8 @@ class Discount(DiscountBase):
         try:
             order.applied_discounts.get(code=self.code).delete()
         except ObjectDoesNotExist:
-            # Don't increment used count when discount has already been applied
+            # Don't increment used count when discount has already been
+            # applied
             self.used += 1
             self.save()
 
@@ -292,13 +315,14 @@ class AppliedDiscount(DiscountBase):
 
     order = models.ForeignKey(Order, related_name='applied_discounts',
         verbose_name=_('order'))
-    code = models.CharField(_('code'), max_length=30) # We could make this a ForeignKey
-                                                      # to Discount.code, but we do not
-                                                      # want deletions to cascade to this
-                                                      # table.
+    # We could make this a ForeignKey to Discount.code, but we do not
+    # want deletions to cascade to this table and we still need the code
+    # for the PDF generation or whatever anyway.
+    code = models.CharField(_('code'), max_length=30)
     remaining = models.DecimalField(_('remaining'),
         max_digits=18, decimal_places=10, default=0,
-        help_text=_('Discount amount excl. tax remaining after discount has been applied.'))
+        help_text=_('Discount amount excl. tax remaining after discount has'
+            ' been applied.'))
 
     class Meta:
         ordering = ['type', 'name']

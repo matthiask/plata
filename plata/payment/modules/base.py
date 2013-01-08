@@ -1,7 +1,7 @@
 import logging
 import warnings
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ugettext
 
 import plata
 from plata.shop import signals
@@ -12,10 +12,11 @@ logger = logging.getLogger('plata.payment')
 class ProcessorBase(object):
     """Payment processor base class"""
 
-    #: Safe key for this payment module (shouldn't contain special chars, spaces etc.)
+    #: Safe key for this payment module (shouldn't contain special chars,
+    #: spaces etc.)
     key = 'unnamed'
 
-    #: Human-readable name for this payment module. You may even use i18n here.
+    #: Human-readable name for this payment module. You may use i18n here.
     default_name = 'unnamed'
 
     def __init__(self, shop):
@@ -24,10 +25,10 @@ class ProcessorBase(object):
     @property
     def name(self):
         """
-        Return name of this payment module suitable for human consumption
+        Returns name of this payment module suitable for human consumption
 
-        Defaults to ``default_name`` but can be overridden by placing an entry
-        in ``PLATA_PAYMENT_MODULE_NAMES``. Example::
+        Defaults to ``default_name`` but can be overridden by placing an
+        entry in ``PLATA_PAYMENT_MODULE_NAMES``. Example::
 
             PLATA_PAYMENT_MODULE_NAMES = {
                 'paypal': _('Paypal and credit cards'),
@@ -40,12 +41,12 @@ class ProcessorBase(object):
     @property
     def urls(self):
         """
-        Return URLconf definitions used by this payment processor
+        Returns URLconf definitions used by this payment processor
 
         This is especially useful for processors offering server-to-server
-        communication such as Paypal's IPN (Instant Payment Notification) where
-        Paypal communicates payment success immediately and directly, without
-        involving the client.
+        communication such as Paypal's IPN (Instant Payment Notification)
+        where Paypal communicates payment success immediately and directly,
+        without involving the client.
 
         Define your own URLs in ``get_urls``.
         """
@@ -53,7 +54,7 @@ class ProcessorBase(object):
 
     def get_urls(self):
         """
-        Define URLs for this payment processor
+        Defines URLs for this payment processor
 
         Note that these URLs are added directly to the shop views URLconf
         without prefixes. It is your responsability to namespace these URLs
@@ -64,10 +65,11 @@ class ProcessorBase(object):
 
     def enabled_for_request(self, request):
         """
-        Decides whether or not this payment modules is available for a given request.
+        Decides whether this payment modules is available for a given request.
 
-        Defaults to ``True``. If you need to disable payment modules for certain
-        visitors or group of visitors, that is the method you are searching for.
+        Defaults to ``True``. If you need to disable payment modules for
+        certain visitors or group of visitors, that is the method you are
+        searching for.
         """
         return True
 
@@ -77,9 +79,9 @@ class ProcessorBase(object):
         the user has selected a payment module and accepted the terms and
         conditions of the shop.
 
-        Must return a response which is presented to the user, i.e. a form with
-        hidden values forwarding the user to the PSP or a redirect to the success
-        page if no further processing is needed.
+        Must return a response which is presented to the user, i.e. a form
+        with hidden values forwarding the user to the PSP or a redirect to
+        the success page if no further processing is needed.
         """
         raise NotImplementedError
 
@@ -125,7 +127,7 @@ class ProcessorBase(object):
             return
         StockTransaction = plata.stock_model()
         StockTransaction.objects.bulk_create(order,
-            notes=_('%(stage)s: %(order)s processed by %(payment_module)s') % {
+            notes=_('%(stage)s: %(order)s processed by %(payment_module)s') %{
                 'stage': stage,
                 'order': order,
                 'payment_module': self.name,
@@ -152,26 +154,31 @@ class ProcessorBase(object):
             signal_kwargs = dict(sender=self, order=order, payment=payment)
 
             if order.discount_remaining:
-                logger.info('Creating discount for remaining amount %s on order %s' % (
-                    order.discount_remaining, order))
+                logger.info('Creating discount for remaining amount %s on'
+                    ' order %s' % ( order.discount_remaining, order))
                 discount_model = self.shop.discount_model
                 try:
-                    discount = order.applied_discounts.filter(
-                        type__in=(discount_model.AMOUNT_VOUCHER_EXCL_TAX, discount_model.AMOUNT_VOUCHER_INCL_TAX),
-                        ).order_by('type')[0]
+                    discount = order.applied_discounts.filter(type__in=(
+                        discount_model.AMOUNT_VOUCHER_EXCL_TAX,
+                        discount_model.AMOUNT_VOUCHER_INCL_TAX,
+                        )).order_by('type')[0]
                 except IndexError:
-                    # XXX: Remaining discount will be applicable to ALL products,
-                    # not sure if this behavior is correct...
+                    # XXX: Remaining discount will be applicable to ALL
+                    #products, not sure if this behavior is correct...
                     discount = None
 
-                signal_kwargs['remaining_discount'] = discount_model.objects.create(
-                    name='Remaining discount amount for order #%s' % order.pk,
-                    type=self.shop.discount_model.AMOUNT_VOUCHER_EXCL_TAX,
+                remaining_discount = discount_model.objects.create(
+                    name=ugettext('Remaining discount for order %s') % (
+                        order.order_id,
+                        ),
+                    type=discount_model.AMOUNT_VOUCHER_EXCL_TAX,
                     value=order.discount_remaining,
                     currency=order.currency,
                     config=getattr(discount, 'config', '{"all": {}}'),
                     allowed_uses=1,
                     )
+
+                signal_kwargs['remaining_discount'] = remaining_discount
 
             signals.order_paid.send(**signal_kwargs)
         self.clear_pending_payments(order)
@@ -179,8 +186,8 @@ class ProcessorBase(object):
     def already_paid(self, order):
         """
         Handles the case where a payment module is selected but the order
-        is already completely paid for (f.e. because an amount discount has been
-        used which covers the order).
+        is already completely paid for (f.e. because an amount discount has
+        been used which covers the order).
 
         Does nothing if the order **status** is ``PAID`` already.
         """

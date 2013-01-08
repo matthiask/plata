@@ -36,7 +36,8 @@ class OrderReport(object):
     def title(self, title=None):
         self.pdf.p(u'%s: %s' % (
             capfirst(_('order date')),
-            self.order.confirmed and self.order.confirmed.strftime('%d.%m.%Y') or _('Not confirmed yet'),
+            self.order.confirmed.strftime('%d.%m.%Y') if self.order.confirmed
+                else _('Not confirmed yet'),
             ))
         self.pdf.spacer(3*mm)
 
@@ -86,10 +87,14 @@ class OrderReport(object):
             ]
 
         if self.order.discount:
-            summary_table.append((capfirst(_('discount')), u'%.2f' % self.order.discount))
+            summary_table.append((
+                capfirst(_('discount')),
+                u'%.2f' % self.order.discount))
 
         if self.order.shipping:
-            summary_table.append((capfirst(_('shipping')), u'%.2f' % self.order.shipping))
+            summary_table.append((
+                capfirst(_('shipping')),
+                u'%.2f' % self.order.shipping))
 
         self.pdf.table(summary_table, (12*cm, 4.4*cm), self.pdf.style.table)
 
@@ -127,10 +132,12 @@ class OrderReport(object):
                 payment = None
 
             if payment and payment.payment_method:
-                self.pdf.p(_('Already paid for with %(payment_method)s (Transaction %(transaction)s).') % {
-                    'payment_method': payment.payment_method,
-                    'transaction': payment.transaction_id,
-                    })
+                self.pdf.p(
+                    _('Already paid for with %(payment_method)s'
+                        ' (Transaction %(transaction)s).') % {
+                        'payment_method': payment.payment_method,
+                        'transaction': payment.transaction_id,
+                        })
             else:
                 self.pdf.p(_('Already paid for.'))
         else:
