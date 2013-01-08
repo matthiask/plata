@@ -276,7 +276,7 @@ class Order(BillingShippingAddress):
             'Order.is_paid() has been deprecated because its name is'
             ' misleading. Test for `order.status >= order.PAID` or'
             ' `not order.balance_remaining yourself.',
-            DeprecationWarning)
+            DeprecationWarning, stacklevel=2)
         return self.balance_remaining <= 0
 
 
