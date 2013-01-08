@@ -376,8 +376,6 @@ class Order(BillingShippingAddress):
             except self.items.model.MultipleObjectsReturned:
                 # Oops. Product already exists several times. Stay on the safe
                 # side and add a new one instead of trying to modify another.
-                # TODO maybe coalesce items when handle_orderitem() sets the same
-                # SKU for two products?
                 if not force_new:
                     raise ValidationError(
                         _('The product already exists several times in the'
