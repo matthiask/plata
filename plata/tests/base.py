@@ -3,7 +3,7 @@ from decimal import Decimal
 
 from django.test import TestCase
 
-try:
+try:  # pragma: no cover
   from django.contrib.auth import get_user_model
   User = get_user_model()
 except ImportError, e:
