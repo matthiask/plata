@@ -18,13 +18,12 @@ except TypeError:
 
 
 #: Field offering all defined currencies
-CurrencyField = curry(models.CharField, _('currency'), max_length=3, choices=zip(
-    plata.settings.CURRENCIES, plata.settings.CURRENCIES))
+CurrencyField = curry(models.CharField, _('currency'), max_length=3,
+    choices=zip(plata.settings.CURRENCIES, plata.settings.CURRENCIES))
 
 
 def json_encode_default(o):
     # See "Date Time String Format" in the ECMA-262 specification.
-    import datetime
     if isinstance(o, datetime.datetime):
         r = o.isoformat()
         if o.microsecond:
@@ -36,6 +35,7 @@ def json_encode_default(o):
         return o.isoformat()
     elif isinstance(o, datetime.time):
         if is_aware(o):
+            # TODO fix this / implement this somehow
             raise ValueError("JSON can't represent timezone-aware times.")
         r = o.isoformat()
         if o.microsecond:
@@ -51,7 +51,8 @@ class JSONFormField(forms.fields.CharField):
     def clean(self, value, *args, **kwargs):
         if value:
             try:
-                # Run the value through JSON so we can normalize formatting and at least learn about malformed data:
+                # Run the value through JSON so we can normalize formatting
+                # and at least learn about malformed data:
                 value = json.dumps(json.loads(value, use_decimal=True),
                     default=json_encode_default, use_decimal=True)
             except ValueError:
@@ -98,7 +99,9 @@ class JSONField(models.TextField):
         return self._flatten_value(value)
 
     def value_to_string(self, obj):
-        """Extract our value from the passed object and return it in string form"""
+        """
+        Extract our value from the passed object and return it in string form
+        """
 
         if hasattr(obj, self.attname):
             value = getattr(obj, self.attname)
@@ -128,9 +131,9 @@ class JSONField(models.TextField):
 
 try:
     from south.modelsinspector import add_introspection_rules
-
     JSONField_introspection_rule = ( (JSONField,), [], {}, )
-
-    add_introspection_rules(rules=[JSONField_introspection_rule], patterns=["^plata\.fields"])
+    add_introspection_rules(
+        rules=[JSONField_introspection_rule],
+        patterns=["^plata\.fields"])
 except ImportError:
     pass
