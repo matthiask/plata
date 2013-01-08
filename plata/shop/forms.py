@@ -14,7 +14,7 @@ from plata.shop import signals
 
 class BaseCheckoutForm(forms.ModelForm):
     """
-    Needs self.request
+    Needs the request and the shop object as keyword argument
     """
 
     def __init__(self, *args, **kwargs):
@@ -26,27 +26,27 @@ class BaseCheckoutForm(forms.ModelForm):
     def clean(self):
         data = super(BaseCheckoutForm, self).clean()
 
-        email = data.get('email')
-        create_account = data.get('create_account')
-
-        if email:
-            users = list(User.objects.filter(email=email))
+        if data.get('email'):
+            users = list(User.objects.filter(email=data.get('email')))
 
             if users:
                 if self.request.user not in users:
                     if self.request.user.is_authenticated():
                         self._errors['email'] = self.error_class([
-                            _('This e-mail address belongs to a different account.')])
+                            _('This e-mail address belongs to a different'
+                                ' account.')])
                     else:
                         self._errors['email'] = self.error_class([
-                            _('This e-mail address might belong to you, but we cannot know for sure because you are not authenticated yet.')])
+                            _('This e-mail address might belong to you, but'
+                                ' we cannot know for sure because you are'
+                                ' not authenticated yet.')])
 
         return data
 
     def save(self):
         """
-        Save the order, create or update the contact information (if available)
-        and return the saved order instance
+        Save the order, create or update the contact information
+        (if available) and return the saved order instance
         """
         order = super(BaseCheckoutForm, self).save(commit=False)
         contact = self.shop.contact_from_user(self.request.user)
@@ -148,7 +148,8 @@ class ConfirmationForm(forms.Form):
         self.order.update_status(self.order.CONFIRMED, 'Confirmation given')
         signals.order_confirmed.send(sender=self.shop, order=self.order)
 
-        payment_module = dict((m.__module__, m)
-            for m in self.payment_modules)[self.cleaned_data['payment_method']]
+        module = dict(
+            (m.__module__, m) for m in self.payment_modules
+            )[self.cleaned_data['payment_method']]
 
-        return payment_module.process_order_confirmed(self.request, self.order)
+        return module.process_order_confirmed(self.request, self.order)
