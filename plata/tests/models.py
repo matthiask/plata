@@ -640,7 +640,7 @@ class ModelTest(PlataTest):
         # Create a period in the far future
         Period.objects.create(
             name='Period 2',
-            start=timezone.make_aware(datetime(2100, 1, 1, 0, 0),
+            start=timezone.make_aware(datetime(2030, 1, 1, 0, 0),
                 timezone.get_default_timezone()),
             )
 
