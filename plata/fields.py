@@ -13,9 +13,9 @@ from django.utils.translation import ugettext_lazy as _
 import plata
 
 
-try:  # pragma: no cover
+try:
     json.dumps([42], use_decimal=True)
-except TypeError:
+except TypeError:  # pragma: no cover
     raise Exception('simplejson>=2.1 with support for use_decimal required.')
 
 
