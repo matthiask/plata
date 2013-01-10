@@ -1,17 +1,19 @@
 import datetime
 import decimal
 import logging
+import re
 import simplejson as json
 
 from django import forms
 from django.db import models
+from django.utils.dateparse import parse_date, parse_datetime
 from django.utils.functional import curry
 from django.utils.translation import ugettext_lazy as _
 
 import plata
 
 
-try:
+try:  # pragma: no cover
     json.dumps([42], use_decimal=True)
 except TypeError:
     raise Exception('simplejson>=2.1 with support for use_decimal required.')
@@ -25,14 +27,9 @@ CurrencyField = curry(models.CharField, _('currency'), max_length=3,
 def json_encode_default(o):
     # See "Date Time String Format" in the ECMA-262 specification.
     if isinstance(o, datetime.datetime):
-        r = o.isoformat()
-        if o.microsecond:
-            r = r[:23] + r[26:]
-        if r.endswith('+00:00'):
-            r = r[:-6] + 'Z'
-        return r
+        return o.strftime('%Y-%m-%dT%H:%M:%S.%f%z')
     elif isinstance(o, datetime.date):
-        return o.isoformat()
+        return o.strftime('%Y-%m-%d')
     elif isinstance(o, datetime.time):
         if is_aware(o):
             # TODO fix this / implement this somehow
@@ -45,14 +42,49 @@ def json_encode_default(o):
     raise TypeError, 'Cannot encode %r' % o
 
 
+_PATTERNS = [
+    (re.compile(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}'), (
+        lambda value: datetime.datetime.strptime(value,
+            '%Y-%m-%dT%H:%M:%S.%f'),
+        lambda value: datetime.datetime.strptime(value,
+            '%Y-%m-%dT%H:%M:%S'),
+        lambda value: parse_datetime(value),
+        )),
+    (re.compile(r'\d{4}-\d{2}-\d{2}'), (
+        lambda value: parse_date(value),
+        )),
+    ]
+
+
+def json_decode_hook(data):
+    for key, value in list(data.items()):
+        if not isinstance(value, basestring):
+            continue
+
+        for regex, fns in _PATTERNS:
+            if regex.match(value):
+                for fn in fns:
+                    try:
+                        data[key] = fn(value)
+                        break
+                    except ValueError:
+                        pass
+
+                break
+
+    return data
+
+
 class JSONFormField(forms.fields.CharField):
     def clean(self, value, *args, **kwargs):
         if value:
             try:
                 # Run the value through JSON so we can normalize formatting
                 # and at least learn about malformed data:
-                value = json.dumps(json.loads(value, use_decimal=True),
-                    default=json_encode_default, use_decimal=True)
+                value = json.dumps(
+                    json.loads(value, use_decimal=True,
+                        object_hook=json_decode_hook),
+                    use_decimal=True, default=json_encode_default,)
             except ValueError:
                 raise forms.ValidationError("Invalid JSON data!")
 
@@ -83,7 +115,8 @@ class JSONField(models.TextField):
                 return {}
 
             try:
-                return json.loads(value, use_decimal=True)
+                return json.loads(value, use_decimal=True,
+                    object_hook=json_decode_hook)
             except ValueError:
                 logging.getLogger("plata.fields").exception(
                     "Unable to deserialize stored JSONField data: %s", value)
@@ -115,8 +148,8 @@ class JSONField(models.TextField):
             return ""
 
         if isinstance(value, dict):
-            value = json.dumps(value, default=json_encode_default,
-                use_decimal=True)
+            value = json.dumps(value, use_decimal=True,
+                default=json_encode_default)
 
         assert isinstance(value, basestring)
 

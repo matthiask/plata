@@ -1035,12 +1035,16 @@ class ModelTest(PlataTest):
             'the_cost': Decimal('37.50'),
             })
 
-        """
-        TODO this always fails currently, because datetimes aren't
-        unserialized :-(
+        _compare({
+            'now': datetime.now().replace(microsecond=0),
+            'now_with_ms': datetime.now(),
+            })
 
         _compare({
-            'now': datetime.now(),
-            'now_tz': timezone.now(),
+            'now_tz': timezone.now().replace(microsecond=0),
+            'now_tz_with_ms': timezone.now(),
             })
-        """
+
+        _compare({
+            'today': date.today(),
+            })
