@@ -1048,3 +1048,10 @@ class ModelTest(PlataTest):
         _compare({
             'today': date.today(),
             })
+
+        _compare({
+            'now_tz_with_ms': timezone.now().time(),
+            'now_with_ms': datetime.now().time(),
+            'now_tz': timezone.now().replace(microsecond=0).time(),
+            'now': datetime.now().replace(microsecond=0).time(),
+            })

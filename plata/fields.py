@@ -6,7 +6,7 @@ import simplejson as json
 
 from django import forms
 from django.db import models
-from django.utils.dateparse import parse_date, parse_datetime
+from django.utils.dateparse import parse_date, parse_datetime, parse_time
 from django.utils.functional import curry
 from django.utils.translation import ugettext_lazy as _
 
@@ -31,14 +31,7 @@ def json_encode_default(o):
     elif isinstance(o, datetime.date):
         return o.strftime('%Y-%m-%d')
     elif isinstance(o, datetime.time):
-        if is_aware(o):
-            # TODO fix this / implement this somehow
-            raise ValueError("JSON can't represent timezone-aware times.")
-        r = o.isoformat()
-        if o.microsecond:
-            r = r[:12]
-        return r
-
+        return o.strftime('%H:%M:%S.%f%z')
     raise TypeError, 'Cannot encode %r' % o
 
 
@@ -52,6 +45,9 @@ _PATTERNS = [
         )),
     (re.compile(r'\d{4}-\d{2}-\d{2}'), (
         lambda value: parse_date(value),
+        )),
+    (re.compile(r'\d{2}:\d{2}:\d{2}'), (
+        lambda value: parse_time(value),
         )),
     ]
 
