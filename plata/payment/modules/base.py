@@ -83,7 +83,7 @@ class ProcessorBase(object):
         with hidden values forwarding the user to the PSP or a redirect to
         the success page if no further processing is needed.
         """
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
     def clear_pending_payments(self, order):
         """

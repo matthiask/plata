@@ -73,7 +73,7 @@ class ProcessorBase(object):
         This is the method which must be implemented in order processor
         classes.
         """
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
 
 class InitializeOrderProcessor(ProcessorBase):
