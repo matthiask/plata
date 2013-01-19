@@ -4,6 +4,7 @@ import StringIO
 
 from django import forms
 from django.core.exceptions import ValidationError
+from django.core.serializers import serialize
 from django.db.models import Q
 from django.utils import timezone
 
@@ -1055,3 +1056,9 @@ class ModelTest(PlataTest):
             'now_tz': timezone.now().replace(microsecond=0).time(),
             'now': datetime.now().replace(microsecond=0).time(),
             })
+
+        # Test the value_to_string method of the model field
+        serialized = serialize('json', Order.objects.all())
+        self.assertTrue(isinstance(serialized, basestring))
+        self.assertTrue('"model": "shop.order"' in serialized)
+        self.assertTrue('\\"now_tz_with_ms\\"' in serialized)
