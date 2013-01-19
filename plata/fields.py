@@ -156,7 +156,7 @@ class JSONField(models.TextField):
             default=json_encode_default, use_decimal=True)
 
 
-try:
+try:  # pragma: no cover
     from south.modelsinspector import add_introspection_rules
     JSONField_introspection_rule = ( (JSONField,), [], {}, )
     add_introspection_rules(
