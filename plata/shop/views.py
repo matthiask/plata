@@ -319,11 +319,14 @@ class Shop(object):
         from plata.contact.forms import CheckoutForm
         return CheckoutForm
 
+    def get_authentication_form(self, **kwargs):
+        return AuthenticationForm(**kwargs)
+
     def checkout(self, request, order):
         """Handles the first step of the checkout process"""
         if not request.user.is_authenticated():
             if request.method == 'POST' and '_login' in request.POST:
-                loginform = AuthenticationForm(data=request.POST, prefix='login')
+                loginform = self.get_authentication_form(data=request.POST, prefix='login')
 
                 if loginform.is_valid():
                     user = loginform.get_user()
@@ -334,7 +337,7 @@ class Shop(object):
 
                     return HttpResponseRedirect('.')
             else:
-                loginform = AuthenticationForm(prefix='login')
+                loginform = self.get_authentication_form(prefix='login')
         else:
             loginform = None
 
