@@ -1,5 +1,6 @@
 import os
 import re
+import warnings
 
 from datetime import timedelta
 
@@ -332,7 +333,11 @@ class ViewTest(PlataTest):
             'OK', status_code=200)
 
         order = Order.objects.get(pk=1)
-        assert order.is_paid()
+        with warnings.catch_warnings(record=True) as w:
+            self.assertTrue(order.is_paid())
+            self.assertEqual(len(w), 1)
+            self.assertTrue(
+                'Order.is_paid() has been deprecated' in str(w[-1]))
 
         self.assertEqual(StockTransaction.objects.count(), 2)
 
@@ -395,7 +400,11 @@ class ViewTest(PlataTest):
             paypal_ipn_data), 'Ok')
 
         order = Order.objects.get(pk=1)
-        assert order.is_paid()
+        with warnings.catch_warnings(record=True) as w:
+            self.assertTrue(order.is_paid())
+            self.assertEqual(len(w), 1)
+            self.assertTrue(
+                'Order.is_paid() has been deprecated' in str(w[-1]))
 
         self.assertEqual(
             set((

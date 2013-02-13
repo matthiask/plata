@@ -36,7 +36,7 @@ class XLSDocument(object):
         self.workbook.save(output)
         response = HttpResponse(
             output.getvalue(),
-            mimetype='application/vnd.openxmlformats-officedocument.'
+            content_type='application/vnd.openxmlformats-officedocument.'
                 'spreadsheetml.sheet',
             )
         output.close()

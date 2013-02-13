@@ -1,6 +1,7 @@
 from datetime import date, datetime
 from decimal import Decimal
 import StringIO
+import warnings
 
 from django import forms
 from django.core.exceptions import ValidationError
@@ -615,7 +616,12 @@ class ModelTest(PlataTest):
 
         order = Order.objects.get(pk=order.pk)
         self.assertAlmostEqual(order.balance_remaining, Decimal('0.00'))
-        self.assertTrue(order.is_paid())
+
+        with warnings.catch_warnings(record=True) as w:
+            self.assertTrue(order.is_paid())
+            self.assertEqual(len(w), 1)
+            self.assertTrue(
+                'Order.is_paid() has been deprecated' in str(w[-1]))
 
         payment.delete()
         order = Order.objects.get(pk=order.pk)
@@ -946,13 +952,15 @@ class ModelTest(PlataTest):
         product = Product.objects.create(name='Test Product',)
         order = self.create_order()
         orderitem = self.create_orderitem(product, order)
+
         self.assertEqual(unicode(orderitem),
                          u'1 of Test Product')
         orderstatus = OrderStatus.objects.create(order=order, status=Order.PAID)
         self.assertEqual(unicode(orderstatus),
                          u'Status Order has been paid for O-000000001')
         orderpayment = OrderPayment.objects.create(
-            order=order, currency=100, amount=1, authorized=date.today())
+            order=order, currency=100, amount=1,
+            authorized=timezone.now())
         self.assertEqual(unicode(orderpayment),
                          u'Authorized of 100 1.00 for O-000000001')
 
