@@ -6,7 +6,6 @@ from django.utils.text import capfirst
 from django.utils.translation import ugettext as _
 
 import plata
-from plata.product.stock.models import Period, StockTransaction
 from plata.reporting.utils import XLSDocument
 
 
@@ -15,6 +14,9 @@ def product_xls():
     Create a list of all product variations, including stock and aggregated
     stock transactions (by type)
     """
+
+    from plata.product.stock.models import Period
+    StockTransaction = plata.stock_model()
 
     xls = XLSDocument()
     xls.add_sheet(capfirst(_('products')))
