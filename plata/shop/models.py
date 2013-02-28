@@ -386,7 +386,8 @@ class Order(BillingShippingAddress):
                     raise ValidationError(
                         _('The product already exists several times in the'
                             ' cart, and neither item nor force_new were'
-                            ' given.'))
+                            ' given.'),
+                        code='multiple')
 
         if item is None:
             item = self.items.model(
@@ -410,7 +411,10 @@ class Order(BillingShippingAddress):
                 logger.error(
                     u'No price could be found for %s with currency %s' % (
                         product, self.currency))
-                raise
+
+                raise ValidationError(
+                    _('The price could not be determined.'),
+                    code='unknown_price')
 
             if data is not None:
                 item.data = data

@@ -117,8 +117,9 @@ class ModelTest(PlataTest):
         plata.settings.PLATA_PRICE_INCLUDES_TAX = True
 
         product.prices.all().delete()
-        self.assertRaises(product.prices.model.DoesNotExist, order.modify_item,
-            product, absolute=1)
+        self.assertRaisesWithCode(ValidationError,
+            lambda: order.modify_item(product, absolute=1),
+            code='unknown_price')
 
     def test_02_eur_order(self):
         """Test basic order in EUR works as expected"""
