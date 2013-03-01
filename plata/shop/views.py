@@ -263,6 +263,25 @@ class Shop(object):
             request.session['shop_order'] = order.pk
         elif 'shop_order' in request.session:
             del request.session['shop_order']
+            
+    def create_order_for_user(self, user, request=None):
+        """Creates and returns a new order for the given user."""
+        contact = self.contact_from_user(user)
+
+        order = self.order_model.objects.create(
+                    currency=getattr(
+                        contact,
+                        'currency',
+                        self.default_currency(request)),
+                    user=getattr(
+                        contact,
+                        'user',
+                        user if self.user_is_authenticated(user)
+                        else None),
+                    language_code=get_language(),
+                )
+        
+        return order
 
     def order_from_request(self, request, create=False):
         """
@@ -281,21 +300,7 @@ class Shop(object):
             return None
         except (ValueError, self.order_model.DoesNotExist):
             if create:
-                contact = self.contact_from_user(request.user)
-
-                order = self.order_model.objects.create(
-                    currency=getattr(
-                        contact,
-                        'currency',
-                        self.default_currency(request)),
-                    user=getattr(
-                        contact,
-                        'user',
-                        request.user if self.user_is_authenticated(request.user)
-                        else None),
-                    language_code=get_language(),
-                )
-
+                order = self.create_order_for_user(request.user)
                 self.set_order_on_request(request, order)
                 return order
 
