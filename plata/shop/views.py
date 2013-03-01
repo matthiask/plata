@@ -231,6 +231,9 @@ class Shop(object):
     def user_is_authenticated(self, user):
         """overwrite this for custom authentication check. This is needed to support lazysignup"""
         return (user and user.is_authenticated())
+    
+    def user_login(self, request, user):
+        auth.login(request, user)
 
     def default_currency(self, request=None):
         """
@@ -463,7 +466,7 @@ class Shop(object):
 
                 if loginform.is_valid():
                     user = loginform.get_user()
-                    auth.login(request, user)
+                    self.user_login(request, user)
 
                     order.user = user
                     order.save()
