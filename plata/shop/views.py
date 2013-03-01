@@ -6,6 +6,7 @@ import logging
 from django.conf.urls import include, patterns, url
 from django.contrib import auth, messages
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import get_callable, reverse
 from django.forms.models import ModelForm, inlineformset_factory
@@ -267,6 +268,8 @@ class Shop(object):
     def create_order_for_user(self, user, request=None):
         """Creates and returns a new order for the given user."""
         contact = self.contact_from_user(user)
+        #we can't check for user_is_authenticated, because in the lazy_user case, it might return false, even though the user is a persistet model
+        order_user = None if isinstance(user, AnonymousUser) else user
 
         order = self.order_model.objects.create(
                     currency=getattr(
@@ -276,8 +279,7 @@ class Shop(object):
                     user=getattr(
                         contact,
                         'user',
-                        user if self.user_is_authenticated(user)
-                        else None),
+                        order_user),
                     language_code=get_language(),
                 )
         
