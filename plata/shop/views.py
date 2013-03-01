@@ -226,6 +226,10 @@ class Shop(object):
         return [
             module for module in all_modules
             if module.enabled_for_request(request)]
+        
+    def user_is_authenticated(self, user):
+        """overwrite this for custom authentication check. This is needed to support lazysignup"""
+        return (user and user.is_authenticated())
 
     def default_currency(self, request=None):
         """
@@ -287,7 +291,7 @@ class Shop(object):
                     user=getattr(
                         contact,
                         'user',
-                        request.user if request.user.is_authenticated()
+                        request.user if self.user_is_authenticated(request.user)
                         else None),
                     language_code=get_language(),
                 )
@@ -302,7 +306,7 @@ class Shop(object):
         Return the contact object bound to the current user if the user is
         authenticated. Returns ``None`` if no contact exists.
         """
-        if not user.is_authenticated():
+        if not self.user_is_authenticated(user):
             return None
 
         try:
@@ -437,7 +441,7 @@ class Shop(object):
 
     def checkout(self, request, order):
         """Handles the first step of the checkout process"""
-        if not request.user.is_authenticated():
+        if not self.user_is_authenticated(request.user):
             if request.method == 'POST' and '_login' in request.POST:
                 loginform = self.get_authentication_form(
                     data=request.POST,

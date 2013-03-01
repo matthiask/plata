@@ -41,7 +41,7 @@ class CheckoutForm(shop_forms.BaseCheckoutForm):
 
             kwargs['initial'] = initial
 
-        elif request.user.is_authenticated():
+        elif shop.user_is_authenticated(request.user):
             kwargs['initial'] = {
                 'email': request.user.email,
                 'billing_first_name': request.user.first_name,
@@ -50,7 +50,7 @@ class CheckoutForm(shop_forms.BaseCheckoutForm):
 
         super(CheckoutForm, self).__init__(*args, **kwargs)
 
-        if not (contact or request.user.is_authenticated()):
+        if not (contact or shop.user_is_authenticated(request.user)):
             self.fields['create_account'] = forms.BooleanField(
                 label=_('create account'),
                 required=False, initial=True)
