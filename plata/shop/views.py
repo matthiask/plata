@@ -293,6 +293,13 @@ class Shop(object):
         try:
             order_pk = request.session.get('shop_order')
             if order_pk is None:
+                #check if the current user has a open order
+                if self.user_is_authenticated(request.user):
+                    order = self.order_model.objects.filter(user=request.user, status__lt=self.order_model.CHECKOUT).latest()
+                    if order is not None:
+                        self.set_order_on_request(request, order)
+                        return order
+                    
                 raise ValueError("no order in session")
             return self.order_model.objects.get(pk=order_pk)
         except AttributeError:
