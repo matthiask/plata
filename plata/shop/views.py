@@ -5,7 +5,6 @@ import logging
 
 from django.conf.urls import include, patterns, url
 from django.contrib import auth, messages
-from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import get_callable, reverse
