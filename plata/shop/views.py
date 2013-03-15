@@ -305,8 +305,8 @@ class Shop(object):
             if order_pk is None:
                 #check if the current user has a open order
                 if self.user_is_authenticated(request.user):
-                    order = self.order_model.objects.filter(user=request.user, status__lt=self.order_model.PAID).latest()
-                    if order is not None:
+                    order = self.order_model.objects.filter(user=request.user).latest()
+                    if order is not None and order.status < self.order_model.PAID:
                         self.set_order_on_request(request, order)
                         return order
                     
