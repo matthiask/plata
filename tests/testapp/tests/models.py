@@ -17,7 +17,7 @@ from plata.product.stock.models import Period, StockTransaction
 import plata.reporting.order
 from plata.shop.models import Order, OrderItem, OrderStatus, OrderPayment
 
-from plata.tests.base import PlataTest
+from .base import PlataTest
 
 
 Product = plata.product_model()

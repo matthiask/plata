@@ -7,7 +7,7 @@ import plata
 from plata.discount.models import Discount
 from plata.shop.models import TaxClass
 
-from plata.tests.base import PlataTest
+from .base import PlataTest
 
 
 Product = plata.product_model()

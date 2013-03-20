@@ -22,7 +22,7 @@ from plata.discount.models import Discount
 from plata.product.stock.models import Period, StockTransaction
 from plata.shop.models import Order, OrderPayment
 
-from plata.tests.base import PlataTest, get_request
+from .base import PlataTest, get_request
 
 
 Product = plata.product_model()
