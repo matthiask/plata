@@ -15,3 +15,5 @@ plata.log
 /Plata.egg-info
 /MANIFEST
 /tests/venv
+/tests/.coverage
+/tests/htmlcov
