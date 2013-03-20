@@ -14,3 +14,4 @@ plata.log
 /dist
 /Plata.egg-info
 /MANIFEST
+/tests/venv
