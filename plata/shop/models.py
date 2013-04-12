@@ -478,6 +478,15 @@ class Order(BillingShippingAddress):
 
         return self.__class__._default_manager.get(pk=self.id)
 
+    def items_in_order(self):
+        """
+        Returns the item count in the order
+
+        This is different from ``order.items.count()`` because it counts items,
+        not distinct products.
+        """
+        return self.items.aggregate(q=Sum('quantity'))['q'] or 0
+
 
 def validate_order_currencies(order):
     """Check whether order contains more than one or an invalid currency"""
