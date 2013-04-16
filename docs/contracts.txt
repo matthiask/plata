@@ -95,7 +95,7 @@ The price model offers the following attributes:
 
 * ``tax_class.rate``
 
-  The tax rate as a percentage, meaning ``19.0`` for a tax rate of
+  The tax rate as a percentage, meaning ``19.6`` for a tax rate of
   19.6%.
 
 * ``tax_class``
