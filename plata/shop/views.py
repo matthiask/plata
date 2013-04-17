@@ -205,6 +205,15 @@ class Shop(object):
         """
         return self._default_currency or plata.settings.CURRENCIES[0]
 
+    def price_includes_tax(self, request=None):
+        """
+        Return if the shop should show prices including tax
+
+        This returns the PLATA_PRICE_INCLUDES_TAX settings by default
+        and is meant to be overridden by subclassing the Shop.
+        """
+        return plata.settings.PLATA_PRICE_INCLUDES_TAX
+
     def set_order_on_request(self, request, order):
         """
         Helper method encapsulating the process of setting the current order
