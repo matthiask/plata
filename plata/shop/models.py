@@ -141,9 +141,8 @@ class Order(BillingShippingAddress):
     email = models.EmailField(_('e-mail address'))
 
     currency = CurrencyField()
-    price_includes_tax = models.BooleanField(
-        _('price includes tax'), default=plata.settings.PLATA_PRICE_INCLUDES_TAX)
-
+    price_includes_tax = models.BooleanField(_('price includes tax'),
+        default=plata.settings.PLATA_PRICE_INCLUDES_TAX)
 
     items_subtotal = models.DecimalField(_('subtotal'),
         max_digits=18, decimal_places=10, default=Decimal('0.00'))

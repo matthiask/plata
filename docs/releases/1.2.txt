@@ -61,6 +61,9 @@ Notable features
 * Tax classes no longer have reverse foreign keys to prices. That means that
   having more than one price model in a project is now fully supported.
 
+* Whether prices should be shown with tax included or not can be decided
+  per-order now.
+
 
 Bugfixes
 ========
