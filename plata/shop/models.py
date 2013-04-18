@@ -789,3 +789,9 @@ class PriceBase(models.Model):
         if not self.tax_included:
             return self._unit_price
         return self._unit_price / (1+self.tax_class.rate/100)
+
+    @property
+    def unit_price(self):
+        # TODO Fix this. We _should_ use shop.price_includes_tax here,
+        # but there's no request and no order around...
+        return self.unit_price_incl_tax
