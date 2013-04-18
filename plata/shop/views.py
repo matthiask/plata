@@ -213,7 +213,7 @@ class Shop(object):
         and is meant to be overridden by subclassing the Shop.
         """
         if request:
-            order = self.oder_from_request(request)
+            order = self.order_from_request(request)
             if order:
                 return order.price_includes_tax
         return plata.settings.PLATA_PRICE_INCLUDES_TAX
