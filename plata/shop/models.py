@@ -141,6 +141,9 @@ class Order(BillingShippingAddress):
     email = models.EmailField(_('e-mail address'))
 
     currency = CurrencyField()
+    price_includes_tax = models.BooleanField(
+        _('price includes tax'), default=plata.settings.PLATA_PRICE_INCLUDES_TAX)
+
 
     items_subtotal = models.DecimalField(_('subtotal'),
         max_digits=18, decimal_places=10, default=Decimal('0.00'))
@@ -244,10 +247,10 @@ class Order(BillingShippingAddress):
     @property
     def shipping(self):
         """
-        Returns the shipping cost, with or without tax depending on the
-        ``PLATA_PRICE_INCLUDES_TAX`` setting.
+        Returns the shipping cost, with or without tax depending on this
+        order's ``price_includes_tax`` field.
         """
-        if plata.settings.PLATA_PRICE_INCLUDES_TAX:
+        if self.price_includes_tax:
             if self.shipping_cost is None:
                 return None
 
@@ -554,7 +557,7 @@ class OrderItem(models.Model):
 
     @property
     def unit_price(self):
-        if plata.settings.PLATA_PRICE_INCLUDES_TAX:
+        if self.order.price_includes_tax:
             return self._unit_price + self._unit_tax
         return self._unit_price
 
@@ -568,7 +571,7 @@ class OrderItem(models.Model):
 
     @property
     def line_item_discount(self):
-        if plata.settings.PLATA_PRICE_INCLUDES_TAX:
+        if self.order.price_includes_tax:
             return self.line_item_discount_incl_tax
         else:
             return self.line_item_discount_excl_tax
@@ -587,7 +590,7 @@ class OrderItem(models.Model):
 
     @property
     def discounted_subtotal(self):
-        if plata.settings.PLATA_PRICE_INCLUDES_TAX:
+        if self.order.price_includes_tax:
             return self.discounted_subtotal_incl_tax
         else:
             return self.discounted_subtotal_excl_tax
@@ -787,10 +790,3 @@ class PriceBase(models.Model):
         if not self.tax_included:
             return self._unit_price
         return self._unit_price / (1+self.tax_class.rate/100)
-
-    @property
-    def unit_price(self):
-        if plata.settings.PLATA_PRICE_INCLUDES_TAX:
-            return self.unit_price_incl_tax
-        else:
-            return self.unit_price_excl_tax
