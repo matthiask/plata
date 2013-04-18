@@ -212,6 +212,10 @@ class Shop(object):
         This returns the PLATA_PRICE_INCLUDES_TAX settings by default
         and is meant to be overridden by subclassing the Shop.
         """
+        if request:
+            order = self.oder_from_request(request)
+            if order:
+                return order.price_includes_tax
         return plata.settings.PLATA_PRICE_INCLUDES_TAX
 
     def set_order_on_request(self, request, order):
