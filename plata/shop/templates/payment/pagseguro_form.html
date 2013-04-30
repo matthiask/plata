@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<h1>{% trans "Payment" %}</h1>
+
+<p>{% trans "You will be forwarded to PagSeguro for payment now." %}</p>
+
+<form action="{{ post_url }}" method="post" id="pagseguroform">
+	<!-- Required fields -->
+    <input type="hidden" name="receiverEmail" value="{{ email }}">
+    <input type="hidden" name="currency" value="{{ order.currency }}">
+
+	<!-- Items for payment -->
+	{% for item in order.items.all %}
+	    <input type="hidden" name="itemId{{ forloop.counter }}" value="{{ item }}" />
+	    <input type="hidden" name="itemAmount{{ forloop.counter }}" value="{{ item.unit_price|stringformat:".2f" }}" />
+	    <input type="hidden" name="itemDescription{{ forloop.counter }}" value="{{ item.name }}" />
+	    <input type="hidden" name="itemQuantity{{ forloop.counter }}" value="{{ item.quantity|floatformat:0 }}" />
+	{% endfor %}
+
+	<!-- Reference -->
+	<input type="hidden" name="reference" value="Order-{{ order.id }}-{{ payment.id }}">
+	<!-- Shipping information (optional) -->
+	<input type="hidden" name="shippingType" value="1">
+	<input type="hidden" name="shippingAddressPostalCode" value="{{ order.billing_zip_code }}">
+	<input type="hidden" name="shippingAddressStreet" value="{{ order.billing_address }}">
+	<input type="hidden" name="shippingAddressCity" value="{{ order.billing_city }}">
+	<input type="hidden" name="extraAmount" value="{{ order.tax|stringformat:".2f" }}">
+	<input type="hidden" name="shippingAddressCountry" value="BRA">
+
+	<!-- Customer informations (optional) -->
+	<input type="hidden" name="senderName" value="{{ order.billing_first_name }}">
+	<input type="hidden" name="senderEmail" value="{{ order.email }}">
+
+    <input type="submit" value="{% trans "Purchase Items" %}" />
+</form>
+
+<script type="text/javascript">
+window.setTimeout(function(){
+    document.getElementById('pagseguroform').submit();
+}, 1000);
+</script>
+
+{% endblock %}
