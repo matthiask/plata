@@ -1,27 +1,15 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-05-12 00:01+0200\n"
-"PO-Revision-Date: 2012-05-12 18:25\n"
-"Last-Translator:   <lars@wecreatepixels.nl>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"X-Translated-Using: django-rosetta 0.6.6\n"
+"X-Generator: POEditor.com\n"
+"Project-Id-Version: Plata\n"
+"Language: nl\n"
 
-#: fields.py:20
+#: fields.py:21
 msgid "currency"
-msgstr "Valuta"
+msgstr "valuta"
 
 #: contact/admin.py:10 shop/admin.py:28
 #: shop/templates/plata/_order_overview.html:3
@@ -37,11 +25,11 @@ msgstr "Verzendadres"
 
 #: contact/admin.py:13 shop/admin.py:34
 msgid "Additional fields"
-msgstr "Overige velden"
+msgstr "Extra velden"
 
 #: contact/forms.py:49
 msgid "create account"
-msgstr "account aanmaken"
+msgstr "Inschrijven"
 
 #: contact/forms.py:60
 msgid "This field is required."
@@ -56,17 +44,17 @@ msgid "date of birth"
 msgstr "geboortedatum"
 
 #: contact/models.py:29 product/stock/models.py:217 shop/models.py:113
-#: shop/models.py:515
+#: shop/models.py:516
 msgid "created"
 msgstr "gemaakt"
 
 #: contact/models.py:31
 msgid "Preferred currency."
-msgstr "Valuta voorkeur."
+msgstr "Gewenste valuta."
 
 #: contact/models.py:32 product/stock/models.py:56 product/stock/models.py:228
 #: reporting/order.py:142 shop/admin.py:90 shop/models.py:150
-#: shop/models.py:517 shop/models.py:583
+#: shop/models.py:518 shop/models.py:586
 msgid "notes"
 msgstr "opmerkingen"
 
@@ -84,16 +72,15 @@ msgstr "Configuratie-opties"
 
 #: discount/admin.py:25
 msgid "Save and continue editing to configure options."
-msgstr "Opslaan en doorgaan met bewerken "
+msgstr "Opslaan en verder bewerken om opties te configureren."
 
 #: discount/admin.py:52
-#, python-format
 msgid "Discount configuration: %s"
 msgstr "Korting configuratie: %s"
 
 #: discount/admin.py:104
 msgid "Raw configuration"
-msgstr ""
+msgstr "Raw configuratie"
 
 #: discount/admin.py:108
 msgid "Configuration"
@@ -101,21 +88,19 @@ msgstr "Configuratie"
 
 #: discount/models.py:25
 msgid "amount voucher excl. tax (reduces total tax on order)"
-msgstr ""
-"hoeveelheid voucher excl. btw (vermindert de totale btw op een bestelling)"
+msgstr "hoeveelheid voucher excl. belasting (vermindert de totale belasting op bestelling)"
 
 #: discount/models.py:27
 msgid "amount voucher incl. tax (reduces total tax on order)"
-msgstr ""
-"hoeveelheid voucher incl. btw (vermindert de totale btw op een bestelling)"
+msgstr "hoeveelheid voucher incl.. belasting (vermindert de totale belasting op bestelling)"
 
 #: discount/models.py:29
 msgid "percentage voucher (reduces total tax on order)"
-msgstr "percentage voucher (vermindert de totale btw op een bestelling)"
+msgstr "percentage voucher (vermindert de totale belasting op bestelling)"
 
 #: discount/models.py:31
 msgid "means of payment (does not change total tax on order)"
-msgstr "betaalmiddelen (verandert totale btw op een bestelling niet)"
+msgstr "betaalmiddelen (verandert niet de totale belasting op bestelling)"
 
 #: discount/models.py:38
 msgid "All products"
@@ -123,7 +108,7 @@ msgstr "Alle producten"
 
 #: discount/models.py:41
 msgid "Exclude sale prices"
-msgstr "Verkoopprijzen niet tonen"
+msgstr "Uitsluiten verkoopprijzen"
 
 #: discount/models.py:46 product/stock/models.py:55
 #: product/stock/models.py:232 shop/models.py:27 shop/models.py:424
@@ -140,16 +125,16 @@ msgstr "waarde"
 
 #: discount/models.py:52
 msgid "Only required for amount discounts."
-msgstr "Alleen vereist voor hoeveelheidskorting."
+msgstr "Alleen nodig voor de hoeveelheid kortingen."
 
 #: discount/models.py:53 shop/models.py:35 shop/models.py:437
-#: shop/models.py:647
+#: shop/models.py:650
 msgid "tax class"
-msgstr "btw percentage"
+msgstr "belasting klasse"
 
 #: discount/models.py:54
 msgid "Only required for amount discounts incl. tax."
-msgstr "Alleen vereist voor hoeveelheidskorting incl. btw."
+msgstr "Alleen nodig voor de hoeveelheid kortingen incl.. belasting."
 
 #: discount/models.py:56
 msgid "configuration"
@@ -157,37 +142,35 @@ msgstr "configuratie"
 
 #: discount/models.py:57
 msgid "If you edit this field directly, changes below will be ignored."
-msgstr ""
-"Als u dit veld aanpast zullen de onderstaande instellingen genegeerd worden."
+msgstr "Als u direct dit veld bewerken, zullen veranderingen hieronder worden genegeerd."
 
 #: discount/models.py:72
 msgid "Percentage discounts cannot have currency and tax class set."
-msgstr "Percentagekortingen kunnen geen valuta en btw percentages hebben."
+msgstr "Percentage kortingen kunnen geen valuta-en fiscale class set."
 
 #: discount/models.py:75
 msgid "Amount discounts excl. tax need a currency."
-msgstr "Hoeveelheidskortingen excl. btw hebben een valuta nodig."
+msgstr "Bedrag kortingen excl. belasting moeten een munt."
 
 #: discount/models.py:77
 msgid "Amount discounts excl. tax cannot have tax class set."
-msgstr "Hoeveelheidskortingen excl. btw kunnen geen btw percentage hebben."
+msgstr "Bedrag kortingen excl. belasting kan geen belasting class set."
 
 #: discount/models.py:80
 msgid "Amount discounts incl. tax need a currency and a tax class."
-msgstr ""
-"Hoeveelheidskortingen incl. btw hebben een valuta en btw percentage nodig."
+msgstr "Bedrag kortingen incl.. belasting moeten een munt en een belasting klasse."
 
 #: discount/models.py:83
 msgid "Means of payment need a currency."
-msgstr "Stel een valuta in voor de betaalmiddelen."
+msgstr "Betaalmiddelen behoefte aan een munt."
 
 #: discount/models.py:85
 msgid "Means of payment cannot have tax class set."
-msgstr "Betaalmiddelen kunnen geen btw percentage hebben."
+msgstr "Betaalmiddelen kunnen geen btw class set."
 
 #: discount/models.py:87
 msgid "Unknown discount type."
-msgstr "Onbekend soort korting."
+msgstr "Onbekend korting type."
 
 #: discount/models.py:183 discount/models.py:294 shop/forms.py:82
 msgid "code"
@@ -195,29 +178,27 @@ msgstr "code"
 
 #: discount/models.py:186
 msgid "is active"
-msgstr "is actief"
+msgstr "actief"
 
 #: discount/models.py:187
 msgid "valid from"
-msgstr ""
+msgstr "geldig van"
 
 #: discount/models.py:188
 msgid "valid until"
-msgstr ""
+msgstr "geldig tot"
 
 #: discount/models.py:190
 msgid "number of allowed uses"
-msgstr "aantal toegestane gebruik"
+msgstr "aantal toegestane toepassingen"
 
 #: discount/models.py:192
-msgid ""
-"Leave empty if there is no limit on the number of uses of this discount."
-msgstr ""
-"Leeg laten als er geen limiet zit aan het gebruik van deze korting optie."
+msgid "Leave empty if there is no limit on the number of uses of this discount."
+msgstr "Laat dit veld leeg als er geen limiet op het aantal toepassingen van deze korting."
 
 #: discount/models.py:193
 msgid "number of times already used"
-msgstr "aantal keer gebruikt"
+msgstr "aantal malen reeds"
 
 #: discount/models.py:196 reporting/order.py:89
 #: shop/templates/plata/_order_overview.html:46
@@ -230,7 +211,7 @@ msgstr "kortingen"
 
 #: discount/models.py:206
 msgid "Discount is inactive."
-msgstr "Korting is inactief."
+msgstr "Korting is niet actief."
 
 #: discount/models.py:210
 msgid "Discount is not active yet."
@@ -242,16 +223,16 @@ msgstr "Korting is verlopen."
 
 #: discount/models.py:215
 msgid "Allowed uses for this discount has already been reached."
-msgstr "Toegestane gebruik van deze korting optie is bereikt."
+msgstr "Toegelaten toepassingen voor deze korting is reeds bereikt."
 
 #: discount/models.py:221
 msgid "Discount and order currencies do not match."
-msgstr "Korting en bestelling valuta zijn niet gelijk."
+msgstr "Korting en orde valuta's komen niet overeen."
 
 #: discount/models.py:293 product/stock/models.py:224 shop/models.py:156
-#: shop/models.py:564
+#: shop/models.py:567
 msgid "order"
-msgstr "bestelling"
+msgstr "volgorde"
 
 #: discount/models.py:298
 msgid "remaining"
@@ -259,22 +240,21 @@ msgstr "resterende"
 
 #: discount/models.py:300
 msgid "Discount amount excl. tax remaining after discount has been applied."
-msgstr ""
+msgstr "Kortingsbedrag excl. belasting die overblijft na korting is toegepast."
 
 #: discount/models.py:304
 msgid "applied discount"
-msgstr "toegepaste korting"
+msgstr "toegepast korting"
 
 #: discount/models.py:305
 msgid "applied discounts"
 msgstr "toegepaste kortingen"
 
-#: payment/modules/base.py:124
-#, python-format
+#: payment/modules/base.py:123
 msgid "%(stage)s: %(order)s processed by %(payment_module)s"
 msgstr "%(stage)s: %(order)s verwerkt door %(payment_module)s"
 
-#: payment/modules/base.py:187 payment/modules/cod.py:38
+#: payment/modules/base.py:186 payment/modules/cod.py:38
 #: payment/modules/ogone.py:219 payment/modules/paypal.py:143
 #: payment/modules/postfinance.py:208 product/stock/models.py:207
 msgid "sale"
@@ -291,7 +271,7 @@ msgstr "Ogone"
 #: payment/modules/ogone.py:101 payment/modules/paypal.py:53
 #: payment/modules/postfinance.py:96 product/stock/models.py:212
 msgid "payment process reservation"
-msgstr "betalingsproces reservering"
+msgstr "betalingsproces reserveren"
 
 #: payment/modules/paypal.py:35
 msgid "Paypal"
@@ -301,23 +281,23 @@ msgstr "Paypal"
 msgid "Postfinance"
 msgstr "Postfinance"
 
-#: product/stock/admin.py:9
+#: product/stock/admin.py:11
 msgid "initial stock"
 msgstr "beginvoorraad"
 
-#: product/stock/admin.py:10
+#: product/stock/admin.py:13
 msgid "purchases and sales"
-msgstr "aan- en verkopen"
+msgstr "aan-en verkopen"
 
-#: product/stock/admin.py:11
+#: product/stock/admin.py:15
 msgid "stock management"
 msgstr "voorraadbeheer"
 
-#: product/stock/admin.py:12
+#: product/stock/admin.py:17
 msgid "generic warehousing"
 msgstr "generieke opslag"
 
-#: product/stock/admin.py:13
+#: product/stock/admin.py:19
 msgid "internal use"
 msgstr "intern gebruik"
 
@@ -327,15 +307,15 @@ msgstr "Automatisch aangemaakt"
 
 #: product/stock/models.py:43
 msgid "Automatically created because no period existed yet."
-msgstr "Automatisch aangemaakt omdat er nog geen periode bestond."
+msgstr "Automatisch aangemaakt omdat er geen periode bestond nog niet."
 
 #: product/stock/models.py:57
 msgid "start"
-msgstr "begin"
+msgstr "beginnen"
 
 #: product/stock/models.py:58
 msgid "Period starts at this time. May also be a future date."
-msgstr "Periode start nu. Dit kan ook een datum in de toekomst zijn."
+msgstr "Periode begint op dit moment. Kan ook een datum in de toekomst."
 
 #: product/stock/models.py:63 product/stock/models.py:216
 msgid "period"
@@ -351,7 +331,7 @@ msgstr "Nieuwe periode"
 
 #: product/stock/models.py:204
 msgid "initial amount"
-msgstr "initiële bedrag"
+msgstr "oorspronkelijk bedrag"
 
 #: product/stock/models.py:205
 msgid "correction"
@@ -359,11 +339,11 @@ msgstr "correctie"
 
 #: product/stock/models.py:206
 msgid "purchase"
-msgstr "aankoop"
+msgstr "kopen"
 
 #: product/stock/models.py:208
 msgid "returns"
-msgstr "retouren"
+msgstr "opbrengst"
 
 #: product/stock/models.py:209
 msgid "reservation"
@@ -375,7 +355,7 @@ msgstr "inkomend"
 
 #: product/stock/models.py:211
 msgid "outgoing"
-msgstr "uitgaand"
+msgstr "uitgaande"
 
 #: product/stock/models.py:219 reporting/order.py:51 reporting/order.py:66
 #: reporting/product.py:90 shop/models.py:421
@@ -385,68 +365,67 @@ msgstr "product"
 
 #: product/stock/models.py:221
 msgid "change"
-msgstr "verander"
+msgstr "veranderen"
 
 #: product/stock/models.py:222
 msgid "Use negative numbers for sales, lendings and other outgoings."
-msgstr ""
+msgstr "Gebruik negatieve getallen voor de verkoop, uitleningen en andere uitgaven."
 
-#: product/stock/models.py:226 shop/models.py:590
+#: product/stock/models.py:226 shop/models.py:593
 msgid "order payment"
-msgstr ""
+msgstr "Om de betaling"
 
 #: product/stock/models.py:233 reporting/order.py:50 reporting/order.py:65
 #: reporting/product.py:91 shop/models.py:425
 msgid "SKU"
-msgstr ""
+msgstr "SKU"
 
 #: product/stock/models.py:234 reporting/order.py:69 shop/models.py:442
 #: shop/templates/plata/shop_cart.html:21
 msgid "line item price"
-msgstr ""
+msgstr "totaal"
 
 #: product/stock/models.py:236 shop/models.py:445
 msgid "line item discount"
-msgstr ""
+msgstr "post korting"
 
 #: product/stock/models.py:238 shop/models.py:450
 msgid "line item tax"
-msgstr ""
+msgstr "post belastingen"
 
 #: product/stock/models.py:243
 msgid "stock transaction"
-msgstr "voorraad transactie"
+msgstr "aandelentransactie"
 
 #: product/stock/models.py:244
 msgid "stock transactions"
-msgstr "voorraad transacties"
+msgstr "aandelentransacties"
 
 #: product/stock/models.py:274
-#, python-format
 msgid "Not enough stock available for %s."
 msgstr "Niet genoeg voorraad beschikbaar voor %s."
 
 #: reporting/order.py:38
 msgid "order date"
-msgstr "besteldatum"
+msgstr "orderdatum"
 
 #: reporting/order.py:39
 msgid "Not confirmed yet"
 msgstr "Nog niet bevestigd"
 
-#: reporting/order.py:44 shop/templates/base.html:118
+#: reporting/order.py:44 shop/templates/base.html:119
 msgid "Order"
-msgstr "Bestel"
+msgstr "Bestelling"
 
 #: reporting/order.py:52 reporting/order.py:67 shop/models.py:427
 #: shop/templates/plata/shop_cart.html:20
 msgid "quantity"
-msgstr "hoeveelheid"
+msgstr "aantal"
 
-#: reporting/order.py:68 shop/models.py:430 shop/models.py:643
+#: reporting/order.py:68 shop/models.py:430 shop/models.py:646
 #: shop/templates/plata/shop_cart.html:19
 msgid "unit price"
-msgstr "prijs per stuk"
+msgstr "prijs"
 
 #: reporting/order.py:85 shop/models.py:127
 #: shop/templates/plata/_order_overview.html:42
@@ -464,13 +443,11 @@ msgstr "totaal"
 
 #: reporting/order.py:107
 msgid "Incl. tax"
-msgstr "Incl. btw"
+msgstr "Incl. belasting"
 
 #: reporting/order.py:130
-#, python-format
-msgid ""
-"Already paid for with %(payment_method)s (Transaction %(transaction)s)."
-msgstr "Al betaald met %(payment_method)s (Transactie %(transaction)s)."
+msgid "Already paid for with %(payment_method)s (Transaction %(transaction)s)."
+msgstr "Reeds betaald met %(payment_method)s (Transactie %(transaction)s)."
 
 #: reporting/order.py:135
 msgid "Already paid for."
@@ -485,7 +462,6 @@ msgid "products"
 msgstr "producten"
 
 #: reporting/product.py:87
-#, python-format
 msgid "Report of %s"
 msgstr "Verslag van %s"
 
@@ -495,11 +471,11 @@ msgstr "voorraad"
 
 #: shop/admin.py:31 shop/templates/plata/_order_overview.html:10
 msgid "Order items"
-msgstr "Bestel aantal"
+msgstr "Bestel stuks"
 
 #: shop/admin.py:32
 msgid "Shipping"
-msgstr "verzending"
+msgstr "Verzending"
 
 #: shop/admin.py:33 shop/templates/plata/_order_overview.html:39
 msgid "Total"
@@ -511,7 +487,7 @@ msgstr "is betaald"
 
 #: shop/admin.py:54 shop/models.py:122
 msgid "order ID"
-msgstr "Bestelling ID"
+msgstr "order-id"
 
 #: shop/admin.py:62
 msgid "Packing slip"
@@ -523,31 +499,27 @@ msgstr "Factuur"
 
 #: shop/admin.py:74
 msgid "add. info"
-msgstr ""
+msgstr "toe te voegen. info"
 
 #: shop/forms.py:33
 msgid "This e-mail address belongs to a different account."
-msgstr "Dit e-mailadres behoort tot een ander account."
+msgstr "Dit e-mail adres behoort tot een andere account."
 
 #: shop/forms.py:36
-msgid ""
-"This e-mail address might belong to you, but we cannot know for sure because"
-" you are not authenticated yet."
-msgstr ""
-"Dit e-mailadres zou van u kunnen zijn, maar wij weten dit niet zeker omdat u"
-" nog niet geverifieerd bent."
+msgid "This e-mail address might belong to you, but we cannot know for sure because you are not authenticated yet."
+msgstr "Dit e-mail adres is nog niet geverifieerd."
 
 #: shop/forms.py:100
 msgid "This code does not validate"
-msgstr ""
+msgstr "Deze code is niet valideren"
 
 #: shop/forms.py:116
 msgid "I accept the terms and conditions."
-msgstr "Ik accepteer de voorwaarden."
+msgstr "Ik ga akkoord met de algemene voorwaarden."
 
 #: shop/forms.py:128
 msgid "Payment method"
-msgstr "Betaalmethode"
+msgstr "Betalingswijze"
 
 #: shop/models.py:28
 msgid "rate"
@@ -555,7 +527,7 @@ msgstr "tarief"
 
 #: shop/models.py:29
 msgid "Tax rate in percent."
-msgstr "BTW tarief in percentage"
+msgstr "Belastingtarief in procent."
 
 #: shop/models.py:30
 msgid "priority"
@@ -563,15 +535,15 @@ msgstr "prioriteit"
 
 #: shop/models.py:31
 msgid "Used to order the tax classes in the administration interface."
-msgstr ""
+msgstr "Wordt gebruikt om de belasting klassen in de administratie-interface te bestellen."
 
 #: shop/models.py:36
 msgid "tax classes"
-msgstr "btw tarieven"
+msgstr "belastingen"
 
 #: shop/models.py:50 shop/models.py:61
 msgid "company"
-msgstr "Organisatie"
+msgstr "bedrijf"
 
 #: shop/models.py:51 shop/models.py:62
 msgid "first name"
@@ -587,11 +559,11 @@ msgstr "adres"
 
 #: shop/models.py:54 shop/models.py:65
 msgid "ZIP code"
-msgstr "postcode"
+msgstr "Postcode"
 
 #: shop/models.py:55 shop/models.py:66
 msgid "city"
-msgstr "woonplaats"
+msgstr "stad"
 
 #: shop/models.py:56 shop/models.py:67
 msgid "country"
@@ -599,19 +571,19 @@ msgstr "land"
 
 #: shop/models.py:58
 msgid "shipping address equals billing address"
-msgstr "verzendadres is gelijk aan factuuradres"
+msgstr "afleveradres is gelijk aan factuuradres"
 
 #: shop/models.py:106
 msgid "Is a cart"
-msgstr "Zit in winkelwagen"
+msgstr "winkelwagen"
 
 #: shop/models.py:107
 msgid "Checkout process started"
-msgstr "Afrekenproces gestart"
+msgstr "Bestelling gestart"
 
 #: shop/models.py:108
 msgid "Order has been confirmed"
-msgstr "Bestelling is bevestigd"
+msgstr "Bedankt voor uw bestelling!"
 
 #: shop/models.py:109
 msgid "Order has been paid"
@@ -619,7 +591,7 @@ msgstr "Bestelling is betaald"
 
 #: shop/models.py:110
 msgid "Order has been completed"
-msgstr "Bestelling is afgerond"
+msgstr "Bestelling is voltooid"
 
 #: shop/models.py:114
 msgid "confirmed"
@@ -629,9 +601,9 @@ msgstr "bevestigd"
 msgid "language"
 msgstr "taal"
 
-#: shop/models.py:119 shop/models.py:516 shop/models.py:566
+#: shop/models.py:119 shop/models.py:517 shop/models.py:569
 msgid "status"
-msgstr "status"
+msgstr "staat"
 
 #: shop/models.py:123
 msgid "e-mail address"
@@ -639,11 +611,11 @@ msgstr "e-mail adres"
 
 #: shop/models.py:129
 msgid "items discount"
-msgstr "product korting"
+msgstr "producten die zijn afgeprijsd"
 
 #: shop/models.py:131
 msgid "items tax"
-msgstr "product BTW"
+msgstr "artikelen fiscale"
 
 #: shop/models.py:134
 msgid "shipping method"
@@ -655,11 +627,11 @@ msgstr "verzendkosten"
 
 #: shop/models.py:138
 msgid "shipping discount"
-msgstr "korting op de verzendkosten"
+msgstr "het verschepen korting"
 
 #: shop/models.py:140
 msgid "shipping tax"
-msgstr "BTW verzendkosten"
+msgstr "verzendkosten belasting"
 
 #: shop/models.py:146
 msgid "paid"
@@ -667,15 +639,15 @@ msgstr "betaald"
 
 #: shop/models.py:148
 msgid "This much has been paid already."
-msgstr "Deze hoeveelheid is al betaald."
+msgstr "Zoveel is al betaald."
 
-#: shop/models.py:152 shop/models.py:453 shop/models.py:585
+#: shop/models.py:152 shop/models.py:453 shop/models.py:588
 msgid "data"
-msgstr "data"
+msgstr "gegevens"
 
-#: shop/models.py:153 shop/models.py:454 shop/models.py:586
+#: shop/models.py:153 shop/models.py:454 shop/models.py:589
 msgid "JSON-encoded additional data about the order payment."
-msgstr ""
+msgstr "JSON-gecodeerde aanvullende gegevens over de bestelling betaling."
 
 #: shop/models.py:157
 msgid "orders"
@@ -683,237 +655,250 @@ msgstr "bestellingen"
 
 #: shop/models.py:322
 msgid "Cannot modify order once it has been confirmed."
-msgstr "De bestelling kan niet meer aangepast worden na een bevestiging."
+msgstr "Kan niet wijzigen order is bevestigd."
 
 #: shop/models.py:385
 msgid "Cannot proceed to checkout without order items."
-msgstr "Er kan niet worden afgerekend als er geen artikelen zijn."
+msgstr "Kan niet naar de kassa zonder orde artikelen."
 
 #: shop/models.py:410
 msgid "Order contains more than one currency."
-msgstr "Bestelling bevat meer dan één valuta."
+msgstr "Bestel bevat meer dan een valuta."
 
 #: shop/models.py:432
 msgid "Unit price excl. tax"
-msgstr "Product prijs excl. BTW"
+msgstr "Losse prijs excl.. belasting"
 
 #: shop/models.py:433
 msgid "unit tax"
-msgstr "product BTW"
+msgstr "eenheid fiscale"
 
 #: shop/models.py:436
 msgid "tax rate"
-msgstr "BTW percentage"
+msgstr "belastingtarief"
 
 #: shop/models.py:440
 msgid "is sale"
-msgstr ""
+msgstr "is te koop"
 
 #: shop/models.py:444
 msgid "Line item price excl. tax"
-msgstr ""
+msgstr "Totaal excl. belasting"
 
 #: shop/models.py:448
 msgid "Discount excl. tax"
-msgstr ""
+msgstr "Korting excl. belasting"
 
 #: shop/models.py:459
 msgid "order item"
-msgstr ""
+msgstr "product"
 
 #: shop/models.py:460
 msgid "order items"
-msgstr ""
+msgstr "artikelen in bestelling"
 
-#: shop/models.py:521
-msgid "order status"
-msgstr "Orderstatus"
+#: shop/models.py:463
+msgid "%(quantity)s of %(product)s"
+msgstr "%(quantity)s van %(product)s"
 
 #: shop/models.py:522
+msgid "order status"
+msgstr "bestelstatus"
+
+#: shop/models.py:523
 msgid "order statuses"
-msgstr ""
+msgstr "bestelstatussen"
 
-#: shop/models.py:559
+#: shop/models.py:526
+msgid "Status %(status)s for %(order)s"
+msgstr "Status %(status)s voor %(order)s"
+
+#: shop/models.py:562
 msgid "pending"
-msgstr "in afwachting"
+msgstr "in afwachting van"
 
-#: shop/models.py:560
+#: shop/models.py:563
 msgid "processed"
 msgstr "verwerkt"
 
-#: shop/models.py:561 shop/models.py:580
+#: shop/models.py:564 shop/models.py:583
 msgid "authorized"
-msgstr "geautoriseerd"
+msgstr "geautoriseerde"
 
-#: shop/models.py:565
+#: shop/models.py:568
 msgid "timestamp"
 msgstr "timestamp"
 
-#: shop/models.py:570
-msgid "amount"
-msgstr "aantal"
-
-#: shop/models.py:571
-msgid "payment module key"
-msgstr "betalingsmodule key"
-
-#: shop/models.py:572
-msgid "Machine-readable identifier for the payment module used."
-msgstr ""
-
 #: shop/models.py:573
-msgid "payment module"
-msgstr "betalingsmodule"
+msgid "amount"
+msgstr "bedrag"
 
 #: shop/models.py:574
+msgid "payment module key"
+msgstr "betaalmodule sleutel"
+
+#: shop/models.py:575
+msgid "Machine-readable identifier for the payment module used."
+msgstr "Machine-leesbare identificatie voor de betaling module gebruikt."
+
+#: shop/models.py:576
+msgid "payment module"
+msgstr "betaalmodule"
+
+#: shop/models.py:577
 msgid "For example 'Cash on delivery', 'PayPal', ..."
 msgstr "Bijvoorbeeld 'Rembours', 'PayPal', ..."
 
-#: shop/models.py:575
+#: shop/models.py:578
 msgid "payment method"
-msgstr "betalingsmethode"
+msgstr "betaalmethode"
 
-#: shop/models.py:576
+#: shop/models.py:579
 msgid "For example 'MasterCard', 'VISA' or some other card."
 msgstr "Bijvoorbeeld 'MasterCard', 'VISA' of een andere kaart."
 
-#: shop/models.py:577
+#: shop/models.py:580
 msgid "transaction ID"
 msgstr "transactie ID"
 
-#: shop/models.py:578
-msgid "Unique ID identifying this payment in the foreign system."
-msgstr ""
-
 #: shop/models.py:581
+msgid "Unique ID identifying this payment in the foreign system."
+msgstr "Unieke ID te identificeren deze betaling in de buitenlandse systeem."
+
+#: shop/models.py:584
 msgid "Point in time when payment has been authorized."
-msgstr ""
+msgstr "Tijdstip waarop de betaling is goedgekeurd."
 
-#: shop/models.py:591
+#: shop/models.py:594
 msgid "order payments"
-msgstr ""
+msgstr "betalingen"
 
-#: shop/models.py:616
-#, python-format
+#: shop/models.py:599
+msgid "%(authorized)s of %(currency)s %(amount).2f for %(order)s"
+msgstr "%(authorized)s van %(currency)s %(amount).2f voor %(order)s"
+
+#: shop/models.py:600
+msgid "Authorized"
+msgstr "Geautoriseerde"
+
+#: shop/models.py:601
+msgid "Not authorized"
+msgstr "Niet toegelaten"
+
+#: shop/models.py:619
 msgid "Currency of payment %s does not match."
-msgstr ""
+msgstr "Valuta van betaling% s komt niet overeen."
 
-#: shop/models.py:639
+#: shop/models.py:642
 msgid "price"
 msgstr "prijs"
 
-#: shop/models.py:640
+#: shop/models.py:643
 msgid "prices"
 msgstr "prijzen"
 
-#: shop/models.py:644
+#: shop/models.py:647
 msgid "tax included"
-msgstr "inclusief BTW"
+msgstr "Toeristenbelasting inbegrepen"
 
-#: shop/models.py:645
+#: shop/models.py:648
 msgid "Is tax included in given unit price?"
-msgstr "Is de BTW inbegrepen bij de gegeven prijs?"
+msgstr "Is inbegrepen in de gegeven prijs?"
 
 #: shop/views.py:26
 msgid "Cart is empty."
 msgstr "Winkelwagen is leeg."
 
-#: shop/views.py:35
-msgid ""
-"You have already confirmed this order earlier, but it is not fully paid for "
-"yet."
-msgstr ""
-"U heeft deze bestelling al bevestigd, maar er is nog niet volledig voor "
-"betaald."
+#: shop/views.py:36
+msgid "You have already confirmed this order earlier, but it is not fully paid for yet."
+msgstr "Je hebt al deze bestelling eerder bevestigd, maar het is niet volledig betaald nog niet."
 
-#: shop/views.py:278
+#: shop/views.py:289
 msgid "The cart has been updated."
-msgstr "De winkelwagen is geüpdate."
+msgstr "De winkelwagen is bijgewerkt."
 
-#: shop/views.py:478
+#: shop/views.py:489
 msgid "Payment failed, please try again."
-msgstr "Betaling mislukt, probeer het alstublieft opnieuw."
+msgstr "Betaling is mislukt, probeer het opnieuw."
 
-#: shop/views.py:482
+#: shop/views.py:493
 msgid "Payment failed; you can continue editing your order and try again."
-msgstr ""
-"Betaling mislukt; u kunt doorgaan met het aanpassen van uw order en het "
-"vervolgens opnieuw proberen."
+msgstr "Betaling is mislukt, u kunt doorgaan met het bewerken van uw bestelling en probeer het opnieuw."
 
 #: shop/templates/_form_errors.html:3
 msgid "Please correct the following errors:"
-msgstr "Corrigeren de volgende fouten:"
+msgstr "Corrigeer de volgende fouten:"
 
 #: shop/templates/_form_errors.html:8 shop/templates/_form_errors.html:24
 msgid "Form errors"
-msgstr "Formulier fouten"
+msgstr "Vorm fouten"
 
 #: shop/templates/_form_errors.html:19
 msgid "Fieldset errors"
-msgstr ""
+msgstr "Fieldset fouten"
 
 #: shop/templates/_pagination.html:19
 msgid "show all"
-msgstr "alles weergeven"
+msgstr "toon alle"
 
-#: shop/templates/base.html:86
+#: shop/templates/base.html:87
 msgid "Home"
-msgstr "Home"
+msgstr "Thuis"
 
-#: shop/templates/base.html:87 shop/templates/product/product_detail.html:5
+#: shop/templates/base.html:88 shop/templates/product/product_detail.html:5
 #: shop/templates/product/product_list.html:5
 #: shop/templates/product/product_list.html:8
 msgid "Products"
 msgstr "Producten"
 
-#: shop/templates/base.html:88 shop/templates/plata/shop_cart.html:5
+#: shop/templates/base.html:89 shop/templates/plata/shop_cart.html:5
 #: shop/templates/plata/shop_cart.html:11
-#: shop/templates/plata/shop_order_payment_failure.html:10
+#: shop/templates/plata/shop_order_payment_failure.html:11
 msgid "Cart"
 msgstr "Winkelwagen"
 
-#: shop/templates/base.html:105
+#: shop/templates/base.html:106
 msgid "Go to cart"
-msgstr "Winkelwagen bekijken"
+msgstr "Ga naar winkelwagen"
 
-#: shop/templates/base.html:107
+#: shop/templates/base.html:108
 msgid "That's what we know about you:"
-msgstr "Dat is wat wij over jou weten:"
+msgstr "Dat is wat wij van u weten:"
 
-#: shop/templates/base.html:110
+#: shop/templates/base.html:111
 msgid "User"
 msgstr "Gebruiker"
 
-#: shop/templates/base.html:114
+#: shop/templates/base.html:115
 msgid "Contact"
 msgstr "Contact"
 
 #: shop/templates/payment/ogone_form.html:6
-#: shop/templates/payment/paypal_form.html:6
-#: shop/templates/payment/postfinance_form.html:6
+#: shop/templates/payment/paypal_form.html:7
+#: shop/templates/payment/postfinance_form.html:7
 msgid "Payment"
 msgstr "Betaling"
 
 #: shop/templates/payment/ogone_form.html:8
 msgid "You will be forwarded to Ogone for payment now."
-msgstr "U wordt nu doorgestuurd naar Ogone voor de betaling"
+msgstr "U wordt doorgestuurd naar nu Ogone voor de betaling."
 
 #: shop/templates/payment/ogone_form.html:27
-#: shop/templates/payment/postfinance_form.html:29
+#: shop/templates/payment/postfinance_form.html:30
 msgid "Pay now"
-msgstr "Nu betalen"
+msgstr "Betaal nu"
 
-#: shop/templates/payment/paypal_form.html:8
+#: shop/templates/payment/paypal_form.html:9
 msgid "You will be forwarded to Paypal for payment now."
-msgstr "U wordt nu doorgestuurd naar Paypal voor de betaling"
+msgstr "U wordt doorgestuurd naar Paypal betaling nu."
 
-#: shop/templates/payment/paypal_form.html:56
+#: shop/templates/payment/paypal_form.html:57
 msgid "Purchase Items"
-msgstr "Producten kopen"
+msgstr "Aankoop Items"
 
-#: shop/templates/payment/postfinance_form.html:8
+#: shop/templates/payment/postfinance_form.html:9
 msgid "You will be forwarded to Postfinance for payment now."
-msgstr "U wordt nu doorgestuurd naar Postfinance voor de betaling"
+msgstr "U wordt doorgestuurd naar Postfinance voor de betaling nu."
 
 #: shop/templates/plata/_order_overview.html:21
 #: shop/templates/plata/shop_discounts.html:5
@@ -927,7 +912,7 @@ msgstr "Geen kortingen"
 
 #: shop/templates/plata/_order_overview.html:50
 msgid "tax"
-msgstr "BTW"
+msgstr "belasting"
 
 #: shop/templates/plata/shop_cart.html:9
 msgid "Cart is empty!"
@@ -935,22 +920,22 @@ msgstr "Winkelwagen is leeg!"
 
 #: shop/templates/plata/shop_cart.html:22
 msgid "Delete"
-msgstr "Verwijderen"
+msgstr "Verwijder"
 
 #: shop/templates/plata/shop_cart.html:39
 msgid "Save"
-msgstr "Opslaan"
+msgstr "Besparen"
 
 #: shop/templates/plata/shop_cart.html:40
 #: shop/templates/plata/shop_checkout.html:5
 #: shop/templates/plata/shop_checkout.html:8
 msgid "Checkout"
-msgstr "Afrekenen"
+msgstr "Uitchecken"
 
 #: shop/templates/plata/shop_checkout.html:19
 #: shop/templates/plata/shop_checkout.html:72
 msgid "Submit"
-msgstr "Verzenden"
+msgstr "Verstuur"
 
 #: shop/templates/plata/shop_checkout.html:67
 msgid "Notes"
@@ -959,15 +944,15 @@ msgstr "Opmerkingen"
 #: shop/templates/plata/shop_confirmation.html:5
 #: shop/templates/plata/shop_confirmation.html:8
 msgid "Order summary"
-msgstr "Besteloverzicht"
+msgstr "Overzicht"
 
 #: shop/templates/plata/shop_confirmation.html:13
 msgid "Payment and order confirmation"
-msgstr "Betalings en bestellingsbevestiging"
+msgstr "Betaling en orderbevestiging"
 
 #: shop/templates/plata/shop_confirmation.html:21
 msgid "Proceed to payment"
-msgstr "Doorgaan naar betaling"
+msgstr "Ga door naar betaling"
 
 #: shop/templates/plata/shop_discounts.html:13
 msgid "Voucher code"
@@ -975,46 +960,43 @@ msgstr "Voucher code"
 
 #: shop/templates/plata/shop_discounts.html:21
 msgid "Add voucher"
-msgstr "Voucher toevoegen"
+msgstr "Voeg voucher"
 
 #: shop/templates/plata/shop_discounts.html:22
 msgid "Proceed to confirmation"
-msgstr "Doorgaan naar bevestiging"
+msgstr "Ga door naar bevestiging"
 
-#: shop/templates/plata/shop_order_payment_failure.html:5
-#: shop/templates/plata/shop_order_payment_failure.html:8
+#: shop/templates/plata/shop_order_payment_failure.html:6
+#: shop/templates/plata/shop_order_payment_failure.html:9
 msgid "Order payment failure"
-msgstr "Fout tijdens het betalen"
+msgstr "Bestel betalingsachterstand"
 
-#: shop/templates/plata/shop_order_payment_failure.html:12
-#: shop/templates/plata/shop_order_success.html:22
+#: shop/templates/plata/shop_order_payment_failure.html:13
+#: shop/templates/plata/shop_order_success.html:23
 msgid "Create new order"
-msgstr "Maak nieuwe bestelling"
+msgstr "Maak nieuwe order"
 
-#: shop/templates/plata/shop_order_success.html:5
+#: shop/templates/plata/shop_order_success.html:6
 msgid "Order successful"
-msgstr "Bestelling geplaatst"
+msgstr "Bedankt voor uw bestelling"
 
-#: shop/templates/plata/shop_order_success.html:9
+#: shop/templates/plata/shop_order_success.html:10
 msgid "Thank you for shopping with us!"
-msgstr "Bedankt dat u bij ons heeft geshopt!"
+msgstr "Dank u voor het winkelen bij ons!"
 
-#: shop/templates/plata/shop_order_success.html:13
+#: shop/templates/plata/shop_order_success.html:14
 msgid "Order has been partially paid."
 msgstr "Bestelling is gedeeltelijk betaald."
 
-#: shop/templates/plata/shop_order_success.html:15
+#: shop/templates/plata/shop_order_success.html:16
 msgid "Order has been confirmed."
 msgstr "Bestelling is bevestigd."
 
-#: shop/templates/plata/shop_order_success.html:17
-msgid ""
-"As soon as we receive a confirmation from the payment provider, you'll be "
-"sent a confirmation e-mail."
-msgstr ""
-"Wanneer wij een bevestiging ontvangen van de betalingsprovider ontvangt u "
-"een bevestigingsmail van ons."
+#: shop/templates/plata/shop_order_success.html:18
+msgid "As soon as we receive a confirmation from the payment provider, you'll be sent a confirmation e-mail."
+msgstr "Bedankt voor uw bestelling! U ontvangt een bevestiging hiervan per e-mail."
 
 #: shop/templates/product/product_detail.html:23
 msgid "Add to cart"
-msgstr "Aan winkelwagen toevoegen"
+msgstr "Toevoegen aan winkelwagen"
+
