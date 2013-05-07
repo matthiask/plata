@@ -60,7 +60,7 @@ class ProcessorBase(object):
         without prefixes. It is your responsability to namespace these URLs
         so they don't clash with shop views and other payment processors.
         """
-        from django.conf.urls.defaults import patterns
+        from django.conf.urls import patterns
         return patterns('')
 
     def enabled_for_request(self, request):
