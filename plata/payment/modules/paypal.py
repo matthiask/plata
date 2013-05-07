@@ -151,3 +151,5 @@ class PaymentProcessor(ProcessorBase):
         except Exception, e:
             logger.error('IPN: Processing failure %s' % unicode(e))
             raise
+        else:
+            return HttpResponse('')
