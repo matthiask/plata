@@ -1,0 +1,27 @@
+=======================
+Plata 1.2 release notes
+=======================
+
+Welcome to Plata 1.2!
+
+
+Custom User model support
+=========================
+
+The ``plata.shop`` migrations will no longer apply if you're using a custom
+user model. In this case, use the ``SOUTH_MIGRATION_MODULES`` settings to
+specify the location of your custom migrations.
+
+Suggestion: before creating your initial ``plata.shop`` migration, comment
+out the entire ``OrderItem`` model from ``plata.shop.models`` and run
+``manage.py schemamigration shop --initial`` so that you have an initial
+migration which doesn't depend on your ``Product`` model. Then create
+your migration for your ``Product`` model's app, which is likely dependent
+upon ``plata.shop`` models such as ``TaxClass``, so you can add
+``depends_on = (('shop', '0001_initial'),)`` to that migration.
+Finally, reinstate the ``OrderItem`` model definition, and run
+``manage.py schemamigration shop --auto``, optionally adding another
+``depends_on`` definition to ensure that your ``Product`` model is created
+first.
+
+TODO: update tests to handle custom User model

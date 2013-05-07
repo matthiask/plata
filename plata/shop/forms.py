@@ -1,6 +1,10 @@
 from django import forms
 from django.contrib import auth
-from django.contrib.auth.models import User
+try:
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+except ImportError:
+    from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
 from plata.shop import signals

@@ -3,7 +3,7 @@ from decimal import Decimal
 import logging
 import re
 
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import get_callable
 from django.db import models
@@ -112,8 +112,13 @@ class Order(BillingShippingAddress):
 
     created = models.DateTimeField(_('created'), default=datetime.now)
     confirmed = models.DateTimeField(_('confirmed'), blank=True, null=True)
-    user = models.ForeignKey(User, blank=True, null=True,
-        verbose_name=_('user'), related_name='orders')
+    user = models.ForeignKey(
+        getattr(settings, 'AUTH_USER_MODEL', 'auth.User'),
+        blank=True,
+        null=True,
+        verbose_name=_('user'),
+        related_name='orders'
+    )
     language_code = models.CharField(_('language'), max_length=10,
         default='', blank=True)
     status = models.PositiveIntegerField(_('status'), choices=STATUS_CHOICES,

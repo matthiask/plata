@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -22,7 +22,8 @@ class Contact(BillingShippingAddress):
       probably won't work for your custom contact model
     """
 
-    user = models.OneToOneField(User, verbose_name=_('user'),
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, verbose_name=_('user'),
         related_name='contactuser')
 
     dob = models.DateField(_('date of birth'), blank=True, null=True)
