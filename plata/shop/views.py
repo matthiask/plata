@@ -360,7 +360,10 @@ class Shop(object):
 
             if orderform.is_valid():
                 orderform.save()
-                return self.redirect('plata_shop_discounts')
+                if self.include_discount_step(request):
+                    return self.redirect('plata_shop_discounts')
+                else:
+                    return self.redirect('plata_shop_confirmation')
         else:
             orderform = OrderForm(**orderform_kwargs)
 
@@ -379,12 +382,18 @@ class Shop(object):
             self.get_context(request, context)
         )
 
+    def include_discount_step(self, request):
+        return self.discount_model.objects.exists()
+
     def discounts_form(self, request, order):
         """Returns the discount form"""
         return shop_forms.DiscountForm
 
     def discounts(self, request, order):
         """Handles the discount code entry page"""
+        if not self.include_discount_step(request):
+            return self.redirect('plata_shop_confirmation')
+
         DiscountForm = self.discounts_form(request, order)
 
         kwargs = {
