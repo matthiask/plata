@@ -95,6 +95,12 @@ class Shop(object):
 
     #: The base template used in all default checkout templates
     base_template = 'base.html'
+    cart_template = 'plata/shop_cart.html'
+    checkout_template = 'plata/shop_checkout.html'
+    discount_template = 'plata/shop_discounts.html'
+    confirmation_template = 'plata/shop_confirmation.html'
+    success_template = 'plata/shop_order_success.html'
+    failure_template = 'plata/shop_order_payment_failure.html'
 
     def __init__(self, contact_model, order_model, discount_model,
             default_currency=None, **kwargs):
@@ -303,13 +309,13 @@ class Shop(object):
         """Renders a cart-is-empty page"""
         context.update({'empty': True})
 
-        return self.render(request, 'plata/shop_cart.html',
-            self.get_context(request, context))
+        return self.render(
+            request, self.cart_template, self.get_context(request, context))
 
     def render_cart(self, request, context):
         """Renders the shopping cart"""
-        return self.render(request, 'plata/shop_cart.html',
-            self.get_context(request, context))
+        return self.render(
+            request, self.cart_template, self.get_context(request, context))
 
     def checkout_form(self, request, order):
         """Returns the address form used in the first checkout step"""
@@ -367,8 +373,11 @@ class Shop(object):
 
     def render_checkout(self, request, context):
         """Renders the checkout page"""
-        return self.render(request, 'plata/shop_checkout.html',
-            self.get_context(request, context))
+        return self.render(
+            request,
+            self.checkout_template,
+            self.get_context(request, context)
+        )
 
     def discounts_form(self, request, order):
         """Returns the discount form"""
@@ -407,8 +416,11 @@ class Shop(object):
 
     def render_discounts(self, request, context):
         """Renders the discount code entry page"""
-        return self.render(request, 'plata/shop_discounts.html',
-            self.get_context(request, context))
+        return self.render(
+            request,
+            self.discount_template,
+            self.get_context(request, context)
+        )
 
     def confirmation_form(self, request, order):
         """Returns the confirmation and payment module selection form"""
@@ -449,8 +461,11 @@ class Shop(object):
 
     def render_confirmation(self, request, context):
         """Renders the confirmation page"""
-        return self.render(request, 'plata/shop_confirmation.html',
-            self.get_context(request, context))
+        return self.render(
+            request,
+            self.confirmation_template,
+            self.get_context(request, context)
+        )
 
     def order_success(self, request):
         """Handles order successes (e.g. when an order has been successfully paid for)"""
@@ -464,11 +479,16 @@ class Shop(object):
             # to keep the completed order around anymore.
             self.set_order_on_request(request, order=None)
 
-        return self.render(request, 'plata/shop_order_success.html',
-            self.get_context(request, {
-                'order': order,
-                'progress': 'success',
-                }))
+        return self.render(
+            request,
+            self.success_template,
+            self.get_context(
+                request, {
+                    'order': order,
+                    'progress': 'success',
+                }
+            )
+        )
 
     def order_payment_failure(self, request):
         """Handles order payment failures"""
@@ -491,11 +511,16 @@ class Shop(object):
             order.update_status(order.CHECKOUT, 'Order payment failure, going back to checkout')
             messages.info(request, _('Payment failed; you can continue editing your order and try again.'))
 
-        return self.render(request, 'plata/shop_order_payment_failure.html',
-            self.get_context(request, {
-                'order': order,
-                'progress': 'failure',
-                }))
+        return self.render(
+            request,
+            self.failure_template,
+            self.get_context(
+                request, {
+                    'order': order,
+                    'progress': 'failure',
+                }
+            )
+        )
 
     def order_new(self, request):
         """
