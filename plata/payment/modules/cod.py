@@ -10,8 +10,8 @@ import logging
 from django.shortcuts import redirect
 from django.utils.translation import ugettext_lazy as _
 
+import plata
 from plata.payment.modules.base import ProcessorBase
-from plata.product.stock.models import StockTransaction
 from plata.shop.models import OrderPayment
 
 
@@ -35,8 +35,11 @@ class PaymentProcessor(ProcessorBase):
         payment.save()
         order = order.reload()
 
-        self.create_transactions(order, _('sale'),
-            type=StockTransaction.SALE, negative=True, payment=payment)
+        if plata.settings.PLATA_STOCK_TRACKING:
+            from plata.product.stock.models import StockTransaction
+            self.create_transactions(
+                order, _('sale'),
+                type=StockTransaction.SALE, negative=True, payment=payment)
         self.order_paid(order, payment=payment)
 
         return self.shop.redirect('plata_order_success')

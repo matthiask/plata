@@ -24,8 +24,10 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _, get_language, to_locale
 from django.views.decorators.csrf import csrf_exempt
 
+import plata
 from plata.payment.modules.base import ProcessorBase
-from plata.product.stock.models import StockTransaction
+if plata.settings.PLATA_STOCK_TRACKING:
+    from plata.product.stock.models import StockTransaction
 from plata.shop.models import OrderPayment
 
 
@@ -98,9 +100,11 @@ class PaymentProcessor(ProcessorBase):
         logger.info('Processing order %s using Ogone' % order)
 
         payment = self.create_pending_payment(order)
-        self.create_transactions(order, _('payment process reservation'),
-            type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
-            negative=True, payment=payment)
+        if plata.settings.PLATA_STOCK_TRACKING:
+            self.create_transactions(
+                order, _('payment process reservation'),
+                type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
+                negative=True, payment=payment)
 
         # params that will be hashed
         form_params = {
@@ -216,8 +220,14 @@ class PaymentProcessor(ProcessorBase):
             logger.info('IPN: Successfully processed IPN request for %s' % order)
 
             if payment.authorized:
-                self.create_transactions(order, _('sale'),
-                    type=StockTransaction.SALE, negative=True, payment=payment)
+                if plata.settings.PLATA_STOCK_TRACKING:
+                    self.create_transactions(
+                        order,
+                        _('sale'),
+                        type=StockTransaction.SALE,
+                        negative=True,
+                        payment=payment
+                    )
 
             if not order.balance_remaining:
                 self.order_paid(order, payment=payment)

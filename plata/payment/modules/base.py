@@ -3,7 +3,8 @@ import logging
 from django.utils.translation import ugettext_lazy as _
 
 import plata
-from plata.product.stock.models import StockTransaction
+if plata.settings.PLATA_STOCK_TRACKING:
+    from plata.product.stock.models import StockTransaction
 from plata.shop import signals
 
 
