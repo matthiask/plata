@@ -10,7 +10,7 @@ PLATA_PRICE_INCLUDES_TAX = getattr(settings, 'PLATA_PRICE_INCLUDES_TAX', True)
 #: List of order processors
 #:
 #: Plata does not check whether the selection makes any sense. This is your
-#: responsability.
+#: responsibility.
 PLATA_ORDER_PROCESSORS = getattr(settings, 'PLATA_ORDER_PROCESSORS', [
     'plata.shop.processors.InitializeOrderProcessor',
     'plata.shop.processors.DiscountProcessor',
