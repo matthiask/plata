@@ -128,11 +128,12 @@ class ConfirmationForm(forms.Form):
 
         super(ConfirmationForm, self).__init__(*args, **kwargs)
 
+        method_choices = [(m.__module__, m.name) for m in self.payment_modules]
+        if len(method_choices) > 1:
+            method_choices.insert(0, ('', '---------'))
         self.fields['payment_method'] = forms.ChoiceField(
-            label=_('Payment method'),
-            choices=[('', '----------')] + [
-                (m.__module__, m.name) for m in self.payment_modules],
-            )
+            label=_('Payment method'), choices=method_choices,
+        )
 
     def clean(self):
         data = super(ConfirmationForm, self).clean()
