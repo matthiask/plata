@@ -10,6 +10,7 @@ from django.db import models
 from django.db.models import F, ObjectDoesNotExist, Sum, Q
 from django.utils.translation import ugettext_lazy as _
 
+from django_countries import CountryField
 import plata
 from plata.fields import CurrencyField, JSONField
 
@@ -53,7 +54,8 @@ class BillingShippingAddress(models.Model):
     billing_address = models.TextField(_('address'))
     billing_zip_code = models.CharField(_('ZIP code'), max_length=50)
     billing_city = models.CharField(_('city'), max_length=100)
-    billing_country = models.CharField(_('country'), max_length=3, blank=True)
+    billing_country = CountryField(_('country'), blank=True)
+
 
     shipping_same_as_billing = models.BooleanField(_('shipping address equals billing address'),
         default=True)
@@ -64,7 +66,7 @@ class BillingShippingAddress(models.Model):
     shipping_address = models.TextField(_('address'), blank=True)
     shipping_zip_code = models.CharField(_('ZIP code'), max_length=50, blank=True)
     shipping_city = models.CharField(_('city'), max_length=100, blank=True)
-    shipping_country = models.CharField(_('country'), max_length=3, blank=True)
+    shipping_country = CountryField(_('country'), blank=True)
 
     class Meta:
         abstract = True
