@@ -2,8 +2,23 @@ from django import forms, template
 from django.template.loader import render_to_string
 
 import plata
+import plata.context_processors
 
 register = template.Library()
+
+@register.simple_tag(takes_context=True)
+def load_plata_context(context):
+    """
+    Conditionally run plata's context processor using {% load_plata_context %}
+
+    Rather than having the overheads involved in globally adding it to
+    TEMPLATE_CONTEXT_PROCESSORS.
+    """
+    if not 'plata' in context:
+        context.update(
+            plata.context_processors.plata_context(context['request'])
+        )
+    return ''
 
 
 def _type_class(item):
