@@ -1,4 +1,5 @@
 from django import forms, template
+from django.db.models import ObjectDoesNotExist
 from django.template.loader import render_to_string
 
 import plata
@@ -19,6 +20,17 @@ def load_plata_context(context):
             plata.context_processors.plata_context(context['request'])
         )
     return ''
+
+
+@register.filter
+def quantity_ordered(product, order):
+    """
+    e.g. {% if product|quantity_ordered:plata.order > 0 %} ... {% endif %}
+    """
+    try:
+        return order.items.values('quantity').get(product=product)['quantity']
+    except ObjectDoesNotExist:
+        return 0
 
 
 def _type_class(item):
