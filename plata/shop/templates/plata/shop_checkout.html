@@ -25,80 +25,88 @@
   {% endblock %}
 
   <form method="post" action=".">
-    {% csrf_token %}
-    <input type="hidden" name="_checkout" value="1" />
+    {% block order_form %}
+      {% csrf_token %}
+      <input type="hidden" name="_checkout" value="1" />
 
-    {% form_errors orderform %}
+      {% form_errors orderform %}
 
-    <table>
-      <tr>
-        <td colspan="2">
-          <h2>{% trans "Billing address" %}</h2>
-        </td>
-      </tr>
+      <table>
+        {% block order_form_table_rows %}
+          {% block billing_heading_row %}
+            <tr>
+              <td colspan="2">
+                <h2>{% trans "Billing address" %}</h2>
+              </td>
+            </tr>
+          {% endblock %}
 
-      {% block create_account_field %}
-        {% if orderform.create_account %}
-          {% form_item orderform.create_account %}
-        {% endif %}
-      {% endblock %}
+          {% block create_account_field %}
+            {% if orderform.create_account %}
+              {% form_item orderform.create_account %}
+            {% endif %}
+          {% endblock %}
 
-      {% block billing_fields %}
-        {% form_item orderform.billing_company %}
-        {% form_item orderform.billing_first_name %}
-        {% form_item orderform.billing_last_name %}
-        {% form_item orderform.email %}
+          {% block billing_fields %}
+            {% form_item orderform.billing_company %}
+            {% form_item orderform.billing_first_name %}
+            {% form_item orderform.billing_last_name %}
+            {% form_item orderform.email %}
 
-        {% block billing_address_fields %}
-          {% form_item orderform.billing_address %}
-          {% form_item orderform.billing_zip_code %}
-          {% form_item orderform.billing_city %}
-          {% form_item orderform.billing_country %}
+            {% block billing_address_fields %}
+              {% form_item orderform.billing_address %}
+              {% form_item orderform.billing_zip_code %}
+              {% form_item orderform.billing_city %}
+              {% form_item orderform.billing_country %}
+            {% endblock %}
+          {% endblock %}
+
+          {% block shipping_heading_row %}
+            <tr>
+              <td colspan="2">
+                <h2>{% trans "Shipping address" %}</h2>
+              </td>
+            </tr>
+          {% endblock %}
+
+          {% block shipping_same_as_billing_row %}
+            <tr>
+              <td colspan="2">
+                {% form_item_plain orderform.shipping_same_as_billing %}
+                {{ orderform.shipping_same_as_billing.label_tag }}
+              </td>
+            </tr>
+          {% endblock %}
+
+          {% block shipping_fields %}
+            {% form_item orderform.shipping_company %}
+            {% form_item orderform.shipping_first_name %}
+            {% form_item orderform.shipping_last_name %}
+            {% block shipping_address_fields %}
+              {% form_item orderform.shipping_address %}
+              {% form_item orderform.shipping_zip_code %}
+              {% form_item orderform.shipping_city %}
+              {% form_item orderform.shipping_country %}
+            {% endblock %}
+          {% endblock %}
+
+          {% block notes %}
+            <tr>
+              <td colspan="2">
+                <h2>{% trans "Notes" %}</h2>
+              </td>
+            </tr>
+            {% form_item orderform.notes %}
+          {% endblock %}
+
+          {% block submit %}
+            <tr>
+              <td></td>
+              <td><button type="submit">{% trans "Submit" %}</button></td>
+            </tr>
+          {% endblock %}
         {% endblock %}
-      {% endblock %}
-
-      <tr>
-        <td colspan="2">
-          <h2>{% trans "Shipping address" %}</h2>
-        </td>
-      </tr>
-
-      {% block shipping_same_as_billing_row %}
-        <tr>
-          <td colspan="2">
-            {% form_item_plain orderform.shipping_same_as_billing %}
-            {{ orderform.shipping_same_as_billing.label_tag }}
-          </td>
-        </tr>
-      {% endblock %}
-
-      {% block shipping_fields %}
-        {% form_item orderform.shipping_company %}
-        {% form_item orderform.shipping_first_name %}
-        {% form_item orderform.shipping_last_name %}
-        {% block shipping_address_fields %}
-          {% form_item orderform.shipping_address %}
-          {% form_item orderform.shipping_zip_code %}
-          {% form_item orderform.shipping_city %}
-          {% form_item orderform.shipping_country %}
-        {% endblock %}
-      {% endblock %}
-
-      {% block notes %}
-        <tr>
-          <td colspan="2">
-            <h2>{% trans "Notes" %}</h2>
-          </td>
-        </tr>
-        {% form_item orderform.notes %}
-      {% endblock %}
-
-      {% block submit %}
-        <tr>
-          <td></td>
-          <td><button type="submit">{% trans "Submit" %}</button></td>
-        </tr>
-      {% endblock %}
-    </table>
+      </table>
+    {% endblock %}
   </form>
 {% endblock %}
