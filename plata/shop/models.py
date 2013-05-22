@@ -52,7 +52,8 @@ class BillingShippingAddress(models.Model):
     billing_first_name = models.CharField(_('first name'), max_length=100)
     billing_last_name = models.CharField(_('last name'), max_length=100)
     billing_address = models.TextField(_('address'))
-    billing_zip_code = models.CharField(_('ZIP code'), max_length=50)
+    billing_zip_code = models.CharField(
+        plata.settings.PLATA_ZIP_CODE_LABEL, max_length=50)
     billing_city = models.CharField(_('city'), max_length=100)
     billing_country = CountryField(_('country'), blank=True)
 
@@ -64,7 +65,8 @@ class BillingShippingAddress(models.Model):
     shipping_first_name = models.CharField(_('first name'), max_length=100, blank=True)
     shipping_last_name = models.CharField(_('last name'), max_length=100, blank=True)
     shipping_address = models.TextField(_('address'), blank=True)
-    shipping_zip_code = models.CharField(_('ZIP code'), max_length=50, blank=True)
+    shipping_zip_code = models.CharField(
+        plata.settings.PLATA_ZIP_CODE_LABEL, max_length=50, blank=True)
     shipping_city = models.CharField(_('city'), max_length=100, blank=True)
     shipping_country = CountryField(_('country'), blank=True)
 
