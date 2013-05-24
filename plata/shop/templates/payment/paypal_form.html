@@ -11,7 +11,7 @@
 <form action="{{ post_url }}" method="post" id="paypalform">
 <input type="hidden" name="business" value="{{ business }}" />
 <input type="hidden" name="currency_code" value="{{ order.currency }}" />
-<input type="hidden" name="return" value="http://{{ HTTP_HOST }}{% url "plata_order_success" %}" />
+<input type="hidden" name="return" value="{{ RETURN_SCHEME }}://{{ HTTP_HOST }}{% url "plata_order_success" %}" />
 
 <input type="hidden" name="cmd" value="_cart" />
 <input type="hidden" name="upload" value="1" />
@@ -53,7 +53,7 @@
     <input type="hidden" name="email" value="{{ order.email }}" />
     <input type="hidden" name="address_override" value="0" />
 
-    <input type="hidden" name="notify_url" value="http://{{ HTTP_HOST }}{% url "plata_payment_paypal_ipn" %}" />
+    <input type="hidden" name="notify_url" value="{{ IPN_SCHEME }}://{{ HTTP_HOST }}{% url "plata_payment_paypal_ipn" %}" />
     <input type="submit" value="{% trans "Purchase Items" %}" />
 </form>
 

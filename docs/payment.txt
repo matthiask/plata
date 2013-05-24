@@ -31,10 +31,15 @@ The Paypal payment module needs two configuration values::
     PAYPAL = {
         'LIVE': False, # Use sandbox or live payment interface?
         'BUSINESS': 'paypal@example.com',
-        }
+    }
 
 The default IPN URL is ``payment/paypal/ipn/``; the base path is defined
 by where you added  ``shop.urls``.
+
+You can also specify `'RETURN_SCHEME'` and `'IPN_SCHEME'` within the
+`PAYPAL` settings if you're using SSL; `IPN_SCHEME` defaults to `'http'`,
+and `RETURN_SCHEME` will auto-select `'http'` or `'https'` based on
+the `request.is_secure()` value of the payment initiating request.
 
 
 .. _payment_postfinance:

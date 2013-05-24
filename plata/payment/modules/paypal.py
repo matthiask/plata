@@ -66,10 +66,16 @@ class PaymentProcessor(ProcessorBase):
         return self.shop.render(request, 'payment/paypal_form.html', {
             'order': order,
             'payment': payment,
+            'RETURN_SCHEME': PAYPAL.get(
+                'RETURN_SCHEME',
+                'https' if request.is_secure() else 'http'
+            ),
+            'IPN_SCHEME': PAYPAL.get('IPN_SCHEME', 'http'),
             'HTTP_HOST': request.META.get('HTTP_HOST'),
             'post_url': PP_URL,
             'business': PAYPAL['BUSINESS'],
-            })
+            }
+        )
 
     @csrf_exempt_m
     def ipn(self, request):
