@@ -133,7 +133,7 @@ class ConfirmationForm(forms.Form):
         self.fields['payment_method'] = forms.ChoiceField(
             label=_('Payment method'),
             choices=[('', '----------')] + [
-                (m.__module__, m.name) for m in self.payment_modules],
+                (m.key, m.name) for m in self.payment_modules],
             )
 
     def clean(self):
@@ -149,7 +149,7 @@ class ConfirmationForm(forms.Form):
         signals.order_confirmed.send(sender=self.shop, order=self.order)
 
         module = dict(
-            (m.__module__, m) for m in self.payment_modules
+            (m.key, m) for m in self.payment_modules
             )[self.cleaned_data['payment_method']]
 
         return module.process_order_confirmed(self.request, self.order)
