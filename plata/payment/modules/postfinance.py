@@ -115,7 +115,7 @@ class PaymentProcessor(ProcessorBase):
             POSTFINANCE['SHA1_IN'],
             ))).hexdigest()
 
-        return self.shop.render(request, 'payment/postfinance_form.html', {
+        return self.shop.render(request, 'payment/%s_form.html' % self.key, {
             'order': order,
             'HTTP_HOST': request.META.get('HTTP_HOST'),
             'form_params': form_params,

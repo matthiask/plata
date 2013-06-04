@@ -141,7 +141,7 @@ class PaymentProcessor(ProcessorBase):
             'mode': OGONE['LIVE'] and 'prod' or 'test',
         })
 
-        return self.shop.render(request, 'payment/ogone_form.html', {
+        return self.shop.render(request, 'payment/%s_form.html' % self.key, {
             'order': order,
             'HTTP_HOST': request.META.get('HTTP_HOST'),
             'form_params': form_params,

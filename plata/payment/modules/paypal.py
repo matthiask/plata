@@ -60,7 +60,7 @@ class PaymentProcessor(ProcessorBase):
         else:
             PP_URL = "https://www.sandbox.paypal.com/cgi-bin/webscr"
 
-        return self.shop.render(request, 'payment/paypal_form.html', {
+        return self.shop.render(request, 'payment/%s_form.html' % self.key, {
             'order': order,
             'payment': payment,
             'HTTP_HOST': request.META.get('HTTP_HOST'),
