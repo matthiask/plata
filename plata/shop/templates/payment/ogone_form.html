@@ -9,6 +9,7 @@
 <p>{% trans "You will be forwarded to Ogone for payment now." %}</p>
 
 <form method="post" action="https://secure.ogone.com/ncol/{{ form_params.mode }}/orderstandard.asp" id="ogoneform">
+{% block parameters %}
 <input type="hidden" name="PSPID" value="{{ form_params.PSPID }}" />
 <input type="hidden" name="orderID" value="{{ form_params.orderID }}" />
 <input type="hidden" name="amount" value="{{ form_params.amount }}" />
@@ -24,7 +25,7 @@
 <input type="hidden" name="exceptionurl" value="{{ form_params.exceptionurl }}" />
 <input type="hidden" name="cancelurl" value="{{ form_params.cancelurl }}" />
 <input type="hidden" name="SHASign" value="{{ form_params.SHASign }}" />
-
+{% endblock %}
 <input type="submit" value="{% trans "Pay now" %}" />
 </form>
 

@@ -10,6 +10,7 @@
 <p>{% trans "You will be forwarded to Postfinance for payment now." %}</p>
 
 <form method="post" action="https://e-payment.postfinance.ch/ncol/{{ form_params.mode }}/orderstandard.asp" id="postfinanceform">
+{% block parameters %}
 <input type="hidden" name="PSPID" value="{{ form_params.PSPID }}" />
 <input type="hidden" name="orderID" value="{{ form_params.orderID }}" />
 <input type="hidden" name="amount" value="{{ form_params.amount }}" />
@@ -27,7 +28,7 @@
 <input type="hidden" name="declineurl" value="http://{{ HTTP_HOST }}{% url "plata_order_payment_failure" %}" />
 <input type="hidden" name="exceptionurl" value="http://{{ HTTP_HOST }}{% url "plata_order_payment_failure" %}" />
 <input type="hidden" name="cancelurl" value="http://{{ HTTP_HOST }}{% url "plata_order_payment_failure" %}" />
-
+{% endblock %}
 <input type="submit" value="{% trans "Pay now" %}" />
 </form>
 

@@ -10,6 +10,7 @@
 <p>{% trans "You will be forwarded to Paypal for payment now." %}</p>
 
 <form action="{{ post_url }}" method="post" id="paypalform">
+{% block parameters %}
 <input type="hidden" name="business" value="{{ business }}" />
 <input type="hidden" name="currency_code" value="{{ order.currency }}" />
 <input type="hidden" name="return" value="http://{{ HTTP_HOST }}{% url "plata_order_success" %}" />
@@ -55,6 +56,7 @@
     <input type="hidden" name="address_override" value="0" />
 
     <input type="hidden" name="notify_url" value="http://{{ HTTP_HOST }}{% url "plata_payment_paypal_ipn" %}" />
+    {% endblock %}
     <input type="submit" value="{% trans "Purchase Items" %}" />
 </form>
 
