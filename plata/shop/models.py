@@ -2,18 +2,15 @@ from decimal import Decimal
 import logging
 import re
 
-try:  # pragma: no cover
-  from django.contrib.auth import get_user_model
-  User = get_user_model()
-except ImportError, e:
-  from django.contrib.auth.models import User
-
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import get_callable
 from django.db import models
 from django.db.models import F, ObjectDoesNotExist, Sum, Q
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
+
+from django_countries import CountryField
 
 import plata
 from plata.fields import CurrencyField, JSONField
@@ -59,10 +56,10 @@ class BillingShippingAddress(models.Model):
     billing_first_name = models.CharField(_('first name'), max_length=100)
     billing_last_name = models.CharField(_('last name'), max_length=100)
     billing_address = models.TextField(_('address'))
-    billing_zip_code = models.CharField(_('ZIP code'), max_length=50)
+    billing_zip_code = models.CharField(
+        plata.settings.PLATA_ZIP_CODE_LABEL, max_length=50)
     billing_city = models.CharField(_('city'), max_length=100)
-    billing_country = models.CharField(_('country'), max_length=3,
-        blank=True)
+    billing_country = CountryField(_('country'), blank=True)
 
     shipping_same_as_billing = models.BooleanField(
         _('shipping address equals billing address'),
@@ -75,11 +72,10 @@ class BillingShippingAddress(models.Model):
     shipping_last_name = models.CharField(_('last name'), max_length=100,
         blank=True)
     shipping_address = models.TextField(_('address'), blank=True)
-    shipping_zip_code = models.CharField(_('ZIP code'), max_length=50,
-        blank=True)
+    shipping_zip_code = models.CharField(
+        plata.settings.PLATA_ZIP_CODE_LABEL, max_length=50, blank=True)
     shipping_city = models.CharField(_('city'), max_length=100, blank=True)
-    shipping_country = models.CharField(_('country'), max_length=3,
-        blank=True)
+    shipping_country = CountryField(_('country'), blank=True)
 
     class Meta:
         abstract = True
@@ -130,8 +126,13 @@ class Order(BillingShippingAddress):
 
     created = models.DateTimeField(_('created'), default=timezone.now)
     confirmed = models.DateTimeField(_('confirmed'), blank=True, null=True)
-    user = models.ForeignKey(User, blank=True, null=True,
-        verbose_name=_('user'), related_name='orders')
+    user = models.ForeignKey(
+        getattr(settings, 'AUTH_USER_MODEL', 'auth.User'),
+        blank=True,
+        null=True,
+        verbose_name=_('user'),
+        related_name='orders'
+    )
     language_code = models.CharField(_('language'), max_length=10,
         default='', blank=True)
     status = models.PositiveIntegerField(_('status'), choices=STATUS_CHOICES,

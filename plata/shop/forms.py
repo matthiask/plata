@@ -63,7 +63,10 @@ class BaseCheckoutForm(forms.ModelForm):
 
             if not self.request.user.is_authenticated():
                 password = User.objects.make_random_password()
-                user = User.objects.create_user(email, email, password)
+                params = {'email': email, 'password': password}
+                if getattr(User, 'USERNAME_FIELD', 'username') == 'username':
+                    params['username'] = email
+                user = User.objects.create_user(**params)
                 user = auth.authenticate(username=email, password=password)
                 auth.login(self.request, user)
             else:
@@ -130,11 +133,12 @@ class ConfirmationForm(forms.Form):
 
         super(ConfirmationForm, self).__init__(*args, **kwargs)
 
+        method_choices = [(m.key, m.name) for m in self.payment_modules]
+        if len(method_choices) > 1:
+            method_choices.insert(0, ('', '---------'))
         self.fields['payment_method'] = forms.ChoiceField(
-            label=_('Payment method'),
-            choices=[('', '----------')] + [
-                (m.key, m.name) for m in self.payment_modules],
-            )
+            label=_('Payment method'), choices=method_choices,
+        )
 
     def clean(self):
         data = super(ConfirmationForm, self).clean()

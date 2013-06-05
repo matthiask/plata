@@ -19,7 +19,7 @@ The (base) product model has to be specified as ``PLATA_SHOP_PRODUCT``
 using Django's ``app_label.model_name`` notation. The model referenced
 will be the model pointed to by the ``OrderItem`` order line items.
 
-Since it's your responsability to write all views and URLs for your
+Since it's your responsibility to write all views and URLs for your
 product catalogue, there aren't many things Plata's products have to
 fulfill.
 
@@ -95,7 +95,7 @@ The price model offers the following attributes:
 
 * ``tax_class.rate``
 
-  The tax rate as a percentage, meaning ``19.0`` for a tax rate of
+  The tax rate as a percentage, meaning ``19.6`` for a tax rate of
   19.6%.
 
 * ``tax_class``

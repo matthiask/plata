@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 
 #: Are prices shown with tax included or not? (Defaults to ``True``)
 #: Please note that this setting is purely presentational and has no
@@ -10,7 +11,7 @@ PLATA_PRICE_INCLUDES_TAX = getattr(settings, 'PLATA_PRICE_INCLUDES_TAX', True)
 #: List of order processors
 #:
 #: Plata does not check whether the selection makes any sense. This is your
-#: responsability.
+#: responsibility.
 PLATA_ORDER_PROCESSORS = getattr(settings, 'PLATA_ORDER_PROCESSORS', [
     'plata.shop.processors.InitializeOrderProcessor',
     'plata.shop.processors.DiscountProcessor',
@@ -68,7 +69,8 @@ PLATA_STOCK_TRACKING_MODEL = getattr(settings, 'PLATA_STOCK_TRACKING_MODEL',
 #: All available currencies. Use ISO 4217 currency codes in this list only.
 CURRENCIES = getattr(settings, 'CURRENCIES', ('CHF', 'EUR', 'USD', 'CAD'))
 
-#: Target of order item product foreign key (Defaults to
-#: ``'product.Product'``)
-PLATA_SHOP_PRODUCT = getattr(settings, 'PLATA_SHOP_PRODUCT',
-    'product.Product')
+#: Target of order item product foreign key (Defaults to ``'product.Product'``)
+PLATA_SHOP_PRODUCT = getattr(settings, 'PLATA_SHOP_PRODUCT', 'product.Product')
+
+#: Since ZIP code is far from universal, and more an L10N than I18N issue:
+PLATA_ZIP_CODE_LABEL = getattr(settings, 'PLATA_ZIP_CODE_LABEL', _('ZIP code'))

@@ -1,9 +1,36 @@
 from django import forms, template
+from django.db.models import ObjectDoesNotExist
 from django.template.loader import render_to_string
 
 import plata
+import plata.context_processors
 
 register = template.Library()
+
+@register.simple_tag(takes_context=True)
+def load_plata_context(context):
+    """
+    Conditionally run plata's context processor using {% load_plata_context %}
+
+    Rather than having the overheads involved in globally adding it to
+    TEMPLATE_CONTEXT_PROCESSORS.
+    """
+    if not 'plata' in context:
+        context.update(
+            plata.context_processors.plata_context(context['request'])
+        )
+    return ''
+
+
+@register.filter
+def quantity_ordered(product, order):
+    """
+    e.g. {% if product|quantity_ordered:plata.order > 0 %} ... {% endif %}
+    """
+    try:
+        return order.items.values('quantity').get(product=product)['quantity']
+    except ObjectDoesNotExist:
+        return 0
 
 
 def _type_class(item):

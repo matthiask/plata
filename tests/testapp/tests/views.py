@@ -176,11 +176,7 @@ class ViewTest(PlataTest):
             'order-email': 'something@example.com',
             'order-currency': 'CHF',
             'order-notes': 'Test\n\nJust testing.',
-            }), '/discounts/')
-
-        self.assertContains(self.client.post('/discounts/', {
-            'code': 'something-invalid',
-            }), 'not validate')
+            }), '/confirmation/')
 
         Discount.objects.create(
             is_active=True,
@@ -188,6 +184,10 @@ class ViewTest(PlataTest):
             code='asdf',
             name='Percentage discount',
             value=30)
+
+        self.assertContains(self.client.post('/discounts/', {
+            'code': 'something-invalid',
+            }), 'not validate')
 
         self.assertRedirects(self.client.post('/discounts/', {
             'code': 'asdf',
@@ -448,7 +448,7 @@ class ViewTest(PlataTest):
         self.assertEqual(len(mail.outbox), 0)
         checkout_data['order-email'] = 'something@example.com'
         self.assertRedirects(self.client.post('/checkout/', checkout_data),
-            '/discounts/')
+            '/confirmation/')
         self.assertEqual(len(mail.outbox), 1)
 
         # There should be exactly one contact object now
@@ -491,7 +491,7 @@ class ViewTest(PlataTest):
         self.assertEqual(len(mail.outbox), 0)
         checkout_data['order-email'] = 'something@example.com'
         self.assertRedirects(self.client.post('/checkout/', checkout_data),
-            '/discounts/')
+            '/confirmation/')
         self.assertEqual(len(mail.outbox), 1)
 
         # There should be exactly one contact object now
@@ -552,7 +552,7 @@ class ViewTest(PlataTest):
 
         self.assertEqual(len(mail.outbox), 0)
         self.assertRedirects(self.client.post('/checkout/', checkout_data),
-            '/discounts/')
+            '/confirmation/')
         self.assertEqual(len(mail.outbox), 0)
 
         contact = Contact.objects.get()
@@ -598,7 +598,7 @@ class ViewTest(PlataTest):
 
         # If order wasn't active after logging in anymore, this would not work
         self.assertRedirects(self.client.post('/checkout/', checkout_data),
-            '/discounts/')
+            '/confirmation/')
 
         contact = Contact.objects.get()
         self.assertEqual(contact.billing_first_name, 'Fritz')

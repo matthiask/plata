@@ -3,3 +3,4 @@ simplejson>=3.0
 openpyxl
 reportlab>=2.6
 pdfdocument
+django-countries>=1.5
