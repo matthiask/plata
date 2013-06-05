@@ -202,12 +202,12 @@ class ViewTest(PlataTest):
 
         self.assertContains(self.client.post('/confirmation/', {
             'terms_and_conditions': True,
-            'payment_method': 'plata.payment.modules.postfinance',
+            'payment_method': 'postfinance',
             }), 'SHASign')
 
         self.assertContains(self.client.post('/confirmation/', {
             'terms_and_conditions': True,
-            'payment_method': 'plata.payment.modules.paypal',
+            'payment_method': 'paypal',
             }), 'cgi-bin/webscr')
 
         self.assertRedirects(self.client.post(p2.get_absolute_url(), {
@@ -230,7 +230,7 @@ class ViewTest(PlataTest):
         self.assertEqual(len(mail.outbox), 0)
         self.assertRedirects(self.client.post('/confirmation/', {
             'terms_and_conditions': True,
-            'payment_method': 'plata.payment.modules.cod',
+            'payment_method': 'cod',
             }), '/order/success/')
         self.assertEqual(len(mail.outbox), 2) # invoice and packing slip
         self.assertEqual(Order.objects.get(pk=order.id).status, Order.PAID)
@@ -245,12 +245,12 @@ class ViewTest(PlataTest):
         # Cart is empty
         self.assertRedirects(self.client.post('/confirmation/', {
             'terms_and_conditions': True,
-            'payment_method': 'plata.payment.modules.cod',
+            'payment_method': 'cod',
             }), '/cart/')
 
         self.assertRedirects(self.client.post('/confirmation/', {
             'terms_and_conditions': True,
-            'payment_method': 'plata.payment.modules.paypal',
+            'payment_method': 'paypal',
             }), '/cart/')
 
         user = User.objects.create_superuser('admin', 'admin@example.com', 'password')
@@ -290,7 +290,7 @@ class ViewTest(PlataTest):
 
         response = self.client.post('/confirmation/', {
             'terms_and_conditions': True,
-            'payment_method': 'plata.payment.modules.postfinance',
+            'payment_method': 'postfinance',
             })
         self.assertContains(response, 'SHASign')
         self.assertContains(response, '721735bc3876094bb7e5ff075de8411d85494a66')
@@ -388,7 +388,7 @@ class ViewTest(PlataTest):
 
         response = self.client.post('/confirmation/', {
             'terms_and_conditions': True,
-            'payment_method': 'plata.payment.modules.paypal',
+            'payment_method': 'paypal',
             })
         self.assertContains(response, 'sandbox')
 
@@ -681,7 +681,7 @@ class ViewTest(PlataTest):
 
         self.assertRedirects(self.client.post('/confirmation/', {
             'terms_and_conditions': True,
-            'payment_method': 'plata.payment.modules.cod',
+            'payment_method': 'cod',
             }), '/order/success/')
 
         self.assertEqual(Discount.objects.count(), 2)
@@ -703,7 +703,7 @@ class ViewTest(PlataTest):
 
         self.assertRedirects(self.client.post('/confirmation/', {
             'terms_and_conditions': True,
-            'payment_method': 'plata.payment.modules.cod',
+            'payment_method': 'cod',
             }), '/order/success/')
 
         self.client.get('/order/new/')
