@@ -338,6 +338,7 @@ class ViewTest(PlataTest):
             self.assertEqual(len(w), 1)
             self.assertTrue(
                 'Order.is_paid() has been deprecated' in str(w[-1]))
+        self.assertTrue(order.status >= Order.PAID)
 
         self.assertEqual(StockTransaction.objects.count(), 2)
 

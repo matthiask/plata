@@ -1,6 +1,7 @@
 from functools import wraps
 import logging
 
+from django.conf.urls import include, patterns, url
 from django.contrib import auth, messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
@@ -151,41 +152,60 @@ class Shop(object):
     def get_urls(self):
         return self.get_shop_urls() + self.get_payment_urls()
 
-    def get_shop_urls(self):
-        from django.conf.urls import patterns, url
-        return patterns('',
-            url(r'^cart/$', checkout_process_decorator(
-                    order_already_confirmed, order_cart_warnings,
-                )(self.cart),
-                name='plata_shop_cart'),
-            url(r'^checkout/$', checkout_process_decorator(
-                cart_not_empty, order_already_confirmed, order_cart_validates,
-                )(self.checkout),
-                name='plata_shop_checkout'),
-            url(r'^discounts/$', checkout_process_decorator(
-                cart_not_empty, order_already_confirmed, order_cart_validates,
-                )(self.discounts),
-                name='plata_shop_discounts'),
-            url(r'^confirmation/$', checkout_process_decorator(
-                    cart_not_empty, order_cart_validates,
-                )(self.confirmation),
-                name='plata_shop_confirmation'),
+    def get_cart_url(self):
+        return url(r'^cart/$', checkout_process_decorator(
+            order_already_confirmed
+        )(self.cart), name='plata_shop_cart')
 
-            url(r'^order/success/$',
-                self.order_success,
-                name='plata_order_success'),
-            url(r'^order/payment_failure/$',
-                self.order_payment_failure,
-                name='plata_order_payment_failure'),
-            url(r'^order/new/$',
-                self.order_new,
-                name='plata_order_new'),
-            )
+    def get_checkout_url(self):
+        return url(r'^checkout/$', checkout_process_decorator(
+            cart_not_empty, order_already_confirmed, order_cart_validates,
+        )(self.checkout), name='plata_shop_checkout')
+
+    def get_discounts_url(self):
+        return url(r'^discounts/$', checkout_process_decorator(
+            cart_not_empty, order_already_confirmed, order_cart_validates,
+        )(self.discounts), name='plata_shop_discounts')
+
+    def get_confirmation_url(self):
+        return url(r'^confirmation/$', checkout_process_decorator(
+            cart_not_empty, order_cart_validates,
+        )(self.confirmation), name='plata_shop_confirmation')
+
+    def get_success_url(self):
+        return url(
+            r'^order/success/$',
+            self.order_success,
+            name='plata_order_success'
+        )
+
+    def get_failure_url(self):
+        return url(
+            r'^order/payment_failure/$',
+            self.order_payment_failure,
+            name='plata_order_payment_failure'
+        )
+
+    def get_new_url(self):
+        return url(r'^order/new/$', self.order_new, name='plata_order_new')
+
+    def get_shop_urls(self):
+        return patterns(
+            '',
+            self.get_cart_url(),
+            self.get_checkout_url(),
+            self.get_discounts_url(),
+            self.get_confirmation_url(),
+            self.get_success_url(),
+            self.get_failure_url(),
+            self.get_new_url(),
+        )
 
     def get_payment_urls(self):
-        from django.conf.urls import patterns, url, include
-        urls = [url(r'', include(module.urls))
-            for module in self.get_payment_modules()]
+        urls = [
+            url(r'', include(module.urls))
+            for module in self.get_payment_modules()
+        ]
         return patterns('', *urls)
 
     def get_payment_modules(self, request=None):
