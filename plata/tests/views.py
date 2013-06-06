@@ -321,7 +321,7 @@ class ViewTest(PlataTest):
             'OK', status_code=200)
 
         order = Order.objects.get(pk=1)
-        assert order.is_paid()
+        self.assertTrue(order.status >= Order.PAID)
 
         self.assertEqual(StockTransaction.objects.count(), 2)
 

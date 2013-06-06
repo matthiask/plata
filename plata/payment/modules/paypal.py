@@ -79,7 +79,8 @@ class PaymentProcessor(ProcessorBase):
 
     @csrf_exempt_m
     def ipn(self, request):
-        request.encoding = 'windows-1252'
+        # request.encoding = 'windows-1252' -- FIXME
+        # see https://github.com/matthiask/plata/commit/8152ce305
         PAYPAL = settings.PAYPAL
 
         if PAYPAL['LIVE']:
@@ -168,4 +169,5 @@ class PaymentProcessor(ProcessorBase):
             logger.error('IPN: Processing failure %s' % unicode(e))
             raise
         else:
+            logger.warning('IPN received without POST parameters')
             return HttpResponse('')
