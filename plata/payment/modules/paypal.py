@@ -93,16 +93,23 @@ class PaymentProcessor(ProcessorBase):
             parameters_repr = repr(parameters).encode('utf-8')
 
             if parameters:
-                logger.info('IPN: Processing request data %s' % parameters_repr)
+                logger.info(
+                    'IPN: Processing request data %s' % parameters_repr)
 
-                postparams = {'cmd': '_notify-validate'}
-                for k, v in parameters.iteritems():
-                    postparams[k] = v.encode('utf-8')
-                status = urllib.urlopen(PP_URL, urllib.urlencode(postparams)).read()
+                status = urllib.urlopen(
+                    PP_URL,
+                    'cmd=_notify-validate&%s' % request.POST.urlencode()
+                ).read()
 
                 if not status == "VERIFIED":
-                    logger.error('IPN: Received status %s, could not verify parameters %s' % (
-                        status, parameters_repr))
+                    logger.error(
+                        'IPN: Received status %s, '
+                        'could not verify parameters %s' % (
+                            status,
+                            parameters_repr
+                        )
+                    )
+                    logger.debug(repr(request))
                     parameters = None
 
             if parameters:
