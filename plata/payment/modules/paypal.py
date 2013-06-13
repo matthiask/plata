@@ -79,8 +79,6 @@ class PaymentProcessor(ProcessorBase):
 
     @csrf_exempt_m
     def ipn(self, request):
-        # request.encoding = 'windows-1252' -- FIXME
-        # see https://github.com/matthiask/plata/commit/8152ce305
         PAYPAL = settings.PAYPAL
 
         if PAYPAL['LIVE']:
@@ -99,7 +97,7 @@ class PaymentProcessor(ProcessorBase):
 
                 postparams = {'cmd': '_notify-validate'}
                 for k, v in parameters.iteritems():
-                    postparams[k] = v.encode('windows-1252')
+                    postparams[k] = v.encode('utf-8')
                 status = urllib.urlopen(PP_URL, urllib.urlencode(postparams)).read()
 
                 if not status == "VERIFIED":
