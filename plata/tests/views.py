@@ -359,7 +359,7 @@ class ViewTest(PlataTest):
             import StringIO
             s = StringIO.StringIO('VERIFIED')
             return s
-        paypal.urllib.urlopen = mock_urlopen
+        paypal.urllib2.urlopen = mock_urlopen
 
         shop = plata.shop_instance()
         request = get_request()

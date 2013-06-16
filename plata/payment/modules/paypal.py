@@ -12,7 +12,7 @@ Needs the following settings to work correctly::
 from datetime import datetime
 from decimal import Decimal
 import logging
-import urllib
+import urllib2
 
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseForbidden
@@ -96,10 +96,10 @@ class PaymentProcessor(ProcessorBase):
                 logger.info(
                     'IPN: Processing request data %s' % parameters_repr)
 
-                status = urllib.urlopen(
-                    PP_URL,
-                    'cmd=_notify-validate&%s' % request.POST.urlencode()
-                ).read()
+                querystring = 'cmd=_notify-validate&%s' % (
+                    request.POST.urlencode()
+                )
+                status = urllib2.urlopen(PP_URL, querystring).read()
 
                 if not status == "VERIFIED":
                     logger.error(
@@ -109,8 +109,9 @@ class PaymentProcessor(ProcessorBase):
                             parameters_repr
                         )
                     )
-                    logger.debug(repr(request))
-                    parameters = None
+                    logger.debug('Destination: %r ? %r', PP_URL, querystring)
+                    logger.debug('Request: %r', request)
+                    return HttpResponse('')
 
             if parameters:
                 logger.info('IPN: Verified request %s' % parameters_repr)
