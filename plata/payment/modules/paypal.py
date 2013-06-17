@@ -128,17 +128,18 @@ class PaymentProcessor(ProcessorBase):
 
                 try:
                     order = self.shop.order_model.objects.get(pk=order_id)
-                except self.shop.order_model.DoesNotExist:
+                except (self.shop.order_model.DoesNotExist, ValueError):
                     logger.error('IPN: Order %s does not exist' % order_id)
-                    return HttpResponseForbidden('Order %s does not exist' % order_id)
+                    return HttpResponseForbidden(
+                        'Order %s does not exist' % order_id)
 
                 try:
                     payment = order.payments.get(pk=payment_id)
-                except order.payments.model.DoesNotExist:
+                except (order.payments.model.DoesNotExist, ValueError):
                     payment = order.payments.model(
                         order=order,
                         payment_module=u'%s' % self.name,
-                        )
+                    )
 
                 payment.status = OrderPayment.PROCESSED
                 payment.currency = currency
