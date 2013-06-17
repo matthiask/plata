@@ -111,7 +111,7 @@ class PaymentProcessor(ProcessorBase):
                     )
                     logger.debug('Destination: %r ? %r', PP_URL, querystring)
                     logger.debug('Request: %r', request)
-                    return HttpResponse('')
+                    return HttpResponseForbidden('Unable to verify')
 
             if parameters:
                 logger.info('IPN: Verified request %s' % parameters_repr)
@@ -177,4 +177,4 @@ class PaymentProcessor(ProcessorBase):
             raise
         else:
             logger.warning('IPN received without POST parameters')
-            return HttpResponse('')
+            return HttpResponseForbidden('No parameters provided')
