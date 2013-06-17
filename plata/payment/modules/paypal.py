@@ -79,6 +79,31 @@ class PaymentProcessor(ProcessorBase):
 
     @csrf_exempt_m
     def ipn(self, request):
+        if not request._read_started:
+            if 'windows-1252' in request.body:
+                if request.encoding != 'windows-1252':
+                    request.encoding = 'windows-1252'
+        else: # middleware (or something else?) has triggered request reading
+            if request.POST.get('charset') == 'windows-1252':
+                if request.encoding != 'windows-1252':
+                    # since the POST data has already been accessed,
+                    # unicode characters may have already been lost and
+                    # cannot be re-encoded.
+                    # -- see https://code.djangoproject.com/ticket/14035
+                    # Unfortunately, PayPal:
+                    # a) defaults to windows-1252 encoding (why?!)
+                    # b) doesn't indicate this in the Content-Type header
+                    #    so Django cannot automatically detect it.
+                    logger.warning(
+                        'IPN received with charset=windows1252, however '
+                        'the request encoding does not match. It may be '
+                        'impossible to verify this IPN if the data contains '
+                        'non-ASCII characters. Please either '
+                        'a) update your PayPal preferences to use UTF-8 '
+                        'b) configure your site so that IPN requests are '
+                        'not ready before they reach the hanlder'
+                    )
+
         PAYPAL = settings.PAYPAL
 
         if PAYPAL['LIVE']:

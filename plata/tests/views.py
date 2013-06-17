@@ -346,16 +346,16 @@ class ViewTest(PlataTest):
             'mc_currency': 'CHF',
             'mc_gross': '1234',
             'payment_status': 'Completed',
-            }
+            'last_name': u'H\xe5konsen',
+        }
 
         from plata.payment.modules import paypal
         import cgi
         def mock_urlopen(*args, **kwargs):
-            qs = cgi.parse_qs(args[1])
-            assert qs['cmd'][0] == '_notify-validate'
+            qs = cgi.parse_qs(args[1].encode('ascii'))
+            self.assertEqual(qs['cmd'][0], '_notify-validate')
             for k, v in paypal_ipn_data.iteritems():
-                assert qs[k][0] == v
-
+                self.assertEqual(unicode(qs[k][0], 'utf-8'), v)
             import StringIO
             s = StringIO.StringIO('VERIFIED')
             return s
@@ -380,8 +380,24 @@ class ViewTest(PlataTest):
         self.assertEqual(Order.objects.count(), 1)
         self.assertEqual(OrderPayment.objects.count(), 1)
 
-        self.assertContains(self.client.post('/payment/paypal/ipn/',
-            paypal_ipn_data), 'Ok')
+        self.assertContains(
+            self.client.post('/payment/paypal/ipn/', paypal_ipn_data),
+            'Ok'
+        )
+
+        # test windows-1252 encoded IPN also:
+        self.assertContains(
+            self.client.post(
+                '/payment/paypal/ipn/',
+                dict(
+                    map(
+                        lambda (k,v): (k, v.encode('windows-1252')),
+                        dict(paypal_ipn_data, charset='windows-1252').items()
+                    )
+                ),
+            ),
+            'Ok'
+        )
 
         order = Order.objects.get(pk=1)
         assert order.is_paid()
