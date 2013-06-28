@@ -24,6 +24,10 @@
 {% else %}
 
 {% for item in order.items.all %}
+    {% if item.unit_price == item.line_item_discount %}
+      {# omit item; PayPal's 'discount_amount_x' variable must be < amount_x #}
+      {# -- otherwise the user is charged the full price! #}
+    {% else %}
     <input type="hidden" name="item_name_{{ forloop.counter }}"
         value="{{ item }}" />
     <input type="hidden" name="amount_{{ forloop.counter }}"
@@ -32,6 +36,7 @@
         value="{{ item.line_item_discount|stringformat:".2f" }}" />{% endif %}
     <input type="hidden" name="quantity_{{ forloop.counter }}"
         value="{{ item.quantity|floatformat:0 }}" />
+    {% endif %}
 {% endfor %}
 
 {# LEAVE THE HANDLING CHARGE ALONE!  PAYPAL SHIPPING WILL INEVITABLY BE MESSED UP IF YOU USE THEIR SHIPPING METHODS #}
