@@ -212,7 +212,7 @@ class PaymentProcessor(ProcessorBase):
                     type=StockTransaction.SALE, negative=True, payment=payment)
 
             if not order.balance_remaining:
-                self.order_paid(order, payment=payment)
+                self.order_paid(order, payment=payment, request=request)
 
             return HttpResponse('OK')
         except Exception, e:

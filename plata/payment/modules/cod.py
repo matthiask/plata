@@ -39,6 +39,6 @@ class PaymentProcessor(ProcessorBase):
             StockTransaction = plata.stock_model()
             self.create_transactions(order, _('sale'),
                 type=StockTransaction.SALE, negative=True, payment=payment)
-        self.order_paid(order, payment=payment)
+        self.order_paid(order, payment=payment, request=request)
 
         return self.shop.redirect('plata_order_success')

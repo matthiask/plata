@@ -70,7 +70,7 @@ from __future__ import with_statement
 import contextlib
 import StringIO
 
-from django.contrib.sites.models import Site
+from django.contrib.sites.models import get_current_site
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.utils.translation import activate
@@ -96,9 +96,11 @@ class BaseHandler(object):
             return content.getvalue()
 
     def context(self, ctx, **kwargs):
-        ctx.update({
-            'site': Site.objects.get_current(),
-            })
+        request = kwargs.get('request')
+        if request is not None:
+            ctx.update({
+                'site': get_current_site(request),
+                })
         ctx.update(kwargs)
         return ctx
 

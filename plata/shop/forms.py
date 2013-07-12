@@ -76,7 +76,7 @@ class BaseCheckoutForm(forms.ModelForm):
             order.user = user
 
             signals.contact_created.send(sender=self.shop, user=user,
-                contact=contact, password=password)
+                contact=contact, password=password, request=self.request)
 
         order.save()
 
@@ -150,7 +150,8 @@ class ConfirmationForm(forms.Form):
         Process the successful order submission
         """
         self.order.update_status(self.order.CONFIRMED, 'Confirmation given')
-        signals.order_confirmed.send(sender=self.shop, order=self.order)
+        signals.order_confirmed.send(sender=self.shop, order=self.order,
+                request=self.request)
 
         module = dict(
             (m.key, m) for m in self.payment_modules

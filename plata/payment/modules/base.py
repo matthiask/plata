@@ -134,7 +134,7 @@ class ProcessorBase(object):
                 },
             **kwargs)
 
-    def order_paid(self, order, payment=None):
+    def order_paid(self, order, payment=None, request=None):
         """
         Call this when the order has been fully paid for
 
@@ -151,7 +151,8 @@ class ProcessorBase(object):
                 order, self.name))
             order.update_status(order.PAID, 'Order has been paid')
 
-            signal_kwargs = dict(sender=self, order=order, payment=payment)
+            signal_kwargs = dict(sender=self, order=order, payment=payment,
+                    request=request)
 
             if order.discount_remaining:
                 logger.info('Creating discount for remaining amount %s on'
