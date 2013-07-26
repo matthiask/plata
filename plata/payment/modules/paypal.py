@@ -11,7 +11,7 @@ Needs the following settings to work correctly::
 
 from decimal import Decimal
 import logging
-import urllib
+import urllib2
 
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseForbidden
@@ -77,8 +77,31 @@ class PaymentProcessor(ProcessorBase):
 
     @csrf_exempt_m
     def ipn(self, request):
-        # request.encoding = 'windows-1252' -- FIXME
-        # see https://github.com/matthiask/plata/commit/8152ce305
+        if not request._read_started:
+            if 'windows-1252' in request.body:
+                if request.encoding != 'windows-1252':
+                    request.encoding = 'windows-1252'
+        else: # middleware (or something else?) has triggered request reading
+            if request.POST.get('charset') == 'windows-1252':
+                if request.encoding != 'windows-1252':
+                    # since the POST data has already been accessed,
+                    # unicode characters may have already been lost and
+                    # cannot be re-encoded.
+                    # -- see https://code.djangoproject.com/ticket/14035
+                    # Unfortunately, PayPal:
+                    # a) defaults to windows-1252 encoding (why?!)
+                    # b) doesn't indicate this in the Content-Type header
+                    #    so Django cannot automatically detect it.
+                    logger.warning(
+                        'IPN received with charset=windows1252, however '
+                        'the request encoding does not match. It may be '
+                        'impossible to verify this IPN if the data contains '
+                        'non-ASCII characters. Please either '
+                        'a) update your PayPal preferences to use UTF-8 '
+                        'b) configure your site so that IPN requests are '
+                        'not ready before they reach the hanlder'
+                    )
+
         PAYPAL = settings.PAYPAL
 
         if PAYPAL['LIVE']:
@@ -93,17 +116,25 @@ class PaymentProcessor(ProcessorBase):
             parameters_repr = repr(parameters).encode('utf-8')
 
             if parameters:
-                logger.info('IPN: Processing request data %s' % parameters_repr)
+                logger.info(
+                    'IPN: Processing request data %s' % parameters_repr)
 
-                postparams = {'cmd': '_notify-validate'}
-                for k, v in parameters.iteritems():
-                    postparams[k] = v.encode('windows-1252')
-                status = urllib.urlopen(PP_URL, urllib.urlencode(postparams)).read()
+                querystring = 'cmd=_notify-validate&%s' % (
+                    request.POST.urlencode()
+                )
+                status = urllib2.urlopen(PP_URL, querystring).read()
 
                 if not status == "VERIFIED":
-                    logger.error('IPN: Received status %s, could not verify parameters %s' % (
-                        status, parameters_repr))
-                    parameters = None
+                    logger.error(
+                        'IPN: Received status %s, '
+                        'could not verify parameters %s' % (
+                            status,
+                            parameters_repr
+                        )
+                    )
+                    logger.debug('Destination: %r ? %r', PP_URL, querystring)
+                    logger.debug('Request: %r', request)
+                    return HttpResponseForbidden('Unable to verify')
 
             if parameters:
                 logger.info('IPN: Verified request %s' % parameters_repr)
@@ -120,17 +151,18 @@ class PaymentProcessor(ProcessorBase):
 
                 try:
                     order = self.shop.order_model.objects.get(pk=order_id)
-                except self.shop.order_model.DoesNotExist:
+                except (self.shop.order_model.DoesNotExist, ValueError):
                     logger.error('IPN: Order %s does not exist' % order_id)
-                    return HttpResponseForbidden('Order %s does not exist' % order_id)
+                    return HttpResponseForbidden(
+                        'Order %s does not exist' % order_id)
 
                 try:
                     payment = order.payments.get(pk=payment_id)
-                except order.payments.model.DoesNotExist:
+                except (order.payments.model.DoesNotExist, ValueError):
                     payment = order.payments.model(
                         order=order,
                         payment_module=u'%s' % self.name,
-                        )
+                    )
 
                 payment.status = OrderPayment.PROCESSED
                 payment.currency = currency
@@ -163,4 +195,4 @@ class PaymentProcessor(ProcessorBase):
             raise
         else:
             logger.warning('IPN received without POST parameters')
-            return HttpResponse('')
+            return HttpResponseForbidden('No parameters provided')
