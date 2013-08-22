@@ -1,9 +1,9 @@
-{{ site.name }}: Account creation successful
+{% load i18n %}{{ site.name }}: {% trans "Account creation successful" %}
 
-You have successfully created an account on our site!
-Go to http://{{ site.domain }}/ and enter the following details:
+{% trans "You have successfully created an account on our site!" %}
+{% blocktrans with domain=site.domain %}Go to http://{{ domain }}/ and enter the following details:{% endblocktrans %}
 
-Your username: {{ contact.user.email }}
-{% if password %}Your password: {{ password }}{% endif %}
+{% trans "Your username:" %} {{ contact.user.email }}
+{% if password %}{% trans "Your password:" %} {{ password }}{% endif %}
 
-Your {{ site.name }} team.
+{% blocktrans with name=site.name %}Your {{ name }} team.{% endblocktrans %}
