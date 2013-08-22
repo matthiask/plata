@@ -5,5 +5,3 @@
 
 {% trans "Your username:" %} {{ contact.user.email }}
 {% if password %}{% trans "Your password:" %} {{ password }}{% endif %}
-
-{% blocktrans with name=site.name %}Your {{ name }} team.{% endblocktrans %}
