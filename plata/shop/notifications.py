@@ -96,7 +96,7 @@ class BaseHandler(object):
             return content.getvalue()
 
     def context(self, ctx, **kwargs):
-        request = kwargs.get('request')
+        request = ctx.get('request')
         if request is not None:
             ctx.update({
                 'site': get_current_site(request),
