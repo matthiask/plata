@@ -765,6 +765,12 @@ class PriceBase(models.Model):
     def __unicode__(self):
         return u'%s %.2f' % (self.currency, self.unit_price)
 
+    def __cmp__(self, other):
+        return int((self.unit_price_excl_tax - other.unit_price_excl_tax)*100)
+
+    def __hash__(self):
+        return int(self.unit_price_excl_tax*100)
+
     def handle_order_item(self, item):
         """
         Set price data on the ``OrderItem`` passed
