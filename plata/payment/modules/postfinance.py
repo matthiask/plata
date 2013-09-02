@@ -20,7 +20,8 @@ from django.conf import settings
 from django.http import HttpResponse, HttpResponseForbidden
 from django.utils import timezone
 from django.utils.decorators import method_decorator
-from django.utils.translation import ugettext_lazy as _, get_language, to_locale
+from django.utils.translation import (ugettext_lazy as _, get_language,
+    to_locale)
 from django.views.decorators.csrf import csrf_exempt
 
 import plata
@@ -81,7 +82,8 @@ class PaymentProcessor(ProcessorBase):
         from django.conf.urls import patterns, url
 
         return patterns('',
-            url(r'^payment/postfinance/ipn/$', self.ipn, name='plata_payment_postfinance_ipn'),
+            url(r'^payment/postfinance/ipn/$', self.ipn,
+                name='plata_payment_postfinance_ipn'),
             )
 
     def process_order_confirmed(self, request, order):
@@ -101,7 +103,8 @@ class PaymentProcessor(ProcessorBase):
 
         form_params = {
             'orderID': 'Order-%d-%d' % (order.id, payment.id),
-            'amount': u'%s' % int(order.balance_remaining.quantize(Decimal('0.00'))*100),
+            'amount': u'%s' % int(
+                order.balance_remaining.quantize(Decimal('0.00')) * 100),
             'currency': order.currency,
             'PSPID': POSTFINANCE['PSPID'],
             'mode': POSTFINANCE['LIVE'] and 'prod' or 'test',
@@ -119,7 +122,8 @@ class PaymentProcessor(ProcessorBase):
             'order': order,
             'HTTP_HOST': request.META.get('HTTP_HOST'),
             'form_params': form_params,
-            'locale': locale.normalize(to_locale(get_language())).split('.')[0],
+            'locale': locale.normalize(
+                to_locale(get_language())).split('.')[0],
             })
 
     @csrf_exempt_m
@@ -179,7 +183,8 @@ class PaymentProcessor(ProcessorBase):
                 order = self.shop.order_model.objects.get(pk=order_id)
             except self.shop.order_model.DoesNotExist:
                 logger.error('IPN: Order %s does not exist' % order_id)
-                return HttpResponseForbidden('Order %s does not exist' % order_id)
+                return HttpResponseForbidden(
+                    'Order %s does not exist' % order_id)
 
             try:
                 payment = order.payments.get(pk=payment_id)
@@ -204,7 +209,8 @@ class PaymentProcessor(ProcessorBase):
             payment.save()
             order = order.reload()
 
-            logger.info('IPN: Successfully processed IPN request for %s' % order)
+            logger.info(
+                'IPN: Successfully processed IPN request for %s' % order)
 
             if payment.authorized and plata.settings.PLATA_STOCK_TRACKING:
                 StockTransaction = plata.stock_model()

@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import get_callable
 from django.db import models
-from django.db.models import F, ObjectDoesNotExist, Sum, Q
+from django.db.models import F, ObjectDoesNotExist, Sum
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
@@ -212,7 +212,7 @@ class Order(BillingShippingAddress):
         items = list(self.items.all())
         shared_state = {}
 
-        processor_classes = [get_callable(processor) for processor\
+        processor_classes = [get_callable(processor) for processor
             in plata.settings.PLATA_ORDER_PROCESSORS]
 
         for p in (cls(shared_state) for cls in processor_classes):
@@ -287,7 +287,6 @@ class Order(BillingShippingAddress):
             DeprecationWarning, stacklevel=2)
         return self.balance_remaining <= 0
 
-
     #: This validator is always called; basic consistency checks such as
     #: whether the currencies in the order match should be added here.
     VALIDATE_BASE = 10
@@ -331,7 +330,7 @@ class Order(BillingShippingAddress):
         - ``Order.VALIDATE_ALL``
         """
 
-        for g in sorted(g for g in self.VALIDATORS.keys() if g<=group):
+        for g in sorted(g for g in self.VALIDATORS.keys() if g <= group):
             for validator in self.VALIDATORS[g]:
                 validator(self)
 
@@ -567,7 +566,7 @@ class OrderItem(models.Model):
 
     @property
     def line_item_discount_incl_tax(self):
-        return self.line_item_discount_excl_tax * (1+self.tax_rate/100)
+        return self.line_item_discount_excl_tax * (1 + self.tax_rate / 100)
 
     @property
     def line_item_discount(self):
@@ -709,7 +708,7 @@ class OrderPayment(models.Model):
                 'currency': self.currency,
                 'amount': self.amount,
                 'order': self.order,
-                 })
+                })
 
     def _recalculate_paid(self):
         paid = OrderPayment.objects.authorized().filter(
@@ -766,10 +765,11 @@ class PriceBase(models.Model):
         return u'%s %.2f' % (self.currency, self.unit_price)
 
     def __cmp__(self, other):
-        return int((self.unit_price_excl_tax - other.unit_price_excl_tax)*100)
+        return int(
+            (self.unit_price_excl_tax - other.unit_price_excl_tax) * 100)
 
     def __hash__(self):
-        return int(self.unit_price_excl_tax*100)
+        return int(self.unit_price_excl_tax * 100)
 
     def handle_order_item(self, item):
         """
@@ -783,19 +783,19 @@ class PriceBase(models.Model):
 
     @property
     def unit_tax(self):
-        return self.unit_price_excl_tax * (self.tax_class.rate/100)
+        return self.unit_price_excl_tax * (self.tax_class.rate / 100)
 
     @property
     def unit_price_incl_tax(self):
         if self.tax_included:
             return self._unit_price
-        return self._unit_price * (1+self.tax_class.rate/100)
+        return self._unit_price * (1 + self.tax_class.rate / 100)
 
     @property
     def unit_price_excl_tax(self):
         if not self.tax_included:
             return self._unit_price
-        return self._unit_price / (1+self.tax_class.rate/100)
+        return self._unit_price / (1 + self.tax_class.rate / 100)
 
     @property
     def unit_price(self):

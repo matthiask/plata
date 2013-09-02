@@ -44,4 +44,3 @@ class XLSDocument(object):
             filename,
             )
         return response
-

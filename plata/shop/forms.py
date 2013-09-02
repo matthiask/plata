@@ -2,10 +2,10 @@ from django import forms
 from django.contrib import auth
 
 try:  # pragma: no cover
-  from django.contrib.auth import get_user_model
-  User = get_user_model()
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
 except ImportError, e:
-  from django.contrib.auth.models import User
+    from django.contrib.auth.models import User
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -93,8 +93,8 @@ class DiscountForm(forms.Form):
     def __init__(self, *args, **kwargs):
         self.order = kwargs.pop('order')
         self.discount_model = kwargs.pop('discount_model')
-        request = kwargs.pop('request') # Unused
-        shop = kwargs.pop('shop') # Unused
+        request = kwargs.pop('request')  # noqa
+        shop = kwargs.pop('shop')  # noqa
 
         super(DiscountForm, self).__init__(*args, **kwargs)
 

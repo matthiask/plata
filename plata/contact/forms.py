@@ -1,7 +1,6 @@
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 
-from plata.contact.models import Contact
 from plata.shop import forms as shop_forms
 from plata.shop.models import Order
 

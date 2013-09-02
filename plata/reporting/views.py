@@ -1,7 +1,4 @@
-import StringIO
-
 from django.contrib.admin.views.decorators import staff_member_required
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 
 from pdfdocument.utils import pdf_response
@@ -41,4 +38,3 @@ def packing_slip_pdf(request, order_id):
     pdf, response = pdf_response('packing-slip-%09d' % order.id)
     plata.reporting.order.packing_slip_pdf(pdf, order)
     return response
-

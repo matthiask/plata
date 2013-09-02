@@ -22,7 +22,7 @@ class ProcessorBase(object):
         return cost_excl_tax, cost_incl_tax - cost_excl_tax
 
     def add_tax_details(self, tax_details, tax_rate, price, discount,
-        tax_amount):
+            tax_amount):
         """
         Add tax details grouped by tax_rate. Especially useful if orders
         potentially use more than one tax class. These values are not used
@@ -140,7 +140,7 @@ class TaxProcessor(ProcessorBase):
 
         for item in items:
             taxable = item._line_item_price - (item._line_item_discount or 0)
-            item._line_item_tax = (taxable * item.tax_rate/100).quantize(
+            item._line_item_tax = (taxable * item.tax_rate / 100).quantize(
                 Decimal('0.0000000000'))
 
             self.add_tax_details(

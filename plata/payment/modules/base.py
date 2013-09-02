@@ -127,7 +127,7 @@ class ProcessorBase(object):
             return
         StockTransaction = plata.stock_model()
         StockTransaction.objects.bulk_create(order,
-            notes=_('%(stage)s: %(order)s processed by %(payment_module)s') %{
+            notes=_('%(stage)s: %(order)s processed by %(payment_module)s') % {
                 'stage': stage,
                 'order': order,
                 'payment_module': self.name,
@@ -156,7 +156,7 @@ class ProcessorBase(object):
 
             if order.discount_remaining:
                 logger.info('Creating discount for remaining amount %s on'
-                    ' order %s' % ( order.discount_remaining, order))
+                    ' order %s' % (order.discount_remaining, order))
                 discount_model = self.shop.discount_model
                 try:
                     discount = order.applied_discounts.filter(type__in=(

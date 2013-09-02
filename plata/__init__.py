@@ -23,15 +23,19 @@ class LazySettings(object):
         del self.__class__.__getattr__
         return self.__dict__[attr]
 
+
 settings = LazySettings()
 
 
 shop_instance_cache = None
+
+
 def register(instance):
     logger.debug('Registering shop instance: %s' % instance)
 
     global shop_instance_cache
     shop_instance_cache = instance
+
 
 def shop_instance():
     """
@@ -47,6 +51,7 @@ def shop_instance():
 
     return shop_instance_cache
 
+
 def product_model():
     """
     Return the product model defined by the ``PLATA_SHOP_PRODUCT`` setting.
@@ -57,8 +62,9 @@ def product_model():
 
 def stock_model():
     """
-    Return the stock transaction model definded by the ``PLATA_STOCK_TRACKING_MODEL``
-    setting or None in case stock transactions are turned off.
+    Return the stock transaction model definded by the
+    ``PLATA_STOCK_TRACKING_MODEL`` setting or ``None`` in case stock
+    transactions are turned off.
     """
     if not settings.PLATA_STOCK_TRACKING:
         return None

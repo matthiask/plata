@@ -6,7 +6,6 @@ Automatically completes every order passed.
 
 import logging
 
-from django.shortcuts import redirect
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 

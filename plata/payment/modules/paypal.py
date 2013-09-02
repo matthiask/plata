@@ -23,7 +23,7 @@ from django.views.decorators.csrf import csrf_exempt
 import plata
 from plata.payment.modules.base import ProcessorBase
 from plata.shop.models import OrderPayment
-import plata
+
 
 logger = logging.getLogger('plata.payment.paypal')
 
@@ -38,7 +38,8 @@ class PaymentProcessor(ProcessorBase):
         from django.conf.urls import patterns, url
 
         return patterns('',
-            url(r'^payment/paypal/ipn/$', self.ipn, name='plata_payment_paypal_ipn'),
+            url(r'^payment/paypal/ipn/$', self.ipn,
+                name='plata_payment_paypal_ipn'),
             )
 
     def process_order_confirmed(self, request, order):
@@ -81,7 +82,7 @@ class PaymentProcessor(ProcessorBase):
             if 'windows-1252' in request.body:
                 if request.encoding != 'windows-1252':
                     request.encoding = 'windows-1252'
-        else: # middleware (or something else?) has triggered request reading
+        else:  # middleware (or something else?) has triggered request reading
             if request.POST.get('charset') == 'windows-1252':
                 if request.encoding != 'windows-1252':
                     # since the POST data has already been accessed,
@@ -146,7 +147,8 @@ class PaymentProcessor(ProcessorBase):
                 try:
                     order, order_id, payment_id = invoice_id.split('-')
                 except ValueError:
-                    logger.error('IPN: Error getting order for %s' % invoice_id)
+                    logger.error(
+                        'IPN: Error getting order for %s' % invoice_id)
                     return HttpResponseForbidden('Malformed order ID')
 
                 try:
@@ -178,12 +180,16 @@ class PaymentProcessor(ProcessorBase):
                 payment.save()
                 order = order.reload()
 
-                logger.info('IPN: Successfully processed IPN request for %s' % order)
+                logger.info(
+                    'IPN: Successfully processed IPN request for %s' % order)
 
                 if payment.authorized and plata.settings.PLATA_STOCK_TRACKING:
                     StockTransaction = plata.stock_model()
-                    self.create_transactions(order, _('sale'),
-                        type=StockTransaction.SALE, negative=True, payment=payment)
+                    self.create_transactions(order,
+                        _('sale'),
+                        type=StockTransaction.SALE,
+                        negative=True,
+                        payment=payment)
 
                 if not order.balance_remaining:
                     self.order_paid(order, payment=payment, request=request)

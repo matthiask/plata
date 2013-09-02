@@ -11,9 +11,11 @@ class OrderItemInline(admin.TabularInline):
     raw_id_fields = ('product',)
     extra = 0
 
+
 class AppliedDiscountInline(admin.TabularInline):
     model = AppliedDiscount
     extra = 0
+
 
 class OrderStatusInline(admin.TabularInline):
     model = models.OrderStatus
@@ -101,7 +103,7 @@ class OrderPaymentAdmin(admin.ModelAdmin):
         'transaction_id', 'notes', 'data')
 
     notes_short = lambda self, obj: (
-        obj.notes[:40]+'...' if len(obj.notes) > 50 else obj.notes)
+        obj.notes[:40] + '...' if len(obj.notes) > 50 else obj.notes)
     notes_short.short_description = _('notes')
 
 

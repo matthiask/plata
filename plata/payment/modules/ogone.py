@@ -21,7 +21,8 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseForbidden
 from django.utils import timezone
 from django.utils.decorators import method_decorator
-from django.utils.translation import ugettext_lazy as _, get_language, to_locale
+from django.utils.translation import (ugettext_lazy as _, get_language,
+    to_locale)
 from django.views.decorators.csrf import csrf_exempt
 
 import plata
@@ -86,7 +87,8 @@ class PaymentProcessor(ProcessorBase):
         from django.conf.urls import patterns, url
 
         return patterns('',
-            url(r'^payment/ogone/ipn/$', self.ipn, name='plata_payment_ogone_ipn'),
+            url(r'^payment/ogone/ipn/$', self.ipn,
+                name='plata_payment_ogone_ipn'),
             )
 
     def process_order_confirmed(self, request, order):
@@ -108,10 +110,14 @@ class PaymentProcessor(ProcessorBase):
         form_params = {
             'PSPID': OGONE['PSPID'],
             'orderID': 'Order-%d-%d' % (order.id, payment.id),
-            'amount': u'%s' % int(order.balance_remaining.quantize(Decimal('0.00'))*100),
+            'amount': u'%s' % int(
+                order.balance_remaining.quantize(Decimal('0.00')) * 100),
             'currency': order.currency,
-            'language': locale.normalize(to_locale(get_language())).split('.')[0],
-            'CN': u'%s %s' % (order.billing_first_name, order.billing_last_name),
+            'language': locale.normalize(
+                to_locale(get_language())).split('.')[0],
+            'CN': u'%s %s' % (
+                order.billing_first_name,
+                order.billing_last_name),
             'EMAIL': order.email,
             'ownerZIP': order.billing_zip_code,
             'owneraddress': order.billing_address,
@@ -130,8 +136,9 @@ class PaymentProcessor(ProcessorBase):
                 reverse('plata_order_payment_failure')),
         }
         # create hash
-        value_strings = [u'{0}={1}{2}'.format(key.upper(), value, OGONE['SHA1_IN'])
-                            for key, value in form_params.items()]
+        value_strings = [
+            u'{0}={1}{2}'.format(key.upper(), value, OGONE['SHA1_IN'])
+            for key, value in form_params.items()]
         hash_string = u''.join(sorted(value_strings))
         encoded_hash_string = sha1(hash_string.encode('utf-8')).hexdigest()
 
@@ -168,10 +175,12 @@ class PaymentProcessor(ProcessorBase):
                 logger.error('IPN: Missing data in %s' % parameters_repr)
                 return HttpResponseForbidden('Missing data')
 
-            value_strings = [u'{0}={1}{2}'.format(key.upper(), value, OGONE['SHA1_OUT'])
-                                for key, value in request.POST.iteritems()
-                                    if value and not key == 'SHASIGN']
-            sha1_out = sha1((u''.join(sorted(value_strings))).encode('utf-8')).hexdigest()
+            value_strings = [
+                u'{0}={1}{2}'.format(key.upper(), value, OGONE['SHA1_OUT'])
+                for key, value in request.POST.iteritems()
+                if value and not key == 'SHASIGN']
+            sha1_out = sha1(
+                (u''.join(sorted(value_strings))).encode('utf-8')).hexdigest()
 
             if sha1_out.lower() != SHASIGN.lower():
                 logger.error('IPN: Invalid hash in %s' % parameters_repr)
@@ -190,7 +199,8 @@ class PaymentProcessor(ProcessorBase):
                 order = self.shop.order_model.objects.get(pk=order_id)
             except self.shop.order_model.DoesNotExist:
                 logger.error('IPN: Order %s does not exist' % order_id)
-                return HttpResponseForbidden('Order %s does not exist' % order_id)
+                return HttpResponseForbidden(
+                    'Order %s does not exist' % order_id)
 
             try:
                 payment = order.payments.get(pk=payment_id)
@@ -215,7 +225,8 @@ class PaymentProcessor(ProcessorBase):
             payment.save()
             order = order.reload()
 
-            logger.info('IPN: Successfully processed IPN request for %s' % order)
+            logger.info(
+                'IPN: Successfully processed IPN request for %s' % order)
 
             if payment.authorized and plata.settings.PLATA_STOCK_TRACKING:
                 StockTransaction = plata.stock_model()

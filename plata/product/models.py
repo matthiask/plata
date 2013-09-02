@@ -26,8 +26,8 @@ class ProductBase(models.Model):
         This method is part of the public, required API of products. It returns
         either a price instance or raises a ``DoesNotExist`` exception.
 
-        If you need more complex pricing schemes, override this method with your
-        own implementation.
+        If you need more complex pricing schemes, override this method with
+        your own implementation.
         """
         if currency is None:
             currency = (orderitem.currency if orderitem else

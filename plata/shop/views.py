@@ -89,7 +89,8 @@ def checkout_process_decorator(*checks):
 
             for check in checks:
                 r = check(order=order, shop=shop, request=request)
-                if r: return r
+                if r:
+                    return r
 
             return fn(request, order=order, *args, **kwargs)
         return wraps(fn)(_fn)
@@ -344,7 +345,7 @@ class Shop(object):
         OrderItemFormset = inlineformset_factory(
             self.order_model,
             self.orderitem_model,
-            form = getattr(self, 'form', ModelForm),
+            form=getattr(self, 'form', ModelForm),
             extra=0,
             fields=('quantity',),
             )

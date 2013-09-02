@@ -1,5 +1,4 @@
 import datetime
-import decimal
 import logging
 import re
 import simplejson as json
@@ -32,7 +31,7 @@ def json_encode_default(o):
         return o.strftime('%Y-%m-%d')
     elif isinstance(o, datetime.time):
         return o.strftime('%H:%M:%S.%f%z')
-    raise TypeError, 'Cannot encode %r' % o
+    raise TypeError('Cannot encode %r' % o)
 
 
 _PATTERNS = [
@@ -158,7 +157,7 @@ class JSONField(models.TextField):
 
 try:  # pragma: no cover
     from south.modelsinspector import add_introspection_rules
-    JSONField_introspection_rule = ( (JSONField,), [], {}, )
+    JSONField_introspection_rule = ((JSONField,), [], {},)
     add_introspection_rules(
         rules=[JSONField_introspection_rule],
         patterns=["^plata\.fields"])

@@ -5,7 +5,9 @@ from django.template.loader import render_to_string
 import plata
 import plata.context_processors
 
+
 register = template.Library()
+
 
 @register.simple_tag(takes_context=True)
 def load_plata_context(context):
@@ -137,7 +139,7 @@ class FormErrorsNode(template.Node):
                 formset_list.append(i)
 
             if (getattr(i, 'errors', None)
-                    or getattr(i, 'non_field_errors', lambda:None)()):
+                    or getattr(i, 'non_field_errors', lambda: None)()):
                 errors = True
 
         if not errors:

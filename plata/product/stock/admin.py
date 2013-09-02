@@ -22,7 +22,6 @@ if plata.settings.PLATA_STOCK_TRACKING:
     class StockTransactionForm(forms.ModelForm):
         type = forms.ChoiceField(choices=TYPE_CHOICES)
 
-
     admin.site.register(models.Period,
         list_display=('name', 'notes', 'start'),
         )

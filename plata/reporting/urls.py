@@ -9,4 +9,3 @@ urlpatterns = patterns('plata.reporting.views',
     url(r'^packing_slip_pdf/(?P<order_id>\d+)/$', 'packing_slip_pdf',
         name='plata_reporting_packing_slip_pdf'),
 )
-

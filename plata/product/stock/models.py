@@ -18,15 +18,13 @@ Follow these steps to enable this module:
 
 from datetime import timedelta
 
-from django.core.exceptions import (FieldError, ImproperlyConfigured,
-    ValidationError)
+from django.core.exceptions import ImproperlyConfigured, ValidationError
 from django.db import models
 from django.db.models import Sum, Q, signals
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _, ugettext
 
 import plata
-from plata.fields import CurrencyField
 from plata.shop.models import Order, OrderPayment
 
 
@@ -116,7 +114,7 @@ class StockTransactionManager(models.Manager):
             update = False
             queryset = queryset.exclude(
                 type=self.model.PAYMENT_PROCESS_RESERVATION,
-                created__lt=timezone.now() - timedelta(seconds=15*60))
+                created__lt=timezone.now() - timedelta(seconds=15 * 60))
         else:
             queryset = queryset.exclude(
                 type=self.model.PAYMENT_PROCESS_RESERVATION)
@@ -207,7 +205,7 @@ class StockTransaction(models.Model):
     OUTGOING = 80
 
     # Semi-internal use
-    PAYMENT_PROCESS_RESERVATION = 100 # reservation during payment process
+    PAYMENT_PROCESS_RESERVATION = 100  # reservation during payment process
 
     TYPE_CHOICES = (
         (INITIAL, _('initial amount')),

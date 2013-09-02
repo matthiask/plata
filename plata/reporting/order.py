@@ -39,7 +39,7 @@ class OrderReport(object):
             self.order.confirmed.strftime('%d.%m.%Y') if self.order.confirmed
                 else _('Not confirmed yet'),
             ))
-        self.pdf.spacer(3*mm)
+        self.pdf.spacer(3 * mm)
 
         if not title:
             title = _('Order')
@@ -51,13 +51,13 @@ class OrderReport(object):
                 _('SKU'),
                 capfirst(_('product')),
                 capfirst(_('quantity')),
-            )]+[
+            )] + [
             (
                 item.sku,
                 item.name,
                 item.quantity,
             ) for item in self.order.items.all()],
-            (2*cm, 13.4*cm, 1*cm), self.pdf.style.tableHead+(
+            (2 * cm, 13.4 * cm, 1 * cm), self.pdf.style.tableHead + (
                 ('ALIGN', (1, 0), (1, -1), 'LEFT'),
                 ))
 
@@ -68,7 +68,7 @@ class OrderReport(object):
                 capfirst(_('quantity')),
                 capfirst(_('unit price')),
                 capfirst(_('line item price')),
-            )]+[
+            )] + [
             (
                 item.sku,
                 item.name,
@@ -76,7 +76,8 @@ class OrderReport(object):
                 u'%.2f' % item.unit_price,
                 u'%.2f' % item.discounted_subtotal,
             ) for item in self.order.items.all()],
-            (2*cm, 6*cm, 1*cm, 3*cm, 4.4*cm), self.pdf.style.tableHead+(
+            (2 * cm, 6 * cm, 1 * cm, 3 * cm, 4.4 * cm),
+            self.pdf.style.tableHead + (
                 ('ALIGN', (1, 0), (1, -1), 'LEFT'),
                 ))
 
@@ -96,9 +97,10 @@ class OrderReport(object):
                 capfirst(_('shipping')),
                 u'%.2f' % self.order.shipping))
 
-        self.pdf.table(summary_table, (12*cm, 4.4*cm), self.pdf.style.table)
+        self.pdf.table(summary_table,
+            (12 * cm, 4.4 * cm), self.pdf.style.table)
 
-        self.pdf.spacer(1*mm)
+        self.pdf.spacer(1 * mm)
 
         total_title = u'%s %s' % (capfirst(_('total')), self.order.currency)
 
@@ -116,11 +118,12 @@ class OrderReport(object):
                     row['tax_amount'].quantize(zero),
                     u'',
                     ) for rate, row in self.order.data['tax_details']],
-                    (2*cm, 4*cm, 3*cm, 3*cm, 4.4*cm), self.pdf.style.table)
+                    (2 * cm, 4 * cm, 3 * cm, 3 * cm, 4.4 * cm),
+                    self.pdf.style.table)
 
         self.pdf.table([
             (total_title, u'%.2f' % self.order.total),
-            ], (12*cm, 4.4*cm), self.pdf.style.tableHead)
+            ], (12 * cm, 4.4 * cm), self.pdf.style.tableHead)
 
         self.pdf.spacer()
 
@@ -145,9 +148,9 @@ class OrderReport(object):
 
     def notes(self):
         if self.order.notes:
-            self.pdf.spacer(10*mm)
+            self.pdf.spacer(10 * mm)
             self.pdf.p(capfirst(_('notes')), style=self.pdf.style.bold)
-            self.pdf.spacer(1*mm)
+            self.pdf.spacer(1 * mm)
             self.pdf.p(self.order.notes)
 
 
