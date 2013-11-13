@@ -5,7 +5,7 @@ Needs the following settings to work correctly::
 
     DATATRANS = {
         'MERCHANT_ID': '1000000000000',
-        'TEST_ACCOUNT': True
+        'LIVE': False
         }
 """
 
@@ -66,10 +66,10 @@ class PaymentProcessor(ProcessorBase):
                                      type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
                                      negative=True, payment=payment)
 
-        if DATATRANS.get('TEST_ACCOUNT', False):
-            DT_URL = "https://pilot.datatrans.biz/upp/jsp/upStart.jsp"
-        else:
+        if DATATRANS.get('LIVE', True):
             DT_URL = "https://payment.datatrans.biz/upp/jsp/upStart.jsp"
+        else:
+            DT_URL = "https://pilot.datatrans.biz/upp/jsp/upStart.jsp"
 
         return render_to_response('payment/datatrans_form.html', {
             'order': order,
@@ -94,10 +94,10 @@ class PaymentProcessor(ProcessorBase):
     @csrf_exempt_m
     def datatrans_success(self, request):
         DATATRANS = settings.DATATRANS
-        if DATATRANS.get('TEST_ACCOUNT', False):
-            DT_URL = "https://pilot.datatrans.biz/upp/jsp/XML_status.jsp"
-        else:
+        if DATATRANS.get('LIVE', True):
             DT_URL = "https://payment.datatrans.biz/upp/jsp/XML_status.jsp"
+        else:
+            DT_URL = "https://pilot.datatrans.biz/upp/jsp/XML_status.jsp"
 
         parameters = None
 
