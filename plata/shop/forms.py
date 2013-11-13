@@ -11,6 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from plata.shop import signals
 
+from plata.shop.widgets import PlusMinusButtons, SubmitButtonInput
 
 class BaseCheckoutForm(forms.ModelForm):
     """
@@ -158,3 +159,84 @@ class ConfirmationForm(forms.Form):
             )[self.cleaned_data['payment_method']]
 
         return module.process_order_confirmed(self.request, self.order)
+
+
+class OrderItemForm(forms.Form):
+    """
+    Used in single page checkout cart
+    """
+    relative = forms.IntegerField(widget=PlusMinusButtons(), required=False)
+    absolute = forms.IntegerField(widget=SubmitButtonInput(attrs={'label': _('Remove')}), required=False)
+
+    def __init__(self, *args, **kwargs):
+        self.orderitem = kwargs.pop('orderitem')
+        kwargs['prefix'] = '%s_%s' % (kwargs.get('prefix', 'orderitem'), self.orderitem.id)
+        initial = kwargs.pop('initial', {})
+        initial['absolute'] = 0
+        kwargs['initial'] = initial
+        super(OrderItemForm, self).__init__(*args, **kwargs)
+
+    def clean_relative(self):
+        if self.cleaned_data['relative'] is not None:
+            return self.cleaned_data['relative']
+
+    def clean_absolute(self):
+        if self.cleaned_data['absolute'] is not None:
+            return self.cleaned_data['absolute']
+
+    def clean(self):
+        if self.cleaned_data['absolute'] is None and self.cleaned_data['relative'] is None:
+            raise forms.ValidationError('must set either relative or absolute')
+        if self.cleaned_data['absolute'] is not None and self.cleaned_data['relative'] is not None:
+            raise forms.ValidationError('can not set absolute and relative together')
+        if self.cleaned_data['absolute'] is None:
+            del self.cleaned_data['absolute']
+        if self.cleaned_data['relative'] is None:
+            del self.cleaned_data['relative']
+        return self.cleaned_data
+
+    def save(self):
+        order = self.orderitem.order
+        order.modify_item(self.orderitem.product, **self.cleaned_data)
+
+
+class SinglePageCheckoutForm(BaseCheckoutForm):
+    """
+    Handles shipping and billing addresses, payment method and terms and conditions
+    """
+    terms_and_conditions = forms.BooleanField(
+        label=_('I accept the terms and conditions.'),
+        required=True)
+
+    class Meta:
+        exclude = ('shipping_country', 'billing_country')
+
+    def __init__(self, *args, **kwargs):
+
+        super(SinglePageCheckoutForm, self).__init__(*args, **kwargs)
+
+        self.payment_modules = self.shop.get_payment_modules(self.request)
+        method_choices = [(m.key, m.name) for m in self.payment_modules]
+        if len(method_choices) > 1:
+            method_choices.insert(0, ('', '---------'))
+        self.fields['payment_method'] = forms.ChoiceField(
+            label=_('Payment method'), choices=method_choices,
+        )
+
+    def clean(self):
+        data = super(SinglePageCheckoutForm, self).clean()
+        self.instance.validate(self.instance.VALIDATE_ALL)
+        return data
+
+    def save(self):
+        """
+        Process the successful order submission
+        """
+        self.instance.update_status(self.instance.CONFIRMED, 'Confirmation given')
+        signals.order_confirmed.send(sender=self.shop, order=self.instance, request=self.request)
+
+        module = dict(
+            (m.key, m) for m in self.payment_modules
+            )[self.cleaned_data['payment_method']]
+
+        return module.process_order_confirmed(self.request, self.instance)
