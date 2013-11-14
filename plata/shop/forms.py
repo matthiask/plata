@@ -65,7 +65,7 @@ class BaseCheckoutForm(forms.ModelForm):
                 password = User.objects.make_random_password()
                 params = {'email': email, 'password': password}
                 if getattr(User, 'USERNAME_FIELD', 'username') == 'username':
-                    params['username'] = email[:30]  # FIXME
+                    params['username'] = email[:30]  # FIXME
                 user = User.objects.create_user(**params)
                 user = auth.authenticate(username=email, password=password)
                 auth.login(self.request, user)
