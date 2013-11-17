@@ -103,8 +103,12 @@ class ModelTest(PlataTest):
 
         self.assertAlmostEqual(order.shipping, Decimal('0.00'))
 
-        # Switch around tax handling and re-test
+        # Switch around tax handling and re-test. Those two are the same
+        # instance in Django >=1.5, but not in 1.4, because 1.4 is a bit less
+        # smart about fetching the same object from the database again and
+        # again when relations are involved.
         item.order.price_includes_tax = False
+        order.price_includes_tax = False
 
         self.assertAlmostEqual(item.unit_price, item_price / tax_factor)
         self.assertAlmostEqual(item.line_item_discount, 0 / tax_factor)
@@ -114,7 +118,7 @@ class ModelTest(PlataTest):
         self.assertRaises(NotImplementedError, lambda: order.shipping)
 
         # Switch tax handling back
-        item.order.price_includes_tax = True
+        order.price_includes_tax = True
 
         product.prices.all().delete()
         self.assertRaisesWithCode(ValidationError,
@@ -552,9 +556,9 @@ class ModelTest(PlataTest):
             )
         discount.add_to(order)
 
+        order.price_includes_tax = False
         order.recalculate_total()
 
-        order.price_includes_tax = False
         self.assertAlmostEqual(order.subtotal, Decimal('1072.00'))
         self.assertAlmostEqual(order.discount, Decimal('532.00'))
         self.assertAlmostEqual(order.items_tax, Decimal('41.04'))
