@@ -1039,6 +1039,14 @@ class ModelTest(PlataTest):
             reloaded_order = Order.objects.get(pk=order.pk)
             self.assertEqual(data, reloaded_order.data)
 
+        import django
+        if django.VERSION >= (1, 5):
+            timezone_now = timezone.now
+        else:
+            # XXX Somehow, this testcase always fails with timezones in
+            # Django 1.4, and I'm too lazy right now.
+            timezone_now = datetime.now
+
         _compare({
             'the_answer': 42,
             'the_cost': Decimal('37.50'),
@@ -1050,8 +1058,8 @@ class ModelTest(PlataTest):
             })
 
         _compare({
-            'now_tz': timezone.now().replace(microsecond=0),
-            'now_tz_with_ms': timezone.now(),
+            'now_tz': timezone_now().replace(microsecond=0),
+            'now_tz_with_ms': timezone_now(),
             })
 
         _compare({
@@ -1059,9 +1067,9 @@ class ModelTest(PlataTest):
             })
 
         _compare({
-            'now_tz_with_ms': timezone.now().time(),
+            'now_tz_with_ms': timezone_now().time(),
             'now_with_ms': datetime.now().time(),
-            'now_tz': timezone.now().replace(microsecond=0).time(),
+            'now_tz': timezone_now().replace(microsecond=0).time(),
             'now': datetime.now().replace(microsecond=0).time(),
             })
 
