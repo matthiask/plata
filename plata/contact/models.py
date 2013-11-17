@@ -22,7 +22,8 @@ class Contact(BillingShippingAddress):
     """
 
     user = models.OneToOneField(
-        settings.AUTH_USER_MODEL, verbose_name=_('user'),
+        getattr(settings, 'AUTH_USER_MODEL', 'auth.User'),
+        verbose_name=_('user'),
         related_name='contactuser')
 
     dob = models.DateField(_('date of birth'), blank=True, null=True)
