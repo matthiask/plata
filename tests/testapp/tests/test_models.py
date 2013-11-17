@@ -618,6 +618,7 @@ class ModelTest(PlataTest):
         self.assertAlmostEqual(order.balance_remaining, Decimal('0.00'))
 
         with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter('always')
             self.assertTrue(order.is_paid())
             self.assertEqual(len(w), 1)
             self.assertTrue(

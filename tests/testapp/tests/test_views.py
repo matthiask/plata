@@ -334,6 +334,7 @@ class ViewTest(PlataTest):
 
         order = Order.objects.get(pk=1)
         with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter('always')
             self.assertTrue(order.is_paid())
             self.assertEqual(len(w), 1)
             self.assertTrue(
@@ -418,6 +419,7 @@ class ViewTest(PlataTest):
 
         order = Order.objects.get(pk=1)
         with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter('always')
             self.assertTrue(order.is_paid())
             self.assertEqual(len(w), 1)
             self.assertTrue(
