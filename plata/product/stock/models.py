@@ -60,6 +60,8 @@ class Period(models.Model):
         help_text=_('Period starts at this time. May also be a future date.'))
 
     class Meta:
+        # See https://github.com/matthiask/plata/issues/27
+        abstract = not plata.settings.PLATA_STOCK_TRACKING
         get_latest_by = 'start'
         ordering = ['-start']
         verbose_name = _('period')
@@ -248,6 +250,8 @@ class StockTransaction(models.Model):
         max_digits=18, decimal_places=10, blank=True, null=True)
 
     class Meta:
+        # See https://github.com/matthiask/plata/issues/27
+        abstract = not plata.settings.PLATA_STOCK_TRACKING
         ordering = ['-id']
         verbose_name = _('stock transaction')
         verbose_name_plural = _('stock transactions')
