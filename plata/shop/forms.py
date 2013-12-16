@@ -176,19 +176,9 @@ class OrderItemForm(forms.Form):
         kwargs['initial'] = initial
         super(OrderItemForm, self).__init__(*args, **kwargs)
 
-    def clean_relative(self):
-        if self.cleaned_data['relative'] is not None:
-            return self.cleaned_data['relative']
-
-    def clean_absolute(self):
-        if self.cleaned_data['absolute'] is not None:
-            return self.cleaned_data['absolute']
-
     def clean(self):
-        if self.cleaned_data['absolute'] is None and self.cleaned_data['relative'] is None:
-            raise forms.ValidationError('must set either relative or absolute')
         if self.cleaned_data['absolute'] is not None and self.cleaned_data['relative'] is not None:
-            raise forms.ValidationError('can not set absolute and relative together')
+            raise forms.ValidationError(_('Provide exactly one of relative and absolute.'))
         if self.cleaned_data['absolute'] is None:
             del self.cleaned_data['absolute']
         if self.cleaned_data['relative'] is None:
@@ -196,8 +186,9 @@ class OrderItemForm(forms.Form):
         return self.cleaned_data
 
     def save(self):
-        order = self.orderitem.order
-        order.modify_item(self.orderitem.product, **self.cleaned_data)
+        if len(self.cleaned_data) == 1:  # either absolute or relative is set
+            order = self.orderitem.order
+            order.modify_item(self.orderitem.product, **self.cleaned_data)
 
 
 class SinglePageCheckoutForm(BaseCheckoutForm):
