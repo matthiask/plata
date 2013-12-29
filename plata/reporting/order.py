@@ -36,9 +36,9 @@ class OrderReport(object):
     def title(self, title=None):
         self.pdf.p(u'%s: %s' % (
             capfirst(_('order date')),
-            self.order.confirmed.strftime('%d.%m.%Y') if self.order.confirmed
-                else _('Not confirmed yet'),
-            ))
+            self.order.confirmed.strftime('%d.%m.%Y')
+            if self.order.confirmed else _('Not confirmed yet'),
+        ))
         self.pdf.spacer(3 * mm)
 
         if not title:
@@ -47,45 +47,53 @@ class OrderReport(object):
         self.pdf.hr()
 
     def items_without_prices(self):
-        self.pdf.table([(
-                _('SKU'),
-                capfirst(_('product')),
-                capfirst(_('quantity')),
-            )] + [
-            (
-                item.sku,
-                item.name,
-                item.quantity,
-            ) for item in self.order.items.all()],
+        self.pdf.table(
+            [
+                (
+                    _('SKU'),
+                    capfirst(_('product')),
+                    capfirst(_('quantity')),
+                )
+            ] + [
+                (
+                    item.sku,
+                    item.name,
+                    item.quantity,
+                ) for item in self.order.items.all()
+            ],
             (2 * cm, 13.4 * cm, 1 * cm), self.pdf.style.tableHead + (
                 ('ALIGN', (1, 0), (1, -1), 'LEFT'),
-                ))
+            ))
 
     def items_with_prices(self):
-        self.pdf.table([(
-                _('SKU'),
-                capfirst(_('product')),
-                capfirst(_('quantity')),
-                capfirst(_('unit price')),
-                capfirst(_('line item price')),
-            )] + [
-            (
-                item.sku,
-                item.name,
-                item.quantity,
-                u'%.2f' % item.unit_price,
-                u'%.2f' % item.discounted_subtotal,
-            ) for item in self.order.items.all()],
+        self.pdf.table(
+            [
+                (
+                    _('SKU'),
+                    capfirst(_('product')),
+                    capfirst(_('quantity')),
+                    capfirst(_('unit price')),
+                    capfirst(_('line item price')),
+                )
+            ] + [
+                (
+                    item.sku,
+                    item.name,
+                    item.quantity,
+                    u'%.2f' % item.unit_price,
+                    u'%.2f' % item.discounted_subtotal,
+                ) for item in self.order.items.all()
+            ],
             (2 * cm, 6 * cm, 1 * cm, 3 * cm, 4.4 * cm),
             self.pdf.style.tableHead + (
                 ('ALIGN', (1, 0), (1, -1), 'LEFT'),
-                ))
+            ))
 
     def summary(self):
         summary_table = [
             ('', ''),
             (capfirst(_('subtotal')), u'%.2f' % self.order.subtotal),
-            ]
+        ]
 
         if self.order.discount:
             summary_table.append((
@@ -97,8 +105,8 @@ class OrderReport(object):
                 capfirst(_('shipping')),
                 u'%.2f' % self.order.shipping))
 
-        self.pdf.table(summary_table,
-            (12 * cm, 4.4 * cm), self.pdf.style.table)
+        self.pdf.table(
+            summary_table, (12 * cm, 4.4 * cm), self.pdf.style.table)
 
         self.pdf.spacer(1 * mm)
 

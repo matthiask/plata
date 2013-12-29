@@ -22,7 +22,7 @@ class ProcessorBase(object):
         return cost_excl_tax, cost_incl_tax - cost_excl_tax
 
     def add_tax_details(self, tax_details, tax_rate, price, discount,
-            tax_amount):
+                        tax_amount):
         """
         Add tax details grouped by tax_rate. Especially useful if orders
         potentially use more than one tax class. These values are not used
@@ -165,7 +165,8 @@ class ItemSummationProcessor(ProcessorBase):
             order.items_discount += item._line_item_discount or 0
             order.items_tax += item._line_item_tax
 
-        self.set_processor_value('total', 'items',
+        self.set_processor_value(
+            'total', 'items',
             order.items_subtotal - order.items_discount + order.items_tax)
 
 
@@ -206,16 +207,18 @@ class FixedAmountShippingProcessor(ProcessorBase):
         order.shipping_discount = min(
             order.discount_remaining,
             order.shipping_cost,
-            )
+        )
         order.shipping_tax = tax / 100 * (
             order.shipping_cost - order.shipping_discount)
 
-        self.set_processor_value('total', 'shipping',
+        self.set_processor_value(
+            'total', 'shipping',
             order.shipping_cost - order.shipping_discount
             + order.shipping_tax)
 
         tax_details = dict(order.data.get('tax_details', []))
-        self.add_tax_details(tax_details, tax, order.shipping_cost,
+        self.add_tax_details(
+            tax_details, tax, order.shipping_cost,
             order.shipping_discount, order.shipping_tax)
         order.data['tax_details'] = tax_details.items()
 
@@ -229,7 +232,7 @@ class ApplyRemainingDiscountToShippingProcessor(ProcessorBase):
     def process(self, order, items):
         raise NotImplementedError(
             "ApplyRemainingDiscountToShippingProcessor is not implemented yet"
-            )
+        )
 
 
 class OrderSummationProcessor(ProcessorBase):
@@ -247,6 +250,6 @@ class OrderSummationProcessor(ProcessorBase):
         total = sum(
             self.get_processor_value('total').values(),
             Decimal('0.00'),
-            )
+        )
 
         order.total = total.quantize(Decimal('0.00'), rounding=ROUND_HALF_UP)

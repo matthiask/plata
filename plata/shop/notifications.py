@@ -100,7 +100,7 @@ class BaseHandler(object):
         if request is not None:
             ctx.update({
                 'site': get_current_site(request),
-                })
+            })
         ctx.update(kwargs)
         return ctx
 
@@ -177,8 +177,10 @@ class SendInvoiceHandler(EmailHandler):
             **kwargs)
 
         message.to.append(order.email)
-        message.attach('invoice-%09d.pdf' % order.id,
-            self.invoice_pdf(order), 'application/pdf')
+        message.attach(
+            'invoice-%09d.pdf' % order.id,
+            self.invoice_pdf(order),
+            'application/pdf')
         return message
 
 
@@ -204,8 +206,10 @@ class SendPackingSlipHandler(EmailHandler):
             'plata/notifications/packing_slip.txt',
             order=order,
             **kwargs)
-        message.attach('packing-slip-%09d.pdf' % order.id,
-            self.packing_slip_pdf(order), 'application/pdf')
+        message.attach(
+            'packing-slip-%09d.pdf' % order.id,
+            self.packing_slip_pdf(order),
+            'application/pdf')
         return message
 
 

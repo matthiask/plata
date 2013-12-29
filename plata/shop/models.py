@@ -27,11 +27,13 @@ class TaxClass(models.Model):
     """
 
     name = models.CharField(_('name'), max_length=100)
-    rate = models.DecimalField(_('rate'), max_digits=10, decimal_places=2,
+    rate = models.DecimalField(
+        _('rate'), max_digits=10, decimal_places=2,
         help_text=_('Tax rate in percent.'))
-    priority = models.PositiveIntegerField(_('priority'), default=0,
-        help_text=_('Used to order the tax classes in the'
-            ' administration interface.'))
+    priority = models.PositiveIntegerField(
+        _('priority'), default=0,
+        help_text=_(
+            'Used to order the tax classes in the administration interface.'))
 
     class Meta:
         ordering = ['-priority']
@@ -48,11 +50,12 @@ class BillingShippingAddress(models.Model):
     address
     """
 
-    ADDRESS_FIELDS = ['company', 'first_name', 'last_name', 'address',
+    ADDRESS_FIELDS = [
+        'company', 'first_name', 'last_name', 'address',
         'zip_code', 'city', 'country']
 
-    billing_company = models.CharField(_('company'), max_length=100,
-        blank=True)
+    billing_company = models.CharField(
+        _('company'), max_length=100, blank=True)
     billing_first_name = models.CharField(_('first name'), max_length=100)
     billing_last_name = models.CharField(_('last name'), max_length=100)
     billing_address = models.TextField(_('address'))
@@ -65,12 +68,12 @@ class BillingShippingAddress(models.Model):
         _('shipping address equals billing address'),
         default=True)
 
-    shipping_company = models.CharField(_('company'), max_length=100,
-        blank=True)
-    shipping_first_name = models.CharField(_('first name'), max_length=100,
-        blank=True)
-    shipping_last_name = models.CharField(_('last name'), max_length=100,
-        blank=True)
+    shipping_company = models.CharField(
+        _('company'), max_length=100, blank=True)
+    shipping_first_name = models.CharField(
+        _('first name'), max_length=100, blank=True)
+    shipping_last_name = models.CharField(
+        _('last name'), max_length=100, blank=True)
     shipping_address = models.TextField(_('address'), blank=True)
     shipping_zip_code = models.CharField(
         plata.settings.PLATA_ZIP_CODE_LABEL, max_length=50, blank=True)
@@ -133,44 +136,55 @@ class Order(BillingShippingAddress):
         verbose_name=_('user'),
         related_name='orders'
     )
-    language_code = models.CharField(_('language'), max_length=10,
-        default='', blank=True)
-    status = models.PositiveIntegerField(_('status'), choices=STATUS_CHOICES,
-        default=CART)
+    language_code = models.CharField(
+        _('language'), max_length=10, default='', blank=True)
+    status = models.PositiveIntegerField(
+        _('status'), choices=STATUS_CHOICES, default=CART)
 
     _order_id = models.CharField(_('order ID'), max_length=20, blank=True)
     email = models.EmailField(_('e-mail address'))
 
     currency = CurrencyField()
-    price_includes_tax = models.BooleanField(_('price includes tax'),
+    price_includes_tax = models.BooleanField(
+        _('price includes tax'),
         default=plata.settings.PLATA_PRICE_INCLUDES_TAX)
 
-    items_subtotal = models.DecimalField(_('subtotal'),
+    items_subtotal = models.DecimalField(
+        _('subtotal'),
         max_digits=18, decimal_places=10, default=Decimal('0.00'))
-    items_discount = models.DecimalField(_('items discount'),
+    items_discount = models.DecimalField(
+        _('items discount'),
         max_digits=18, decimal_places=10, default=Decimal('0.00'))
-    items_tax = models.DecimalField(_('items tax'),
+    items_tax = models.DecimalField(
+        _('items tax'),
         max_digits=18, decimal_places=10, default=Decimal('0.00'))
 
-    shipping_method = models.CharField(_('shipping method'),
+    shipping_method = models.CharField(
+        _('shipping method'),
         max_length=100, blank=True)
-    shipping_cost = models.DecimalField(_('shipping cost'),
+    shipping_cost = models.DecimalField(
+        _('shipping cost'),
         max_digits=18, decimal_places=10, blank=True, null=True)
-    shipping_discount = models.DecimalField(_('shipping discount'),
+    shipping_discount = models.DecimalField(
+        _('shipping discount'),
         max_digits=18, decimal_places=10, blank=True, null=True)
-    shipping_tax = models.DecimalField(_('shipping tax'),
+    shipping_tax = models.DecimalField(
+        _('shipping tax'),
         max_digits=18, decimal_places=10, default=Decimal('0.00'))
 
-    total = models.DecimalField(_('total'),
+    total = models.DecimalField(
+        _('total'),
         max_digits=18, decimal_places=10, default=Decimal('0.00'))
 
-    paid = models.DecimalField(_('paid'),
+    paid = models.DecimalField(
+        _('paid'),
         max_digits=18, decimal_places=10, default=Decimal('0.00'),
         help_text=_('This much has been paid already.'))
 
     notes = models.TextField(_('notes'), blank=True)
 
-    data = JSONField(_('data'), blank=True,
+    data = JSONField(
+        _('data'), blank=True,
         help_text=_('JSON-encoded additional data about the order payment.'))
 
     class Meta:
@@ -212,8 +226,9 @@ class Order(BillingShippingAddress):
         items = list(self.items.all())
         shared_state = {}
 
-        processor_classes = [get_callable(processor) for processor
-            in plata.settings.PLATA_ORDER_PROCESSORS]
+        processor_classes = [
+            get_callable(processor)
+            for processor in plata.settings.PLATA_ORDER_PROCESSORS]
 
         for p in (cls(shared_state) for cls in processor_classes):
             p.process(self, items)
@@ -239,10 +254,14 @@ class Order(BillingShippingAddress):
         """
         # TODO: What about shipping?
         return (
-            sum((item.subtotal for item in self.items.all()), Decimal('0.00'))
-            - sum((item.discounted_subtotal for item in self.items.all()),
-                Decimal('0.00'))
-            ).quantize(Decimal('0.00'))
+            sum(
+                (item.subtotal for item in self.items.all()),
+                Decimal('0.00')
+            ) - sum(
+                (item.discounted_subtotal for item in self.items.all()),
+                Decimal('0.00')
+            )
+        ).quantize(Decimal('0.00'))
 
     @property
     def shipping(self):
@@ -254,10 +273,13 @@ class Order(BillingShippingAddress):
             if self.shipping_cost is None:
                 return None
 
-            return (self.shipping_cost - self.shipping_discount
+            return (
+                self.shipping_cost
+                - self.shipping_discount
                 + self.shipping_tax)
         else:
-            logger.error('Shipping calculation with'
+            logger.error(
+                'Shipping calculation with'
                 ' PLATA_PRICE_INCLUDES_TAX=False is not implemented yet')
             raise NotImplementedError
 
@@ -342,7 +364,7 @@ class Order(BillingShippingAddress):
         return self.status >= self.CONFIRMED
 
     def modify_item(self, product, relative=None, absolute=None,
-            recalculate=True, data=None, item=None, force_new=False):
+                    recalculate=True, data=None, item=None, force_new=False):
         """
         Updates order with the given product
 
@@ -386,7 +408,8 @@ class Order(BillingShippingAddress):
                 # another.
                 if not force_new:
                     raise ValidationError(
-                        _('The product already exists several times in the'
+                        _(
+                            'The product already exists several times in the'
                             ' cart, and neither item nor force_new were'
                             ' given.'),
                         code='multiple')
@@ -397,7 +420,7 @@ class Order(BillingShippingAddress):
                 product=product,
                 quantity=0,
                 currency=self.currency,
-                )
+            )
 
         if relative is not None:
             item.quantity += relative
@@ -495,7 +518,8 @@ def validate_order_currencies(order):
     currencies = set(order.items.values_list('currency', flat=True))
     if (currencies
             and (len(currencies) > 1 or order.currency not in currencies)):
-        raise ValidationError(_('Order contains more than one currency.'),
+        raise ValidationError(
+            _('Order contains more than one currency.'),
             code='multiple_currency')
 
 
@@ -506,7 +530,8 @@ class OrderItem(models.Model):
     """Single order line item"""
 
     order = models.ForeignKey(Order, related_name='items')
-    product = models.ForeignKey(plata.settings.PLATA_SHOP_PRODUCT,
+    product = models.ForeignKey(
+        plata.settings.PLATA_SHOP_PRODUCT,
         verbose_name=_('product'),
         blank=True, null=True, on_delete=models.SET_NULL)
 
@@ -516,31 +541,39 @@ class OrderItem(models.Model):
     quantity = models.IntegerField(_('quantity'))
 
     currency = CurrencyField()
-    _unit_price = models.DecimalField(_('unit price'),
+    _unit_price = models.DecimalField(
+        _('unit price'),
         max_digits=18, decimal_places=10,
         help_text=_('Unit price excl. tax'))
-    _unit_tax = models.DecimalField(_('unit tax'),
+    _unit_tax = models.DecimalField(
+        _('unit tax'),
         max_digits=18, decimal_places=10)
 
-    tax_rate = models.DecimalField(_('tax rate'),
+    tax_rate = models.DecimalField(
+        _('tax rate'),
         max_digits=10, decimal_places=2)
-    tax_class = models.ForeignKey(TaxClass, verbose_name=_('tax class'),
+    tax_class = models.ForeignKey(
+        TaxClass, verbose_name=_('tax class'),
         blank=True, null=True, on_delete=models.SET_NULL)
 
     is_sale = models.BooleanField(_('is sale'))
 
-    _line_item_price = models.DecimalField(_('line item price'),
+    _line_item_price = models.DecimalField(
+        _('line item price'),
         max_digits=18, decimal_places=10, default=0,
         help_text=_('Line item price excl. tax'))
-    _line_item_discount = models.DecimalField(_('line item discount'),
+    _line_item_discount = models.DecimalField(
+        _('line item discount'),
         max_digits=18, decimal_places=10,
         blank=True, null=True,
         help_text=_('Discount excl. tax'))
 
-    _line_item_tax = models.DecimalField(_('line item tax'),
+    _line_item_tax = models.DecimalField(
+        _('line item tax'),
         max_digits=18, decimal_places=10, default=0)
 
-    data = JSONField(_('data'), blank=True,
+    data = JSONField(
+        _('data'), blank=True,
         help_text=_('JSON-encoded additional data about the order payment.'))
 
     class Meta:
@@ -552,7 +585,7 @@ class OrderItem(models.Model):
         return _(u'%(quantity)s of %(name)s') % {
             'quantity': self.quantity,
             'name': self.name,
-            }
+        }
 
     @property
     def unit_price(self):
@@ -605,8 +638,8 @@ class OrderStatus(models.Model):
 
     order = models.ForeignKey(Order, related_name='statuses')
     created = models.DateTimeField(_('created'), default=timezone.now)
-    status = models.PositiveIntegerField(_('status'), max_length=20,
-        choices=Order.STATUS_CHOICES)
+    status = models.PositiveIntegerField(
+        _('status'), max_length=20, choices=Order.STATUS_CHOICES)
     notes = models.TextField(_('notes'), blank=True)
 
     class Meta:
@@ -615,9 +648,10 @@ class OrderStatus(models.Model):
         verbose_name_plural = _('order statuses')
 
     def __unicode__(self):
-        return (_(u'Status %(status)s for %(order)s') % {
+        return _(u'Status %(status)s for %(order)s') % {
             'status': self.get_status_display(),
-            'order': self.order})
+            'order': self.order,
+        }
 
     def save(self, *args, **kwargs):
         super(OrderStatus, self).save(*args, **kwargs)
@@ -657,39 +691,44 @@ class OrderPayment(models.Model):
         (PENDING, _('pending')),
         (PROCESSED, _('processed')),
         (AUTHORIZED, _('authorized')),
-        )
+    )
 
-    order = models.ForeignKey(Order, verbose_name=_('order'),
-        related_name='payments')
+    order = models.ForeignKey(
+        Order, verbose_name=_('order'), related_name='payments')
     timestamp = models.DateTimeField(_('timestamp'), default=timezone.now)
-    status = models.PositiveIntegerField(_('status'), choices=STATUS_CHOICES,
-        default=PENDING)
+    status = models.PositiveIntegerField(
+        _('status'), choices=STATUS_CHOICES, default=PENDING)
 
     currency = CurrencyField()
-    amount = models.DecimalField(_('amount'),
-        max_digits=10, decimal_places=2)
-    payment_module_key = models.CharField(_('payment module key'),
+    amount = models.DecimalField(_('amount'), max_digits=10, decimal_places=2)
+    payment_module_key = models.CharField(
+        _('payment module key'),
         max_length=20,
-        help_text=_('Machine-readable identifier for the payment module'
-            ' used.'))
-    payment_module = models.CharField(_('payment module'), max_length=50,
+        help_text=_(
+            'Machine-readable identifier for the payment module used.'))
+    payment_module = models.CharField(
+        _('payment module'), max_length=50,
         blank=True,
         help_text=_('For example \'Cash on delivery\', \'PayPal\', ...'))
-    payment_method = models.CharField(_('payment method'), max_length=50,
+    payment_method = models.CharField(
+        _('payment method'), max_length=50,
         blank=True,
-        help_text=_('For example \'MasterCard\', \'VISA\' or some other'
-            ' card.'))
-    transaction_id = models.CharField(_('transaction ID'), max_length=50,
+        help_text=_(
+            'For example \'MasterCard\', \'VISA\' or some other card.'))
+    transaction_id = models.CharField(
+        _('transaction ID'), max_length=50,
         blank=True,
-        help_text=_('Unique ID identifying this payment in the foreign'
-            ' system.'))
+        help_text=_(
+            'Unique ID identifying this payment in the foreign system.'))
 
-    authorized = models.DateTimeField(_('authorized'), blank=True, null=True,
+    authorized = models.DateTimeField(
+        _('authorized'), blank=True, null=True,
         help_text=_('Point in time when payment has been authorized.'))
 
     notes = models.TextField(_('notes'), blank=True)
 
-    data = JSONField(_('data'), blank=True,
+    data = JSONField(
+        _('data'), blank=True,
         help_text=_('JSON-encoded additional data about the order payment.'))
 
     class Meta:
@@ -700,21 +739,21 @@ class OrderPayment(models.Model):
     objects = OrderPaymentManager()
 
     def __unicode__(self):
-        return (
-            _(u'%(authorized)s of %(currency)s %(amount).2f for %(order)s')
-            % {
-                'authorized': self.authorized and _(u'Authorized')
-                    or _(u'Not authorized'),
-                'currency': self.currency,
-                'amount': self.amount,
-                'order': self.order,
-                })
+        return _(
+            u'%(authorized)s of %(currency)s %(amount).2f for %(order)s'
+        ) % {
+            'authorized': (
+                self.authorized and _(u'Authorized') or _(u'Not authorized')),
+            'currency': self.currency,
+            'amount': self.amount,
+            'order': self.order,
+        }
 
     def _recalculate_paid(self):
         paid = OrderPayment.objects.authorized().filter(
             order=self.order_id,
             currency=F('order__currency'),
-            ).aggregate(total=Sum('amount'))['total'] or 0
+        ).aggregate(total=Sum('amount'))['total'] or 0
 
         Order.objects.filter(id=self.order_id).update(paid=paid)
 
@@ -753,13 +792,15 @@ class PriceBase(models.Model):
         verbose_name_plural = _('prices')
 
     currency = CurrencyField()
-    _unit_price = models.DecimalField(_('unit price'),
+    _unit_price = models.DecimalField(
+        _('unit price'),
         max_digits=18, decimal_places=10)
-    tax_included = models.BooleanField(_('tax included'),
+    tax_included = models.BooleanField(
+        _('tax included'),
         help_text=_('Is tax included in given unit price?'),
         default=plata.settings.PLATA_PRICE_INCLUDES_TAX)
-    tax_class = models.ForeignKey(TaxClass, verbose_name=_('tax class'),
-                                  related_name='+')
+    tax_class = models.ForeignKey(
+        TaxClass, verbose_name=_('tax class'), related_name='+')
 
     def __unicode__(self):
         return u'%s %.2f' % (self.currency, self.unit_price)

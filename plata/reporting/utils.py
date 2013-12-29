@@ -36,8 +36,9 @@ class XLSDocument(object):
         self.workbook.save(output)
         response = HttpResponse(
             output.getvalue(),
-            content_type='application/vnd.openxmlformats-officedocument.'
-                'spreadsheetml.sheet',
+            content_type=(
+                'application/vnd.openxmlformats-officedocument.'
+                'spreadsheetml.sheet'),
             )
         output.close()
         response['Content-Disposition'] = 'attachment; filename="%s"' % (
