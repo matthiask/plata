@@ -6,6 +6,7 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 import plata
 from plata.shop import signals
 
+
 logger = logging.getLogger('plata.payment')
 
 
@@ -109,7 +110,7 @@ class ProcessorBase(object):
             amount=order.balance_remaining,
             payment_module_key=self.key,
             payment_module=u'%s' % self.name,
-            )
+        )
 
     def create_transactions(self, order, stage, **kwargs):
         """
@@ -118,7 +119,8 @@ class ProcessorBase(object):
         """
 
         if not plata.settings.PLATA_STOCK_TRACKING:
-            warnings.warn('StockTransaction.objects.create_transactions'
+            warnings.warn(
+                'StockTransaction.objects.create_transactions'
                 ' currently has no effect when PLATA_STOCK_TRACKING = False.'
                 ' This will change in the future. Change your code to only'
                 ' call create_transactions when'
@@ -126,12 +128,13 @@ class ProcessorBase(object):
                 DeprecationWarning, stacklevel=2)
             return
         StockTransaction = plata.stock_model()
-        StockTransaction.objects.bulk_create(order,
+        StockTransaction.objects.bulk_create(
+            order,
             notes=_('%(stage)s: %(order)s processed by %(payment_module)s') % {
                 'stage': stage,
                 'order': order,
                 'payment_module': self.name,
-                },
+            },
             **kwargs)
 
     def order_paid(self, order, payment=None, request=None):
@@ -151,18 +154,22 @@ class ProcessorBase(object):
                 order, self.name))
             order.update_status(order.PAID, 'Order has been paid')
 
-            signal_kwargs = dict(sender=self, order=order, payment=payment,
-                    request=request)
+            signal_kwargs = dict(
+                sender=self,
+                order=order,
+                payment=payment,
+                request=request)
 
             if order.discount_remaining:
-                logger.info('Creating discount for remaining amount %s on'
+                logger.info(
+                    'Creating discount for remaining amount %s on'
                     ' order %s' % (order.discount_remaining, order))
                 discount_model = self.shop.discount_model
                 try:
                     discount = order.applied_discounts.filter(type__in=(
                         discount_model.AMOUNT_VOUCHER_EXCL_TAX,
                         discount_model.AMOUNT_VOUCHER_INCL_TAX,
-                        )).order_by('type')[0]
+                    )).order_by('type')[0]
                 except IndexError:
                     # XXX: Remaining discount will be applicable to ALL
                     #products, not sure if this behavior is correct...
@@ -171,13 +178,13 @@ class ProcessorBase(object):
                 remaining_discount = discount_model.objects.create(
                     name=ugettext('Remaining discount for order %s') % (
                         order.order_id,
-                        ),
+                    ),
                     type=discount_model.AMOUNT_VOUCHER_EXCL_TAX,
                     value=order.discount_remaining,
                     currency=order.currency,
                     config=getattr(discount, 'config', '{"all": {}}'),
                     allowed_uses=1,
-                    )
+                )
 
                 signal_kwargs['remaining_discount'] = remaining_discount
 
@@ -197,7 +204,8 @@ class ProcessorBase(object):
 
             if plata.settings.PLATA_STOCK_TRACKING:
                 StockTransaction = plata.stock_model()
-                self.create_transactions(order, _('sale'),
+                self.create_transactions(
+                    order, _('sale'),
                     type=StockTransaction.SALE, negative=True)
 
             self.order_paid(order)

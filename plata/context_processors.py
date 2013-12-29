@@ -18,4 +18,4 @@ def plata_context(request):
         'contact': (shop.contact_from_user(request.user)
             if hasattr(request, 'user') else None),
         'price_includes_tax': shop.price_includes_tax(request),
-        }} if shop else {}
+    }} if shop else {}

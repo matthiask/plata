@@ -13,14 +13,15 @@ class DiscountAdminForm(forms.ModelForm):
         # Seems to be necessary because of the custom validation
         self.fields['config'].required = False
 
-        choices = [(key, cfg.get('title', key)) for key, cfg
-            in self._meta.model.CONFIG_OPTIONS]
+        choices = [
+            (key, cfg.get('title', key))
+            for key, cfg in self._meta.model.CONFIG_OPTIONS]
 
         self.fields['config_options'] = forms.MultipleChoiceField(
             choices=choices,
             label=_('Configuration options'),
             help_text=_('Save and continue editing to configure options.'),
-            )
+        )
 
         config_fieldsets = []
 
@@ -48,7 +49,7 @@ class DiscountAdminForm(forms.ModelForm):
             fieldset = [
                 _('Discount configuration: %s') % cfg.get('title', s),
                 {'fields': []},
-                ]
+            ]
 
             for k, f in cfg.get('form_fields', []):
                 self.fields['%s_%s' % (s, k)] = f
@@ -90,8 +91,9 @@ class DiscountAdminForm(forms.ModelForm):
 
 class DiscountAdmin(admin.ModelAdmin):
     form = DiscountAdminForm
-    list_display = ('name', 'type', 'is_active', 'valid_from',
-        'valid_until', 'code', 'value')
+    list_display = (
+        'name', 'type', 'is_active', 'valid_from', 'valid_until', 'code',
+        'value')
     list_filter = ('type', 'is_active')
     ordering = ('-valid_from',)
     search_fields = ('name', 'code', 'config')
@@ -113,14 +115,15 @@ class DiscountAdmin(admin.ModelAdmin):
         fieldsets.append((_('Raw configuration'), {
             'fields': ('config',),
             'classes': ('collapse',),
-            }))
+        }))
         fieldsets.append((_('Configuration'), {
             'fields': ('config_options',),
-            }))
+        }))
 
         fieldsets.extend(
             request._plata_discount_config_fieldsets)
 
         return fieldsets
+
 
 admin.site.register(models.Discount, DiscountAdmin)

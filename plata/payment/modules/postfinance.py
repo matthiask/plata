@@ -20,8 +20,8 @@ from django.conf import settings
 from django.http import HttpResponse, HttpResponseForbidden
 from django.utils import timezone
 from django.utils.decorators import method_decorator
-from django.utils.translation import (ugettext_lazy as _, get_language,
-    to_locale)
+from django.utils.translation import (
+    ugettext_lazy as _, get_language, to_locale)
 from django.views.decorators.csrf import csrf_exempt
 
 import plata
@@ -81,10 +81,11 @@ class PaymentProcessor(ProcessorBase):
     def get_urls(self):
         from django.conf.urls import patterns, url
 
-        return patterns('',
+        return patterns(
+            '',
             url(r'^payment/postfinance/ipn/$', self.ipn,
                 name='plata_payment_postfinance_ipn'),
-            )
+        )
 
     def process_order_confirmed(self, request, order):
         POSTFINANCE = settings.POSTFINANCE
@@ -97,7 +98,8 @@ class PaymentProcessor(ProcessorBase):
         payment = self.create_pending_payment(order)
         if plata.settings.PLATA_STOCK_TRACKING:
             StockTransaction = plata.stock_model()
-            self.create_transactions(order, _('payment process reservation'),
+            self.create_transactions(
+                order, _('payment process reservation'),
                 type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
                 negative=True, payment=payment)
 
@@ -108,7 +110,7 @@ class PaymentProcessor(ProcessorBase):
             'currency': order.currency,
             'PSPID': POSTFINANCE['PSPID'],
             'mode': POSTFINANCE['LIVE'] and 'prod' or 'test',
-            }
+        }
 
         form_params['SHASign'] = sha1(u''.join((
             form_params['orderID'],
@@ -116,7 +118,7 @@ class PaymentProcessor(ProcessorBase):
             form_params['currency'],
             form_params['PSPID'],
             POSTFINANCE['SHA1_IN'],
-            ))).hexdigest()
+        ))).hexdigest()
 
         return self.shop.render(request, 'payment/%s_form.html' % self.key, {
             'order': order,
@@ -124,7 +126,7 @@ class PaymentProcessor(ProcessorBase):
             'form_params': form_params,
             'locale': locale.normalize(
                 to_locale(get_language())).split('.')[0],
-            })
+        })
 
     @csrf_exempt_m
     def ipn(self, request):
@@ -162,7 +164,7 @@ class PaymentProcessor(ProcessorBase):
                 NCERROR,
                 BRAND,
                 POSTFINANCE['SHA1_OUT'],
-                ))
+            ))
 
             sha1_out = sha1(sha1_source).hexdigest()
 
@@ -192,7 +194,7 @@ class PaymentProcessor(ProcessorBase):
                 payment = order.payments.model(
                     order=order,
                     payment_module=u'%s' % self.name,
-                    )
+                )
 
             payment.status = OrderPayment.PROCESSED
             payment.currency = currency
@@ -214,7 +216,8 @@ class PaymentProcessor(ProcessorBase):
 
             if payment.authorized and plata.settings.PLATA_STOCK_TRACKING:
                 StockTransaction = plata.stock_model()
-                self.create_transactions(order, _('sale'),
+                self.create_transactions(
+                    order, _('sale'),
                     type=StockTransaction.SALE, negative=True, payment=payment)
 
             if not order.balance_remaining:

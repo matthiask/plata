@@ -19,8 +19,12 @@ except TypeError:  # pragma: no cover
 
 
 #: Field offering all defined currencies
-CurrencyField = curry(models.CharField, _('currency'), max_length=3,
-    choices=zip(plata.settings.CURRENCIES, plata.settings.CURRENCIES))
+CurrencyField = curry(
+    models.CharField,
+    _('currency'),
+    max_length=3,
+    choices=zip(plata.settings.CURRENCIES, plata.settings.CURRENCIES),
+)
 
 
 def json_encode_default(o):
@@ -36,19 +40,21 @@ def json_encode_default(o):
 
 _PATTERNS = [
     (re.compile(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}'), (
-        lambda value: datetime.datetime.strptime(value,
+        lambda value: datetime.datetime.strptime(
+            value,
             '%Y-%m-%dT%H:%M:%S.%f'),
-        lambda value: datetime.datetime.strptime(value,
+        lambda value: datetime.datetime.strptime(
+            value,
             '%Y-%m-%dT%H:%M:%S'),
         lambda value: parse_datetime(value),
-        )),
+    )),
     (re.compile(r'\d{4}-\d{2}-\d{2}'), (
         lambda value: parse_date(value),
-        )),
+    )),
     (re.compile(r'\d{2}:\d{2}:\d{2}'), (
         lambda value: parse_time(value),
-        )),
-    ]
+    )),
+]
 
 
 def json_decode_hook(data):
@@ -77,9 +83,14 @@ class JSONFormField(forms.fields.CharField):
                 # Run the value through JSON so we can normalize formatting
                 # and at least learn about malformed data:
                 value = json.dumps(
-                    json.loads(value, use_decimal=True,
-                        object_hook=json_decode_hook),
-                    use_decimal=True, default=json_encode_default,)
+                    json.loads(
+                        value,
+                        use_decimal=True,
+                        object_hook=json_decode_hook,
+                    ),
+                    use_decimal=True,
+                    default=json_encode_default,
+                )
             except ValueError:
                 raise forms.ValidationError("Invalid JSON data!")
 
@@ -110,7 +121,8 @@ class JSONField(models.TextField):
                 return {}
 
             try:
-                return json.loads(value, use_decimal=True,
+                return json.loads(
+                    value, use_decimal=True,
                     object_hook=json_decode_hook)
             except ValueError:
                 logging.getLogger("plata.fields").exception(
@@ -143,7 +155,8 @@ class JSONField(models.TextField):
             return ""
 
         if isinstance(value, dict):
-            value = json.dumps(value, use_decimal=True,
+            value = json.dumps(
+                value, use_decimal=True,
                 default=json_encode_default)
 
         assert isinstance(value, basestring)
@@ -151,7 +164,8 @@ class JSONField(models.TextField):
         return value
 
     def value_from_object(self, obj):
-        return json.dumps(super(JSONField, self).value_from_object(obj),
+        return json.dumps(
+            super(JSONField, self).value_from_object(obj),
             default=json_encode_default, use_decimal=True)
 
 

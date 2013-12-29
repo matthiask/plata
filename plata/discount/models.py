@@ -29,33 +29,36 @@ class DiscountBase(models.Model):
             _('percentage voucher (reduces total tax on order)')),
         (MEANS_OF_PAYMENT,
             _('means of payment (does not change total tax on order)')),
-        )
+    )
 
     #: You can add and remove options at will, except for 'all': This option
     #: must always be available, and it cannot have any form fields
     CONFIG_OPTIONS = [
         ('all', {
             'title': _('All products'),
-            }),
+        }),
         ('exclude_sale', {
             'title': _('Exclude sale prices'),
             'orderitem_query': lambda **values: Q(is_sale=False),
-            }),
-        ]
+        }),
+    ]
 
     name = models.CharField(_('name'), max_length=100)
 
     type = models.PositiveIntegerField(_('type'), choices=TYPE_CHOICES)
     value = models.DecimalField(_('value'), max_digits=18, decimal_places=10)
 
-    currency = CurrencyField(blank=True, null=True,
+    currency = CurrencyField(
+        blank=True, null=True,
         help_text=_('Only required for amount discounts.'))
-    tax_class = models.ForeignKey(TaxClass, verbose_name=_('tax class'),
+    tax_class = models.ForeignKey(
+        TaxClass, verbose_name=_('tax class'),
         blank=True, null=True,
         help_text=_('Only required for amount discounts incl. tax.'))
 
-    config = JSONField(_('configuration'), blank=True,
-        help_text=_('If you edit this field directly, changes below will be'
+    config = JSONField(
+        _('configuration'), blank=True, help_text=_(
+            'If you edit this field directly, changes below will be'
             ' ignored.'))
 
     class Meta:
@@ -72,22 +75,22 @@ class DiscountBase(models.Model):
     def clean(self):
         if self.type == self.PERCENTAGE_VOUCHER:
             if self.currency or self.tax_class:
-                raise ValidationError(
-                    _('Percentage discounts cannot have currency and tax'
-                        ' class set.'))
+                raise ValidationError(_(
+                    'Percentage discounts cannot have currency and tax'
+                    ' class set.'))
         elif self.type == self.AMOUNT_VOUCHER_EXCL_TAX:
             if not self.currency:
-                raise ValidationError(
-                    _('Amount discounts excl. tax need a currency.'))
+                raise ValidationError(_(
+                    'Amount discounts excl. tax need a currency.'))
             if self.tax_class:
-                raise ValidationError(
-                    _('Amount discounts excl. tax cannot have tax class'
-                        ' set.'))
+                raise ValidationError(_(
+                    'Amount discounts excl. tax cannot have tax class'
+                    ' set.'))
         elif self.type == self.AMOUNT_VOUCHER_INCL_TAX:
             if not (self.currency and self.tax_class):
-                raise ValidationError(
-                    _('Amount discounts incl. tax need a currency and a tax'
-                        ' class.'))
+                raise ValidationError(_(
+                    'Amount discounts incl. tax need a currency and a tax'
+                    ' class.'))
         elif self.type == self.MEANS_OF_PAYMENT:
             if not self.currency:
                 raise ValidationError(_('Means of payment need a currency.'))
@@ -148,7 +151,8 @@ class DiscountBase(models.Model):
 
         eligible_products = self._eligible_products(order, items).values_list(
             'id', flat=True)
-        eligible_items = [item for item in items
+        eligible_items = [
+            item for item in items
             if item.product_id in eligible_products]
 
         if tax_included:
@@ -158,7 +162,7 @@ class DiscountBase(models.Model):
 
         items_subtotal = sum([
             item.discounted_subtotal_excl_tax for item in eligible_items
-            ], Decimal('0.00'))
+        ], Decimal('0.00'))
 
         # Don't allow bigger discounts than the items subtotal
         if discount > items_subtotal:
@@ -192,8 +196,8 @@ class DiscountBase(models.Model):
 
 
 # Nearly all letters and digits, excluding those which can be easily confounded
-RANDOM_CODE_CHARACTERS = ('23456789abcdefghijkmnopqrstuvwxyz'
-    'ABCDEFGHJKLMNPQRSTUVWXYZ')
+RANDOM_CODE_CHARACTERS = (
+    '23456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ')
 
 
 def generate_random_code():
@@ -201,16 +205,18 @@ def generate_random_code():
 
 
 class Discount(DiscountBase):
-    code = models.CharField(_('code'), max_length=30, unique=True,
-        default=generate_random_code)
+    code = models.CharField(
+        _('code'), max_length=30, unique=True, default=generate_random_code)
 
     is_active = models.BooleanField(_('is active'), default=True)
     valid_from = models.DateField(_('valid from'), default=date.today)
     valid_until = models.DateField(_('valid until'), blank=True, null=True)
 
-    allowed_uses = models.IntegerField(_('number of allowed uses'),
+    allowed_uses = models.IntegerField(
+        _('number of allowed uses'),
         blank=True, null=True,
-        help_text=_('Leave empty if there is no limit on the number of uses'
+        help_text=_(
+            'Leave empty if there is no limit on the number of uses'
             ' of this discount.'))
     used = models.IntegerField(_('number of times already used'), default=0)
 
@@ -274,7 +280,7 @@ class Discount(DiscountBase):
             currency=self.currency,
             tax_class=self.tax_class,
             config=self.config,
-            )
+        )
 
         if recalculate:
             order.recalculate_total()
@@ -313,15 +319,17 @@ class AppliedDiscount(DiscountBase):
     affect orders.
     """
 
-    order = models.ForeignKey(Order, related_name='applied_discounts',
-        verbose_name=_('order'))
+    order = models.ForeignKey(
+        Order, related_name='applied_discounts', verbose_name=_('order'))
     # We could make this a ForeignKey to Discount.code, but we do not
     # want deletions to cascade to this table and we still need the code
     # for the PDF generation or whatever anyway.
     code = models.CharField(_('code'), max_length=30)
-    remaining = models.DecimalField(_('remaining'),
+    remaining = models.DecimalField(
+        _('remaining'),
         max_digits=18, decimal_places=10, default=0,
-        help_text=_('Discount amount excl. tax remaining after discount has'
+        help_text=_(
+            'Discount amount excl. tax remaining after discount has'
             ' been applied.'))
 
     class Meta:
