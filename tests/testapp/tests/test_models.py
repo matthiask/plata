@@ -1,6 +1,6 @@
 from datetime import date, datetime
 from decimal import Decimal
-import StringIO
+from io import BytesIO
 import warnings
 
 from django import forms
@@ -847,7 +847,7 @@ class ModelTest(PlataTest):
     def test_24_uninitialized_order(self):
         # This should not crash; generating a PDF exercises the methods
         # and properties of the order
-        plata.reporting.order.invoice_pdf(PDFDocument(StringIO.StringIO()),
+        plata.reporting.order.invoice_pdf(PDFDocument(BytesIO()),
             Order.objects.create())
 
     def test_25_discount_validation(self):

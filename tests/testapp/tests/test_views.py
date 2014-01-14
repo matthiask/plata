@@ -1,3 +1,4 @@
+from io import BytesIO
 import os
 import re
 import warnings
@@ -374,8 +375,7 @@ class ViewTest(PlataTest):
             self.assertEqual(qs['cmd'][0], '_notify-validate')
             for k, v in paypal_ipn_data.iteritems():
                 self.assertEqual(unicode(qs[k][0], 'utf-8'), v)
-            import StringIO
-            s = StringIO.StringIO('VERIFIED')
+            s = BytesIO('VERIFIED')
             return s
         paypal.urllib2.urlopen = mock_urlopen
 
