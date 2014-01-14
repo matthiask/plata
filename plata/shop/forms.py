@@ -214,8 +214,19 @@ class SinglePageCheckoutForm(BaseCheckoutForm):
             label=_('Payment method'), choices=method_choices,
         )
 
+        self.REQUIRED_ADDRESS_FIELDS = [name[9:] for name in self.fields.keys() if name.startswith('shipping_')]
+        self.REQUIRED_ADDRESS_FIELDS.remove('company')
+
+
+
     def clean(self):
         data = super(SinglePageCheckoutForm, self).clean()
+        if not data.get('shipping_same_as_billing'):
+            for f in self.REQUIRED_ADDRESS_FIELDS:
+                field = 'shipping_%s' % f
+                if not data.get(field):
+                    self._errors[field] = self.error_class([
+                        _('This field is required.')])
         self.instance.validate(self.instance.VALIDATE_ALL)
         return data
 
