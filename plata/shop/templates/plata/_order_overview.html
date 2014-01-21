@@ -47,6 +47,10 @@
     <td>{{ order.currency }} {{ order.discount|floatformat:2 }}</td>
 </tr>
 <tr>
+    <th>{% trans "shipping"|capfirst %}</th>
+    <td>{{ order.currency }} {{ order.shipping|floatformat:2 }}</td>
+</tr>
+<tr>
     <th>{% trans "tax"|capfirst %}</th>
     <td>{{ order.currency }} {{ order.tax|floatformat:2 }}</td>
 </tr>
