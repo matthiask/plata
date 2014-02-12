@@ -666,10 +666,16 @@ class SinglePageCheckoutShop(Shop):
             '',
             self.get_cart_url(),
             self.get_checkout_url(),
+            self.get_already_confirmed_url(),
             self.get_success_url(),
             self.get_failure_url(),
             self.get_new_url(),
         )
+
+    def get_already_confirmed_url(self):
+        return url(r'^confirmed/$', checkout_process_decorator(
+            cart_not_empty, order_cart_validates,
+        )(self.already_confirmed), name='plata_shop_confirmation')
 
     def checkout_form(self, request, order):
         """Returns the address form used in the first checkout step"""
@@ -779,3 +785,25 @@ class SinglePageCheckoutShop(Shop):
             self.checkout_template,
             self.get_context(request, context)
         )
+
+    def already_confirmed(self, request, order):
+        form_kwargs = {
+            'shop': self,
+            'request': request,
+        }
+        if request.method == 'POST':
+            form = shop_forms.PaymentSelectForm(request.POST, **form_kwargs)
+            if form.is_valid():
+                return form.payment_order_confirmed(order, form.cleaned_data['payment_method'])
+        else:
+            form = shop_forms.PaymentSelectForm(**form_kwargs)
+
+        context = {
+            'form': form,
+        }
+
+        return self.render(
+            request,
+            'plata/shop_payment_select.html',
+            self.get_context(request, context)
+            )

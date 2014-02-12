@@ -191,7 +191,38 @@ class OrderItemForm(forms.Form):
             order.modify_item(self.orderitem.product, **self.cleaned_data)
 
 
-class SinglePageCheckoutForm(BaseCheckoutForm):
+class PaymentSelectMixin(object):
+    """
+    Handles the payment selection field
+    """
+
+    def get_payment_field(self, shop, request):
+
+
+        self.payment_modules = shop.get_payment_modules(request)
+        method_choices = [(m.key, m.name) for m in self.payment_modules]
+        if len(method_choices) > 1:
+            method_choices.insert(0, ('', '---------'))
+        return forms.ChoiceField(
+            label=_('Payment method'), choices=method_choices,
+        )
+
+    def payment_order_confirmed(self, order, payment_method):
+        module = dict(
+            (m.key, m) for m in self.payment_modules
+            )[payment_method]
+        return module.process_order_confirmed(self.request, order)
+
+
+class PaymentSelectForm(forms.Form, PaymentSelectMixin):
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request')
+        self.shop = kwargs.pop('shop')
+        super(PaymentSelectForm, self).__init__(*args, **kwargs)
+        self.fields['payment_method'] = self.get_payment_field(self.shop, self.request)
+
+
+class SinglePageCheckoutForm(BaseCheckoutForm, PaymentSelectMixin):
     """
     Handles shipping and billing addresses, payment method and terms and conditions
     """
@@ -206,18 +237,10 @@ class SinglePageCheckoutForm(BaseCheckoutForm):
 
         super(SinglePageCheckoutForm, self).__init__(*args, **kwargs)
 
-        self.payment_modules = self.shop.get_payment_modules(self.request)
-        method_choices = [(m.key, m.name) for m in self.payment_modules]
-        if len(method_choices) > 1:
-            method_choices.insert(0, ('', '---------'))
-        self.fields['payment_method'] = forms.ChoiceField(
-            label=_('Payment method'), choices=method_choices,
-        )
+        self.fields['payment_method'] = self.get_payment_field(self.shop, self.request)
 
         self.REQUIRED_ADDRESS_FIELDS = [name[9:] for name in self.fields.keys() if name.startswith('shipping_')]
         self.REQUIRED_ADDRESS_FIELDS.remove('company')
-
-
 
     def clean(self):
         data = super(SinglePageCheckoutForm, self).clean()
@@ -237,8 +260,4 @@ class SinglePageCheckoutForm(BaseCheckoutForm):
         self.instance.update_status(self.instance.CONFIRMED, 'Confirmation given')
         signals.order_confirmed.send(sender=self.shop, order=self.instance, request=self.request)
 
-        module = dict(
-            (m.key, m) for m in self.payment_modules
-            )[self.cleaned_data['payment_method']]
-
-        return module.process_order_confirmed(self.request, self.instance)
+        return self.payment_order_confirmed(self.instance, self.cleaned_data['payment_method'])
