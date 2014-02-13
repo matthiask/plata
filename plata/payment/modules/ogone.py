@@ -21,8 +21,8 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseForbidden
 from django.utils import timezone
 from django.utils.decorators import method_decorator
-from django.utils.translation import (ugettext_lazy as _, get_language,
-    to_locale)
+from django.utils.translation import (
+    ugettext_lazy as _, get_language, to_locale)
 from django.views.decorators.csrf import csrf_exempt
 
 import plata
@@ -86,10 +86,11 @@ class PaymentProcessor(ProcessorBase):
     def get_urls(self):
         from django.conf.urls import patterns, url
 
-        return patterns('',
+        return patterns(
+            '',
             url(r'^payment/ogone/ipn/$', self.ipn,
                 name='plata_payment_ogone_ipn'),
-            )
+        )
 
     def process_order_confirmed(self, request, order):
         OGONE = settings.OGONE
@@ -102,7 +103,8 @@ class PaymentProcessor(ProcessorBase):
         payment = self.create_pending_payment(order)
         if plata.settings.PLATA_STOCK_TRACKING:
             StockTransaction = plata.stock_model()
-            self.create_transactions(order, _('payment process reservation'),
+            self.create_transactions(
+                order, _('payment process reservation'),
                 type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
                 negative=True, payment=payment)
 
@@ -153,7 +155,7 @@ class PaymentProcessor(ProcessorBase):
             'HTTP_HOST': request.META.get('HTTP_HOST'),
             'form_params': form_params,
             'locale': form_params['language'],
-            })
+        })
 
     @csrf_exempt_m
     def ipn(self, request):
@@ -208,7 +210,7 @@ class PaymentProcessor(ProcessorBase):
                 payment = order.payments.model(
                     order=order,
                     payment_module=u'%s' % self.name,
-                    )
+                )
 
             payment.status = OrderPayment.PROCESSED
             payment.currency = currency
@@ -230,7 +232,8 @@ class PaymentProcessor(ProcessorBase):
 
             if payment.authorized and plata.settings.PLATA_STOCK_TRACKING:
                 StockTransaction = plata.stock_model()
-                self.create_transactions(order, _('sale'),
+                self.create_transactions(
+                    order, _('sale'),
                     type=StockTransaction.SALE, negative=True, payment=payment)
 
             if not order.balance_remaining:

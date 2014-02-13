@@ -68,7 +68,7 @@ A real-world example follows::
 from __future__ import with_statement
 
 import contextlib
-import StringIO
+from io import BytesIO
 
 from django.contrib.sites.models import get_current_site
 from django.core.mail import EmailMessage
@@ -81,7 +81,7 @@ class BaseHandler(object):
         from pdfdocument.document import PDFDocument
         from plata.reporting.order import invoice_pdf
 
-        with contextlib.closing(StringIO.StringIO()) as content:
+        with contextlib.closing(BytesIO()) as content:
             pdf = PDFDocument(content)
             invoice_pdf(pdf, order)
             return content.getvalue()
@@ -90,7 +90,7 @@ class BaseHandler(object):
         from pdfdocument.document import PDFDocument
         from plata.reporting.order import packing_slip_pdf
 
-        with contextlib.closing(StringIO.StringIO()) as content:
+        with contextlib.closing(BytesIO()) as content:
             pdf = PDFDocument(content)
             packing_slip_pdf(pdf, order)
             return content.getvalue()
@@ -100,7 +100,7 @@ class BaseHandler(object):
         if request is not None:
             ctx.update({
                 'site': get_current_site(request),
-                })
+            })
         ctx.update(kwargs)
         return ctx
 
@@ -177,8 +177,10 @@ class SendInvoiceHandler(EmailHandler):
             **kwargs)
 
         message.to.append(order.email)
-        message.attach('invoice-%09d.pdf' % order.id,
-            self.invoice_pdf(order), 'application/pdf')
+        message.attach(
+            'invoice-%09d.pdf' % order.id,
+            self.invoice_pdf(order),
+            'application/pdf')
         return message
 
 
@@ -204,8 +206,10 @@ class SendPackingSlipHandler(EmailHandler):
             'plata/notifications/packing_slip.txt',
             order=order,
             **kwargs)
-        message.attach('packing-slip-%09d.pdf' % order.id,
-            self.packing_slip_pdf(order), 'application/pdf')
+        message.attach(
+            'packing-slip-%09d.pdf' % order.id,
+            self.packing_slip_pdf(order),
+            'application/pdf')
         return message
 
 

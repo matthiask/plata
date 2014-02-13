@@ -1,3 +1,4 @@
+from io import BytesIO
 import os
 import re
 import warnings
@@ -334,6 +335,7 @@ class ViewTest(PlataTest):
 
         order = Order.objects.get(pk=1)
         with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter('always')
             self.assertTrue(order.is_paid())
             self.assertEqual(len(w), 1)
             self.assertTrue(
@@ -373,8 +375,7 @@ class ViewTest(PlataTest):
             self.assertEqual(qs['cmd'][0], '_notify-validate')
             for k, v in paypal_ipn_data.iteritems():
                 self.assertEqual(unicode(qs[k][0], 'utf-8'), v)
-            import StringIO
-            s = StringIO.StringIO('VERIFIED')
+            s = BytesIO('VERIFIED')
             return s
         paypal.urllib2.urlopen = mock_urlopen
 
@@ -418,6 +419,7 @@ class ViewTest(PlataTest):
 
         order = Order.objects.get(pk=1)
         with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter('always')
             self.assertTrue(order.is_paid())
             self.assertEqual(len(w), 1)
             self.assertTrue(

@@ -33,9 +33,9 @@ def order_already_confirmed(order, shop, request, **kwargs):
     if order and order.status >= order.CONFIRMED:
         if not order.balance_remaining:
             return shop.redirect('plata_order_success')
-        messages.warning(request,
-            _('You have already confirmed this order earlier, but it is not'
-                ' fully paid for yet.'))
+        messages.warning(request, _(
+            'You have already confirmed this order earlier, but it is not'
+            ' fully paid for yet.'))
         return HttpResponseRedirect(
             shop.reverse_url('plata_shop_confirmation') + '?confirmed=1')
 
@@ -128,7 +128,7 @@ class Shop(object):
     failure_template = 'plata/shop_order_payment_failure.html'
 
     def __init__(self, contact_model, order_model, discount_model,
-            default_currency=None, **kwargs):
+                 default_currency=None, **kwargs):
         self.contact_model = contact_model
         self.order_model = order_model
         self.orderitem_model = self.order_model.items.related.model
@@ -216,11 +216,13 @@ class Shop(object):
 
         If request is given only applicable modules are loaded.
         """
-        all_modules = [get_callable(module)(self)
+        all_modules = [
+            get_callable(module)(self)
             for module in plata.settings.PLATA_PAYMENT_MODULES]
         if not request:
             return all_modules
-        return [module for module in all_modules
+        return [
+            module for module in all_modules
             if module.enabled_for_request(request)]
 
     def default_currency(self, request=None):
@@ -276,13 +278,17 @@ class Shop(object):
                 contact = self.contact_from_user(request.user)
 
                 order = self.order_model.objects.create(
-                    currency=getattr(contact, 'currency',
+                    currency=getattr(
+                        contact,
+                        'currency',
                         self.default_currency(request)),
-                    user=getattr(contact, 'user',
+                    user=getattr(
+                        contact,
+                        'user',
                         request.user if request.user.is_authenticated()
                         else None),
                     language_code=get_language(),
-                    )
+                )
 
                 self.set_order_on_request(request, order)
                 return order
@@ -309,7 +315,7 @@ class Shop(object):
         """
         ctx = {
             'base_template': self.base_template,
-            }
+        }
         ctx.update(context)
         ctx.update(kwargs)
         return ctx
@@ -340,7 +346,7 @@ class Shop(object):
         if not order or not order.items.count():
             return self.render_cart_empty(request, {
                 'progress': 'cart',
-                })
+            })
 
         OrderItemFormset = inlineformset_factory(
             self.order_model,
@@ -348,7 +354,7 @@ class Shop(object):
             form=getattr(self, 'form', ModelForm),
             extra=0,
             fields=('quantity',),
-            )
+        )
 
         if request.method == 'POST':
             formset = OrderItemFormset(request.POST, instance=order)
@@ -361,17 +367,18 @@ class Shop(object):
                 for form in formset.forms:
                     if not form.instance.product_id:
                         form.instance.delete()
-                        messages.warning(request,
-                            _('%(name)s has been removed from the inventory'
+                        messages.warning(request, _(
+                            '%(name)s has been removed from the inventory'
                             ' and from your cart as well.') % {
-                                'name': form.instance.name,
-                                })
+                            'name': form.instance.name,
+                        })
                         changed = True
 
                     elif (formset.can_delete
                             and formset._should_delete_form(form)):
                         if order.is_confirmed():
-                            raise ValidationError(_('Cannot modify order once'
+                            raise ValidationError(_(
+                                'Cannot modify order once'
                                 ' it has been confirmed.'),
                                 code='order_sealed')
 
@@ -379,7 +386,8 @@ class Shop(object):
                         changed = True
 
                     elif form.has_changed():
-                        order.modify_item(form.instance.product,
+                        order.modify_item(
+                            form.instance.product,
                             absolute=form.cleaned_data['quantity'],
                             recalculate=False,
                             item=form.instance,
@@ -400,7 +408,7 @@ class Shop(object):
             'order': order,
             'orderitemformset': formset,
             'progress': 'cart',
-            })
+        })
 
     def render_cart_empty(self, request, context):
         """Renders a cart-is-empty page"""
@@ -429,7 +437,8 @@ class Shop(object):
         """Handles the first step of the checkout process"""
         if not request.user.is_authenticated():
             if request.method == 'POST' and '_login' in request.POST:
-                loginform = self.get_authentication_form(data=request.POST,
+                loginform = self.get_authentication_form(
+                    data=request.POST,
                     prefix='login')
 
                 if loginform.is_valid():
@@ -455,7 +464,7 @@ class Shop(object):
             'instance': order,
             'request': request,
             'shop': self,
-            }
+        }
 
         if request.method == 'POST' and '_checkout' in request.POST:
             orderform = OrderForm(request.POST, **orderform_kwargs)
@@ -474,7 +483,7 @@ class Shop(object):
             'loginform': loginform,
             'orderform': orderform,
             'progress': 'checkout',
-            })
+        })
 
     def render_checkout(self, request, context):
         """Renders the checkout page"""
@@ -503,7 +512,7 @@ class Shop(object):
             'discount_model': self.discount_model,
             'request': request,
             'shop': self,
-            }
+        }
 
         if request.method == 'POST':
             form = DiscountForm(request.POST, **kwargs)
@@ -523,7 +532,7 @@ class Shop(object):
             'order': order,
             'form': form,
             'progress': 'discounts',
-            })
+        })
 
     def render_discounts(self, request, context):
         """Renders the discount code entry page"""
@@ -553,7 +562,7 @@ class Shop(object):
             'order': order,
             'request': request,
             'shop': self,
-            }
+        }
 
         if request.method == 'POST':
             form = ConfirmationForm(request.POST, **kwargs)
@@ -569,7 +578,7 @@ class Shop(object):
             # Whether the order had already been confirmed.
             'confirmed': request.GET.get('confirmed', False),
             'progress': 'confirmation',
-            })
+        })
 
     def render_confirmation(self, request, context):
         """Renders the confirmation page"""
@@ -623,14 +632,16 @@ class Shop(object):
         if order.payments.authorized().exists():
             # There authorized order payments around!
             messages.warning(request, _('Payment failed, please try again.'))
-            logger.warn('Order %s is already partially paid, but payment'
+            logger.warn(
+                'Order %s is already partially paid, but payment'
                 ' failed anyway!' % order.order_id)
         elif order.status > order.CHECKOUT and order.status < order.PAID:
-            order.update_status(order.CHECKOUT,
+            order.update_status(
+                order.CHECKOUT,
                 'Order payment failure, going back to checkout')
-            messages.info(request,
-                _('Payment failed; you can continue editing your order and'
-                    ' try again.'))
+            messages.info(request, _(
+                'Payment failed; you can continue editing your order and'
+                ' try again.'))
 
         return self.render(
             request,

@@ -27,12 +27,14 @@ class CheckoutForm(shop_forms.BaseCheckoutForm):
             initial = {
                 'email': contact.user.email,
                 'shipping_same_as_billing': contact.shipping_same_as_billing,
-                }
+            }
 
             for f in contact.ADDRESS_FIELDS:
-                initial['billing_%s' % f] = getattr(contact,
+                initial['billing_%s' % f] = getattr(
+                    contact,
                     'billing_%s' % f)
-                initial['shipping_%s' % f] = getattr(contact,
+                initial['shipping_%s' % f] = getattr(
+                    contact,
                     'shipping_%s' % f)
 
             kwargs['initial'] = initial
@@ -42,7 +44,7 @@ class CheckoutForm(shop_forms.BaseCheckoutForm):
                 'email': request.user.email,
                 'billing_first_name': request.user.first_name,
                 'billing_last_name': request.user.last_name,
-                }
+            }
 
         super(CheckoutForm, self).__init__(*args, **kwargs)
 

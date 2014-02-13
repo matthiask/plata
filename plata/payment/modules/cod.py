@@ -36,7 +36,8 @@ class PaymentProcessor(ProcessorBase):
 
         if plata.settings.PLATA_STOCK_TRACKING:
             StockTransaction = plata.stock_model()
-            self.create_transactions(order, _('sale'),
+            self.create_transactions(
+                order, _('sale'),
                 type=StockTransaction.SALE, negative=True, payment=payment)
         self.order_paid(order, payment=payment, request=request)
 

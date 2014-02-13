@@ -30,7 +30,8 @@ class ProductBase(models.Model):
         your own implementation.
         """
         if currency is None:
-            currency = (orderitem.currency if orderitem else
+            currency = (
+                orderitem.currency if orderitem else
                 plata.shop_instance().default_currency())
 
         try:
