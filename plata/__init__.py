@@ -15,8 +15,15 @@ class LazySettings(object):
             if not key.startswith(('PLATA', 'CURRENCIES')):
                 continue
 
-            setattr(self, key, getattr(django_settings, key,
-                getattr(default_settings, key)))
+            setattr(
+                self,
+                key,
+                getattr(
+                    django_settings,
+                    key,
+                    getattr(
+                        default_settings,
+                        key)))
 
     def __getattr__(self, attr):
         self._load_settings()

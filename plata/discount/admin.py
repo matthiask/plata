@@ -1,15 +1,9 @@
-from threading import local
-
 from django import forms
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
 from plata.discount import models
 from plata.utils import jsonize
-
-
-# Internal state tracking helper for config fields
-_discount_admin_state = local()
 
 
 class DiscountAdminForm(forms.ModelForm):
@@ -19,16 +13,17 @@ class DiscountAdminForm(forms.ModelForm):
         # Seems to be necessary because of the custom validation
         self.fields['config'].required = False
 
-        choices = [(key, cfg.get('title', key)) for key, cfg
-            in self._meta.model.CONFIG_OPTIONS]
+        choices = [
+            (key, cfg.get('title', key))
+            for key, cfg in self._meta.model.CONFIG_OPTIONS]
 
         self.fields['config_options'] = forms.MultipleChoiceField(
             choices=choices,
             label=_('Configuration options'),
             help_text=_('Save and continue editing to configure options.'),
-            )
+        )
 
-        _discount_admin_state._plata_discount_config_fieldsets = []
+        config_fieldsets = []
 
         # Determine the list of selected configuration options
         # 1. POST data
@@ -54,7 +49,7 @@ class DiscountAdminForm(forms.ModelForm):
             fieldset = [
                 _('Discount configuration: %s') % cfg.get('title', s),
                 {'fields': []},
-                ]
+            ]
 
             for k, f in cfg.get('form_fields', []):
                 self.fields['%s_%s' % (s, k)] = f
@@ -65,8 +60,9 @@ class DiscountAdminForm(forms.ModelForm):
 
                 fieldset[1]['fields'].append('%s_%s' % (s, k))
 
-            _discount_admin_state._plata_discount_config_fieldsets.append(
-                fieldset)
+            config_fieldsets.append(fieldset)
+
+        self.request._plata_discount_config_fieldsets = config_fieldsets
 
     def clean(self):
         data = self.cleaned_data
@@ -95,28 +91,39 @@ class DiscountAdminForm(forms.ModelForm):
 
 class DiscountAdmin(admin.ModelAdmin):
     form = DiscountAdminForm
-    list_display = ('name', 'type', 'is_active', 'valid_from',
-        'valid_until', 'code', 'value')
+    list_display = (
+        'name', 'type', 'is_active', 'valid_from', 'valid_until', 'code',
+        'value')
     list_filter = ('type', 'is_active')
     ordering = ('-valid_from',)
     search_fields = ('name', 'code', 'config')
 
+    def get_form(self, request, obj=None, **kwargs):
+        form_class = super(DiscountAdmin, self).get_form(
+            request, obj=obj, **kwargs)
+        # Generate a new type to be sure that the request stays inside this
+        # request/response cycle.
+        return type(form_class.__name__, (form_class,), {'request': request})
+
     def get_fieldsets(self, request, obj=None):
         fieldsets = super(DiscountAdmin, self).get_fieldsets(request, obj)
+        if not hasattr(request, '_plata_discount_config_fieldsets'):
+            return fieldsets
+
         fieldsets[0][1]['fields'].remove('config')
 
         fieldsets.append((_('Raw configuration'), {
             'fields': ('config',),
             'classes': ('collapse',),
-            }))
+        }))
         fieldsets.append((_('Configuration'), {
             'fields': ('config_options',),
-            }))
+        }))
 
         fieldsets.extend(
-            _discount_admin_state._plata_discount_config_fieldsets)
-        del _discount_admin_state._plata_discount_config_fieldsets
+            request._plata_discount_config_fieldsets)
 
         return fieldsets
+
 
 admin.site.register(models.Discount, DiscountAdmin)

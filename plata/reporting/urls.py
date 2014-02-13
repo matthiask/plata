@@ -1,7 +1,8 @@
 from django.conf.urls import patterns, url
 
 
-urlpatterns = patterns('plata.reporting.views',
+urlpatterns = patterns(
+    'plata.reporting.views',
     url(r'^product_xls/$', 'product_xls',
         name='plata_reporting_product_xls'),
     url(r'^invoice_pdf/(?P<order_id>\d+)/$', 'invoice_pdf',

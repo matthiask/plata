@@ -18,40 +18,41 @@
 {% endfor %}
 </table>
 
-<h2>{% trans "Discounts" %}</h2>
-{% for discount in order.applied_discounts.all %}
-    {% if forloop.first %}
-    <table>
-    {% endif %}
-
-    <tr>
-        <td>{{ discount.name }}</td>
-        <td>{{ discount.code }}</td>
-    </tr>
-
-    {% if forloop.last %}
+{% with order.applied_discounts.all as discounts %}
+  {% if discounts %}
+    <h2>{% trans "Discounts" %}</h2>
+      {% for discount in discounts %}
+        <tr>
+          <td>{{ discount.name }}</td>
+          <td>{{ discount.code }}</td>
+        </tr>
+      {% endfor %}
     </table>
-    {% endif %}
-{% empty %}
-    {% trans "No discounts" %}
-{% endfor %}
+  {% endif %}
 
-<h2>{% trans "Total" %}</h2>
-<table>
-<tr>
-    <th>{% trans "subtotal"|capfirst %}</th>
-    <td>{{ order.currency }} {{ order.subtotal|floatformat:2 }}</td>
-</tr>
-<tr>
-    <th>{% trans "discount"|capfirst %}</th>
-    <td>{{ order.currency }} {{ order.discount|floatformat:2 }}</td>
-</tr>
-<tr>
-    <th>{% trans "tax"|capfirst %}</th>
-    <td>{{ order.currency }} {{ order.tax|floatformat:2 }}</td>
-</tr>
-<tr>
-    <th>{% trans "total"|capfirst %}</th>
-    <td>{{ order.currency }} {{ order.total|floatformat:2 }}</td>
-</tr>
-</table>
+  <h2>{% trans "Total" %}</h2>
+  <table>
+    <tr>
+      <th>{% trans "subtotal"|capfirst %}</th>
+      <td>{{ order.currency }} {{ order.subtotal|floatformat:2 }}</td>
+    </tr>
+    {% if discounts %}
+      <tr>
+        <th>{% trans "discount"|capfirst %}</th>
+        <td>{{ order.currency }} {{ order.discount|floatformat:2 }}</td>
+      </tr>
+    {% endif %}
+    <tr>
+      <th>{% trans "shipping"|capfirst %}</th>
+      <td>{{ order.currency }} {{ order.shipping|floatformat:2 }}</td>
+    </tr>
+    <tr>
+      <th>{% trans "tax"|capfirst %}</th>
+      <td>{{ order.currency }} {{ order.tax|floatformat:2 }}</td>
+    </tr>
+    <tr>
+      <th>{% trans "total"|capfirst %}</th>
+      <td>{{ order.currency }} {{ order.total|floatformat:2 }}</td>
+    </tr>
+  </table>
+{% endwith %}

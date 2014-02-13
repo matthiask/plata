@@ -32,7 +32,7 @@ def product_xls():
         capfirst(_('product')),
         _('SKU'),
         capfirst(_('stock')),
-        ]
+    ]
     titles.extend(
         unicode(name) for key, name in StockTransaction.TYPE_CHOICES)
 
@@ -44,7 +44,8 @@ def product_xls():
             getattr(product, 'sku', ''),
             getattr(product, 'items_in_stock', -1),
             ]
-        row.extend(transactions[product.id].get(key, '')
+        row.extend(
+            transactions[product.id].get(key, '')
             for key, name in StockTransaction.TYPE_CHOICES)
         data.append(row)
 

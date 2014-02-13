@@ -66,7 +66,7 @@ class BaseCheckoutForm(forms.ModelForm):
                 password = User.objects.make_random_password()
                 params = {'email': email, 'password': password}
                 if getattr(User, 'USERNAME_FIELD', 'username') == 'username':
-                    params['username'] = email
+                    params['username'] = email[:30]  # FIXME
                 user = User.objects.create_user(**params)
                 user = auth.authenticate(username=email, password=password)
                 auth.login(self.request, user)
@@ -76,8 +76,12 @@ class BaseCheckoutForm(forms.ModelForm):
             contact = self.shop.contact_model(user=user)
             order.user = user
 
-            signals.contact_created.send(sender=self.shop, user=user,
-                contact=contact, password=password, request=self.request)
+            signals.contact_created.send(
+                sender=self.shop,
+                user=user,
+                contact=contact,
+                password=password,
+                request=self.request)
 
         order.save()
 
@@ -151,8 +155,10 @@ class ConfirmationForm(forms.Form):
         Process the successful order submission
         """
         self.order.update_status(self.order.CONFIRMED, 'Confirmation given')
-        signals.order_confirmed.send(sender=self.shop, order=self.order,
-                request=self.request)
+        signals.order_confirmed.send(
+            sender=self.shop,
+            order=self.order,
+            request=self.request)
 
         module = dict(
             (m.key, m) for m in self.payment_modules

@@ -56,10 +56,13 @@ class Period(models.Model):
 
     name = models.CharField(_('name'), max_length=100)
     notes = models.TextField(_('notes'), blank=True)
-    start = models.DateTimeField(_('start'), default=timezone.now,
+    start = models.DateTimeField(
+        _('start'), default=timezone.now,
         help_text=_('Period starts at this time. May also be a future date.'))
 
     class Meta:
+        # See https://github.com/matthiask/plata/issues/27
+        abstract = not plata.settings.PLATA_STOCK_TRACKING
         get_latest_by = 'start'
         ordering = ['-start']
         verbose_name = _('period')
@@ -86,10 +89,10 @@ class StockTransactionManager(models.Manager):
                 type=StockTransaction.INITIAL,
                 change=p.items_in_stock,
                 notes=ugettext('New period'),
-                )
+            )
 
     def items_in_stock(self, product, update=False, exclude_order=None,
-            include_reservations=False):
+                       include_reservations=False):
         """
         Determine the items in stock for the given product variation,
         optionally updating the ``items_in_stock`` field in the database.
@@ -129,7 +132,7 @@ class StockTransactionManager(models.Manager):
         if update:
             product_model._default_manager.filter(
                 id=getattr(product, 'pk', product)
-                ).update(items_in_stock=count)
+            ).update(items_in_stock=count)
 
         return count
 
@@ -217,21 +220,27 @@ class StockTransaction(models.Model):
         (INCOMING, _('incoming')),
         (OUTGOING, _('outgoing')),
         (PAYMENT_PROCESS_RESERVATION, _('payment process reservation')),
-        )
+    )
 
-    period = models.ForeignKey(Period, default=Period.objects.current,
+    period = models.ForeignKey(
+        Period, default=Period.objects.current,
         related_name='stock_transactions', verbose_name=_('period'))
     created = models.DateTimeField(_('created'), default=timezone.now)
-    product = models.ForeignKey(plata.settings.PLATA_SHOP_PRODUCT,
+    product = models.ForeignKey(
+        plata.settings.PLATA_SHOP_PRODUCT,
         related_name='stock_transactions', verbose_name=_('product'),
         on_delete=models.SET_NULL, null=True)
     type = models.PositiveIntegerField(_('type'), choices=TYPE_CHOICES)
-    change = models.IntegerField(_('change'),
-        help_text=_('Use negative numbers for sales, lendings and other'
+    change = models.IntegerField(
+        _('change'),
+        help_text=_(
+            'Use negative numbers for sales, lendings and other'
             ' outgoings.'))
-    order = models.ForeignKey(Order, blank=True, null=True,
+    order = models.ForeignKey(
+        Order, blank=True, null=True,
         related_name='stock_transactions', verbose_name=_('order'))
-    payment = models.ForeignKey(OrderPayment, blank=True, null=True,
+    payment = models.ForeignKey(
+        OrderPayment, blank=True, null=True,
         related_name='stock_transactions', verbose_name=_('order payment'))
 
     notes = models.TextField(_('notes'), blank=True)
@@ -240,14 +249,19 @@ class StockTransaction(models.Model):
     # (but very useful for analysis down the road)
     name = models.CharField(_('name'), max_length=100, blank=True)
     sku = models.CharField(_('SKU'), max_length=100, blank=True)
-    line_item_price = models.DecimalField(_('line item price'),
+    line_item_price = models.DecimalField(
+        _('line item price'),
         max_digits=18, decimal_places=10, blank=True, null=True)
-    line_item_discount = models.DecimalField(_('line item discount'),
+    line_item_discount = models.DecimalField(
+        _('line item discount'),
         max_digits=18, decimal_places=10, blank=True, null=True)
-    line_item_tax = models.DecimalField(_('line item tax'),
+    line_item_tax = models.DecimalField(
+        _('line item tax'),
         max_digits=18, decimal_places=10, blank=True, null=True)
 
     class Meta:
+        # See https://github.com/matthiask/plata/issues/27
+        abstract = not plata.settings.PLATA_STOCK_TRACKING
         ordering = ['-id']
         verbose_name = _('stock transaction')
         verbose_name_plural = _('stock transactions')
@@ -285,9 +299,9 @@ def validate_order_stock_available(order):
                 item.product,
                 exclude_order=order,
                 include_reservations=True):
-            raise ValidationError(_('Not enough stock available for %s.') % (
-                item.product,
-                ), code='insufficient_stock')
+            raise ValidationError(
+                _('Not enough stock available for %s.') % item.product,
+                code='insufficient_stock')
 
 
 if plata.settings.PLATA_STOCK_TRACKING:
@@ -298,12 +312,15 @@ if plata.settings.PLATA_STOCK_TRACKING:
         raise ImproperlyConfigured(
             'Product model %r must have a field named `items_in_stock`' % (
                 product_model,
-                ))
+            ))
 
-    signals.post_delete.connect(update_items_in_stock,
+    signals.post_delete.connect(
+        update_items_in_stock,
         sender=StockTransaction)
-    signals.post_save.connect(update_items_in_stock,
+    signals.post_save.connect(
+        update_items_in_stock,
         sender=StockTransaction)
 
-    Order.register_validator(validate_order_stock_available,
+    Order.register_validator(
+        validate_order_stock_available,
         Order.VALIDATE_CART)
