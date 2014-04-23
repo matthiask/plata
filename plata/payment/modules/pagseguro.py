@@ -32,7 +32,7 @@ class PaymentProcessor(ProcessorBase):
     default_name = _('Pagseguro')
 
     def get_urls(self):
-        from django.conf.urls.defaults import patterns, url
+        from django.conf.urls import patterns, url
 
         return patterns('',
             url(r'^payment/pagseguro/notify/$', self.psnotify,
