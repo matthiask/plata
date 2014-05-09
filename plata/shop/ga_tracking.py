@@ -54,13 +54,13 @@ def on_order_paid(order, payment, request, **kwargs):
     transaction.total = order.subtotal
     transaction.tax = order.tax
     transaction.shipping = order.shipping
-    transaction.city = order.billing_city
-    transaction.country = order.billing_country
+    transaction.city = order.billing_city.encode('utf8')
+    transaction.country = unicode(order.billing_country).encode('utf8')
     transaction.currency = order.currency
     for item in order.items.all():
         i = Item()
         i.sku = item.sku
-        i.name = item.name
+        i.name = item.name.encode('utf8')
         i.price = item.unit_price
         i.quantity = item.quantity
         transaction.add_item(i)
