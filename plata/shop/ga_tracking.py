@@ -63,6 +63,7 @@ def on_order_paid(order, payment, request, **kwargs):
         i.name = item.name
         i.price = item.unit_price
         i.quantity = item.quantity
+        transaction.add_item(i)
 
     # tracker.setcurrencyCode
     tracker.track_transaction(transaction, session, visitor)
