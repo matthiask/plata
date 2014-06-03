@@ -172,7 +172,7 @@ class ProcessorBase(object):
                     )).order_by('type')[0]
                 except IndexError:
                     # XXX: Remaining discount will be applicable to ALL
-                    #products, not sure if this behavior is correct...
+                    # products, not sure if this behavior is correct...
                     discount = None
 
                 remaining_discount = discount_model.objects.create(

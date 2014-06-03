@@ -17,7 +17,7 @@ def load_plata_context(context):
     Rather than having the overheads involved in globally adding it to
     TEMPLATE_CONTEXT_PROCESSORS.
     """
-    if not 'plata' in context:
+    if 'plata' not in context:
         context.update(
             plata.context_processors.plata_context(context['request'])
         )
