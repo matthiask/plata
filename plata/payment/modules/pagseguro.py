@@ -34,7 +34,8 @@ class PaymentProcessor(ProcessorBase):
     def get_urls(self):
         from django.conf.urls import patterns, url
 
-        return patterns('',
+        return patterns(
+            '',
             url(r'^payment/pagseguro/notify/$', self.psnotify,
                 name='plata_payment_pagseguro_notify'),
         )
@@ -62,7 +63,7 @@ class PaymentProcessor(ProcessorBase):
                                  'email': PAGSEGURO['EMAIL']})
 
     @csrf_exempt_m
-    def psnotify(self,request):
+    def psnotify(self, request):
         request.encoding = 'ISO-8859-1'
         PAGSEGURO = settings.PAGSEGURO
 
@@ -92,11 +93,11 @@ class PaymentProcessor(ProcessorBase):
                 xml = minidom.parseString(result)
                 try:
                     xmlTag = xml.getElementsByTagName('status')[0].toxml()
-                    status = xmlTag.replace('<status>','').replace('</status>','')
+                    status = xmlTag.replace('<status>', '').replace('</status>', '')
                     xmlTag = xml.getElementsByTagName('reference')[0].toxml()
-                    reference = xmlTag.replace('<reference>','').replace('</reference>','')
+                    reference = xmlTag.replace('<reference>', '').replace('</reference>', '')
                     xmlTag = xml.getElementsByTagName('grossAmount')[0].toxml()
-                    amount = xmlTag.replace('<grossAmount>','').replace('</grossAmount>','')
+                    amount = xmlTag.replace('<grossAmount>', '').replace('</grossAmount>', '')
                 except (ValueError, IndexError):
                     logger.error("Pagseguro: Can't verify notification: %s" % result.decode('ISO-8859-1'))
                     return HttpResponseForbidden('Order verification failed')
