@@ -26,7 +26,7 @@ logger = logging.getLogger('plata.payment.check')
 
 class PaymentProcessor(ProcessorBase):
     key = 'check'
-    default_name = _('Check/Transfert')
+    default_name = _('Check/Bank transfert')
 
     def get_urls(self):
         from django.conf.urls import patterns, url
@@ -63,12 +63,17 @@ Items: %s
 Amount due: %s %s
 
 Click on this link when the payment is received: %s
-""" % (order, "\n   -".join([unicode(item) for item in order.items.all()]), order.balance_remaining, order.currency, confirm_link)
+""" % (order, ", ".join([unicode(item) for item in order.items.all()]), order.balance_remaining, order.currency, confirm_link)
 
-        send_mail('New check/bank order (%s)' % order,
+        try:
+            notification_emails = settings.PLATA_PAYMENT_CHECK_NOTIFICATIONS
+        except AttributeError:
+            raise Exception("Configure the notification emails in the PLATA_PAYMENT_CHECK_NOTIFICATIONS setting")
+
+        send_mail('%sNew check/bank order (%s)' % (getattr(settings, 'EMAIL_SUBJECT_PREFIX', ''), order),
                   message,
                   settings.SERVER_EMAIL,
-                  settings.PLATA_PAYMENT_CHECK_NOTIFICATIONS)
+                  notification_emails)
 
         return self.shop.render(request, 'payment/check_informations.html',
                                 {'order': order,
