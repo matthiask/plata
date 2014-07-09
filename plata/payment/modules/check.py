@@ -89,7 +89,7 @@ Click on this link when the payment is received: %s
 
         try:
             order = Order.objects.get(notes=uuid)
-        except Order.DoesNotExists:
+        except Order.DoesNotExist:
             raise Http404
 
         payment = list(order.payments.all()[:1])[0]
