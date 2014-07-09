@@ -65,7 +65,7 @@ Amount due: %s %s
 Click on this link when the payment is received: %s
 """ % (order, "\n   -".join([unicode(item) for item in order.items.all()]), order.balance_remaining, order.currency, confirm_link)
 
-        send_mail('New ServicePlace check/bank order.',
+        send_mail('New check/bank order (%s)' % order,
                   message,
                   settings.SERVER_EMAIL,
                   settings.PLATA_PAYMENT_CHECK_NOTIFICATIONS)
