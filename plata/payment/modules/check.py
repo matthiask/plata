@@ -93,6 +93,10 @@ Click on this link when the payment is received: %s
             raise Http404
 
         payment = list(order.payments.all()[:1])[0]
+
+        if payment.status == OrderPayment.AUTHORIZED:
+            return HttpResponse("Already authorized")
+
         payment.authorized = timezone.now()
         payment.status = OrderPayment.AUTHORIZED
         payment.amount = Decimal(order.balance_remaining)
@@ -103,4 +107,4 @@ Click on this link when the payment is received: %s
         order.save()
 
         self.order_paid(order, payment=payment)
-        return HttpResponse("OK")
+        return HttpResponse("Order authorized")
