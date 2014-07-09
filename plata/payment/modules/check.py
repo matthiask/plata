@@ -58,12 +58,17 @@ class PaymentProcessor(ProcessorBase):
         confirm_link = "https://%s%s" % (current_site.domain, reverse('plata_payment_check_confirm', kwargs={'uuid': order.notes}))
         message = """The order %s has been confirmed for check or bank transfert.
 
+Customer: %s %s <%s>
+
 Items: %s
 
 Amount due: %s %s
 
 Click on this link when the payment is received: %s
-""" % (order, ", ".join([unicode(item) for item in order.items.all()]), order.balance_remaining, order.currency, confirm_link)
+""" % (order, order.user.first_name, order.user.last_name, order.email,
+       ", ".join([unicode(item) for item in order.items.all()]),
+       order.balance_remaining, order.currency,
+       confirm_link)
 
         try:
             notification_emails = settings.PLATA_PAYMENT_CHECK_NOTIFICATIONS
