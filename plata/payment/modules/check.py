@@ -71,6 +71,8 @@ Click on this link when the payment is received: %s
        confirm_link)
 
         try:
+            notification_emails = settings.PLATA_PAYMENT_CHECK_NOTIFICATIONS.get(order.currency)
+        except KeyError:
             notification_emails = settings.PLATA_PAYMENT_CHECK_NOTIFICATIONS
         except AttributeError:
             raise Exception("Configure the notification emails in the PLATA_PAYMENT_CHECK_NOTIFICATIONS setting")
