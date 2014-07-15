@@ -1,5 +1,5 @@
 """
-Payment module for check/transfert
+Payment module for check/transfer
 
 Author: jpbraun@mandriva.com
 """
@@ -26,7 +26,7 @@ logger = logging.getLogger('plata.payment.check')
 
 class PaymentProcessor(ProcessorBase):
     key = 'check'
-    default_name = _('Check/Bank transfert')
+    default_name = _('Check/Bank transfer')
 
     def get_urls(self):
         from django.conf.urls import patterns, url
@@ -56,7 +56,7 @@ class PaymentProcessor(ProcessorBase):
                                      payment=payment)
         current_site = Site.objects.get_current()
         confirm_link = "https://%s%s" % (current_site.domain, reverse('plata_payment_check_confirm', kwargs={'uuid': order.notes}))
-        message = """The order %s has been confirmed for check or bank transfert.
+        message = """The order %s has been confirmed for check or bank transfer.
 
 Customer: %s %s <%s>
 
