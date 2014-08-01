@@ -1,3 +1,5 @@
+from __future__ import absolute_import, unicode_literals
+
 from decimal import Decimal
 
 from django.core.urlresolvers import get_callable

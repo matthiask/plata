@@ -4,6 +4,8 @@ Product model base implementation -- you do not need to use this
 It may save you some typing though.
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from django.db import models
 
 import plata
@@ -47,5 +49,5 @@ class ProductBase(models.Model):
         sufficient for posteriority. Old orders should always be complete
         even if the products have been changed or deleted in the meantime.
         """
-        orderitem.name = unicode(self)
-        orderitem.sku = getattr(self, 'sku', u'')
+        orderitem.name = '%s' % self
+        orderitem.sku = getattr(self, 'sku', '')

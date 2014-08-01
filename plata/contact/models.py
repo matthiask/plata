@@ -1,12 +1,16 @@
+from __future__ import absolute_import, unicode_literals
+
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from plata.fields import CurrencyField
 from plata.shop.models import BillingShippingAddress
 
 
+@python_2_unicode_compatible
 class Contact(BillingShippingAddress):
     """
     Each user can have at most one of these
@@ -36,8 +40,8 @@ class Contact(BillingShippingAddress):
         verbose_name = _('contact')
         verbose_name_plural = _('contacts')
 
-    def __unicode__(self):
-        return unicode(self.user)
+    def __str__(self):
+        return '%s' % self.user
 
     def update_from_order(self, order, request=None):
         """

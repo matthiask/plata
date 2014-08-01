@@ -11,6 +11,8 @@ Needs the following settings to work correctly::
         }
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from decimal import Decimal
 from hashlib import sha1
 import locale
@@ -173,13 +175,13 @@ class PaymentProcessor(ProcessorBase):
                 PAYID = request.POST['PAYID']
                 BRAND = request.POST['BRAND']
                 SHASIGN = request.POST['SHASIGN']
-            except KeyError, e:
+            except KeyError:
                 logger.error('IPN: Missing data in %s' % parameters_repr)
                 return HttpResponseForbidden('Missing data')
 
             value_strings = [
                 u'{0}={1}{2}'.format(key.upper(), value, OGONE['SHA1_OUT'])
-                for key, value in request.POST.iteritems()
+                for key, value in request.POST.items()
                 if value and not key == 'SHASIGN']
             sha1_out = sha1(
                 (u''.join(sorted(value_strings))).encode('utf-8')).hexdigest()
@@ -209,7 +211,7 @@ class PaymentProcessor(ProcessorBase):
             except order.payments.model.DoesNotExist:
                 payment = order.payments.model(
                     order=order,
-                    payment_module=u'%s' % self.name,
+                    payment_module='%s' % self.name,
                 )
 
             payment.status = OrderPayment.PROCESSED
@@ -240,6 +242,6 @@ class PaymentProcessor(ProcessorBase):
                 self.order_paid(order, payment=payment, request=request)
 
             return HttpResponse('OK')
-        except Exception, e:
-            logger.error('IPN: Processing failure %s' % unicode(e))
+        except Exception as e:
+            logger.error('IPN: Processing failure %s' % e)
             raise

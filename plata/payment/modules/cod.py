@@ -4,6 +4,8 @@ Payment module for cash on delivery handling
 Automatically completes every order passed.
 """
 
+from __future__ import absolute_import, unicode_literals
+
 import logging
 
 from django.utils import timezone

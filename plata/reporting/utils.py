@@ -1,3 +1,5 @@
+from __future__ import absolute_import, unicode_literals
+
 from datetime import date
 from decimal import Decimal
 from io import BytesIO
@@ -26,7 +28,7 @@ class XLSDocument(object):
                 elif value is None:
                     processed.append('-')
                 else:
-                    processed.append(unicode(value).strip())
+                    processed.append(('%s' % value).strip())
 
             self.sheet.append(processed)
 

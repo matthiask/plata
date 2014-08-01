@@ -1,10 +1,12 @@
+from __future__ import absolute_import, unicode_literals
+
 from django import forms
 from django.contrib import auth
 
 try:  # pragma: no cover
     from django.contrib.auth import get_user_model
     User = get_user_model()
-except ImportError, e:
+except ImportError:
     from django.contrib.auth.models import User
 
 from django.utils.translation import ugettext_lazy as _

@@ -9,14 +9,16 @@ Needs the following settings to work correctly::
         }
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from decimal import Decimal
 import logging
-import urllib2
 
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseForbidden
 from django.utils import timezone
 from django.utils.decorators import method_decorator
+from django.utils import six
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
 
@@ -28,6 +30,10 @@ from plata.shop.models import OrderPayment
 logger = logging.getLogger('plata.payment.paypal')
 
 csrf_exempt_m = method_decorator(csrf_exempt)
+
+
+def urlopen(*args, **kwargs):
+    return six.moves.urllib.urlopen(*args, **kwargs)
 
 
 class PaymentProcessor(ProcessorBase):
@@ -80,7 +86,7 @@ class PaymentProcessor(ProcessorBase):
     @csrf_exempt_m
     def ipn(self, request):
         if not request._read_started:
-            if 'windows-1252' in request.body:
+            if 'windows-1252' in request.body.decode('windows-1252', 'ignore'):
                 if request.encoding != 'windows-1252':
                     request.encoding = 'windows-1252'
         else:  # middleware (or something else?) has triggered request reading
@@ -124,7 +130,7 @@ class PaymentProcessor(ProcessorBase):
                 querystring = 'cmd=_notify-validate&%s' % (
                     request.POST.urlencode()
                 )
-                status = urllib2.urlopen(PP_URL, querystring).read()
+                status = urlopen(PP_URL, querystring).read()
 
                 if not status == "VERIFIED":
                     logger.error(
@@ -198,8 +204,8 @@ class PaymentProcessor(ProcessorBase):
 
                 return HttpResponse("Ok")
 
-        except Exception, e:
-            logger.error('IPN: Processing failure %s' % unicode(e))
+        except Exception as e:
+            logger.error('IPN: Processing failure %s' % e)
             raise
         else:
             logger.warning('IPN received without POST parameters')

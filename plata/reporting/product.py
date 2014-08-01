@@ -1,3 +1,5 @@
+from __future__ import absolute_import, unicode_literals
+
 from collections import defaultdict
 
 from django.db.models import Sum
@@ -34,7 +36,7 @@ def product_xls():
         capfirst(_('stock')),
     ]
     titles.extend(
-        unicode(name) for key, name in StockTransaction.TYPE_CHOICES)
+        '%s' % row[1] for row in StockTransaction.TYPE_CHOICES)
 
     data = []
 

@@ -1,3 +1,5 @@
+from __future__ import absolute_import, unicode_literals
+
 from functools import wraps
 import logging
 
@@ -49,7 +51,7 @@ def order_cart_validates(order, shop, request, **kwargs):
 
     try:
         order.validate(order.VALIDATE_CART)
-    except ValidationError, e:
+    except ValidationError as e:
         for message in e.messages:
             messages.error(request, message)
         return HttpResponseRedirect(
@@ -64,7 +66,7 @@ def order_cart_warnings(order, shop, request, **kwargs):
 
     try:
         order.validate(order.VALIDATE_CART)
-    except ValidationError, e:
+    except ValidationError as e:
         for message in e.messages:
             messages.warning(request, message)
 

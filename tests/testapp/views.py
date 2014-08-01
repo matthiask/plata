@@ -32,7 +32,7 @@ def product_detail(request, pk):
             try:
                 order.modify_item(product, form.cleaned_data.get('quantity'))
                 messages.success(request, _('The cart has been updated.'))
-            except forms.ValidationError, e:
+            except forms.ValidationError as e:
                 if e.code == 'order_sealed':
                     [messages.error(request, msg) for msg in e.messages]
                 else:

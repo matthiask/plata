@@ -1,3 +1,5 @@
+from __future__ import absolute_import, unicode_literals
+
 import datetime
 import logging
 import re
@@ -6,6 +8,7 @@ import simplejson as json
 from django import forms
 from django.db import models
 from django.utils.dateparse import parse_date, parse_datetime, parse_time
+from django.utils import six
 from django.utils.functional import curry
 from django.utils.translation import ugettext_lazy as _
 
@@ -23,7 +26,7 @@ CurrencyField = curry(
     models.CharField,
     _('currency'),
     max_length=3,
-    choices=zip(plata.settings.CURRENCIES, plata.settings.CURRENCIES),
+    choices=list(zip(plata.settings.CURRENCIES, plata.settings.CURRENCIES)),
 )
 
 
@@ -59,7 +62,7 @@ _PATTERNS = [
 
 def json_decode_hook(data):
     for key, value in list(data.items()):
-        if not isinstance(value, basestring):
+        if not isinstance(value, six.string_types):
             continue
 
         for regex, fns in _PATTERNS:
@@ -97,16 +100,13 @@ class JSONFormField(forms.fields.CharField):
         return super(JSONFormField, self).clean(value, *args, **kwargs)
 
 
-class JSONField(models.TextField):
+class JSONField(six.with_metaclass(models.SubfieldBase, models.TextField)):
     """
     TextField which transparently serializes/unserializes JSON objects
 
     See:
     http://www.djangosnippets.org/snippets/1478/
     """
-
-    # Used so to_python() is called
-    __metaclass__ = models.SubfieldBase
 
     formfield = JSONFormField
 
@@ -115,7 +115,7 @@ class JSONField(models.TextField):
 
         if isinstance(value, dict):
             return value
-        elif isinstance(value, basestring):
+        elif isinstance(value, six.string_types):
             # Avoid asking the JSON decoder to handle empty values:
             if not value:
                 return {}
@@ -159,7 +159,7 @@ class JSONField(models.TextField):
                 value, use_decimal=True,
                 default=json_encode_default)
 
-        assert isinstance(value, basestring)
+        assert isinstance(value, six.string_types)
 
         return value
 

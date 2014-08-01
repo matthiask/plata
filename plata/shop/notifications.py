@@ -65,7 +65,7 @@ A real-world example follows::
         weak=False)
 """
 
-from __future__ import with_statement
+from __future__ import absolute_import, unicode_literals
 
 import contextlib
 from io import BytesIO

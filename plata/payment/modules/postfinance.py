@@ -11,6 +11,8 @@ Needs the following settings to work correctly::
         }
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from decimal import Decimal
 from hashlib import sha1
 import locale
@@ -112,13 +114,13 @@ class PaymentProcessor(ProcessorBase):
             'mode': POSTFINANCE['LIVE'] and 'prod' or 'test',
         }
 
-        form_params['SHASign'] = sha1(u''.join((
+        form_params['SHASign'] = sha1((''.join((
             form_params['orderID'],
             form_params['amount'],
             form_params['currency'],
             form_params['PSPID'],
             POSTFINANCE['SHA1_IN'],
-        ))).hexdigest()
+        ))).encode('utf-8')).hexdigest()
 
         return self.shop.render(request, 'payment/%s_form.html' % self.key, {
             'order': order,
@@ -152,7 +154,7 @@ class PaymentProcessor(ProcessorBase):
                 logger.error('IPN: Missing data in %s' % parameters_repr)
                 return HttpResponseForbidden('Missing data')
 
-            sha1_source = u''.join((
+            sha1_source = ''.join((
                 orderID,
                 currency,
                 amount,
@@ -166,7 +168,7 @@ class PaymentProcessor(ProcessorBase):
                 POSTFINANCE['SHA1_OUT'],
             ))
 
-            sha1_out = sha1(sha1_source).hexdigest()
+            sha1_out = sha1(sha1_source.encode('utf-8')).hexdigest()
 
             if sha1_out.lower() != SHASIGN.lower():
                 logger.error('IPN: Invalid hash in %s' % parameters_repr)
@@ -224,6 +226,6 @@ class PaymentProcessor(ProcessorBase):
                 self.order_paid(order, payment=payment, request=request)
 
             return HttpResponse('OK')
-        except Exception, e:
-            logger.error('IPN: Processing failure %s' % unicode(e))
+        except Exception as e:
+            logger.error('IPN: Processing failure %s' % e)
             raise

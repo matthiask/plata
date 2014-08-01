@@ -1,3 +1,5 @@
+from __future__ import absolute_import, unicode_literals
+
 from django import forms, template
 from django.db.models import ObjectDoesNotExist
 from django.template.loader import render_to_string

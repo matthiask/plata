@@ -1,3 +1,5 @@
+from __future__ import absolute_import, unicode_literals
+
 from django.dispatch import Signal
 
 #: Emitted upon contact creation. Receives the user and contact instance

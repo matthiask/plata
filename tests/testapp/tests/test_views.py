@@ -1,3 +1,5 @@
+from __future__ import absolute_import, unicode_literals
+
 from io import BytesIO
 import os
 import re
@@ -10,7 +12,7 @@ from django.conf import settings
 try:  # pragma: no cover
   from django.contrib.auth import get_user_model
   User = get_user_model()
-except ImportError, e:
+except ImportError:
   from django.contrib.auth.models import User
 
 from django.core import mail
@@ -377,13 +379,13 @@ class ViewTest(PlataTest):
         from plata.payment.modules import paypal
         import cgi
         def mock_urlopen(*args, **kwargs):
-            qs = cgi.parse_qs(args[1].encode('ascii'))
+            qs = cgi.parse_qs(args[1])
             self.assertEqual(qs['cmd'][0], '_notify-validate')
-            for k, v in paypal_ipn_data.iteritems():
-                self.assertEqual(unicode(qs[k][0], 'utf-8'), v)
-            s = BytesIO('VERIFIED')
+            for k, v in paypal_ipn_data.items():
+                self.assertEqual('%s' % qs[k][0], v)
+            s = BytesIO(b'VERIFIED')
             return s
-        paypal.urllib2.urlopen = mock_urlopen
+        paypal.urlopen = mock_urlopen
 
         shop = plata.shop_instance()
         request = get_request()
@@ -415,7 +417,7 @@ class ViewTest(PlataTest):
                 '/payment/paypal/ipn/',
                 dict(
                     map(
-                        lambda (k,v): (k, v.encode('windows-1252')),
+                        lambda k, v: (k, v.encode('windows-1252')),
                         dict(paypal_ipn_data, charset='windows-1252').items()
                     )
                 ),
@@ -583,7 +585,7 @@ class ViewTest(PlataTest):
         contact = Contact.objects.get()
         # First name should be updated in checkout processing
         self.assertEqual(contact.billing_first_name, 'Fritz')
-        self.assertEqual(unicode(contact), 'else@example.com') # Username
+        self.assertEqual('%s' % contact, 'else@example.com')  # Username
 
         # Order should be assigned to contact
         self.assertEqual(Order.objects.count(), 1)

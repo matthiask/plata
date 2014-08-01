@@ -1,3 +1,5 @@
+from __future__ import absolute_import, unicode_literals
+
 from datetime import date, datetime
 from decimal import Decimal
 from io import BytesIO
@@ -7,7 +9,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.core.serializers import serialize
 from django.db.models import Q
-from django.utils import timezone
+from django.utils import six, timezone
 
 from pdfdocument.document import PDFDocument
 
@@ -396,7 +398,7 @@ class ModelTest(PlataTest):
 
         try:
             d.validate(order)
-        except ValidationError, e:
+        except ValidationError as e:
             self.assertEqual(len(e.messages), 2)
 
         d.is_active = True
@@ -404,7 +406,7 @@ class ModelTest(PlataTest):
 
         try:
             d.validate(order)
-        except ValidationError, e:
+        except ValidationError as e:
             self.assertEqual(len(e.messages), 2)
 
     def test_11_multiple_discounts(self):
@@ -954,16 +956,16 @@ class ModelTest(PlataTest):
         order = self.create_order()
         orderitem = self.create_orderitem(product, order)
 
-        self.assertEqual(unicode(orderitem),
-                         u'1 of Test Product')
+        self.assertEqual('%s' % orderitem,
+                         '1 of Test Product')
         orderstatus = OrderStatus.objects.create(order=order, status=Order.PAID)
-        self.assertEqual(unicode(orderstatus),
-                         u'Status Order has been paid for O-000000001')
+        self.assertEqual('%s' % orderstatus,
+                         'Status Order has been paid for O-000000001')
         orderpayment = OrderPayment.objects.create(
             order=order, currency=100, amount=1,
             authorized=timezone.now())
-        self.assertEqual(unicode(orderpayment),
-                         u'Authorized of 100 1.00 for O-000000001')
+        self.assertEqual('%s' % orderpayment,
+                         'Authorized of 100 1.00 for O-000000001')
 
     def test_28_order_items_without_products(self):
         """Test order items where the product foreign key is NULL"""
@@ -1076,6 +1078,6 @@ class ModelTest(PlataTest):
 
         # Test the value_to_string method of the model field
         serialized = serialize('json', Order.objects.all())
-        self.assertTrue(isinstance(serialized, basestring))
+        self.assertTrue(isinstance(serialized, six.string_types))
         self.assertTrue('"model": "shop.order"' in serialized)
         self.assertTrue('\\"now_tz_with_ms\\"' in serialized)

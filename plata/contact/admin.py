@@ -1,3 +1,5 @@
+from __future__ import absolute_import, unicode_literals
+
 from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
@@ -20,7 +22,7 @@ class ContactAdmin(admin.ModelAdmin):
         }),
     )
     list_display = (
-        '__unicode__', 'billing_first_name', 'billing_last_name',
+        'user', 'billing_first_name', 'billing_last_name',
         'billing_city', 'created')
     list_filter = ('user__is_active',)
     ordering = ('-created',)

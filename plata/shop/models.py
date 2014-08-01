@@ -1,3 +1,5 @@
+from __future__ import absolute_import, unicode_literals
+
 from decimal import Decimal
 import logging
 import re
@@ -8,6 +10,7 @@ from django.core.urlresolvers import get_callable
 from django.db import models
 from django.db.models import F, ObjectDoesNotExist, Sum
 from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 from django_countries.fields import CountryField
@@ -19,6 +22,7 @@ from plata.fields import CurrencyField, JSONField
 logger = logging.getLogger('plata.shop.order')
 
 
+@python_2_unicode_compatible
 class TaxClass(models.Model):
     """
     Tax class, storing a tax rate
@@ -40,7 +44,7 @@ class TaxClass(models.Model):
         verbose_name = _('tax class')
         verbose_name_plural = _('tax classes')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -105,6 +109,7 @@ class BillingShippingAddress(models.Model):
         return ['%s%s' % (prefix, f) for f in cls.ADDRESS_FIELDS]
 
 
+@python_2_unicode_compatible
 class Order(BillingShippingAddress):
     """The main order model. Used for carts and orders alike."""
     #: Order object is a cart.
@@ -191,7 +196,7 @@ class Order(BillingShippingAddress):
         verbose_name = _('order')
         verbose_name_plural = _('orders')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.order_id
 
     def save(self, *args, **kwargs):
@@ -526,6 +531,7 @@ def validate_order_currencies(order):
 Order.register_validator(validate_order_currencies, Order.VALIDATE_BASE)
 
 
+@python_2_unicode_compatible
 class OrderItem(models.Model):
     """Single order line item"""
 
@@ -581,8 +587,8 @@ class OrderItem(models.Model):
         verbose_name = _('order item')
         verbose_name_plural = _('order items')
 
-    def __unicode__(self):
-        return _(u'%(quantity)s of %(name)s') % {
+    def __str__(self):
+        return _('%(quantity)s of %(name)s') % {
             'quantity': self.quantity,
             'name': self.name,
         }
@@ -628,6 +634,7 @@ class OrderItem(models.Model):
             return self.discounted_subtotal_excl_tax
 
 
+@python_2_unicode_compatible
 class OrderStatus(models.Model):
     """
     Order status
@@ -647,8 +654,8 @@ class OrderStatus(models.Model):
         verbose_name = _('order status')
         verbose_name_plural = _('order statuses')
 
-    def __unicode__(self):
-        return _(u'Status %(status)s for %(order)s') % {
+    def __str__(self):
+        return _('Status %(status)s for %(order)s') % {
             'status': self.get_status_display(),
             'order': self.order,
         }
@@ -675,6 +682,7 @@ class OrderPaymentManager(models.Manager):
         return self.filter(authorized__isnull=False)
 
 
+@python_2_unicode_compatible
 class OrderPayment(models.Model):
     """
     Order payment
@@ -738,12 +746,12 @@ class OrderPayment(models.Model):
 
     objects = OrderPaymentManager()
 
-    def __unicode__(self):
+    def __str__(self):
         return _(
-            u'%(authorized)s of %(currency)s %(amount).2f for %(order)s'
+            '%(authorized)s of %(currency)s %(amount).2f for %(order)s'
         ) % {
             'authorized': (
-                self.authorized and _(u'Authorized') or _(u'Not authorized')),
+                self.authorized and _('Authorized') or _('Not authorized')),
             'currency': self.currency,
             'amount': self.amount,
             'order': self.order,
@@ -773,6 +781,7 @@ class OrderPayment(models.Model):
     delete.alters_data = True
 
 
+@python_2_unicode_compatible
 class PriceBase(models.Model):
     """
     Price for a given product, currency, tax class and time period
@@ -802,8 +811,8 @@ class PriceBase(models.Model):
     tax_class = models.ForeignKey(
         TaxClass, verbose_name=_('tax class'), related_name='+')
 
-    def __unicode__(self):
-        return u'%s %.2f' % (self.currency, self.unit_price)
+    def __str__(self):
+        return '%s %.2f' % (self.currency, self.unit_price)
 
     def __cmp__(self, other):
         return int(

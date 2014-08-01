@@ -6,7 +6,7 @@ from django.test import TestCase
 try:  # pragma: no cover
   from django.contrib.auth import get_user_model
   User = get_user_model()
-except ImportError, e:
+except ImportError:
   from django.contrib.auth.models import User
 
 from django.contrib.auth.models import AnonymousUser
@@ -56,11 +56,11 @@ class PlataTest(TestCase):
     def assertRaisesWithCode(self, exception, fn, code):
         try:
             fn()
-        except exception, e:
+        except exception as e:
             if e.code == code:
                 return True
             raise
-        raise Exception, '%s did not raise %s' % (fn, exception)
+        raise Exception('%s did not raise %s' % (fn, exception))
 
     def setUp(self):
         plata.settings.PLATA_PRICE_INCLUDES_TAX = True

@@ -16,12 +16,15 @@ Follow these steps to enable this module:
   into account ``items_in_stock``.
 """
 
+from __future__ import absolute_import, unicode_literals
+
 from datetime import timedelta
 
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Sum, Q
 from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _, ugettext
 
 import plata
@@ -44,6 +47,7 @@ class PeriodManager(models.Manager):
                     'Automatically created because no period existed yet.'))
 
 
+@python_2_unicode_compatible
 class Period(models.Model):
     """
     A period in which stock changes are tracked
@@ -70,7 +74,7 @@ class Period(models.Model):
 
     objects = PeriodManager()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -162,6 +166,7 @@ class StockTransactionManager(models.Manager):
                 **kwargs)
 
 
+@python_2_unicode_compatible
 class StockTransaction(models.Model):
     """
     Stores stock transactions transactionally :-)
@@ -268,8 +273,8 @@ class StockTransaction(models.Model):
 
     objects = StockTransactionManager()
 
-    def __unicode__(self):
-        return u'%s %s of %s' % (
+    def __str__(self):
+        return '%s %s of %s' % (
             self.change,
             self.get_type_display(),
             self.product)

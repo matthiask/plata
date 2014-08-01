@@ -1,3 +1,5 @@
+from __future__ import absolute_import, unicode_literals
+
 from datetime import date
 from decimal import Decimal
 import random
@@ -5,6 +7,7 @@ import random
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import ObjectDoesNotExist, Q
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 import plata
@@ -12,6 +15,7 @@ from plata.fields import CurrencyField, JSONField
 from plata.shop.models import TaxClass, Order
 
 
+@python_2_unicode_compatible
 class DiscountBase(models.Model):
     """Base class for discounts and applied discounts"""
 
@@ -64,7 +68,7 @@ class DiscountBase(models.Model):
     class Meta:
         abstract = True
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def save(self, *args, **kwargs):
