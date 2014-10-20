@@ -556,7 +556,7 @@ class OrderItem(models.Model):
         TaxClass, verbose_name=_('tax class'),
         blank=True, null=True, on_delete=models.SET_NULL)
 
-    is_sale = models.BooleanField(_('is sale'))
+    is_sale = models.BooleanField(_('is sale'), default=False)
 
     _line_item_price = models.DecimalField(
         _('line item price'),
@@ -820,7 +820,6 @@ class PriceBase(models.Model):
         item._unit_tax = self.unit_tax
         item.tax_rate = self.tax_class.rate
         item.tax_class = self.tax_class
-        item.is_sale = False  # Hardcoded; override in your own price class
 
     @property
     def unit_tax(self):
