@@ -10,7 +10,7 @@ from django.db.models import F, ObjectDoesNotExist, Sum
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 
-from django_countries import CountryField
+from django_countries.fields import CountryField
 
 import plata
 from plata.fields import CurrencyField, JSONField
