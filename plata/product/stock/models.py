@@ -18,9 +18,9 @@ Follow these steps to enable this module:
 
 from datetime import timedelta
 
-from django.core.exceptions import ImproperlyConfigured, ValidationError
+from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Sum, Q, signals
+from django.db.models import Sum, Q
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _, ugettext
 
@@ -162,6 +162,10 @@ class StockTransactionManager(models.Manager):
                 **kwargs)
 
 
+def current_period():
+    return Period.objects.current().id
+
+
 class StockTransaction(models.Model):
     """
     Stores stock transactions transactionally :-)
@@ -223,7 +227,7 @@ class StockTransaction(models.Model):
     )
 
     period = models.ForeignKey(
-        Period, default=Period.objects.current,
+        Period, default=current_period,
         related_name='stock_transactions', verbose_name=_('period'))
     created = models.DateTimeField(_('created'), default=timezone.now)
     product = models.ForeignKey(
@@ -302,25 +306,3 @@ def validate_order_stock_available(order):
             raise ValidationError(
                 _('Not enough stock available for %s.') % item.product,
                 code='insufficient_stock')
-
-
-if plata.settings.PLATA_STOCK_TRACKING:
-    product_model = plata.product_model()
-    try:
-        product_model._meta.get_field('items_in_stock')
-    except models.FieldDoesNotExist:
-        raise ImproperlyConfigured(
-            'Product model %r must have a field named `items_in_stock`' % (
-                product_model,
-            ))
-
-    signals.post_delete.connect(
-        update_items_in_stock,
-        sender=StockTransaction)
-    signals.post_save.connect(
-        update_items_in_stock,
-        sender=StockTransaction)
-
-    Order.register_validator(
-        validate_order_stock_available,
-        Order.VALIDATE_CART)
