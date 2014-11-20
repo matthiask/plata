@@ -811,6 +811,7 @@ class SinglePageCheckoutShop(Shop):
 
         context = {
             'form': form,
+            'order': self.order_from_request(request),
         }
 
         return self.render(
