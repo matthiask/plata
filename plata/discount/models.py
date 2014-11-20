@@ -175,7 +175,16 @@ class DiscountBase(models.Model):
                 item.discounted_subtotal_excl_tax / items_subtotal * discount)
 
     def _apply_means_of_payment(self, order, items):
-        self._apply_amount_discount(order, items, tax_included=False)
+
+        discount = self.value
+        items_subtotal = order.subtotal
+
+        # Don't allow bigger discounts than the items subtotal
+        if discount > items_subtotal:
+            self.remaining = discount - items_subtotal
+            self.save()
+            discount = items_subtotal
+
 
     def _apply_percentage_discount(self, order, items):
         """
