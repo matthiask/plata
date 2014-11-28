@@ -177,7 +177,7 @@ class DiscountBase(models.Model):
     def _apply_means_of_payment(self, order, items):
 
         discount = self.value
-        items_subtotal = order.subtotal
+        items_subtotal = order.subtotal if order.price_includes_tax else order.subtotal + order.items_tax
 
         # Don't allow bigger discounts than the items subtotal
         if discount > items_subtotal:
