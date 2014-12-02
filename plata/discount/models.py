@@ -176,14 +176,41 @@ class DiscountBase(models.Model):
 
     def _apply_means_of_payment(self, order, items):
 
+        items_tax = sum(
+                (item._line_item_tax for item in items),
+                Decimal('0.00')
+            )
+
+        for item in items:
+            items_tax
+
         discount = self.value
-        items_subtotal = order.subtotal if order.price_includes_tax else order.subtotal + order.items_tax
+        items_subtotal = order.subtotal if order.price_includes_tax else order.subtotal + items_tax
 
         # Don't allow bigger discounts than the items subtotal
+
         if discount > items_subtotal:
             self.remaining = discount - items_subtotal
             self.save()
             discount = items_subtotal
+
+        remaining = discount
+        for item in items:
+            if  order.price_includes_tax:
+                items_subtotal_inkl_taxes = item.subtotal
+                items_subtotal_excl_taxes = item._unit_price * self.quantity
+            else:
+                items_subtotal_inkl_taxes = item.subtotal + item._line_item_tax
+                items_subtotal_excl_taxes = item.subtotal
+
+            if remaining >= items_subtotal_inkl_taxes - item._line_item_discount:
+                if item._line_item_discount < items_subtotal_inkl_taxes:
+                    item._line_item_discount += (items_subtotal_inkl_taxes - item._line_item_discount)
+                    remaining -= items_subtotal_inkl_taxes
+
+            else:
+                item._line_item_discount += remaining
+                remaining = 0
 
 
     def _apply_percentage_discount(self, order, items):
