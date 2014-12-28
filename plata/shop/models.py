@@ -113,6 +113,8 @@ class Order(BillingShippingAddress):
     CHECKOUT = 20
     #: Order has been confirmed, but it not (completely) paid for yet.
     CONFIRMED = 30
+    #: For invoice payment methods, when waiting for the money
+    PENDING = 35
     #: Order has been completely paid for.
     PAID = 40
     #: Order has been completed. Plata itself never sets this state,
@@ -123,6 +125,7 @@ class Order(BillingShippingAddress):
         (CART, _('Is a cart')),
         (CHECKOUT, _('Checkout process started')),
         (CONFIRMED, _('Order has been confirmed')),
+        (PENDING, _('Order is pending payment')),
         (PAID, _('Order has been paid')),
         (COMPLETED, _('Order has been completed')),
         )
