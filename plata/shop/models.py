@@ -731,6 +731,14 @@ class OrderPayment(models.Model):
         _('data'), blank=True,
         help_text=_('JSON-encoded additional data about the order payment.'))
 
+    transaction_fee = models.DecimalField(
+        _('transaction fee'),
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text=_('Fee charged by the payment processor.'))
+
     class Meta:
         ordering = ('-timestamp',)
         verbose_name = _('order payment')
