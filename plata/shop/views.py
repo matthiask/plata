@@ -190,6 +190,13 @@ class Shop(object):
     def get_new_url(self):
         return url(r'^order/new/$', self.order_new, name='plata_order_new')
 
+    def get_pending_url(self):
+        return url(
+            r'^order/payment_pending/$',
+            self.order_payment_pending,
+            name='plata_order_payment_pending',
+        )
+
     def get_shop_urls(self):
         return patterns(
             '',
@@ -200,6 +207,7 @@ class Shop(object):
             self.get_success_url(),
             self.get_failure_url(),
             self.get_new_url(),
+            self.get_pending_url(),
         )
 
     def get_payment_urls(self):
@@ -666,3 +674,25 @@ class Shop(object):
             return HttpResponseRedirect(next)
 
         return HttpResponseRedirect('/')
+
+    def order_payment_pending(self, request):
+        """
+        Handles order successes for invoice payments where payment is still pending.
+        """
+        order = self.order_from_request(request)
+
+        if not order:
+            return self.order_new(request)
+
+        self.set_order_on_request(request, order=None)
+
+        return self.render(
+            request,
+            self.success_template,
+            self.get_context(
+                request, {
+                    'order': order,
+                    'progress': 'pending',
+                }
+            )
+        )

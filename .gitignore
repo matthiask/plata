@@ -18,3 +18,4 @@ plata.log
 /tests/.coverage
 /tests/.tox
 /tests/htmlcov
+.idea/*
