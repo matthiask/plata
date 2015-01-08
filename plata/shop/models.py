@@ -137,7 +137,8 @@ class Order(BillingShippingAddress):
         blank=True,
         null=True,
         verbose_name=_('user'),
-        related_name='orders'
+        related_name='orders',
+        on_delete=models.SET_NULL,
     )
     language_code = models.CharField(
         _('language'), max_length=10, default='', blank=True)
@@ -154,34 +155,34 @@ class Order(BillingShippingAddress):
 
     items_subtotal = models.DecimalField(
         _('subtotal'),
-        max_digits=18, decimal_places=10, default=Decimal('0.00'))
+        max_digits=18, decimal_places=2, default=Decimal('0.00'))
     items_discount = models.DecimalField(
         _('items discount'),
-        max_digits=18, decimal_places=10, default=Decimal('0.00'))
+        max_digits=18, decimal_places=2, default=Decimal('0.00'))
     items_tax = models.DecimalField(
         _('items tax'),
-        max_digits=18, decimal_places=10, default=Decimal('0.00'))
+        max_digits=18, decimal_places=2, default=Decimal('0.00'))
 
     shipping_method = models.CharField(
         _('shipping method'),
         max_length=100, blank=True)
     shipping_cost = models.DecimalField(
         _('shipping cost'),
-        max_digits=18, decimal_places=10, blank=True, null=True)
+        max_digits=18, decimal_places=2, blank=True, null=True)
     shipping_discount = models.DecimalField(
         _('shipping discount'),
-        max_digits=18, decimal_places=10, blank=True, null=True)
+        max_digits=18, decimal_places=2, blank=True, null=True)
     shipping_tax = models.DecimalField(
         _('shipping tax'),
-        max_digits=18, decimal_places=10, default=Decimal('0.00'))
+        max_digits=18, decimal_places=2, default=Decimal('0.00'))
 
     total = models.DecimalField(
         _('total'),
-        max_digits=18, decimal_places=10, default=Decimal('0.00'))
+        max_digits=18, decimal_places=2, default=Decimal('0.00'))
 
     paid = models.DecimalField(
         _('paid'),
-        max_digits=18, decimal_places=10, default=Decimal('0.00'),
+        max_digits=18, decimal_places=2, default=Decimal('0.00'),
         help_text=_('This much has been paid already.'))
 
     notes = models.TextField(_('notes'), blank=True)
@@ -245,7 +246,7 @@ class Order(BillingShippingAddress):
         """
         Returns the order subtotal.
         """
-        # TODO: What about shipping?
+        #TODO: What about shipping?
         return sum(
             (item.subtotal for item in self.items.all()),
             Decimal('0.00')).quantize(Decimal('0.00'))
@@ -255,7 +256,7 @@ class Order(BillingShippingAddress):
         """
         Returns the discount total.
         """
-        # TODO: What about shipping?
+        #TODO: What about shipping?
         return (
             sum(
                 (item.subtotal for item in self.items.all()),
@@ -850,6 +851,6 @@ class PriceBase(models.Model):
 
     @property
     def unit_price(self):
-        # TODO Fix this. We _should_ use shop.price_includes_tax here,
+        #TODO Fix this. We _should_ use shop.price_includes_tax here,
         # but there's no request and no order around...
         return self.unit_price_incl_tax
