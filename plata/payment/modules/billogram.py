@@ -55,9 +55,9 @@ class PaymentProcessor(ProcessorBase):
 
         except billogram_api.BillogramExceptions.ObjectNotFoundError:
             name = ' '.join((order.billing_first_name,
-                              order.billing_last_name))
+                             order.billing_last_name))
             address = all((name, order.billing_address, order.billing_city,
-                           order.billing_zip_code, order.billing_country))
+                           order.billing_zip_code, order.billing_country.code))
             delivery_address = all((order.shipping_first_name,
                                     order.shipping_last_name,
                                     order.shipping_address,
@@ -74,8 +74,15 @@ class PaymentProcessor(ProcessorBase):
                 "company_type": "%sindividual" % ('foreign ' if order.billing_country.code != 'SE' else ''),
             }
             if address:
+                billing_address = order.billing_address.split('\n', 1)
+                if len(billing_address) > 1:
+                    careof, street_address = billing_address
+                    #todo strip any c/o from careof, it will be doubled
+                else:
+                    careof, street_address = '', billing_address[0]
                 customer_data['address'] = {
-                    "street_address": order.billing_address,
+                    "street_address": street_address,
+                    "careof": careof,
                     "city": order.billing_city,
                     "zipcode": order.billing_zip_code,
                     "country": order.billing_country.code,
@@ -85,7 +92,7 @@ class PaymentProcessor(ProcessorBase):
                 customer_data["delivery_address"] = {
                     "name": "%s %s" % (order.shipping_first_name,
                                        order.shipping_last_name),
-                    "street_address": order.shipping_address,
+                    "street_address": order.shipping_address,  #todo split this too
                     "city": order.shipping_city,
                     "zipcode": order.shipping_zip_code,
                     "country": order.shipping_country.code,
@@ -109,7 +116,7 @@ class PaymentProcessor(ProcessorBase):
                 "price": str(item.product.get_price(orderitem=item).unit_price_excl_tax),
                 "vat": int(item.tax_rate),
             } for item in order.items.all()],
-            "invoice_fee": '18.87',
+            "invoice_fee": str(order.shipping_cost),  #todo use a real invoice fee field
         }
         if 'localhost' not in request.get_host():  # Billogram does not allow localhost to be sent in
             billogram_data["callbacks"] = {
@@ -127,6 +134,8 @@ class PaymentProcessor(ProcessorBase):
 
         try:
             billogram = self.api.billogram.create_and_send(billogram_data, method)
+            order.shipping_tax_rate = billogram.invoice_fee_vat
+            order.recalculate_total(save=True)
         except Exception, e:
             logger.error(str(e))
             # message error
@@ -155,11 +164,12 @@ class PaymentProcessor(ProcessorBase):
         event_type = data['event']['type']
         if event_type == 'Payment':
             amount = decimal.Decimal(data['event']['data']['amount'])
-            banking_amount = decimal.Decimal(data['event']['data']['banking_amount'])
-            #payment.status
             payment.amount = amount
-            payment.transaction_fee = amount - banking_amount
-#            payment.payment_method = payment_details.type
+            banking_amount = decimal.Decimal(data['event']['data']['banking_amount'])
+            if banking_amount is not None:
+                payment.transaction_fee = amount - banking_amount
+#  payment.status
+#  payment.payment_method = payment_details.type
 
         elif event_type == 'BillogramSent':
             payment.transaction_id = data['event']['data']['invoice_no']
