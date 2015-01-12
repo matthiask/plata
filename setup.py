@@ -35,10 +35,6 @@ setup(
     },
     install_requires=[
         'Django>=1.4.2',
-        'simplejson>=3.0',
-        'openpyxl>=1.6',
-        'reportlab>=2.6',
-        'pdfdocument>=1.6',
         'django-countries>=1.5',
         'pytz',
     ],
