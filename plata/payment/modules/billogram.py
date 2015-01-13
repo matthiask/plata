@@ -134,6 +134,8 @@ class PaymentProcessor(ProcessorBase):
 
         try:
             billogram = self.api.billogram.create_and_send(billogram_data, method)
+            payment.transaction_id = billogram.id
+            payment.save()
             order.shipping_tax_rate = billogram.invoice_fee_vat
             order.recalculate_total(save=True)
         except Exception, e:
@@ -150,7 +152,8 @@ class PaymentProcessor(ProcessorBase):
     @require_POST_m
     def callback(self, request):
         data = json.loads(request.body)
-        if data['signature'] != hashlib.md5(data['callback_id']+settings.BILLOGRAM_SIGN_KEY).hexdigest():
+        if data['signature'] != hashlib.md5(data['callback_id'] + \
+                settings.BILLOGRAM_SIGN_KEY).hexdigest():
             return http.HttpResponseBadRequest()
 
         order_id, payment_id = data['custom'].split('-')
@@ -159,28 +162,26 @@ class PaymentProcessor(ProcessorBase):
             return http.HttpResponse('OK')
 
         payment = order.payments.get(pk=payment_id)
-        payment.data.setdefault('list', [])  # plata JSONField needs dict as root obj,,,
-        payment.data['list'].append(data)
+        payment.data.setdefault('cb_data_list', []).append(data)  # plata JSONField needs dict as root obj,,,
         event_type = data['event']['type']
         if event_type == 'Payment':
             amount = decimal.Decimal(data['event']['data']['amount'])
             payment.amount = amount
-            banking_amount = decimal.Decimal(data['event']['data']['banking_amount'])
-            if banking_amount is not None:
-                payment.transaction_fee = amount - banking_amount
+            try:
+                payment.transaction_fee = amount - decimal.Decimal(
+                    data['event']['data']['banking_amount']
+                )
+            except TypeError:
+                pass
 #  payment.status
 #  payment.payment_method = payment_details.type
 
-        elif event_type == 'BillogramSent':
-            payment.transaction_id = data['event']['data']['invoice_no']
         elif event_type == 'CustomerMessage':
             payment.notes = data['event']['data']['message']
-
-        #todo release stock if cancelled or credited
-
-        if data['billogram']['state'] == 'Paid':
+        elif event_type == 'BillogramEnded' and data['billogram']['state'] == 'Paid':
              payment.authorized = timezone.now()
              payment.status = plata.shop.models.OrderPayment.AUTHORIZED
+        #todo release stock if cancelled or credited
         payment.save()
         order = order.reload()
         if not order.balance_remaining:
