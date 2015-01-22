@@ -54,7 +54,7 @@ class PaymentProcessor(ProcessorBase):
         #todo log
         payment = self.create_pending_payment(order)
         self.reserve_stock_item(order, payment)
-        locale_code = (order.language_code or settings.LANGUAGE_CODE[:2]).upper()
+        locale_code = (order.language_code or settings.LANGUAGE_CODE).upper()[:2]
         if locale_code not in ('SV', 'FI', 'EN'):
             locale_code = 'EN'
         pay_response = self.payson_api.pay(
