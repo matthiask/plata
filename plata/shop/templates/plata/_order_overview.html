@@ -2,9 +2,6 @@
 {% with order.addresses as addresses %}
 <h2>{% trans "Billing address" %}</h2>
 {% with addresses.billing as address %}{% include "plata/_address.html" %}{% endwith %}
-
-<h2>{% trans "Shipping address" %}</h2>
-{% with addresses.shipping as address %}{% include "plata/_address.html" %}{% endwith %}
 {% endwith %}
 
 <h2>{% trans "Order items" %}</h2>
