@@ -89,9 +89,9 @@ table td {
 <body>
 
 <div id="navigation">
-<a href="/"><span>{% trans "Home" %}</span></a>
-<a href="/products/"><span>{% trans "Products" %}</span></a>
-<a href="/cart/"><span>{% trans "Cart" %}</span></a>
+<a href="{% url "plata_home" %}"><span>{% trans "Home" %}</span></a>
+<a href="{% url "plata_product_list" %}"><span>{% trans "Products" %}</span></a>
+<a href="{% url "plata_shop_cart" %}"><span>{% trans "Cart" %}</span></a>
 <br style="clear:left" />
 </div>
 
