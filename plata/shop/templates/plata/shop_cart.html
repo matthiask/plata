@@ -10,6 +10,11 @@
 {% else %}
 <h1>{% trans "Cart" %}</h1>
 
+<p>
+You may add products by going to the <a href="{% url "plata_product_list" %}"> products list</a>.
+To proceed to payment, select the "Checkout" button below.
+</p>
+
 <form method="post" action=".">{% csrf_token %}{{ orderitemformset.management_form }}
 
 {% form_errors orderitemformset %}
