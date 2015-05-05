@@ -21,6 +21,12 @@ body {
     float: left;
 }
 
+.txt {
+    color: #fff;
+    float: left;
+    padding: 5px 10px;
+}
+
 #navigation a span {
     display: block;
     padding: 5px 10px;
@@ -96,6 +102,8 @@ display:none;
 <a href="{% url "plata_home" %}"><span>{% trans "Home" %}</span></a>
 <a href="{% url "plata_product_list" %}"><span>{% trans "Products" %}</span></a>
 <a href="{% url "plata_shop_cart" %}"><span>{% trans "Cart" %}</span></a>
+<a href="{% url "dashboard" %}"><span>Dashboard</span></a>
+<div class="txt"> logged in as {{ user.email }}</div>
 <br style="clear:left" />
 </div>
 
@@ -112,36 +120,6 @@ display:none;
 {% endblock %}
 
 <hr />
-<a href="{% url "plata_shop_cart" %}">{% trans "Go to cart" %}</a>
-<hr />
-<h2>{% trans "That's what we know about you:" %}</h2>
-<table>
-    <tr>
-        <th>{% trans "User" %}</th>
-        <td>{{ user }}</td>
-    </tr>
-    <tr>
-        <th>{% trans "Contact" %}</th>
-        <td>{{ plata.contact }}</td>
-    </tr>
-    <tr>
-        <th>{% trans "Order" %}</th>
-        <td>
-            {{ plata.order }}, {{ plata.order.currency }} {{ plata.order.total|floatformat:2 }}
-            <ul>
-                {% for item in plata.order.items.all %}
-                <li><a href="{{ item.product.get_absolute_url }}">{{ item }}</a></li>
-                {% endfor %}
-            </ul>
-            {% if plata.order.id %}
-            {% url "plata_reporting_invoice_pdf" plata.order.id as invoice_url %}
-            {% if invoice_url %}<a href="{{ invoice_url }}">Invoice</a>{% endif %}
-            {% endif %}
-            {% url "plata_reporting_product_xls" as product_xls_url %}
-            {% if product_xls_url %}<a href="{{ product_xls_url }}">Products</a>{% endif %}
-        </td>
-    </tr>
-</table>
 
 </body>
 </html>
