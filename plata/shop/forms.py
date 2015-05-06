@@ -126,7 +126,7 @@ class DiscountForm(forms.Form):
 
 class ConfirmationForm(forms.Form):
     terms_and_conditions = forms.BooleanField(
-        label=_('I accept the terms and conditions.'),
+        label=_('I accept the terms and conditions (see Code of Conduct on "About" page of the conference").'),
         required=True)
 
     def __init__(self, *args, **kwargs):
