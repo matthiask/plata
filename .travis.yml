@@ -7,7 +7,7 @@ env:
   - REQ="Django>=1.8,<1.9"
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
-  - pip install -q $REQ simplejson==3.8.0 openpyxl==2.2.6 reportlab==3.2.0 pdfdocument==3.1 django-countries==3.3
+  - pip install -q $REQ -r requirements.txt --use-mirrors
   - python setup.py -q install
 # command to run tests, e.g. python setup.py test
 script: "cd tests && ./manage.py test testapp"
