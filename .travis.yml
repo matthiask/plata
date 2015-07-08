@@ -1,14 +1,18 @@
 language: python
 python:
-  - "2.7"
-  - "2.6"
+  - 2.7
+  - 2.6
 env:
-  - DJANGO_VERSION=1.4.0
   - DJANGO_VERSION=1.5.5
   - DJANGO_VERSION=1.6
+  - DJANGO_VERSION=1.7
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
   - pip install -q Django==$DJANGO_VERSION simplejson==3.3.1 openpyxl==1.6.2 reportlab==2.7 pdfdocument==1.6 django-countries==1.5 --use-mirrors
   - python setup.py -q install
 # command to run tests, e.g. python setup.py test
 script: "cd tests && ./manage.py test testapp"
+matrix:
+  exclude:
+    - python: 2.6
+      env: DJANGO_VERSION=1.7
