@@ -59,12 +59,19 @@ def shop_instance():
     return shop_instance_cache
 
 
+try:
+    from django.apps import apps
+    get_model = apps.get_model
+except ImportError:
+    # Django < 1.7
+    from django.db.models import loading
+    get_model = loading.get_model
+
 def product_model():
     """
     Return the product model defined by the ``PLATA_SHOP_PRODUCT`` setting.
     """
-    from django.db.models import loading
-    return loading.get_model(*settings.PLATA_SHOP_PRODUCT.split('.'))
+    return get_model(*settings.PLATA_SHOP_PRODUCT.split('.'))
 
 
 def stock_model():
@@ -75,5 +82,4 @@ def stock_model():
     """
     if not settings.PLATA_STOCK_TRACKING:
         return None
-    from django.db.models import loading
-    return loading.get_model(*settings.PLATA_STOCK_TRACKING_MODEL.split('.'))
+    return get_model(*settings.PLATA_STOCK_TRACKING_MODEL.split('.'))
