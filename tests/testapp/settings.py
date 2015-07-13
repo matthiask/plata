@@ -72,12 +72,12 @@ INSTALLED_APPS = (
     'django.contrib.admin',
 
     'testapp',
+    'plata.product.stock', # Accurate stock tracking, not required
     'plata',
     'plata.contact', # Not strictly required (contact model can be exchanged)
     'plata.discount',
     'plata.payment',
     'plata.product', # Does nothing
-    'plata.product.stock', # Accurate stock tracking, not required
     'plata.shop',
 )
 
