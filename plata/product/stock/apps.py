@@ -6,7 +6,6 @@ import plata
 from plata.product.stock.models import update_items_in_stock
 
 
-
 class PlataProductStockConfig(AppConfig):
     name = 'plata.product.stock'
     verbose_name = 'Plata stock product  module'
