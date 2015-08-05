@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from plata.discount.models import AppliedDiscount
 from plata.shop import models
 
+from .actions import export_as_csv_action
 
 class OrderItemInline(admin.TabularInline):
     model = models.OrderItem
@@ -96,6 +97,7 @@ class OrderAdmin(admin.ModelAdmin):
         return u', '.join(bits)
     additional_info.allow_tags = True
     additional_info.short_description = _('add. info')
+    actions = [export_as_csv_action("CSV Export")]
 
 
 class OrderPaymentAdmin(admin.ModelAdmin):
