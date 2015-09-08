@@ -132,7 +132,7 @@ class PaymentProcessor(ProcessorBase):
                 )
                 status = urlopen(PP_URL, querystring).read()
 
-                if not status == "VERIFIED":
+                if not status == b"VERIFIED":
                     logger.error(
                         'IPN: Received status %s, '
                         'could not verify parameters %s' % (
