@@ -104,6 +104,7 @@ class ViewTest(PlataTest):
             }), '/cart/')
 
         self.assertEqual(order.modify_item(p1, 0).quantity, 6)
+        self.assertEqual(order.items.count(), 2)
 
         self.assertRedirects(self.client.post('/cart/', {
             'checkout': True,
@@ -130,8 +131,12 @@ class ViewTest(PlataTest):
         # TODO test what happens when a product has been deleted from the
         # shop in the meantime (and orderitem.product = None)
 
+        # Refresh i1 and i2
+        i1 = order.modify_item(p1, 0)
+        i2 = order.modify_item(p2, 0)
+
         self.assertEqual(Order.objects.get().status, Order.CART)
-        self.assertRedirects(self.client.post('/cart/', {
+        response = self.client.post('/cart/', {
             'checkout': True,
 
             'items-INITIAL_FORMS': 2,
@@ -144,7 +149,8 @@ class ViewTest(PlataTest):
 
             'items-1-id': i2.id,
             'items-1-quantity': 5,
-            }), '/checkout/')
+            })
+        self.assertRedirects(response, '/checkout/')
         self.assertEqual(order.items.count(), 1)
 
         self.client.get('/checkout/')

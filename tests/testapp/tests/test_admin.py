@@ -23,7 +23,7 @@ class AdminTest(PlataTest):
         product_model = Product
         self.product_admin_url = '/admin/%s/%s/' % (
             product_model._meta.app_label,
-            product_model._meta.module_name,
+            product_model._meta.model_name,
             )
 
     def login(self):

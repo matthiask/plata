@@ -1,3 +1,3 @@
 #!/bin/sh
-coverage run --branch --include="*plata/plata*" ./manage.py test testapp
-coverage html
+venv/bin/coverage run --branch --include="*plata/plata*" ./manage.py test testapp
+venv/bin/coverage html

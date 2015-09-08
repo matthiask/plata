@@ -16,5 +16,4 @@ plata.log
 /MANIFEST
 /tests/venv
 /tests/.coverage
-/tests/.tox
 /tests/htmlcov
