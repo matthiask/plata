@@ -1,13 +1,9 @@
-coverage (3.7.1)
-Django (1.8.4)
-django-countries (3.3)
-jdcal (1.0)
-openpyxl (2.2.6)
-pdfdocument (3.1)
-Pillow (2.9.0)
-pip (7.1.0)
-pytz (2015.4)
-reportlab (3.2.0)
-setuptools (18.0.1)
-simplejson (3.8.0)
-wheel (0.24.0)
+coverage==3.7.1
+Django==1.8.4
+django-countries==3.3
+openpyxl==2.2.6
+pdfdocument==3.1
+Pillow==2.9.0
+pytz==2015.4
+reportlab==3.2.0
+simplejson==3.8.0
