@@ -18,9 +18,9 @@ Follow these steps to enable this module:
 
 from datetime import timedelta
 
-from django.core.exceptions import ImproperlyConfigured, ValidationError
+from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Sum, Q, signals
+from django.db.models import Sum, Q
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _, ugettext
 

@@ -17,7 +17,8 @@ class AppConfig(apps.AppConfig):
                 product_model._meta.get_field('items_in_stock')
             except FieldDoesNotExist:
                 raise ImproperlyConfigured(
-                    'Product model %r must have a field named `items_in_stock`' % (
+                    'Product model %r must have a field named'
+                    ' `items_in_stock`' % (
                         product_model,
                     ))
 
