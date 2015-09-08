@@ -411,20 +411,6 @@ class ViewTest(PlataTest):
             'Ok'
         )
 
-        # test windows-1252 encoded IPN also:
-        self.assertContains(
-            self.client.post(
-                '/payment/paypal/ipn/',
-                dict(
-                    map(
-                        lambda k, v: (k, v.encode('windows-1252')),
-                        dict(paypal_ipn_data, charset='windows-1252').items()
-                    )
-                ),
-            ),
-            'Ok'
-        )
-
         order = Order.objects.get(pk=1)
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter('always')
