@@ -65,8 +65,8 @@ def product_model():
     """
     Return the product model defined by the ``PLATA_SHOP_PRODUCT`` setting.
     """
-    from django.db.models import loading
-    return loading.get_model(*settings.PLATA_SHOP_PRODUCT.split('.'))
+    from django.apps import apps
+    return apps.get_model(*settings.PLATA_SHOP_PRODUCT.split('.'))
 
 
 def stock_model():
@@ -77,5 +77,5 @@ def stock_model():
     """
     if not settings.PLATA_STOCK_TRACKING:
         return None
-    from django.db.models import loading
-    return loading.get_model(*settings.PLATA_STOCK_TRACKING_MODEL.split('.'))
+    from django.apps import apps
+    return apps.get_model(*settings.PLATA_STOCK_TRACKING_MODEL.split('.'))
