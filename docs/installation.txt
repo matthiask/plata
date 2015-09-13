@@ -13,9 +13,9 @@ Plata is based on Django_, so you need a working Django_ installation
 first. Plata is developed using Django_ 1.3, and will not
 work with any earlier version.
 
-You can download a stable release of plata using ``pip``::
+You can download a version of plata using ``pip``::
 
-    $ sudo pip install Plata
+    $ pip install -e git+https://github.com/matthiask/plata@next#egg=Plata
 
 Please note that the package installable with ``pip`` only
 contains the files needed to run plata. It does not include documentation,
