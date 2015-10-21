@@ -188,12 +188,6 @@ class DiscountBase(models.Model):
         items_subtotal = order.subtotal if order.price_includes_tax else order.subtotal + items_tax
 
         # Don't allow bigger discounts than the items subtotal
-
-        if discount > items_subtotal:
-            self.remaining = discount - items_subtotal
-            self.save()
-            discount = items_subtotal
-
         remaining = discount
         for item in items:
             if  order.price_includes_tax:
@@ -205,13 +199,16 @@ class DiscountBase(models.Model):
 
             if remaining >= items_subtotal_inkl_taxes - item._line_item_discount:
                 if item._line_item_discount < items_subtotal_inkl_taxes:
-                    item._line_item_discount += (items_subtotal_inkl_taxes - item._line_item_discount)
-                    remaining -= items_subtotal_inkl_taxes
+                    new_discount = items_subtotal_inkl_taxes - item._line_item_discount
+                    item._line_item_discount += new_discount
+                    remaining -= new_discount
 
             else:
                 item._line_item_discount += remaining
                 remaining = 0
 
+            self.remaining = remaining
+            self.save()
 
     def _apply_percentage_discount(self, order, items):
         """
@@ -303,10 +300,7 @@ class Discount(DiscountBase):
         try:
             order.applied_discounts.get(code=self.code).delete()
         except ObjectDoesNotExist:
-            # Don't increment used count when discount has already been
-            # applied
-            self.used += 1
-            self.save()
+            pass
 
         instance = order.applied_discounts.create(
             code=self.code,

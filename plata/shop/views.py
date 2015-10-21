@@ -14,7 +14,6 @@ from django.utils.translation import get_language, ugettext as _
 import plata
 from plata.shop import forms as shop_forms
 
-
 logger = logging.getLogger('plata.shop.views')
 
 

@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 
 import plata
 from plata.shop import signals
+from plata.discount.models import Discount
 
 
 logger = logging.getLogger('plata.payment')
@@ -159,6 +160,18 @@ class ProcessorBase(object):
                 order=order,
                 payment=payment,
                 request=request)
+
+            for applied_discount in order.applied_discounts.all():
+                try:
+                    discount = Discount.objects.get(code=applied_discount.code)
+                except Discount.DoesNotExist:
+                    return
+
+                if discount.used < discount.allowed_uses:
+                    discount.used += 1
+                    discount.save()
+                else:
+                    applied_discount.delete()
 
             if order.discount_remaining:
                 logger.info(
