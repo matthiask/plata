@@ -1,0 +1,1067 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-11-29 10:59-0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+
+#: contact/admin.py:12 shop/admin.py:35
+#: shop/templates/plata/_order_overview.html:3
+#: shop/templates/plata/shop_checkout.html:39
+msgid "Billing address"
+msgstr "Fakturační kontakt"
+
+#: contact/admin.py:15 shop/admin.py:38
+#: shop/templates/plata/_order_overview.html:6
+#: shop/templates/plata/shop_checkout.html:67
+msgid "Shipping address"
+msgstr "Poštovní kontakt"
+
+#: contact/admin.py:20 shop/admin.py:52
+msgid "Additional fields"
+msgstr "Další informace"
+
+#: contact/forms.py:55
+msgid "create account"
+msgstr "vytvořit nový účet"
+
+#: contact/forms.py:66
+msgid "This field is required."
+msgstr "Toto pole je povinné."
+
+#: contact/models.py:30 shop/models.py:141
+msgid "user"
+msgstr "uživatel"
+
+#: contact/models.py:33
+msgid "date of birth"
+msgstr "datum narození"
+
+#: contact/models.py:34 product/stock/models.py:233 shop/models.py:135
+#: shop/models.py:647
+msgid "created"
+msgstr "vytvořen"
+
+#: contact/models.py:36
+msgid "Preferred currency."
+msgstr "Preferovaná měna."
+
+#: contact/models.py:37 product/stock/models.py:62 product/stock/models.py:251
+#: reporting/order.py:162 shop/admin.py:117 shop/models.py:189
+#: shop/models.py:650 shop/models.py:736
+msgid "notes"
+msgstr "poznámky"
+
+#: contact/models.py:40
+msgid "contact"
+msgstr "kontakt"
+
+#: contact/models.py:41
+msgid "contacts"
+msgstr "kontakty"
+
+#: default_settings.py:85
+msgid "ZIP code"
+msgstr "PSČ"
+
+#: discount/admin.py:24
+msgid "Configuration options"
+msgstr "Možnosti nastavení"
+
+#: discount/admin.py:25
+msgid "Save and continue editing to configure options."
+msgstr "Uložit a pokračovat v úpravě možností nastavení"
+
+#: discount/admin.py:52
+#, python-format
+msgid "Discount configuration: %s"
+msgstr "Konfigurace slev: %s"
+
+#: discount/admin.py:117
+msgid "Raw configuration"
+msgstr "Nezpracovaná konfigurace"
+
+#: discount/admin.py:121
+msgid "Configuration"
+msgstr "Konfigurace"
+
+#: discount/models.py:29
+msgid "amount voucher excl. tax (reduces total tax on order)"
+msgstr ""
+
+#: discount/models.py:31
+msgid "amount voucher incl. tax (reduces total tax on order)"
+msgstr ""
+
+#: discount/models.py:33
+msgid "percentage voucher (reduces total tax on order)"
+msgstr "procentuální poukázka (zmenšuje celkovou daň u objednávky)"
+
+#: discount/models.py:35
+msgid "means of payment (does not change total tax on order)"
+msgstr "způsob platby (nemění celkovou daň u objednávky)"
+
+#: discount/models.py:42
+msgid "All products"
+msgstr "Všechny produkty"
+
+#: discount/models.py:45
+msgid "Exclude sale prices"
+msgstr "Vyřadit položky ve slevě"
+
+#: discount/models.py:50 product/stock/models.py:61
+#: product/stock/models.py:255 shop/models.py:33 shop/models.py:544
+msgid "name"
+msgstr "jméno"
+
+#: discount/models.py:52 product/stock/models.py:238
+msgid "type"
+msgstr "typ"
+
+#: discount/models.py:53
+msgid "value"
+msgstr "hodnota"
+
+#: discount/models.py:57
+msgid "Only required for amount discounts."
+msgstr "Požadováno pouze pro celočíselné slevy."
+
+#: discount/models.py:59 shop/models.py:44 shop/models.py:562
+#: shop/models.py:812
+msgid "tax class"
+msgstr "daňová třída"
+
+#: discount/models.py:61
+msgid "Only required for amount discounts incl. tax."
+msgstr ""
+
+#: discount/models.py:64
+msgid "configuration"
+msgstr "konfigurace"
+
+#: discount/models.py:65
+msgid "If you edit this field directly, changes below will be ignored."
+msgstr ""
+
+#: discount/models.py:83
+msgid "Percentage discounts cannot have currency and tax class set."
+msgstr ""
+
+#: discount/models.py:88
+msgid "Amount discounts excl. tax need a currency."
+msgstr ""
+
+#: discount/models.py:91
+msgid "Amount discounts excl. tax cannot have tax class set."
+msgstr ""
+
+#: discount/models.py:96
+msgid "Amount discounts incl. tax need a currency and a tax class."
+msgstr ""
+
+#: discount/models.py:100
+msgid "Means of payment need a currency."
+msgstr ""
+
+#: discount/models.py:103
+msgid "Means of payment cannot have tax class set."
+msgstr ""
+
+#: discount/models.py:105
+msgid "Unknown discount type."
+msgstr ""
+
+#: discount/models.py:213 discount/models.py:331 shop/forms.py:97
+msgid "code"
+msgstr ""
+
+#: discount/models.py:215
+msgid "is active"
+msgstr ""
+
+#: discount/models.py:216
+msgid "valid from"
+msgstr ""
+
+#: discount/models.py:217
+msgid "valid until"
+msgstr ""
+
+#: discount/models.py:220
+msgid "number of allowed uses"
+msgstr ""
+
+#: discount/models.py:223
+msgid ""
+"Leave empty if there is no limit on the number of uses of this discount."
+msgstr ""
+
+#: discount/models.py:225
+msgid "number of times already used"
+msgstr ""
+
+#: discount/models.py:228 reporting/order.py:102
+#: shop/templates/plata/_order_overview.html:41
+msgid "discount"
+msgstr ""
+
+#: discount/models.py:229
+msgid "discounts"
+msgstr ""
+
+#: discount/models.py:238
+msgid "Discount is inactive."
+msgstr ""
+
+#: discount/models.py:242
+msgid "Discount is not active yet."
+msgstr ""
+
+#: discount/models.py:244
+msgid "Discount is expired."
+msgstr ""
+
+#: discount/models.py:248
+msgid "Allowed uses for this discount has already been reached."
+msgstr ""
+
+#: discount/models.py:254
+msgid "Discount and order currencies do not match."
+msgstr ""
+
+#: discount/models.py:327 product/stock/models.py:246 shop/models.py:196
+#: shop/models.py:705
+msgid "order"
+msgstr ""
+
+#: discount/models.py:333
+msgid "remaining"
+msgstr ""
+
+#: discount/models.py:336
+msgid "Discount amount excl. tax remaining after discount has been applied."
+msgstr ""
+
+#: discount/models.py:341
+msgid "applied discount"
+msgstr ""
+
+#: discount/models.py:342
+msgid "applied discounts"
+msgstr ""
+
+#: fields.py:27
+msgid "currency"
+msgstr "měna"
+
+#: payment/modules/base.py:135
+#, python-format
+msgid "%(stage)s: %(order)s processed by %(payment_module)s"
+msgstr ""
+
+#: payment/modules/base.py:181
+#, python-format
+msgid "Remaining discount for order %s"
+msgstr ""
+
+#: payment/modules/base.py:210 payment/modules/cod.py:42
+#: payment/modules/ogone.py:238 payment/modules/paypal.py:197
+#: payment/modules/postfinance.py:222 product/stock/models.py:222
+msgid "sale"
+msgstr "sleva"
+
+#: payment/modules/cod.py:24
+msgid "Cash on delivery"
+msgstr "Dobírka"
+
+#: payment/modules/ogone.py:86
+msgid "Ogone"
+msgstr ""
+
+#: payment/modules/ogone.py:109 payment/modules/paypal.py:64
+#: payment/modules/postfinance.py:104 product/stock/models.py:227
+msgid "payment process reservation"
+msgstr ""
+
+#: payment/modules/paypal.py:41
+msgid "Paypal"
+msgstr ""
+
+#: payment/modules/postfinance.py:81
+msgid "Postfinance"
+msgstr ""
+
+#: product/stock/admin.py:14
+msgid "initial stock"
+msgstr ""
+
+#: product/stock/admin.py:17
+msgid "purchases and sales"
+msgstr ""
+
+#: product/stock/admin.py:20
+msgid "stock management"
+msgstr ""
+
+#: product/stock/admin.py:23
+msgid "generic warehousing"
+msgstr ""
+
+#: product/stock/admin.py:26
+msgid "internal use"
+msgstr ""
+
+#: product/stock/models.py:45
+msgid "Automatically created"
+msgstr ""
+
+#: product/stock/models.py:47
+msgid "Automatically created because no period existed yet."
+msgstr ""
+
+#: product/stock/models.py:64
+msgid "start"
+msgstr ""
+
+#: product/stock/models.py:65
+msgid "Period starts at this time. May also be a future date."
+msgstr ""
+
+#: product/stock/models.py:72 product/stock/models.py:232
+msgid "period"
+msgstr ""
+
+#: product/stock/models.py:73
+msgid "periods"
+msgstr ""
+
+#: product/stock/models.py:88 product/stock/models.py:95
+msgid "New period"
+msgstr ""
+
+#: product/stock/models.py:219
+msgid "initial amount"
+msgstr ""
+
+#: product/stock/models.py:220
+msgid "correction"
+msgstr ""
+
+#: product/stock/models.py:221
+msgid "purchase"
+msgstr ""
+
+#: product/stock/models.py:223
+msgid "returns"
+msgstr ""
+
+#: product/stock/models.py:224
+msgid "reservation"
+msgstr ""
+
+#: product/stock/models.py:225
+msgid "incoming"
+msgstr ""
+
+#: product/stock/models.py:226
+msgid "outgoing"
+msgstr ""
+
+#: product/stock/models.py:236 reporting/order.py:56 reporting/order.py:75
+#: reporting/product.py:34 shop/models.py:541
+#: shop/templates/plata/shop_cart.html:18
+msgid "product"
+msgstr ""
+
+#: product/stock/models.py:240
+msgid "change"
+msgstr ""
+
+#: product/stock/models.py:242
+msgid "Use negative numbers for sales, lendings and other outgoings."
+msgstr ""
+
+#: product/stock/models.py:249 shop/models.py:744
+msgid "order payment"
+msgstr ""
+
+#: product/stock/models.py:256 reporting/order.py:55 reporting/order.py:74
+#: reporting/product.py:35 shop/models.py:545
+msgid "SKU"
+msgstr ""
+
+#: product/stock/models.py:258 reporting/order.py:78 shop/models.py:568
+#: shop/templates/plata/shop_cart.html:21
+msgid "line item price"
+msgstr ""
+
+#: product/stock/models.py:261 shop/models.py:572
+msgid "line item discount"
+msgstr ""
+
+#: product/stock/models.py:264 shop/models.py:578
+msgid "line item tax"
+msgstr ""
+
+#: product/stock/models.py:271
+msgid "stock transaction"
+msgstr ""
+
+#: product/stock/models.py:272
+msgid "stock transactions"
+msgstr ""
+
+#: product/stock/models.py:308
+#, python-format
+msgid "Not enough stock available for %s."
+msgstr ""
+
+#: reporting/order.py:40
+msgid "order date"
+msgstr "datum objednávky"
+
+#: reporting/order.py:42
+msgid "Not confirmed yet"
+msgstr "Zatím nepotvrzeno"
+
+#: reporting/order.py:47 shop/templates/base.html:123
+msgid "Order"
+msgstr "Objednávka"
+
+#: reporting/order.py:57 reporting/order.py:76 shop/models.py:547
+#: shop/templates/plata/shop_cart.html:20
+msgid "quantity"
+msgstr "množství"
+
+#: reporting/order.py:77 shop/models.py:551 shop/models.py:805
+#: shop/templates/plata/shop_cart.html:19
+msgid "unit price"
+msgstr "cena za jednotku"
+
+#: reporting/order.py:97 shop/models.py:158
+#: shop/templates/plata/_order_overview.html:36
+msgid "subtotal"
+msgstr "mezisoučet"
+
+#: reporting/order.py:107 shop/templates/plata/_order_overview.html:46
+msgid "shipping"
+msgstr "doprava"
+
+#: reporting/order.py:115 shop/models.py:181
+#: shop/templates/plata/_order_overview.html:54
+msgid "total"
+msgstr "celkem"
+
+#: reporting/order.py:124
+msgid "Incl. tax"
+msgstr "Včetně daně"
+
+#: reporting/order.py:149
+#, python-format
+msgid "Already paid for with %(payment_method)s (Transaction %(transaction)s)."
+msgstr "Již zaplaceno metodou %(payment_method)s (Transaction %(transaction)s)."
+
+#: reporting/order.py:155
+msgid "Already paid for."
+msgstr "Již zaplaceno."
+
+#: reporting/order.py:157
+msgid "Not paid yet."
+msgstr "Ještě nezaplaceno."
+
+#: reporting/product.py:23
+msgid "products"
+msgstr "produkty"
+
+#: reporting/product.py:36
+msgid "stock"
+msgstr "sklad"
+
+#: shop/admin.py:43 shop/templates/plata/_order_overview.html:10
+msgid "Order items"
+msgstr "Objednávka"
+
+#: shop/admin.py:46
+msgid "Shipping"
+msgstr "Poštovné"
+
+#: shop/admin.py:49 shop/templates/plata/_order_overview.html:33
+msgid "Total"
+msgstr "Celkem"
+
+#: shop/admin.py:71
+msgid "is paid"
+msgstr "zaplaceno"
+
+#: shop/admin.py:76 shop/models.py:149
+msgid "order ID"
+msgstr "ID objednávky"
+
+#: shop/admin.py:86
+msgid "Packing slip"
+msgstr ""
+
+#: shop/admin.py:94
+msgid "Invoice"
+msgstr "Faktura"
+
+#: shop/admin.py:100
+msgid "add. info"
+msgstr "další info"
+
+#: shop/forms.py:38
+msgid "This e-mail address belongs to a different account."
+msgstr "Tato e-mailová adresa již patří k jinému účtu."
+
+#: shop/forms.py:42
+msgid ""
+"This e-mail address might belong to you, but we cannot know for sure because "
+"you are not authenticated yet."
+msgstr ""
+"Tento e-mail může být váš, ale zatím to nemůžeme vědět jistě, protože "
+"jste se ještě nepřihlásil."
+
+#: shop/forms.py:115
+msgid "This code does not validate"
+msgstr "Tento kód není platný."
+
+#: shop/forms.py:131
+msgid "I accept the terms and conditions."
+msgstr "Souhlasím s obchodními pravidly."
+
+#: shop/forms.py:146
+msgid "Payment method"
+msgstr "Způsob platby"
+
+#: shop/models.py:35
+msgid "rate"
+msgstr "daň"
+
+#: shop/models.py:36
+msgid "Tax rate in percent."
+msgstr "Daň v procentech"
+
+#: shop/models.py:38
+msgid "priority"
+msgstr "priorita"
+
+#: shop/models.py:40
+msgid "Used to order the tax classes in the administration interface."
+msgstr ""
+
+#: shop/models.py:45
+msgid "tax classes"
+msgstr "třídy daně"
+
+#: shop/models.py:62 shop/models.py:76
+msgid "company"
+msgstr "společnost"
+
+#: shop/models.py:63 shop/models.py:78
+msgid "first name"
+msgstr "křestní jméno"
+
+#: shop/models.py:64 shop/models.py:80
+msgid "last name"
+msgstr "příjmení"
+
+#: shop/models.py:65 shop/models.py:81
+msgid "address"
+msgstr "ulice"
+
+#: shop/models.py:68 shop/models.py:84
+msgid "city"
+msgstr "město"
+
+#: shop/models.py:69 shop/models.py:85
+msgid "country"
+msgstr "stát"
+
+#: shop/models.py:72
+msgid "shipping address equals billing address"
+msgstr "poštovní adresa odpovídá fakturační"
+
+#: shop/models.py:128
+msgid "Is a cart"
+msgstr "Košík"
+
+#: shop/models.py:129
+msgid "Checkout process started"
+msgstr "Objednávání započalo"
+
+#: shop/models.py:130
+msgid "Order has been confirmed"
+msgstr "Objednávka byla potvrzena"
+
+#: shop/models.py:131
+msgid "Order has been paid"
+msgstr "Objednávka byla zaplacena"
+
+#: shop/models.py:132
+msgid "Order has been completed"
+msgstr "Objednávka byla dokončena"
+
+#: shop/models.py:136
+msgid "confirmed"
+msgstr "potvrzeno"
+
+#: shop/models.py:145
+msgid "language"
+msgstr "jazyk"
+
+#: shop/models.py:147 shop/models.py:649 shop/models.py:708
+msgid "status"
+msgstr "status"
+
+#: shop/models.py:150
+msgid "e-mail address"
+msgstr "e-mailová adresa"
+
+#: shop/models.py:154
+msgid "price includes tax"
+msgstr "cena s daní"
+
+#: shop/models.py:161
+msgid "items discount"
+msgstr "sleva na položku"
+
+#: shop/models.py:164
+msgid "items tax"
+msgstr "daň za položku"
+
+#: shop/models.py:168
+msgid "shipping method"
+msgstr "způsob doručení"
+
+#: shop/models.py:171
+msgid "shipping cost"
+msgstr "cena doručení"
+
+#: shop/models.py:174
+msgid "shipping discount"
+msgstr "sleva na doručení"
+
+#: shop/models.py:177
+msgid "shipping tax"
+msgstr "daň z doručení"
+
+#: shop/models.py:185
+msgid "paid"
+msgstr "zaplaceno"
+
+#: shop/models.py:187
+msgid "This much has been paid already."
+msgstr "Zaplacená částka"
+
+#: shop/models.py:192 shop/models.py:582 shop/models.py:739
+msgid "data"
+msgstr ""
+
+#: shop/models.py:193 shop/models.py:583 shop/models.py:740
+msgid "JSON-encoded additional data about the order payment."
+msgstr ""
+
+#: shop/models.py:197
+msgid "orders"
+msgstr "objednávky"
+
+#: shop/models.py:401 shop/views.py:383
+msgid "Cannot modify order once it has been confirmed."
+msgstr "Nemůžete upravit objednávku, když již byla potvrzena."
+
+#: shop/models.py:417
+msgid ""
+"The product already exists several times in the cart, and neither item nor "
+"force_new were given."
+msgstr ""
+
+#: shop/models.py:446
+msgid "The price could not be determined."
+msgstr "Cena nemohla být určena."
+
+#: shop/models.py:490
+msgid "Cannot proceed to checkout without order items."
+msgstr "Nelze postoupit k dalšímu kroku s prázdným košíkem."
+
+#: shop/models.py:527
+msgid "Order contains more than one currency."
+msgstr "Objednávka obsahuje více než jednu měnu."
+
+#: shop/models.py:553
+msgid "Unit price excl. tax"
+msgstr "Cena za jednotku bez daně"
+
+#: shop/models.py:555
+msgid "unit tax"
+msgstr "jednotková daň"
+
+#: shop/models.py:559
+msgid "tax rate"
+msgstr "daň"
+
+#: shop/models.py:565
+msgid "is sale"
+msgstr "ve slevě"
+
+#: shop/models.py:570
+msgid "Line item price excl. tax"
+msgstr "Cena za jednotku bez daně"
+
+#: shop/models.py:575
+msgid "Discount excl. tax"
+msgstr "Sleva bez daně"
+
+#: shop/models.py:587
+msgid "order item"
+msgstr "položka"
+
+#: shop/models.py:588
+msgid "order items"
+msgstr "položky"
+
+#: shop/models.py:591
+#, python-format
+msgid "%(quantity)s of %(name)s"
+msgstr ""
+
+#: shop/models.py:654
+msgid "order status"
+msgstr "stav objednávky"
+
+#: shop/models.py:655
+msgid "order statuses"
+msgstr "stavy objednávky"
+
+#: shop/models.py:658
+#, python-format
+msgid "Status %(status)s for %(order)s"
+msgstr ""
+
+#: shop/models.py:699
+msgid "pending"
+msgstr "probíhá"
+
+#: shop/models.py:700
+msgid "processed"
+msgstr "dokončena"
+
+#: shop/models.py:701 shop/models.py:733
+msgid "authorized"
+msgstr "ověřena"
+
+#: shop/models.py:706
+msgid "timestamp"
+msgstr "časové razítko"
+
+#: shop/models.py:711
+msgid "amount"
+msgstr "množství"
+
+#: shop/models.py:713
+msgid "payment module key"
+msgstr "klíč platebního modulu"
+
+#: shop/models.py:716
+msgid "Machine-readable identifier for the payment module used."
+msgstr ""
+
+#: shop/models.py:718
+msgid "payment module"
+msgstr "platební modul"
+
+#: shop/models.py:720
+msgid "For example 'Cash on delivery', 'PayPal', ..."
+msgstr ""
+
+#: shop/models.py:722
+msgid "payment method"
+msgstr "způsob platby"
+
+#: shop/models.py:725
+msgid "For example 'MasterCard', 'VISA' or some other card."
+msgstr ""
+
+#: shop/models.py:727
+msgid "transaction ID"
+msgstr "ID transakce"
+
+#: shop/models.py:730
+msgid "Unique ID identifying this payment in the foreign system."
+msgstr ""
+
+#: shop/models.py:734
+msgid "Point in time when payment has been authorized."
+msgstr ""
+
+#: shop/models.py:745
+msgid "order payments"
+msgstr "platby od objednávky"
+
+#: shop/models.py:751
+#, python-format
+msgid "%(authorized)s of %(currency)s %(amount).2f for %(order)s"
+msgstr ""
+
+#: shop/models.py:754
+msgid "Authorized"
+msgstr "Autorizován"
+
+#: shop/models.py:754
+msgid "Not authorized"
+msgstr "Neautorizován"
+
+#: shop/models.py:774
+#, python-format
+msgid "Currency of payment %s does not match."
+msgstr ""
+
+#: shop/models.py:800
+msgid "price"
+msgstr "cena"
+
+#: shop/models.py:801
+msgid "prices"
+msgstr "ceny"
+
+#: shop/models.py:808
+msgid "tax included"
+msgstr "včetně daně"
+
+#: shop/models.py:809
+msgid "Is tax included in given unit price?"
+msgstr ""
+
+#: shop/templates/_form_errors.html:3
+msgid "Please correct the following errors:"
+msgstr "Opravte prosím následující chyby:"
+
+#: shop/templates/_form_errors.html:8 shop/templates/_form_errors.html:24
+msgid "Form errors"
+msgstr "Chyby formuláře"
+
+#: shop/templates/_form_errors.html:19
+msgid "Fieldset errors"
+msgstr "Chyby formuláře"
+
+#: shop/templates/_pagination.html:19
+msgid "show all"
+msgstr "zobrazit vše"
+
+#: shop/templates/base.html:91
+msgid "Home"
+msgstr "Domů"
+
+#: shop/templates/base.html:92 shop/templates/product/product_detail.html:5
+#: shop/templates/product/product_list.html:5
+#: shop/templates/product/product_list.html:8
+msgid "Products"
+msgstr "Produkty"
+
+#: shop/templates/base.html:93 shop/templates/plata/shop_cart.html:5
+#: shop/templates/plata/shop_cart.html:11
+#: shop/templates/plata/shop_order_payment_failure.html:10
+msgid "Cart"
+msgstr "Košík"
+
+#: shop/templates/base.html:110
+msgid "Go to cart"
+msgstr "Jdi do košíku"
+
+#: shop/templates/base.html:112
+msgid "That's what we know about you:"
+msgstr ""
+
+#: shop/templates/base.html:115
+msgid "User"
+msgstr "Uživatel"
+
+#: shop/templates/base.html:119
+msgid "Contact"
+msgstr "Kontakt"
+
+#: shop/templates/payment/ogone_form.html:6
+#: shop/templates/payment/paypal_form.html:6
+#: shop/templates/payment/postfinance_form.html:6
+msgid "Payment"
+msgstr "Platba"
+
+#: shop/templates/payment/ogone_form.html:8
+msgid "You will be forwarded to Ogone for payment now."
+msgstr ""
+
+#: shop/templates/payment/ogone_form.html:28
+#: shop/templates/payment/postfinance_form.html:30
+msgid "Pay now"
+msgstr "Zaplatit"
+
+#: shop/templates/payment/paypal_form.html:8
+msgid "You will be forwarded to Paypal for payment now."
+msgstr ""
+
+#: shop/templates/payment/paypal_form.html:63
+msgid "Purchase Items"
+msgstr ""
+
+#: shop/templates/payment/postfinance_form.html:8
+msgid "You will be forwarded to Postfinance for payment now."
+msgstr ""
+
+#: shop/templates/plata/_order_overview.html:23
+#: shop/templates/plata/shop_discounts.html:5
+#: shop/templates/plata/shop_discounts.html:8
+msgid "Discounts"
+msgstr "Slevy"
+
+#: shop/templates/plata/_order_overview.html:50
+msgid "tax"
+msgstr "daň"
+
+#: shop/templates/plata/notifications/contact_created.txt:1
+msgid "Account creation successful"
+msgstr "Účet úspěšně vytvořen"
+
+#: shop/templates/plata/notifications/contact_created.txt:3
+msgid "You have successfully created an account on our site!"
+msgstr "Úspěšně jste si u nás vytvořili účet."
+
+#: shop/templates/plata/notifications/contact_created.txt:4
+#, python-format
+msgid "Go to http://%(domain)s/ and enter the following details:"
+msgstr ""
+
+#: shop/templates/plata/notifications/contact_created.txt:6
+msgid "Your username:"
+msgstr "Uživatelské jméno:"
+
+#: shop/templates/plata/notifications/contact_created.txt:7
+msgid "Your password:"
+msgstr "Heslo:"
+
+#: shop/templates/plata/shop_cart.html:9
+msgid "Cart is empty!"
+msgstr "Košík je prázdný!"
+
+#: shop/templates/plata/shop_cart.html:22
+msgid "Delete"
+msgstr "Smazat"
+
+#: shop/templates/plata/shop_cart.html:39
+msgid "Save"
+msgstr "Uložit"
+
+#: shop/templates/plata/shop_cart.html:40
+#: shop/templates/plata/shop_checkout.html:5
+#: shop/templates/plata/shop_checkout.html:8
+msgid "Checkout"
+msgstr "Pokladna"
+
+#: shop/templates/plata/shop_checkout.html:20
+#: shop/templates/plata/shop_checkout.html:105
+msgid "Submit"
+msgstr "Odeslat"
+
+#: shop/templates/plata/shop_checkout.html:96
+msgid "Notes"
+msgstr "Poznámky"
+
+#: shop/templates/plata/shop_confirmation.html:5
+#: shop/templates/plata/shop_confirmation.html:8
+msgid "Order summary"
+msgstr "Souhrn objednávky"
+
+#: shop/templates/plata/shop_confirmation.html:13
+msgid "Payment and order confirmation"
+msgstr "Platba a potvrzení objednávky"
+
+#: shop/templates/plata/shop_confirmation.html:21
+msgid "Proceed to payment"
+msgstr "Pokračovat k platbě"
+
+#: shop/templates/plata/shop_discounts.html:13
+msgid "Voucher code"
+msgstr "Slevový kupón"
+
+#: shop/templates/plata/shop_discounts.html:21
+msgid "Add voucher"
+msgstr "Přidat slevový kupón"
+
+#: shop/templates/plata/shop_discounts.html:22
+msgid "Proceed to confirmation"
+msgstr "Pokračovat k potvrzení"
+
+#: shop/templates/plata/shop_order_payment_failure.html:5
+#: shop/templates/plata/shop_order_payment_failure.html:8
+msgid "Order payment failure"
+msgstr "Chyba platby"
+
+#: shop/templates/plata/shop_order_payment_failure.html:12
+#: shop/templates/plata/shop_order_success.html:22
+msgid "Create new order"
+msgstr "Vytvořte novou objednávku"
+
+#: shop/templates/plata/shop_order_success.html:5
+msgid "Order successful"
+msgstr "Objednávka úspěšně provedena"
+
+#: shop/templates/plata/shop_order_success.html:9
+msgid "Thank you for shopping with us!"
+msgstr "Děkujeme, že jste u nás nakoupili!"
+
+#: shop/templates/plata/shop_order_success.html:13
+msgid "Order has been partially paid."
+msgstr "Objednávka byla zaplacena."
+
+#: shop/templates/plata/shop_order_success.html:15
+msgid "Order has been confirmed."
+msgstr "Objednávka byla potvrzena."
+
+#: shop/templates/plata/shop_order_success.html:17
+msgid ""
+"As soon as we receive a confirmation from the payment provider, you'll be "
+"sent a confirmation e-mail."
+msgstr ""
+
+#: shop/templates/product/product_detail.html:23
+msgid "Add to cart"
+msgstr "Přidat do košíku"
+
+#: shop/views.py:26
+msgid "Cart is empty."
+msgstr "Košík je prázdný."
+
+#: shop/views.py:39
+msgid ""
+"You have already confirmed this order earlier, but it is not fully paid for "
+"yet."
+msgstr ""
+
+#: shop/views.py:373
+#, python-format
+msgid ""
+"%(name)s has been removed from the inventory and from your cart as well."
+msgstr ""
+
+#: shop/views.py:401
+msgid "The cart has been updated."
+msgstr "Košík byl aktualizován."
+
+#: shop/views.py:636
+msgid "Payment failed, please try again."
+msgstr "Platba selhala, zkuste to znovu."
+
+#: shop/views.py:645
+msgid "Payment failed; you can continue editing your order and try again."
+msgstr "Platba selhala; můžete pokračovat v úpravě vaší objednávky a zkusit to znovu."
