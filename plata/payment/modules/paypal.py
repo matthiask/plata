@@ -78,7 +78,7 @@ class PaymentProcessor(ProcessorBase):
                 'https' if request.is_secure() else 'http'
             ),
             'IPN_SCHEME': PAYPAL.get('IPN_SCHEME', 'http'),
-            'HTTP_HOST': request.META.get('HTTP_HOST'),
+            'HTTP_HOST': request.get_host(),
             'post_url': PP_URL,
             'business': PAYPAL['BUSINESS'],
         })

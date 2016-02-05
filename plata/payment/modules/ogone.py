@@ -127,16 +127,16 @@ class PaymentProcessor(ProcessorBase):
             'owneraddress': order.billing_address,
             'ownertown': order.billing_city,
             'accepturl': u'http://%s%s' % (
-                request.META.get('HTTP_HOST'),
+                request.get_host(),
                 reverse('plata_order_success')),
             'declineurl': u'http://%s%s' % (
-                request.META.get('HTTP_HOST'),
+                request.get_host(),
                 reverse('plata_order_payment_failure')),
             'exceptionurl': u'http://%s%s' % (
-                request.META.get('HTTP_HOST'),
+                request.get_host(),
                 reverse('plata_order_payment_failure')),
             'cancelurl': u'http://%s%s' % (
-                request.META.get('HTTP_HOST'),
+                request.get_host(),
                 reverse('plata_order_payment_failure')),
         }
         # create hash
@@ -154,7 +154,7 @@ class PaymentProcessor(ProcessorBase):
 
         return self.shop.render(request, 'payment/%s_form.html' % self.key, {
             'order': order,
-            'HTTP_HOST': request.META.get('HTTP_HOST'),
+            'HTTP_HOST': request.get_host(),
             'form_params': form_params,
             'locale': form_params['language'],
         })
