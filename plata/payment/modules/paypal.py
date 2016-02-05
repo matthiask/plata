@@ -33,7 +33,7 @@ csrf_exempt_m = method_decorator(csrf_exempt)
 
 
 def urlopen(*args, **kwargs):
-    return six.moves.urllib.urlopen(*args, **kwargs)
+    return six.moves.urllib.request.urlopen(*args, **kwargs)
 
 
 class PaymentProcessor(ProcessorBase):
@@ -130,7 +130,7 @@ class PaymentProcessor(ProcessorBase):
                 querystring = 'cmd=_notify-validate&%s' % (
                     request.POST.urlencode()
                 )
-                status = urlopen(PP_URL, querystring).read()
+                status = urlopen(PP_URL, querystring.encode('utf-8')).read()
 
                 if not status == b"VERIFIED":
                     logger.error(
