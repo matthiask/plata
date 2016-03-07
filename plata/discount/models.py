@@ -22,7 +22,7 @@ class DiscountBase(models.Model):
 
     TYPE_CHOICES = (
         (PERCENTAGE_VOUCHER,
-            _('%%-Rabatt')),
+            _('%-Rabatt')),
         (MEANS_OF_PAYMENT,
             _('Geschenkgutschein')),
     )
