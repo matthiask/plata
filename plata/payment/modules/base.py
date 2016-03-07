@@ -192,7 +192,7 @@ class ProcessorBase(object):
                     name=ugettext('Remaining discount for order %s') % (
                         order.order_id,
                     ),
-                    type=discount_model.AMOUNT_VOUCHER_EXCL_TAX,
+                    type=discount_model.MEANS_OF_PAYMENT,
                     value=order.discount_remaining,
                     currency=order.currency,
                     config=getattr(discount, 'config', '{"all": {}}'),
