@@ -1,4 +1,4 @@
-VERSION = (1, 2, 0, 'pre')
+VERSION = (1, 2, 1)
 __version__ = '.'.join(map(str, VERSION))
 
 
@@ -59,12 +59,13 @@ def shop_instance():
     return shop_instance_cache
 
 
+
 def product_model():
     """
     Return the product model defined by the ``PLATA_SHOP_PRODUCT`` setting.
     """
-    from django.db.models import loading
-    return loading.get_model(*settings.PLATA_SHOP_PRODUCT.split('.'))
+    from plata.compat import get_model
+    return get_model(*settings.PLATA_SHOP_PRODUCT.split('.'))
 
 
 def stock_model():
@@ -73,7 +74,5 @@ def stock_model():
     ``PLATA_STOCK_TRACKING_MODEL`` setting or ``None`` in case stock
     transactions are turned off.
     """
-    if not settings.PLATA_STOCK_TRACKING:
-        return None
-    from django.db.models import loading
-    return loading.get_model(*settings.PLATA_STOCK_TRACKING_MODEL.split('.'))
+    from plata.compat import get_model
+    return get_model(*settings.PLATA_STOCK_TRACKING_MODEL.split('.'))

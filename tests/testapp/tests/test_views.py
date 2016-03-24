@@ -21,7 +21,7 @@ import plata
 from plata.contact.models import Contact
 from plata.discount.models import Discount
 from plata.product.stock.models import Period, StockTransaction
-from plata.shop.models import Order, OrderPayment
+from plata.shop.models import Order, OrderPayment, OrderItem
 
 from .base import PlataTest, get_request
 
@@ -130,6 +130,9 @@ class ViewTest(PlataTest):
         # TODO test what happens when a product has been deleted from the
         # shop in the meantime (and orderitem.product = None)
 
+        # sync i2 with database
+        # for unknown reason it changes it's id in Django 1.7
+        i2 = OrderItem.objects.latest('id')
         self.assertEqual(Order.objects.get().status, Order.CART)
         self.assertRedirects(self.client.post('/cart/', {
             'checkout': True,
