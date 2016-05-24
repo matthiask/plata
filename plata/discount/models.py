@@ -188,7 +188,7 @@ class DiscountBase(models.Model):
         for item in items:
             if  order.price_includes_tax:
                 items_subtotal_inkl_taxes = item.subtotal
-                items_subtotal_excl_taxes = item._unit_price * self.quantity
+                items_subtotal_excl_taxes = item._unit_price * item.quantity
             else:
                 items_subtotal_inkl_taxes = item.subtotal + item._line_item_tax
                 items_subtotal_excl_taxes = item.subtotal
