@@ -186,7 +186,7 @@ class DiscountBase(models.Model):
         # Don't allow bigger discounts than the items subtotal
         remaining = discount
         for item in items:
-            if  order.price_includes_tax:
+            if order.price_includes_tax:
                 items_subtotal_inkl_taxes = item.subtotal
                 items_subtotal_excl_taxes = item._unit_price * item.quantity
             else:
@@ -198,13 +198,12 @@ class DiscountBase(models.Model):
                     new_discount = items_subtotal_inkl_taxes - item._line_item_discount
                     item._line_item_discount += new_discount
                     remaining -= new_discount
-
             else:
                 item._line_item_discount += remaining
                 remaining = 0
 
-            self.remaining = remaining
-            self.save()
+        self.remaining = remaining
+        self.save()
 
     def _apply_percentage_discount(self, order, items):
         """
@@ -221,7 +220,7 @@ class DiscountBase(models.Model):
                 continue
 
             item._line_item_discount += (
-                item.discounted_subtotal_excl_tax * factor)
+                    item.discounted_subtotal_excl_tax * factor)
 
 
 # Nearly all letters and digits, excluding those which can be easily confounded
