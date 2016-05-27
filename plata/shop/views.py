@@ -133,7 +133,11 @@ class Shop(object):
                  default_currency=None, **kwargs):
         self.contact_model = contact_model
         self.order_model = order_model
-        self.orderitem_model = self.order_model.items.related.related_model
+        try:
+            # Django 1.9
+            self.orderitem_model = self.order_model.items.rel.related_model
+        except AttributeError:
+            self.orderitem_model = self.order_model.items.related.related_model
         self.discount_model = discount_model
         self._default_currency = default_currency
 
