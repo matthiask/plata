@@ -23,7 +23,7 @@ class PaymentProcessor(ProcessorBase):
 
     def process_order_confirmed(self, request, order):
         if not order.balance_remaining:
-            return self.already_paid(order)
+            return self.already_paid(order, request=request)
 
         logger.info('Processing order %s using COD' % order)
 

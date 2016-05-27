@@ -204,7 +204,7 @@ class ProcessorBase(object):
             signals.order_paid.send(**signal_kwargs)
         self.clear_pending_payments(order)
 
-    def already_paid(self, order):
+    def already_paid(self, order, request=None):
         """
         Handles the case where a payment module is selected but the order
         is already completely paid for (f.e. because an amount discount has
@@ -221,6 +221,6 @@ class ProcessorBase(object):
                     order, _('sale'),
                     type=StockTransaction.SALE, negative=True)
 
-            self.order_paid(order)
+            self.order_paid(order, request=request)
 
         return self.shop.redirect('plata_order_success')
