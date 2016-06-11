@@ -46,9 +46,15 @@ class PaymentProcessor(ProcessorBase):
         from django.conf.urls import patterns, url
 
         return patterns('',
-            url(r'^datatrans/success/$', self.datatrans_success, name='plata_payment_datatrans_success'),
-            url(r'^datatrans/error/$', self.datatrans_error, name='plata_payment_datatrans_error'),
-            url(r'^datatrans/cancel/$', self.datatrans_cancel, name='plata_payment_datatrans_cancel'),
+            url(r'^datatrans/success/$',
+                self.datatrans_success,
+                name='plata_payment_datatrans_success'),
+            url(r'^datatrans/error/$',
+                self.datatrans_error,
+                name='plata_payment_datatrans_error'),
+            url(r'^datatrans/cancel/$',
+                self.datatrans_cancel,
+                name='plata_payment_datatrans_cancel'),
         )
 
     def process_order_confirmed(self, request, order):
@@ -62,9 +68,11 @@ class PaymentProcessor(ProcessorBase):
         payment = self.create_pending_payment(order)
         if plata.settings.PLATA_STOCK_TRACKING:
             StockTransaction = plata.stock_model()
-            self.create_transactions(order, _('payment process reservation'),
-                                     type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
-                                     negative=True, payment=payment)
+            self.create_transactions(
+                order,
+                _('payment process reservation'),
+                type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
+                negative=True, payment=payment)
 
         if DATATRANS.get('LIVE', True):
             DT_URL = "https://payment.datatrans.biz/upp/jsp/upStart.jsp"
@@ -118,14 +126,16 @@ class PaymentProcessor(ProcessorBase):
                     </transaction>
                   </body>
                 </statusService>
-                """ % {'transaction_id': parameters['uppTransactionId'], 'merchant_id': DATATRANS['MERCHANT_ID']}
+                """ % {
+                    'transaction_id': parameters['uppTransactionId'],
+                    'merchant_id': DATATRANS['MERCHANT_ID']}
                 params = urllib.urlencode({'xmlRequest': xml})
                 xml_response = urllib.urlopen(DT_URL, params).read()
 
                 tree = ET.fromstring(xml_response)
                 response = tree.find('body/transaction/response')
                 response_code = response.find('responseCode').text
-                if not response_code in ('1', '2', '3'):
+                if response_code not in ('1', '2', '3'):
                     logger.error('IPN: Received response_code %s, could not verify parameters %s' % (
                         response_code, parameters_repr))
                     parameters = None
@@ -167,8 +177,10 @@ class PaymentProcessor(ProcessorBase):
 
                 if payment.authorized and plata.settings.PLATA_STOCK_TRACKING:
                     StockTransaction = plata.stock_model()
-                    self.create_transactions(order, _('sale'), type=StockTransaction.SALE,
-                                             negative=True, payment=payment)
+                    self.create_transactions(
+                        order, _('sale'),
+                        type=StockTransaction.SALE,
+                        negative=True, payment=payment)
 
                 if not order.balance_remaining:
                     self.order_paid(order, payment=payment)

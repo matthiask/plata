@@ -215,8 +215,9 @@ class FixedAmountShippingProcessor(ProcessorBase):
 
         self.set_processor_value(
             'total', 'shipping',
-            order.shipping_cost - order.shipping_discount
-            + order.shipping_tax)
+            order.shipping_cost -
+            order.shipping_discount +
+            order.shipping_tax)
 
         tax_details = dict(order.data.get('tax_details', []))
         self.add_tax_details(

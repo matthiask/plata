@@ -14,8 +14,8 @@ class ContactAdmin(admin.ModelAdmin):
         }),
         (_('Shipping address'), {
             'fields': (
-                ['shipping_same_as_billing']
-                + models.Contact.address_fields('shipping_')),
+                ['shipping_same_as_billing'] +
+                models.Contact.address_fields('shipping_')),
         }),
         (_('Additional fields'), {
             'fields': ('notes',),
@@ -28,9 +28,9 @@ class ContactAdmin(admin.ModelAdmin):
     ordering = ('-created',)
     raw_id_fields = ('user',)
     search_fields = (
-        ['user__first_name', 'user__last_name', 'user__email']
-        + models.Contact.address_fields('billing_')
-        + models.Contact.address_fields('shipping_')
+        ['user__first_name', 'user__last_name', 'user__email'] +
+        models.Contact.address_fields('billing_') +
+        models.Contact.address_fields('shipping_')
     )
 
 

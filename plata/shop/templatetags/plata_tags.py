@@ -4,7 +4,7 @@ from django import forms, template
 from django.db.models import ObjectDoesNotExist
 from django.template.loader import render_to_string
 
-import plata
+# import plata
 import plata.context_processors
 
 
@@ -140,8 +140,8 @@ class FormErrorsNode(template.Node):
             else:
                 formset_list.append(i)
 
-            if (getattr(i, 'errors', None)
-                    or getattr(i, 'non_field_errors', lambda: None)()):
+            if (getattr(i, 'errors', None) or
+                    getattr(i, 'non_field_errors', lambda: None)()):
                 errors = True
 
         if not errors:

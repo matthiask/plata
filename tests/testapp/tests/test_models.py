@@ -13,11 +13,11 @@ from django.utils import six, timezone
 
 from pdfdocument.document import PDFDocument
 
-import plata
+# import plata
 from plata.discount.models import Discount, DiscountBase
 from plata.product.stock.models import Period, StockTransaction
 import plata.reporting.order
-from plata.shop.models import Order, OrderItem, OrderStatus, OrderPayment
+from plata.shop.models import Order, OrderStatus, OrderPayment
 
 from .base import PlataTest
 
@@ -603,7 +603,7 @@ class ModelTest(PlataTest):
 
         self.assertAlmostEqual(order.balance_remaining, Decimal('79.90') * 3)
 
-        payment.transaction_id = '1234' # Not strictly required
+        payment.transaction_id = '1234'  # Not strictly required
         payment.authorized = timezone.now()
         payment.save()
 
@@ -708,7 +708,7 @@ class ModelTest(PlataTest):
         normal2 = order.modify_item(p2, 5)
 
         order.recalculate_total()
-        #self.assertAlmostEqual(order.total, Decimal('598.84'))
+        # self.assertAlmostEqual(order.total, Decimal('598.84'))
         # We use ROUND_HALF_UP now
         self.assertAlmostEqual(order.total, Decimal('598.85'))
 
@@ -726,7 +726,7 @@ class ModelTest(PlataTest):
         order.recalculate_total()
 
         # Exact values after usage of different tax rates in same order
-        #self.assertAlmostEqual(order.total, Decimal('548.84'))
+        # self.assertAlmostEqual(order.total, Decimal('548.84'))
         # We use ROUND_HALF_UP now
         self.assertAlmostEqual(order.total, Decimal('548.85'))
         self.assertAlmostEqual(order.discount, Decimal('50.00'))
@@ -862,19 +862,19 @@ class ModelTest(PlataTest):
             name='Percentage discount',
             value=30)
 
-        discount.save() # should not raise
+        discount.save()  # should not raise
 
         discount.type = Discount.AMOUNT_VOUCHER_EXCL_TAX
         self.assertRaises(ValidationError, lambda: discount.save())
 
         discount.currency = 'CHF'
-        discount.save() # should not raise
+        discount.save()  # should not raise
 
         discount.tax_class = self.tax_class
         self.assertRaises(ValidationError, lambda: discount.save())
 
         discount.type = Discount.AMOUNT_VOUCHER_INCL_TAX
-        discount.save() # should not raise
+        discount.save()  # should not raise
 
         discount.currency = None
         self.assertRaises(ValidationError, lambda: discount.save())
@@ -894,7 +894,7 @@ class ModelTest(PlataTest):
         discount.currency = order.currency
         discount.save()
 
-        discount.add_to(order) # should not raise
+        discount.add_to(order)  # should not raise
 
     def test_26_discounts(self):
         """Discount testing reloaded"""

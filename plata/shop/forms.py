@@ -12,8 +12,8 @@ except ImportError:
 from django.utils.translation import ugettext_lazy as _
 
 from plata.shop import signals
-
 from plata.shop.widgets import PlusMinusButtons, SubmitButtonInput
+
 
 class BaseCheckoutForm(forms.ModelForm):
     """
@@ -174,18 +174,23 @@ class OrderItemForm(forms.Form):
     Used in single page checkout cart
     """
     relative = forms.IntegerField(widget=PlusMinusButtons(), required=False)
-    absolute = forms.IntegerField(widget=SubmitButtonInput(attrs={'label': _('Remove')}), required=False)
+    absolute = forms.IntegerField(
+                widget=SubmitButtonInput(attrs={'label': _('Remove')}),
+                required=False)
 
     def __init__(self, *args, **kwargs):
         self.orderitem = kwargs.pop('orderitem')
-        kwargs['prefix'] = '%s_%s' % (kwargs.get('prefix', 'orderitem'), self.orderitem.id)
+        kwargs['prefix'] = '%s_%s' % (
+            kwargs.get('prefix', 'orderitem'),
+            self.orderitem.id)
         initial = kwargs.pop('initial', {})
         initial['absolute'] = 0
         kwargs['initial'] = initial
         super(OrderItemForm, self).__init__(*args, **kwargs)
 
     def clean(self):
-        if self.cleaned_data['absolute'] is None == self.cleaned_data['relative'] is None:
+        if (self.cleaned_data['absolute'] is None) ==
+        (self.cleaned_data['relative'] is None):
             raise forms.ValidationError(_('Provide either "relative" or "absolute".'))
         if self.cleaned_data['absolute'] is None:
             del self.cleaned_data['absolute']
@@ -205,8 +210,6 @@ class PaymentSelectMixin(object):
     """
 
     def get_payment_field(self, shop, request):
-
-
         self.payment_modules = shop.get_payment_modules(request)
         method_choices = [(m.key, m.name) for m in self.payment_modules]
         if len(method_choices) > 1:
@@ -232,7 +235,8 @@ class PaymentSelectForm(forms.Form, PaymentSelectMixin):
 
 class SinglePageCheckoutForm(BaseCheckoutForm, PaymentSelectMixin):
     """
-    Handles shipping and billing addresses, payment method and terms and conditions
+    Handles shipping and billing addresses,
+    payment method and terms and conditions
     """
     terms_and_conditions = forms.BooleanField(
         label=_('I accept the terms and conditions.'),
@@ -247,7 +251,8 @@ class SinglePageCheckoutForm(BaseCheckoutForm, PaymentSelectMixin):
 
         self.fields['payment_method'] = self.get_payment_field(self.shop, self.request)
 
-        self.REQUIRED_ADDRESS_FIELDS = [name[9:] for name in self.fields.keys() if name.startswith('shipping_')]
+        self.REQUIRED_ADDRESS_FIELDS = [name[9:] for name in self.fields.keys()
+                                        if name.startswith('shipping_')]
         self.REQUIRED_ADDRESS_FIELDS.remove('company')
 
     def clean(self):
@@ -265,7 +270,14 @@ class SinglePageCheckoutForm(BaseCheckoutForm, PaymentSelectMixin):
         """
         Process the successful order submission
         """
-        self.instance.update_status(self.instance.CONFIRMED, 'Confirmation given')
-        signals.order_confirmed.send(sender=self.shop, order=self.instance, request=self.request)
+        self.instance.update_status(
+            self.instance.CONFIRMED,
+            'Confirmation given')
+        signals.order_confirmed.send(
+            sender=self.shop,
+            order=self.instance,
+            request=self.request)
 
-        return self.payment_order_confirmed(self.instance, self.cleaned_data['payment_method'])
+        return self.payment_order_confirmed(
+            self.instance,
+            self.cleaned_data['payment_method'])

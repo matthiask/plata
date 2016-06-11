@@ -2,7 +2,6 @@ from __future__ import absolute_import, unicode_literals
 
 from io import BytesIO
 import os
-import re
 import warnings
 
 from datetime import timedelta
@@ -10,10 +9,10 @@ from datetime import timedelta
 from django.conf import settings
 
 try:  # pragma: no cover
-  from django.contrib.auth import get_user_model
-  User = get_user_model()
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
 except ImportError:
-  from django.contrib.auth.models import User
+    from django.contrib.auth.models import User
 
 from django.core import mail
 from django.core.exceptions import ValidationError
@@ -99,7 +98,7 @@ class ViewTest(PlataTest):
             'items-MAX_NUM_FORMS': 2,
 
             'items-0-id': i1.id,
-            'items-0-quantity': 6, # one additional item
+            'items-0-quantity': 6,  # one additional item
 
             'items-1-id': i2.id,
             'items-1-quantity': i2.quantity,
@@ -116,7 +115,7 @@ class ViewTest(PlataTest):
             'items-MAX_NUM_FORMS': 2,
 
             'items-0-id': i1.id,
-            'items-0-quantity': 6, # one additional item
+            'items-0-quantity': 6,  # one additional item
 
             'items-1-id': i2.id,
             'items-1-quantity': 0,
@@ -167,10 +166,10 @@ class ViewTest(PlataTest):
             'order-billing_zip_code': u'8042',
             'order-billing_city': u'Beispielstadt',
             'order-billing_country': u'CH',
-            #'order-shipping_same_as_billing': True, # billing information is missing...
+            # 'order-shipping_same_as_billing': True, # billing information is missing...
             'order-email': 'something@example.com',
             'order-currency': 'CHF',
-            }).status_code, 200) # ... therefore view does not redirect
+            }).status_code, 200)  # ... therefore view does not redirect
 
         self.assertRedirects(self.client.post('/checkout/', {
             '_checkout': 1,
@@ -241,7 +240,7 @@ class ViewTest(PlataTest):
             'terms_and_conditions': True,
             'payment_method': 'cod',
             }), '/order/success/')
-        self.assertEqual(len(mail.outbox), 2) # invoice and packing slip
+        self.assertEqual(len(mail.outbox), 2)  # invoice and packing slip
         self.assertEqual(Order.objects.get(pk=order.id).status, Order.PAID)
 
         # Clear order
@@ -325,7 +324,7 @@ class ViewTest(PlataTest):
             'amount': order.balance_remaining,
             'PM': 'Postfinance',
             'ACCEPTANCE': 'xxx',
-            'STATUS': '5', # Authorized
+            'STATUS': '5',  # Authorized
             'CARDNO': 'xxxxxxxxxxxx1111',
             'PAYID': '123456789',
             'NCERROR': '',
@@ -378,6 +377,7 @@ class ViewTest(PlataTest):
 
         from plata.payment.modules import paypal
         import cgi
+        
         def mock_urlopen(*args, **kwargs):
             qs = cgi.parse_qs(args[1])
             if not six.PY3:
@@ -730,7 +730,7 @@ class ViewTest(PlataTest):
             }), '/order/success/')
 
         self.client.get('/order/new/')
-        self.client.get('/order/new/') # Should not do anything the second time
+        self.client.get('/order/new/')  # Should not do anything the second time
         self.client.post(p1.get_absolute_url(), {'quantity': 1})
         self.assertContains(self.client.post('/discounts/', {
             'code': new_discount.code,

@@ -4,10 +4,10 @@ from decimal import Decimal
 from django.test import TestCase
 
 try:  # pragma: no cover
-  from django.contrib.auth import get_user_model
-  User = get_user_model()
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
 except ImportError:
-  from django.contrib.auth.models import User
+    from django.contrib.auth.models import User
 
 from django.contrib.auth.models import AnonymousUser
 
@@ -45,12 +45,13 @@ def get_request(**kwargs):
     request.user = AnonymousUser()
 
     for k, v in kwargs.items():
-       setattr(request, k, v)
+        setattr(request, k, v)
 
     return request
 
 
 PRODUCTION_CREATION_COUNTER = 0
+
 
 class PlataTest(TestCase):
     def assertRaisesWithCode(self, exception, fn, code):
@@ -116,7 +117,6 @@ class PlataTest(TestCase):
 
         return self.tax_class, self.tax_class_germany, self.tax_class_something
 
-
     def create_product(self, stock=0):
         global PRODUCTION_CREATION_COUNTER
         PRODUCTION_CREATION_COUNTER += 1
@@ -147,8 +147,8 @@ class PlataTest(TestCase):
             tax_class=tax_class,
             _unit_price=Decimal('199.90'),
             tax_included=True,
-            #valid_from=date(2000, 1, 1),
-            #valid_until=date(2001, 1, 1),
+            # valid_from=date(2000, 1, 1),
+            # valid_until=date(2001, 1, 1),
             )
 
         product.prices.create(
@@ -156,7 +156,7 @@ class PlataTest(TestCase):
             tax_class=tax_class,
             _unit_price=Decimal('299.90'),
             tax_included=True,
-            #valid_from=date(2000, 1, 1),
+            # valid_from=date(2000, 1, 1),
             )
 
         product.prices.create(
@@ -164,8 +164,8 @@ class PlataTest(TestCase):
             tax_class=tax_class,
             _unit_price=Decimal('299.90'),
             tax_included=True,
-            #valid_from=date(2000, 7, 1),
-            #is_sale=True,
+            # valid_from=date(2000, 7, 1),
+            # is_sale=True,
             )
 
         product.prices.create(
@@ -173,7 +173,7 @@ class PlataTest(TestCase):
             tax_class=tax_class,
             _unit_price=Decimal('79.90'),
             tax_included=True,
-            #is_sale=True,
+            # is_sale=True,
             )
 
         product.prices.create(

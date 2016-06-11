@@ -1,5 +1,5 @@
 """
-signal handlers to do google analytics tracking on the server side
+signal handlers to do Google analytics tracking on the server side
 
 to register the handlers you need:
 

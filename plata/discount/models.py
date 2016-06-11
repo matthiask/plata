@@ -189,7 +189,9 @@ class DiscountBase(models.Model):
             items_tax
 
         discount = self.value
-        items_subtotal = order.subtotal if order.price_includes_tax else order.subtotal + items_tax
+        items_subtotal = order.subtotal if \
+            order.price_includes_tax else order.subtotal + items_tax
+        # CHECK: this is probably item.subtotal, not items_subtotal!
 
         # Don't allow bigger discounts than the items subtotal
         remaining = discount
@@ -200,6 +202,7 @@ class DiscountBase(models.Model):
             else:
                 items_subtotal_inkl_taxes = item.subtotal + item._line_item_tax
                 items_subtotal_excl_taxes = item.subtotal
+            # CHECK: items_subtotal_excl_taxes is unused!
 
             if remaining >= items_subtotal_inkl_taxes - item._line_item_discount:
                 if item._line_item_discount < items_subtotal_inkl_taxes:

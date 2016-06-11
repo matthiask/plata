@@ -37,8 +37,8 @@ class OrderAdmin(admin.ModelAdmin):
         }),
         (_('Shipping address'), {
             'fields': (
-                ['shipping_same_as_billing']
-                + models.Order.address_fields('shipping_')),
+                ['shipping_same_as_billing'] +
+                models.Order.address_fields('shipping_')),
         }),
         (_('Order items'), {
             'fields': ('items_subtotal', 'items_discount', 'items_tax'),
@@ -62,9 +62,9 @@ class OrderAdmin(admin.ModelAdmin):
     raw_id_fields = ('user',)
     readonly_fields = ('status',)
     search_fields = (
-        ['_order_id', 'email', 'total', 'notes']
-        + models.Order.address_fields('billing_')
-        + models.Order.address_fields('shipping_'))
+        ['_order_id', 'email', 'total', 'notes'] +
+        models.Order.address_fields('billing_') +
+        models.Order.address_fields('shipping_'))
 
     def admin_is_paid(self, instance):
         return not instance.balance_remaining

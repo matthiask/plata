@@ -6,6 +6,7 @@ import logging
 from django.conf.urls import include, patterns, url
 from django.contrib import auth, messages
 from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import get_callable, reverse
 from django.forms.models import ModelForm, inlineformset_factory
@@ -15,6 +16,7 @@ from django.utils.translation import get_language, ugettext as _
 
 import plata
 from plata.shop import forms as shop_forms
+from .forms import OrderItemForm
 
 logger = logging.getLogger('plata.shop.views')
 
@@ -24,7 +26,8 @@ def cart_not_empty(order, shop, request, **kwargs):
     if not order or not order.items.count():
         messages.warning(request, _('Cart is empty.'))
         return shop.redirect('plata_shop_cart')
-    
+
+
 def user_is_authenticated(order, shop, request, **kwargs):
     """ensure the user is authenticated and redirect to checkout if not"""
     if not shop.user_is_authenticated(request.user):
@@ -175,9 +178,14 @@ class Shop(object):
         )(self.checkout), name='plata_shop_checkout')
 
     def get_discounts_url(self):
-        return url(r'^discounts/$', checkout_process_decorator(
-            user_is_authenticated, cart_not_empty, order_already_confirmed, order_cart_validates,
-        )(self.discounts), name='plata_shop_discounts')
+        return url(r'^discounts/$',
+                   checkout_process_decorator(
+                        user_is_authenticated,
+                        cart_not_empty,
+                        order_already_confirmed,
+                        order_cart_validates,
+                        )(self.discounts),
+                   name='plata_shop_discounts')
 
     def get_confirmation_url(self):
         return url(r'^confirmation/$', checkout_process_decorator(
@@ -235,11 +243,14 @@ class Shop(object):
         return [
             module for module in all_modules
             if module.enabled_for_request(request)]
-        
+
     def user_is_authenticated(self, user):
-        """overwrite this for custom authentication check. This is needed to support lazysignup"""
+        """
+        Overwrite this for custom authentication check.
+        This is needed to support lazysignup
+        """
         return (user and user.is_authenticated())
-    
+
     def user_login(self, request, user):
         auth.login(request, user)
 
@@ -275,11 +286,13 @@ class Shop(object):
             request.session['shop_order'] = order.pk
         elif 'shop_order' in request.session:
             del request.session['shop_order']
-            
+
     def create_order_for_user(self, user, request=None):
         """Creates and returns a new order for the given user."""
         contact = self.contact_from_user(user)
-        #we can't check for user_is_authenticated, because in the lazy_user case, it might return false, even though the user is a persistet model
+        # we can't check for user_is_authenticated,
+        # because in the lazy_user case, it might return false,
+        # even though the user is a persistent model
         order_user = None if isinstance(user, AnonymousUser) else user
 
         order = self.order_model.objects.create(
@@ -293,7 +306,6 @@ class Shop(object):
                         order_user),
                     language_code=get_language(),
                 )
-        
         return order
 
     def order_from_request(self, request, create=False):
@@ -306,13 +318,13 @@ class Shop(object):
         try:
             order_pk = request.session.get('shop_order')
             if order_pk is None:
-                #check if the current user has a open order
+                # check if the current user has a open order
                 if self.user_is_authenticated(request.user):
                     order = self.order_model.objects.filter(user=request.user).latest()
                     if order is not None and order.status < self.order_model.PAID:
                         self.set_order_on_request(request, order)
                         return order
-                    
+
                 raise ValueError("no order in session")
             return self.order_model.objects.get(pk=order_pk)
         except AttributeError:
@@ -405,8 +417,8 @@ class Shop(object):
                         })
                         changed = True
 
-                    elif (formset.can_delete
-                            and formset._should_delete_form(form)):
+                    elif (formset.can_delete and
+                            formset._should_delete_form(form)):
                         if order.is_confirmed():
                             raise ValidationError(_(
                                 'Cannot modify order once'
@@ -692,14 +704,11 @@ class Shop(object):
         """
         self.set_order_on_request(request, order=None)
 
-        next = request.GET.get('next')
-        if next:
-            return HttpResponseRedirect(next)
+        rnext = request.GET.get('next')
+        if rnext:
+            return HttpResponseRedirect(rnext)
 
         return HttpResponseRedirect('/')
-
-
-from .forms import OrderItemForm
 
 
 class SinglePageCheckoutShop(Shop):
@@ -753,7 +762,8 @@ class SinglePageCheckoutShop(Shop):
             if changed:
                 return HttpResponseRedirect('.')
         else:
-            orderitemforms = [OrderItemForm(orderitem=item) for item in order.items.all()]
+            orderitemforms = [OrderItemForm(orderitem=item)
+                              for item in order.items.all()]
 
         DiscountForm = self.discounts_form(request, order)
 
@@ -836,7 +846,8 @@ class SinglePageCheckoutShop(Shop):
         if request.method == 'POST':
             form = shop_forms.PaymentSelectForm(request.POST, **form_kwargs)
             if form.is_valid():
-                return form.payment_order_confirmed(order, form.cleaned_data['payment_method'])
+                return form.payment_order_confirmed(
+                    order, form.cleaned_data['payment_method'])
         else:
             form = shop_forms.PaymentSelectForm(**form_kwargs)
 

@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 
 from pdfdocument.utils import pdf_response
 
-import plata
+# import plata
 import plata.reporting.product
 import plata.reporting.order
 

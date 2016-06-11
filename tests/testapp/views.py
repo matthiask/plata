@@ -16,7 +16,8 @@ product_list = generic.ListView.as_view(
 
 
 class OrderItemForm(forms.Form):
-    quantity = forms.IntegerField(label=_('quantity'), initial=1,
+    quantity = forms.IntegerField(
+        label=_('quantity'), initial=1,
         min_value=1, max_value=100)
 
 

@@ -280,9 +280,9 @@ class Order(BillingShippingAddress):
                 return None
 
             return (
-                self.shipping_cost
-                - self.shipping_discount
-                + self.shipping_tax)
+                self.shipping_cost -
+                self.shipping_discount +
+                self.shipping_tax)
         else:
             logger.error(
                 'Shipping calculation with'
@@ -522,8 +522,8 @@ class Order(BillingShippingAddress):
 def validate_order_currencies(order):
     """Check whether order contains more than one or an invalid currency"""
     currencies = set(order.items.values_list('currency', flat=True))
-    if (currencies
-            and (len(currencies) > 1 or order.currency not in currencies)):
+    if (currencies and
+            (len(currencies) > 1 or order.currency not in currencies)):
         raise ValidationError(
             _('Order contains more than one currency.'),
             code='multiple_currency')

@@ -1,4 +1,4 @@
-from django.forms.util import flatatt
+from django.forms.utils import flatatt
 from django.forms.widgets import Widget
 from django.utils.encoding import force_text
 from django.utils.html import format_html
