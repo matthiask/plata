@@ -186,7 +186,7 @@ class OrderItemForm(forms.Form):
 
     def clean(self):
         if self.cleaned_data['absolute'] is None == self.cleaned_data['relative'] is None:
-            raise forms.ValidationError(_('Provide exactly one of relative and absolute.'))
+            raise forms.ValidationError(_('Provide either "relative" or "absolute".'))
         if self.cleaned_data['absolute'] is None:
             del self.cleaned_data['absolute']
         if self.cleaned_data['relative'] is None:
