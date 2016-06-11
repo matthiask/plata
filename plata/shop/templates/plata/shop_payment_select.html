@@ -1,0 +1,24 @@
+{% extends base_template|default:"base.html" %}
+
+{% load i18n plata_tags %}
+
+{% block title %}{% trans "Select payment method" %} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<h1>{% trans "Order summary" %}</h1>
+
+{% include "plata/_order_overview.html" %}
+
+<form method="post" action=".">{% csrf_token %}
+<h2>{% trans "Payment and order confirmation" %}</h2>
+{% form_errors form %}
+
+<table>
+{% form_item form.payment_method %}
+<tr>
+    <td></td>
+    <td><button type="submit">{% trans "Proceed to payment" %}</button></td>
+</tr>
+</table>
+</form>
+{% endblock %}

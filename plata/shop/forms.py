@@ -13,6 +13,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from plata.shop import signals
 
+from plata.shop.widgets import PlusMinusButtons, SubmitButtonInput
 
 class BaseCheckoutForm(forms.ModelForm):
     """
@@ -166,3 +167,105 @@ class ConfirmationForm(forms.Form):
             )[self.cleaned_data['payment_method']]
 
         return module.process_order_confirmed(self.request, self.order)
+
+
+class OrderItemForm(forms.Form):
+    """
+    Used in single page checkout cart
+    """
+    relative = forms.IntegerField(widget=PlusMinusButtons(), required=False)
+    absolute = forms.IntegerField(widget=SubmitButtonInput(attrs={'label': _('Remove')}), required=False)
+
+    def __init__(self, *args, **kwargs):
+        self.orderitem = kwargs.pop('orderitem')
+        kwargs['prefix'] = '%s_%s' % (kwargs.get('prefix', 'orderitem'), self.orderitem.id)
+        initial = kwargs.pop('initial', {})
+        initial['absolute'] = 0
+        kwargs['initial'] = initial
+        super(OrderItemForm, self).__init__(*args, **kwargs)
+
+    def clean(self):
+        if self.cleaned_data['absolute'] is None == self.cleaned_data['relative'] is None:
+            raise forms.ValidationError(_('Provide exactly one of relative and absolute.'))
+        if self.cleaned_data['absolute'] is None:
+            del self.cleaned_data['absolute']
+        if self.cleaned_data['relative'] is None:
+            del self.cleaned_data['relative']
+        return self.cleaned_data
+
+    def save(self):
+        if len(self.cleaned_data) == 1:  # either absolute or relative is set
+            order = self.orderitem.order
+            order.modify_item(self.orderitem.product, **self.cleaned_data)
+
+
+class PaymentSelectMixin(object):
+    """
+    Handles the payment selection field
+    """
+
+    def get_payment_field(self, shop, request):
+
+
+        self.payment_modules = shop.get_payment_modules(request)
+        method_choices = [(m.key, m.name) for m in self.payment_modules]
+        if len(method_choices) > 1:
+            method_choices.insert(0, ('', '---------'))
+        return forms.ChoiceField(
+            label=_('Payment method'), choices=method_choices,
+        )
+
+    def payment_order_confirmed(self, order, payment_method):
+        module = dict(
+            (m.key, m) for m in self.payment_modules
+            )[payment_method]
+        return module.process_order_confirmed(self.request, order)
+
+
+class PaymentSelectForm(forms.Form, PaymentSelectMixin):
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request')
+        self.shop = kwargs.pop('shop')
+        super(PaymentSelectForm, self).__init__(*args, **kwargs)
+        self.fields['payment_method'] = self.get_payment_field(self.shop, self.request)
+
+
+class SinglePageCheckoutForm(BaseCheckoutForm, PaymentSelectMixin):
+    """
+    Handles shipping and billing addresses, payment method and terms and conditions
+    """
+    terms_and_conditions = forms.BooleanField(
+        label=_('I accept the terms and conditions.'),
+        required=True)
+
+    class Meta:
+        exclude = ('shipping_country', 'billing_country')
+
+    def __init__(self, *args, **kwargs):
+
+        super(SinglePageCheckoutForm, self).__init__(*args, **kwargs)
+
+        self.fields['payment_method'] = self.get_payment_field(self.shop, self.request)
+
+        self.REQUIRED_ADDRESS_FIELDS = [name[9:] for name in self.fields.keys() if name.startswith('shipping_')]
+        self.REQUIRED_ADDRESS_FIELDS.remove('company')
+
+    def clean(self):
+        data = super(SinglePageCheckoutForm, self).clean()
+        if not data.get('shipping_same_as_billing'):
+            for f in self.REQUIRED_ADDRESS_FIELDS:
+                field = 'shipping_%s' % f
+                if not data.get(field):
+                    self._errors[field] = self.error_class([
+                        _('This field is required.')])
+        self.instance.validate(self.instance.VALIDATE_ALL)
+        return data
+
+    def save(self):
+        """
+        Process the successful order submission
+        """
+        self.instance.update_status(self.instance.CONFIRMED, 'Confirmation given')
+        signals.order_confirmed.send(sender=self.shop, order=self.instance, request=self.request)
+
+        return self.payment_order_confirmed(self.instance, self.cleaned_data['payment_method'])

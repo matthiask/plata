@@ -16,7 +16,6 @@ from django.utils.translation import get_language, ugettext as _
 import plata
 from plata.shop import forms as shop_forms
 
-
 logger = logging.getLogger('plata.shop.views')
 
 
@@ -672,3 +671,156 @@ class Shop(object):
             return HttpResponseRedirect(next)
 
         return HttpResponseRedirect('/')
+
+
+from .forms import OrderItemForm
+
+
+class SinglePageCheckoutShop(Shop):
+    def get_shop_urls(self):
+        return patterns(
+            '',
+            self.get_cart_url(),
+            self.get_checkout_url(),
+            self.get_already_confirmed_url(),
+            self.get_success_url(),
+            self.get_failure_url(),
+            self.get_new_url(),
+        )
+
+    def get_already_confirmed_url(self):
+        return url(r'^confirmed/$', checkout_process_decorator(
+            cart_not_empty, order_cart_validates,
+        )(self.already_confirmed), name='plata_shop_confirmation')
+
+    def checkout_form(self, request, order):
+        """Returns the address form used in the first checkout step"""
+
+        # Only import plata.contact if necessary and if this method isn't
+        # overridden
+        class CheckoutForm(shop_forms.SinglePageCheckoutForm):
+            class Meta(shop_forms.SinglePageCheckoutForm.Meta):
+                model = self.order_model
+                fields = ['notes', 'email', 'shipping_same_as_billing']
+                fields.extend('billing_%s' % f for f in self.order_model.ADDRESS_FIELDS)
+                fields.extend('shipping_%s' % f for f in self.order_model.ADDRESS_FIELDS)
+
+        return CheckoutForm
+
+    def cart(self, request, order):
+        """Shopping cart view"""
+
+        if not order or not order.items.count():
+            return self.render_cart_empty(request, {
+                'progress': 'cart',
+                })
+
+        if request.method == 'POST':
+            orderitemforms = [OrderItemForm(request.POST, orderitem=item)
+                              for item in order.items.all()]
+            changed = False
+
+            for form in orderitemforms:
+                if form.is_valid():
+                    changed = True
+                    form.save()
+            if changed:
+                return HttpResponseRedirect('.')
+        else:
+            orderitemforms = [OrderItemForm(orderitem=item) for item in order.items.all()]
+
+        DiscountForm = self.discounts_form(request, order)
+
+        discounts_kwargs = {
+            'order': order,
+            'discount_model': self.discount_model,
+            'request': request,
+            'shop': self,
+            'prefix': 'discount',
+            }
+
+        if request.method == 'POST' and '_apply_discount' in request.POST:
+            discount_form = DiscountForm(request.POST, **discounts_kwargs)
+            if discount_form.is_valid():
+                discount_form.save()
+                return HttpResponseRedirect('.')
+        else:
+            discount_form = DiscountForm(**discounts_kwargs)
+
+        return self.render_cart(request, {
+            'order': order,
+            'orderitemforms': orderitemforms,
+            'discount_form': discount_form,
+            'progress': 'cart',
+            })
+
+    def render_cart_empty(self, request, context):
+        """Renders a cart-is-empty page"""
+        context.update({'empty': True})
+
+        return self.render(
+            request, self.cart_template, self.get_context(request, context))
+
+    def render_cart(self, request, context):
+        """Renders the shopping cart"""
+        return self.render(
+            request, self.cart_template, self.get_context(request, context))
+
+    def checkout(self, request, order):
+        """Handles the first step of the checkout process"""
+        if order.status < order.CHECKOUT:
+            order.update_status(order.CHECKOUT, 'Checkout process started')
+
+        OrderForm = self.checkout_form(request, order)
+
+        orderform_kwargs = {
+            'prefix': 'order',
+            'instance': order,
+            'request': request,
+            'shop': self,
+            }
+
+        if request.method == 'POST':
+            orderform = OrderForm(request.POST, **orderform_kwargs)
+
+            if orderform.is_valid():
+                return orderform.save()
+        else:
+            orderform = OrderForm(**orderform_kwargs)
+
+        return self.render_checkout(request, {
+            'order': order,
+            'orderform': orderform,
+            'progress': 'checkout',
+            })
+
+    def render_checkout(self, request, context):
+        """Renders the checkout page"""
+        return self.render(
+            request,
+            self.checkout_template,
+            self.get_context(request, context)
+        )
+
+    def already_confirmed(self, request, order):
+        form_kwargs = {
+            'shop': self,
+            'request': request,
+        }
+        if request.method == 'POST':
+            form = shop_forms.PaymentSelectForm(request.POST, **form_kwargs)
+            if form.is_valid():
+                return form.payment_order_confirmed(order, form.cleaned_data['payment_method'])
+        else:
+            form = shop_forms.PaymentSelectForm(**form_kwargs)
+
+        context = {
+            'form': form,
+            'order': self.order_from_request(request),
+        }
+
+        return self.render(
+            request,
+            'plata/shop_payment_select.html',
+            self.get_context(request, context)
+            )

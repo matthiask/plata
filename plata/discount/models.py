@@ -179,7 +179,39 @@ class DiscountBase(models.Model):
                 item.discounted_subtotal_excl_tax / items_subtotal * discount)
 
     def _apply_means_of_payment(self, order, items):
-        self._apply_amount_discount(order, items, tax_included=False)
+
+        items_tax = sum(
+                (item._line_item_tax for item in items),
+                Decimal('0.00')
+            )
+
+        for item in items:
+            items_tax
+
+        discount = self.value
+        items_subtotal = order.subtotal if order.price_includes_tax else order.subtotal + items_tax
+
+        # Don't allow bigger discounts than the items subtotal
+        remaining = discount
+        for item in items:
+            if order.price_includes_tax:
+                items_subtotal_inkl_taxes = item.subtotal
+                items_subtotal_excl_taxes = item._unit_price * item.quantity
+            else:
+                items_subtotal_inkl_taxes = item.subtotal + item._line_item_tax
+                items_subtotal_excl_taxes = item.subtotal
+
+            if remaining >= items_subtotal_inkl_taxes - item._line_item_discount:
+                if item._line_item_discount < items_subtotal_inkl_taxes:
+                    new_discount = items_subtotal_inkl_taxes - item._line_item_discount
+                    item._line_item_discount += new_discount
+                    remaining -= new_discount
+            else:
+                item._line_item_discount += remaining
+                remaining = 0
+
+        self.remaining = remaining
+        self.save()
 
     def _apply_percentage_discount(self, order, items):
         """
@@ -196,7 +228,7 @@ class DiscountBase(models.Model):
                 continue
 
             item._line_item_discount += (
-                item.discounted_subtotal_excl_tax * factor)
+                    item.discounted_subtotal_excl_tax * factor)
 
 
 # Nearly all letters and digits, excluding those which can be easily confounded
@@ -271,10 +303,7 @@ class Discount(DiscountBase):
         try:
             order.applied_discounts.get(code=self.code).delete()
         except ObjectDoesNotExist:
-            # Don't increment used count when discount has already been
-            # applied
-            self.used += 1
-            self.save()
+            pass
 
         instance = order.applied_discounts.create(
             code=self.code,

@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _, ugettext
 
 import plata
 from plata.shop import signals
+from plata.discount.models import Discount
 
 
 logger = logging.getLogger('plata.payment')
@@ -162,6 +163,18 @@ class ProcessorBase(object):
                 payment=payment,
                 request=request)
 
+            for applied_discount in order.applied_discounts.all():
+                try:
+                    discount = Discount.objects.get(code=applied_discount.code)
+                except Discount.DoesNotExist:
+                    return
+
+                if discount.used < discount.allowed_uses or not discount.allowed_uses:
+                    discount.used += 1
+                    discount.save()
+                else:
+                    applied_discount.delete()
+
             if order.discount_remaining:
                 logger.info(
                     'Creating discount for remaining amount %s on'
@@ -181,7 +194,7 @@ class ProcessorBase(object):
                     name=ugettext('Remaining discount for order %s') % (
                         order.order_id,
                     ),
-                    type=discount_model.AMOUNT_VOUCHER_EXCL_TAX,
+                    type=discount_model.MEANS_OF_PAYMENT,
                     value=order.discount_remaining,
                     currency=order.currency,
                     config=getattr(discount, 'config', '{"all": {}}'),
@@ -193,7 +206,7 @@ class ProcessorBase(object):
             signals.order_paid.send(**signal_kwargs)
         self.clear_pending_payments(order)
 
-    def already_paid(self, order):
+    def already_paid(self, order, request=None):
         """
         Handles the case where a payment module is selected but the order
         is already completely paid for (f.e. because an amount discount has
@@ -210,6 +223,6 @@ class ProcessorBase(object):
                     order, _('sale'),
                     type=StockTransaction.SALE, negative=True)
 
-            self.order_paid(order)
+            self.order_paid(order, request=request)
 
         return self.shop.redirect('plata_order_success')
