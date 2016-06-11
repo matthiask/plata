@@ -563,7 +563,7 @@ class OrderItem(models.Model):
         TaxClass, verbose_name=_('tax class'),
         blank=True, null=True, on_delete=models.SET_NULL)
 
-    is_sale = models.BooleanField(_('is sale'))
+    is_sale = models.BooleanField(_('is sale'), default=False)
 
     _line_item_price = models.DecimalField(
         _('line item price'),
