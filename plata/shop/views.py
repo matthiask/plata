@@ -5,7 +5,7 @@ import logging
 
 from django.conf.urls import include, patterns, url
 from django.contrib import auth, messages
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import get_callable, reverse
 from django.forms.models import ModelForm, inlineformset_factory
@@ -24,6 +24,12 @@ def cart_not_empty(order, shop, request, **kwargs):
     if not order or not order.items.count():
         messages.warning(request, _('Cart is empty.'))
         return shop.redirect('plata_shop_cart')
+    
+def user_is_authenticated(order, shop, request, **kwargs):
+    """ensure the user is authenticated and redirect to checkout if not"""
+    if not shop.user_is_authenticated(request.user):
+        messages.warning(request, _('You are not authenticated'))
+        return shop.redirect('plata_shop_checkout')
 
 
 def order_already_confirmed(order, shop, request, **kwargs):
@@ -170,12 +176,12 @@ class Shop(object):
 
     def get_discounts_url(self):
         return url(r'^discounts/$', checkout_process_decorator(
-            cart_not_empty, order_already_confirmed, order_cart_validates,
+            user_is_authenticated, cart_not_empty, order_already_confirmed, order_cart_validates,
         )(self.discounts), name='plata_shop_discounts')
 
     def get_confirmation_url(self):
         return url(r'^confirmation/$', checkout_process_decorator(
-            cart_not_empty, order_cart_validates,
+            user_is_authenticated, cart_not_empty, order_cart_validates,
         )(self.confirmation), name='plata_shop_confirmation')
 
     def get_success_url(self):
@@ -229,6 +235,13 @@ class Shop(object):
         return [
             module for module in all_modules
             if module.enabled_for_request(request)]
+        
+    def user_is_authenticated(self, user):
+        """overwrite this for custom authentication check. This is needed to support lazysignup"""
+        return (user and user.is_authenticated())
+    
+    def user_login(self, request, user):
+        auth.login(request, user)
 
     def default_currency(self, request=None):
         """
@@ -262,6 +275,26 @@ class Shop(object):
             request.session['shop_order'] = order.pk
         elif 'shop_order' in request.session:
             del request.session['shop_order']
+            
+    def create_order_for_user(self, user, request=None):
+        """Creates and returns a new order for the given user."""
+        contact = self.contact_from_user(user)
+        #we can't check for user_is_authenticated, because in the lazy_user case, it might return false, even though the user is a persistet model
+        order_user = None if isinstance(user, AnonymousUser) else user
+
+        order = self.order_model.objects.create(
+                    currency=getattr(
+                        contact,
+                        'currency',
+                        self.default_currency(request)),
+                    user=getattr(
+                        contact,
+                        'user',
+                        order_user),
+                    language_code=get_language(),
+                )
+        
+        return order
 
     def order_from_request(self, request, create=False):
         """
@@ -273,6 +306,13 @@ class Shop(object):
         try:
             order_pk = request.session.get('shop_order')
             if order_pk is None:
+                #check if the current user has a open order
+                if self.user_is_authenticated(request.user):
+                    order = self.order_model.objects.filter(user=request.user).latest()
+                    if order is not None and order.status < self.order_model.PAID:
+                        self.set_order_on_request(request, order)
+                        return order
+                    
                 raise ValueError("no order in session")
             return self.order_model.objects.get(pk=order_pk)
         except AttributeError:
@@ -280,21 +320,7 @@ class Shop(object):
             return None
         except (ValueError, self.order_model.DoesNotExist):
             if create:
-                contact = self.contact_from_user(request.user)
-
-                order = self.order_model.objects.create(
-                    currency=getattr(
-                        contact,
-                        'currency',
-                        self.default_currency(request)),
-                    user=getattr(
-                        contact,
-                        'user',
-                        request.user if request.user.is_authenticated()
-                        else None),
-                    language_code=get_language(),
-                )
-
+                order = self.create_order_for_user(request.user)
                 self.set_order_on_request(request, order)
                 return order
 
@@ -305,7 +331,7 @@ class Shop(object):
         Return the contact object bound to the current user if the user is
         authenticated. Returns ``None`` if no contact exists.
         """
-        if not user.is_authenticated():
+        if not self.user_is_authenticated(user):
             return None
 
         try:
@@ -440,7 +466,7 @@ class Shop(object):
 
     def checkout(self, request, order):
         """Handles the first step of the checkout process"""
-        if not request.user.is_authenticated():
+        if not self.user_is_authenticated(request.user):
             if request.method == 'POST' and '_login' in request.POST:
                 loginform = self.get_authentication_form(
                     data=request.POST,
@@ -448,7 +474,7 @@ class Shop(object):
 
                 if loginform.is_valid():
                     user = loginform.get_user()
-                    auth.login(request, user)
+                    self.user_login(request, user)
 
                     order.user = user
                     order.save()

@@ -124,7 +124,7 @@ class PaymentProcessor(ProcessorBase):
 
         return self.shop.render(request, 'payment/%s_form.html' % self.key, {
             'order': order,
-            'HTTP_HOST': request.META.get('HTTP_HOST'),
+            'HTTP_HOST': request.get_host(),
             'form_params': form_params,
             'locale': locale.normalize(
                 to_locale(get_language())).split('.')[0],

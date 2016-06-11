@@ -34,7 +34,7 @@ class BaseCheckoutForm(forms.ModelForm):
 
             if users:
                 if self.request.user not in users:
-                    if self.request.user.is_authenticated():
+                    if self.shop.user_is_authenticated(self.request.user):
                         self._errors['email'] = self.error_class([
                             _('This e-mail address belongs to a different'
                                 ' account.')])
@@ -56,15 +56,15 @@ class BaseCheckoutForm(forms.ModelForm):
 
         if contact:
             order.user = contact.user
-        elif self.request.user.is_authenticated():
+        elif self.shop.user_is_authenticated(self.request.user):
             order.user = self.request.user
 
         if (self.cleaned_data.get('create_account') and not contact) or (
-                not contact and self.request.user.is_authenticated()):
+                not contact and self.shop.user_is_authenticated(self.request.user)):
             password = None
             email = self.cleaned_data.get('email')
 
-            if not self.request.user.is_authenticated():
+            if not self.shop.user_is_authenticated(self.request.user):
                 password = User.objects.make_random_password()
                 params = {'email': email, 'password': password}
                 if getattr(User, 'USERNAME_FIELD', 'username') == 'username':

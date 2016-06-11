@@ -195,6 +195,7 @@ class Order(BillingShippingAddress):
     class Meta:
         verbose_name = _('order')
         verbose_name_plural = _('orders')
+        get_latest_by = "created"
 
     def __str__(self):
         return self.order_id
