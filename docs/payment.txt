@@ -10,6 +10,7 @@ Plata supports the following means of payment:
 * :ref:`payment_paypal`
 * :ref:`payment_postfinance`
 * :ref:`payment_ogone`
+* :ref:`payment_datatrans`
 
 
 .. _payment_cod:
@@ -82,3 +83,17 @@ SHA-1 IN hashing algorithm.
 
 The default server to server notification URL is ``payment/ogone/ipn/``;
 the base path is defined by where you added ``shop.urls``.
+
+
+.. _payment_datatrans:
+
+Datatrans
+=========
+
+The Datatrans payment module requires the following configuration values::
+
+    DATATRANS = {
+        'MERCHANT_ID': '1000000000000',
+        'LIVE': False
+        }
+

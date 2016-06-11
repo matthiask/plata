@@ -10,19 +10,19 @@ Installation
 This document describes the steps needed to get Plata up and running.
 
 Plata is based on Django_, so you need a working Django_ installation
-first. Plata is developed using Django_ 1.3, and will not
+first. Plata is developed using Django_ 1.8, and will not
 work with any earlier version.
 
 You can download a version of plata using ``pip``::
 
-    $ pip install -e git+https://github.com/matthiask/plata@next#egg=Plata
+    $ pip install -e git+https://github.com/fiee/plata@next#egg=Plata
 
 Please note that the package installable with ``pip`` only
 contains the files needed to run plata. It does not include documentation,
 tests or the example project which comes with the development version,
 which you can download using the Git_ version control system::
 
-    $ git clone git://github.com/matthiask/plata.git
+    $ git clone git://github.com/fiee/plata.git
 
 Plata requires a version of simplejson_ >=2.1 because older versions cannot
 serialize decimal values, only floats.
@@ -104,7 +104,8 @@ Adding the modules to ``INSTALLED_APPS``
         ...
         )
 
-You should run ``./manage.py syncdb`` after you've added the required modules
+You should run ``./manage.py makemigrations plata`` and
+``./manage.py migrate plata`` after you've added the required modules
 to ``INSTALLED_APPS``.
 
 
