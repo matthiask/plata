@@ -11,6 +11,10 @@ Plata supports the following means of payment:
 * :ref:`payment_postfinance`
 * :ref:`payment_ogone`
 * :ref:`payment_datatrans`
+* :ref:`payment_billogram`
+* :ref:`payment_check`
+* :ref:`payment_payson`
+* :ref:`payment_pagseguro`
 
 
 .. _payment_cod:
@@ -97,3 +101,26 @@ The Datatrans payment module requires the following configuration values::
         'LIVE': False
         }
 
+
+.. _payment_billogram:
+
+Billogram
+=========
+
+
+.. _payment_check:
+
+Check / Bank Transfer
+=====================
+
+
+.. _payment_payson:
+
+Payson
+======
+
+
+.. _payment_pagseguro:
+
+PagSeguro
+=========

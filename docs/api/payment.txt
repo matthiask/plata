@@ -34,10 +34,50 @@ Postfinance support
    :noindex:
 
 
+Billogram support
+-----------------
+
+.. automodule:: plata.payment.modules.billogram
+   :members:
+   :noindex:
+
+
+Check support
+-------------
+
+.. automodule:: plata.payment.modules.check
+   :members:
+   :noindex:
+
+
+Datatrans support
+-----------------
+
+.. automodule:: plata.payment.modules.datatrans
+   :members:
+   :noindex:
+
+
 Ogone support
 -------------
 
 .. automodule:: plata.payment.modules.ogone
+   :members:
+   :noindex:
+
+
+PagSeguro support
+-----------------
+
+.. automodule:: plata.payment.modules.pagseguro
+   :members:
+   :noindex:
+
+
+Payson support
+--------------
+
+.. automodule:: plata.payment.modules.payson
    :members:
    :noindex:
 
