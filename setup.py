@@ -34,7 +34,7 @@ setup(
         ],
     },
     install_requires=[
-        'Django>=1.8',
+        'Django < 1.10',
         'simplejson>=3.8',
         'openpyxl>=2.2',
         'reportlab>=3.2',
