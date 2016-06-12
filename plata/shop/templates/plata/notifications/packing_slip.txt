@@ -1,13 +1,13 @@
-Order completed - packing slip
+{% load i18n %}{% trans %}Order completed - packing slip{% endtrans %}
 
-The following order has been successfully completed:
+{% trans %}The following order has been successfully completed:{% endtrans %}
 
 
 
 {% if remaining_discount %}
-You received a new discount code, because the discount you used for
-this order has not been completely used up yet:
+{% blocktrans %}You received a new discount code, because the discount you used for
+this order has not been completely used up yet:{% endblocktrans %}
 
-Code: {{ remaining_discount.code }}
-Value: {{ remaining_discount.value }} {{ remaining_discount.get_type_display }}
+{% trans %}Code{% endtrans %}: {{ remaining_discount.code }}
+{% trans %}Value{% endtrans %}: {{ remaining_discount.value }} {{ remaining_discount.get_type_display }}
 {% endif %}
