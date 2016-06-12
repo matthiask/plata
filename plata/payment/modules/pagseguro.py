@@ -1,9 +1,9 @@
-#-*- coding: utf-8 -*-
 """
 Pagseguro payment module for django-plata
 Authors: alexandre@mandriva.com.br, jpbraun@mandriva.com
 Date: 03/14/2012
 """
+from __future__ import absolute_import, unicode_literals
 
 from datetime import datetime
 from decimal import Decimal
@@ -55,12 +55,12 @@ class PaymentProcessor(ProcessorBase):
                                      type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
                                      negative=True, payment=payment)
 
-        return self.shop.render(request, 'payment/pagseguro_form.html',
-                                {'order': order,
-                                 'payment': payment,
-                                 'HTTP_HOST': request.META.get('HTTP_HOST'),
-                                 'post_url': "https://pagseguro.uol.com.br/v2/checkout/payment.html",
-                                 'email': PAGSEGURO['EMAIL']})
+        return self.shop.render(request, 'payment/pagseguro_form.html', {
+            'order': order,
+            'payment': payment,
+            'HTTP_HOST': request.META.get('HTTP_HOST'),
+            'post_url': "https://pagseguro.uol.com.br/v2/checkout/payment.html",
+            'email': PAGSEGURO['EMAIL']})
 
     @csrf_exempt_m
     def psnotify(self, request):
@@ -113,19 +113,20 @@ class PaymentProcessor(ProcessorBase):
                     order, order_id, payment_id = reference.split('-')
                 except ValueError:
                     logger.error('Pagseguro: Error getting order for %s' % reference)
-                    return HttpResponseForbidden('Malformed order ID')
+                    return HttpResponseForbidden(_('Malformed order ID'))
 
                 try:
                     order = self.shop.order_model.objects.get(pk=order_id)
                 except self.shop.order_model.DoesNotExist:
                     logger.error('Pagseguro: Order %s does not exist' % order_id)
-                    return HttpResponseForbidden('Order %s does not exist' % order_id)
+                    return HttpResponseForbidden(_('Order %s does not exist' % order_id))
 
                 try:
                     payment = order.payments.get(pk=payment_id)
                 except order.payments.model.DoesNotExist:
-                    payment = order.payments.model(order=order,
-                                                   payment_module=u'%s' % self.name)
+                    payment = order.payments.model(
+                        order=order,
+                        payment_module=u'%s' % self.name)
 
                 payment.status = OrderPayment.PROCESSED
                 payment.amount = Decimal(amount)
@@ -145,8 +146,10 @@ class PaymentProcessor(ProcessorBase):
 
                 if payment.authorized and plata.settings.PLATA_STOCK_TRACKING:
                     StockTransaction = plata.stock_model()
-                    self.create_transactions(order, _('sale'),
-                        type=StockTransaction.SALE, negative=True, payment=payment)
+                    self.create_transactions(
+                        order, _('sale'),
+                        type=StockTransaction.SALE,
+                        negative=True, payment=payment)
 
                 if not order.balance_remaining:
                     self.order_paid(order, payment=payment)

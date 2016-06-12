@@ -2,7 +2,11 @@
 Payment module for check/transfer
 
 Author: jpbraun@mandriva.com
+
+Configuration:
+PLATA_PAYMENT_CHECK_NOTIFICATIONS
 """
+from __future__ import absolute_import, unicode_literals
 
 import logging
 from decimal import Decimal
@@ -55,37 +59,48 @@ class PaymentProcessor(ProcessorBase):
                                      negative=True,
                                      payment=payment)
         current_site = Site.objects.get_current()
-        confirm_link = "https://%s%s" % (current_site.domain, reverse('plata_payment_check_confirm', kwargs={'uuid': order.notes}))
-        message = """The order %s has been confirmed for check or bank transfer.
+        confirm_link = "https://%s%s" % (
+            current_site.domain,
+            reverse('plata_payment_check_confirm',
+                    kwargs={'uuid': order.notes}))
+        message = _(
+"""The order %(order)s has been confirmed for check or bank transfer.
 
-Customer: %s %s <%s>
+Customer: %(first_name)s %(last_name)s <%(email)s>
 
-Items: %s
+Items: %(items)s
 
-Amount due: %s %s
+Amount due: %(remaining)s %(currency)s
 
-Click on this link when the payment is received: %s
-""" % (order, order.user.first_name, order.user.last_name, order.email,
-       ", ".join([unicode(item) for item in order.items.all()]),
-       order.balance_remaining, order.currency,
-       confirm_link)
+Click on this link when the payment is received: %(confirm_link)s
+""" % {
+       'order': order,
+       'first_name': order.user.first_name,
+       'last_name': order.user.last_name,
+       'email': order.email,
+       'items': ", ".join([unicode(item) for item in order.items.all()]),
+       'remaining': order.balance_remaining,
+       'currency': order.currency,
+       'confirm_link': confirm_link})
 
         try:
             notification_emails = settings.PLATA_PAYMENT_CHECK_NOTIFICATIONS.get(order.currency)
         except KeyError:
             notification_emails = settings.PLATA_PAYMENT_CHECK_NOTIFICATIONS
         except AttributeError:
-            raise Exception("Configure the notification emails in the PLATA_PAYMENT_CHECK_NOTIFICATIONS setting")
+            raise Exception(_("Configure the notification emails in the PLATA_PAYMENT_CHECK_NOTIFICATIONS setting"))
 
-        send_mail('%sNew check/bank order (%s)' % (getattr(settings, 'EMAIL_SUBJECT_PREFIX', ''), order),
-                  message,
-                  settings.SERVER_EMAIL,
-                  notification_emails)
+        send_mail(_('%(prefix)sNew check/bank order (%(order)s)' % {
+                'prefix': getattr(settings, 'EMAIL_SUBJECT_PREFIX', ''),
+                'order': order}),
+                message,
+                settings.SERVER_EMAIL,
+                notification_emails)
 
-        return self.shop.render(request, 'payment/check_informations.html',
-                                {'order': order,
-                                 'payment': payment,
-                                 'HTTP_HOST': request.META.get('HTTP_HOST')})
+        return self.shop.render(request, 'payment/check_informations.html', {
+                'order': order,
+                'payment': payment,
+                'HTTP_HOST': request.META.get('HTTP_HOST')})
 
     def confirm(self, request, uuid):
 
