@@ -20,6 +20,12 @@ body {
     float: left;
 }
 
+.txt {
+    color: #fff;
+    float: left;
+    padding: 5px 10px;
+}
+
 #navigation a span {
     display: block;
     padding: 5px 10px;
@@ -83,14 +89,20 @@ table td {
     vertical-align: top;
     text-align: left;
 }
+
+tr.hidden {
+display:none;
+}
 </style>
 </head>
 <body>
 
 <div id="navigation">
-<a href="/"><span>{% trans "Home" %}</span></a>
-<a href="/products/"><span>{% trans "Products" %}</span></a>
-<a href="/cart/"><span>{% trans "Cart" %}</span></a>
+<a href="{% url "plata_home" %}"><span>{% trans "Home" %}</span></a>
+<a href="{% url "plata_product_list" %}"><span>{% trans "Products" %}</span></a>
+<a href="{% url "plata_shop_cart" %}"><span>{% trans "Cart" %}</span></a>
+<a href="{% url "dashboard" %}"><span>Dashboard</span></a>
+<div class="txt"> logged in as {{ user.email }}</div>
 <br style="clear:left" />
 </div>
 
