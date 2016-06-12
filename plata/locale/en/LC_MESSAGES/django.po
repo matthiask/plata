@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Plata next\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-12 09:58+0600\n"
-"PO-Revision-Date: 2016-06-12 10:03+0600\n"
+"POT-Creation-Date: 2016-06-12 10:53+0600\n"
+"PO-Revision-Date: 2016-06-12 10:54+0600\n"
 "Last-Translator: Henning Hraban Ramm <hraban@fiee.net>\n"
 "Language-Team: \n"
 "Language: en\n"
@@ -278,12 +278,53 @@ msgstr "%(stage)s: %(order)s processed by %(payment_module)s"
 msgid "Remaining discount for order %s"
 msgstr "Remaining discount for order %s"
 
-#: payment/modules/base.py:223 payment/modules/cod.py:42
-#: payment/modules/datatrans.py:181 payment/modules/ogone.py:238
+#: payment/modules/base.py:223 payment/modules/check.py:57
+#: payment/modules/cod.py:42 payment/modules/datatrans.py:181
+#: payment/modules/ogone.py:238 payment/modules/pagseguro.py:150
 #: payment/modules/paypal.py:197 payment/modules/postfinance.py:222
 #: product/stock/models.py:222
 msgid "sale"
 msgstr "sale"
+
+#: payment/modules/check.py:33
+msgid "Check/Bank transfer"
+msgstr "Check/Bank transfer"
+
+#: payment/modules/check.py:67
+#, python-format
+msgid ""
+"The order %(order)s has been confirmed for check or bank transfer.\n"
+"\n"
+"Customer: %(first_name)s %(last_name)s <%(email)s>\n"
+"\n"
+"Items: %(items)s\n"
+"\n"
+"Amount due: %(remaining)s %(currency)s\n"
+"\n"
+"Click on this link when the payment is received: %(confirm_link)s\n"
+msgstr ""
+"The order %(order)s has been confirmed for check or bank transfer.\n"
+"\n"
+"Customer: %(first_name)s %(last_name)s <%(email)s>\n"
+"\n"
+"Items: %(items)s\n"
+"\n"
+"Amount due: %(remaining)s %(currency)s\n"
+"\n"
+"Click on this link when the payment is received: %(confirm_link)s\n"
+
+#: payment/modules/check.py:91
+msgid ""
+"Configure the notification emails in the PLATA_PAYMENT_CHECK_NOTIFICATIONS "
+"setting"
+msgstr ""
+"Configure the notification emails in the PLATA_PAYMENT_CHECK_NOTIFICATIONS "
+"setting"
+
+#: payment/modules/check.py:93
+#, python-format
+msgid "%(prefix)sNew check/bank order (%(order)s)"
+msgstr "%(prefix)sNew check/bank order (%(order)s)"
 
 #: payment/modules/cod.py:24
 msgid "Cash on delivery"
@@ -294,14 +335,28 @@ msgid "Datatrans"
 msgstr "Datatrans"
 
 #: payment/modules/datatrans.py:73 payment/modules/ogone.py:109
-#: payment/modules/paypal.py:64 payment/modules/postfinance.py:104
-#: product/stock/models.py:227
+#: payment/modules/pagseguro.py:54 payment/modules/paypal.py:64
+#: payment/modules/postfinance.py:104 product/stock/models.py:227
 msgid "payment process reservation"
 msgstr "payment process reservation"
 
 #: payment/modules/ogone.py:86
 msgid "Ogone"
 msgstr "Ogone"
+
+#: payment/modules/pagseguro.py:32
+msgid "Pagseguro"
+msgstr "Pagseguro"
+
+#: payment/modules/pagseguro.py:116
+#| msgid "order ID"
+msgid "Malformed order ID"
+msgstr "Malformed order ID"
+
+#: payment/modules/pagseguro.py:122
+#, python-format
+msgid "Order %s does not exist"
+msgstr "Order %s does not exist"
 
 #: payment/modules/paypal.py:41
 msgid "Paypal"
@@ -920,6 +975,7 @@ msgid "Contact"
 msgstr "Contact"
 
 #: shop/templates/payment/ogone_form.html:6
+#: shop/templates/payment/pagseguro_form.html:5
 #: shop/templates/payment/paypal_form.html:6
 #: shop/templates/payment/postfinance_form.html:6
 msgid "Payment"
@@ -934,13 +990,19 @@ msgstr "You will be forwarded to Ogone for payment now."
 msgid "Pay now"
 msgstr "Pay now"
 
-#: shop/templates/payment/paypal_form.html:8
-msgid "You will be forwarded to Paypal for payment now."
-msgstr "You will be forwarded to Paypal for payment now."
+#: shop/templates/payment/pagseguro_form.html:7
+#| msgid "You will be forwarded to Ogone for payment now."
+msgid "You will be forwarded to PagSeguro for payment now."
+msgstr "You will be forwarded to PagSeguro for payment now."
 
+#: shop/templates/payment/pagseguro_form.html:36
 #: shop/templates/payment/paypal_form.html:63
 msgid "Purchase Items"
 msgstr "Purchase Items"
+
+#: shop/templates/payment/paypal_form.html:8
+msgid "You will be forwarded to Paypal for payment now."
+msgstr "You will be forwarded to Paypal for payment now."
 
 #: shop/templates/payment/postfinance_form.html:8
 msgid "You will be forwarded to Postfinance for payment now."
