@@ -189,7 +189,7 @@ class OrderItemForm(forms.Form):
         super(OrderItemForm, self).__init__(*args, **kwargs)
 
     def clean(self):
-        if (self.cleaned_data['absolute'] is None) ==
+        if (self.cleaned_data['absolute'] is None) == \
         (self.cleaned_data['relative'] is None):
             raise forms.ValidationError(_('Provide either "relative" or "absolute".'))
         if self.cleaned_data['absolute'] is None:
