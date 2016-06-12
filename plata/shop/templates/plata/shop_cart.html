@@ -10,8 +10,9 @@
 {% else %}
 <h1>{% trans "Cart" %}</h1>
 
+{% url 'plata_product_list' as ppl_url %}
 <p>{% blocktrans %}
-You may add products by going to the <a href="{% url "plata_product_list" %}"> products list</a>.
+You may add products by going to the <a href="{{ ppl_url }}"> products list</a>.
 To proceed to payment, select the "Checkout" button below.{% endblocktrans %}
 </p>
 
