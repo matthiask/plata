@@ -226,3 +226,11 @@ class ProcessorBase(object):
             self.order_paid(order, request=request)
 
         return self.shop.redirect('plata_order_success')
+
+    def reserve_stock_item(self, order, payment):
+        if plata.settings.PLATA_STOCK_TRACKING:
+            StockTransaction = plata.stock_model()
+            self.create_transactions(
+                order, _('payment process reservation'),
+                type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
+                negative=True, payment=payment)

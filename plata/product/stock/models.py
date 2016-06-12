@@ -36,7 +36,6 @@ class PeriodManager(models.Manager):
         """
         Return the newest active period
         """
-
         try:
             return self.filter(start__lte=timezone.now()).order_by(
                 '-start')[0]
@@ -149,7 +148,6 @@ class StockTransactionManager(models.Manager):
         """
 
         # Set negative to True for sales, lendings etc.
-
         factor = negative and -1 or 1
 
         for item in order.items.all():
@@ -164,6 +162,10 @@ class StockTransactionManager(models.Manager):
                 line_item_discount=item._line_item_discount,
                 line_item_tax=item._line_item_tax,
                 **kwargs)
+
+
+def current_period():
+    return Period.objects.current().id
 
 
 @python_2_unicode_compatible
@@ -228,7 +230,7 @@ class StockTransaction(models.Model):
     )
 
     period = models.ForeignKey(
-        Period, default=Period.objects.current,
+        Period, default=current_period,
         related_name='stock_transactions', verbose_name=_('period'))
     created = models.DateTimeField(_('created'), default=timezone.now)
     product = models.ForeignKey(

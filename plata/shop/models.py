@@ -118,6 +118,8 @@ class Order(BillingShippingAddress):
     CHECKOUT = 20
     #: Order has been confirmed, but it not (completely) paid for yet.
     CONFIRMED = 30
+    #: For invoice payment methods, when waiting for the money
+    PENDING = 35
     #: Order has been completely paid for.
     PAID = 40
     #: Order has been completed. Plata itself never sets this state,
@@ -128,6 +130,7 @@ class Order(BillingShippingAddress):
         (CART, _('Is a cart')),
         (CHECKOUT, _('Checkout process started')),
         (CONFIRMED, _('Order has been confirmed')),
+        (PENDING, _('Order is pending payment')),
         (PAID, _('Order has been paid')),
         (COMPLETED, _('Order has been completed')),
         )
@@ -139,7 +142,8 @@ class Order(BillingShippingAddress):
         blank=True,
         null=True,
         verbose_name=_('user'),
-        related_name='orders'
+        related_name='orders',
+        on_delete=models.SET_NULL,
     )
     language_code = models.CharField(
         _('language'), max_length=10, default='', blank=True)
@@ -156,34 +160,34 @@ class Order(BillingShippingAddress):
 
     items_subtotal = models.DecimalField(
         _('subtotal'),
-        max_digits=18, decimal_places=10, default=Decimal('0.00'))
+        max_digits=18, decimal_places=2, default=Decimal('0.00'))
     items_discount = models.DecimalField(
         _('items discount'),
-        max_digits=18, decimal_places=10, default=Decimal('0.00'))
+        max_digits=18, decimal_places=2, default=Decimal('0.00'))
     items_tax = models.DecimalField(
         _('items tax'),
-        max_digits=18, decimal_places=10, default=Decimal('0.00'))
+        max_digits=18, decimal_places=2, default=Decimal('0.00'))
 
     shipping_method = models.CharField(
         _('shipping method'),
         max_length=100, blank=True)
     shipping_cost = models.DecimalField(
         _('shipping cost'),
-        max_digits=18, decimal_places=10, blank=True, null=True)
+        max_digits=18, decimal_places=2, blank=True, null=True)
     shipping_discount = models.DecimalField(
         _('shipping discount'),
-        max_digits=18, decimal_places=10, blank=True, null=True)
+        max_digits=18, decimal_places=2, blank=True, null=True)
     shipping_tax = models.DecimalField(
         _('shipping tax'),
-        max_digits=18, decimal_places=10, default=Decimal('0.00'))
+        max_digits=18, decimal_places=2, default=Decimal('0.00'))
 
     total = models.DecimalField(
         _('total'),
-        max_digits=18, decimal_places=10, default=Decimal('0.00'))
+        max_digits=18, decimal_places=2, default=Decimal('0.00'))
 
     paid = models.DecimalField(
         _('paid'),
-        max_digits=18, decimal_places=10, default=Decimal('0.00'),
+        max_digits=18, decimal_places=2, default=Decimal('0.00'),
         help_text=_('This much has been paid already.'))
 
     notes = models.TextField(_('notes'), blank=True)
@@ -740,6 +744,14 @@ class OrderPayment(models.Model):
         _('data'), blank=True,
         help_text=_('JSON-encoded additional data about the order payment.'))
 
+    transaction_fee = models.DecimalField(
+        _('transaction fee'),
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text=_('Fee charged by the payment processor.'))
+
     class Meta:
         ordering = ('-timestamp',)
         verbose_name = _('order payment')
@@ -830,7 +842,6 @@ class PriceBase(models.Model):
         item._unit_tax = self.unit_tax
         item.tax_rate = self.tax_class.rate
         item.tax_class = self.tax_class
-        item.is_sale = False  # Hardcoded; override in your own price class
 
     @property
     def unit_tax(self):
