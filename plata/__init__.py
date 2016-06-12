@@ -1,10 +1,8 @@
 from __future__ import absolute_import, unicode_literals
-
-VERSION = (1, 2, 0, 'pre')
-__version__ = '.'.join(map(str, VERSION))
-
-
 import logging
+
+VERSION = (1, 2, 1, 'pre')
+__version__ = '.'.join(map(str, VERSION))
 logger = logging.getLogger('plata')
 
 
