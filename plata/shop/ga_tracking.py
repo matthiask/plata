@@ -29,8 +29,10 @@ def on_order_confirmed(order, request, **kwargs):
 
 
 def on_order_paid(order, payment, request, **kwargs):
-    ga_data = order.data.get('google_analytics', {})
+    if not request:
+        return
 
+    ga_data = order.data.get('google_analytics', {})
     tracker = Tracker(settings.GOOGLE_ANALYTICS_ID, request.get_host())
 
     # create visitor
