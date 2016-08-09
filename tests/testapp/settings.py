@@ -49,7 +49,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.i18n',
     'django.core.context_processors.media',
     'django.core.context_processors.static',
-    #'django.core.context_processors.tz',
+    # 'django.core.context_processors.tz',
     'django.core.context_processors.request',
     'django.contrib.messages.context_processors.messages',
     'plata.context_processors.plata_context',
@@ -73,11 +73,11 @@ INSTALLED_APPS = (
 
     'testapp',
     'plata',
-    'plata.contact', # Not strictly required (contact model can be exchanged)
+    'plata.contact',  # Not strictly required (contact model can be exchanged)
     'plata.discount',
     'plata.payment',
-    'plata.product', # Does nothing
-    'plata.product.stock', # Accurate stock tracking, not required
+    'plata.product',  # Does nothing
+    'plata.product.stock',  # Accurate stock tracking, not required
     'plata.shop',
 )
 
@@ -88,9 +88,9 @@ POSTFINANCE = {
     'SHA1_IN': 'plataSHA1_IN',
     'SHA1_OUT': 'plataSHA1_OUT',
     'LIVE': False,
-    }
+}
 
 PAYPAL = {
     'BUSINESS': 'example@paypal.com',
     'LIVE': False,
-    }
+}

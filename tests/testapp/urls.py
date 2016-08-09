@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.contrib import admin
 from django.shortcuts import redirect
 
@@ -14,10 +14,10 @@ shop = Shop(
     contact_model=Contact,
     order_model=Order,
     discount_model=Discount,
-    )
+)
 
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^$', lambda request: redirect('plata_product_list')),
     url(r'', include(shop.urls)),
     url(r'^products/$', 'testapp.views.product_list',
@@ -26,4 +26,4 @@ urlpatterns = patterns('',
         name='plata_product_detail'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^reporting/', include('plata.reporting.urls')),
-)
+]
