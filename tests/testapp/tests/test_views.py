@@ -398,10 +398,9 @@ class ViewTest(PlataTest):
         }
 
         from plata.payment.modules import paypal
-        import cgi
 
         def mock_urlopen(*args, **kwargs):
-            qs = cgi.parse_qs(args[1])
+            qs = six.moves.urllib.parse.parse_qs(args[1])
             if not six.PY3:
                 # Fix doubly encoded UTF-8
                 # Thanks, http://stackoverflow.com/a/1177542

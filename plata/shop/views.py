@@ -3,7 +3,7 @@ from __future__ import absolute_import, unicode_literals
 from functools import wraps
 import logging
 
-from django.conf.urls import include, patterns, url
+from django.conf.urls import include, url
 from django.contrib import auth, messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
@@ -115,9 +115,9 @@ class Shop(object):
 
         shop_instance = Shop(Contact, Order, Discount)
 
-        urlpatterns = patterns('',
+        urlpatterns = [
             url(r'^shop/', include(shop_instance.urls)),
-        )
+        ]
     """
 
     #: The base template used in all default checkout templates
@@ -197,8 +197,7 @@ class Shop(object):
         return url(r'^order/new/$', self.order_new, name='plata_order_new')
 
     def get_shop_urls(self):
-        return patterns(
-            '',
+        return [
             self.get_cart_url(),
             self.get_checkout_url(),
             self.get_discounts_url(),
@@ -206,14 +205,13 @@ class Shop(object):
             self.get_success_url(),
             self.get_failure_url(),
             self.get_new_url(),
-        )
+        ]
 
     def get_payment_urls(self):
-        urls = [
+        return [
             url(r'', include(module.urls))
             for module in self.get_payment_modules()
         ]
-        return patterns('', *urls)
 
     def get_payment_modules(self, request=None):
         """
