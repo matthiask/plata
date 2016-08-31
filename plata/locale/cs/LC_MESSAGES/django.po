@@ -174,94 +174,94 @@ msgstr "Peněžní slevy s DPH musí mít nastavenou měnu a třídu daně."
 
 #: discount/models.py:100
 msgid "Means of payment need a currency."
-msgstr ""
+msgstr "Způsob platby musí mít zadanou měnu."
 
 #: discount/models.py:103
 msgid "Means of payment cannot have tax class set."
-msgstr ""
+msgstr "Způsob platby nemůže mít zadanou třídu daně."
 
 #: discount/models.py:105
 msgid "Unknown discount type."
-msgstr ""
+msgstr "Neznámý typ slevy."
 
 #: discount/models.py:213 discount/models.py:331 shop/forms.py:97
 msgid "code"
-msgstr ""
+msgstr "kód"
 
 #: discount/models.py:215
 msgid "is active"
-msgstr ""
+msgstr "je aktivní"
 
 #: discount/models.py:216
 msgid "valid from"
-msgstr ""
+msgstr "platí od"
 
 #: discount/models.py:217
 msgid "valid until"
-msgstr ""
+msgstr "platí do"
 
 #: discount/models.py:220
 msgid "number of allowed uses"
-msgstr ""
+msgstr "počet možných použití"
 
 #: discount/models.py:223
 msgid ""
 "Leave empty if there is no limit on the number of uses of this discount."
-msgstr ""
+msgstr "Ponechte prázdné pokud nechcete omezovat počet možných použití slevového kupónu"
 
 #: discount/models.py:225
 msgid "number of times already used"
-msgstr ""
+msgstr "aktuální počet použití"
 
 #: discount/models.py:228 reporting/order.py:102
 #: shop/templates/plata/_order_overview.html:41
 msgid "discount"
-msgstr ""
+msgstr "sleva"
 
 #: discount/models.py:229
 msgid "discounts"
-msgstr ""
+msgstr "slevy"
 
 #: discount/models.py:238
 msgid "Discount is inactive."
-msgstr ""
+msgstr "Sleva není aktivní."
 
 #: discount/models.py:242
 msgid "Discount is not active yet."
-msgstr ""
+msgstr "Sleva ještě není aktivní."
 
 #: discount/models.py:244
 msgid "Discount is expired."
-msgstr ""
+msgstr "Sleva vypršela."
 
 #: discount/models.py:248
 msgid "Allowed uses for this discount has already been reached."
-msgstr ""
+msgstr "Počet použití slevy již byl vyčerpán."
 
 #: discount/models.py:254
 msgid "Discount and order currencies do not match."
-msgstr ""
+msgstr "Sleva a objednávka mají rozdílnou měnu."
 
 #: discount/models.py:327 product/stock/models.py:246 shop/models.py:196
 #: shop/models.py:705
 msgid "order"
-msgstr ""
+msgstr "objednávka"
 
 #: discount/models.py:333
 msgid "remaining"
-msgstr ""
+msgstr "zbývá"
 
 #: discount/models.py:336
 msgid "Discount amount excl. tax remaining after discount has been applied."
-msgstr ""
+msgstr "Zbývající peněžní sleva bez DPH po uplatnění."
 
 #: discount/models.py:341
 msgid "applied discount"
-msgstr ""
+msgstr "uplatněná sleva"
 
 #: discount/models.py:342
 msgid "applied discounts"
-msgstr ""
+msgstr "uplatněné slevy"
 
 #: fields.py:27
 msgid "currency"
@@ -275,7 +275,7 @@ msgstr ""
 #: payment/modules/base.py:180
 #, python-format
 msgid "Remaining discount for order %s"
-msgstr ""
+msgstr "Zbývající sleva pro objednávku %s"
 
 #: payment/modules/base.py:209 payment/modules/cod.py:42
 #: payment/modules/ogone.py:238 payment/modules/paypal.py:197
@@ -294,7 +294,7 @@ msgstr ""
 #: payment/modules/ogone.py:109 payment/modules/paypal.py:64
 #: payment/modules/postfinance.py:104 product/stock/models.py:227
 msgid "payment process reservation"
-msgstr ""
+msgstr "rezervace platebním procesem"
 
 #: payment/modules/paypal.py:41
 msgid "Paypal"
@@ -306,85 +306,85 @@ msgstr ""
 
 #: product/stock/admin.py:14
 msgid "initial stock"
-msgstr ""
+msgstr "původní sklad"
 
 #: product/stock/admin.py:17
 msgid "purchases and sales"
-msgstr ""
+msgstr "nákupy a prodeje"
 
 #: product/stock/admin.py:20
 msgid "stock management"
-msgstr ""
+msgstr "správa skladu"
 
 #: product/stock/admin.py:23
 msgid "generic warehousing"
-msgstr ""
+msgstr "obecný sklad"
 
 #: product/stock/admin.py:26
 msgid "internal use"
-msgstr ""
+msgstr "interní použití"
 
 #: product/stock/models.py:45
 msgid "Automatically created"
-msgstr ""
+msgstr "Automaticky vytvořeno"
 
 #: product/stock/models.py:47
 msgid "Automatically created because no period existed yet."
-msgstr ""
+msgstr "Vytvořeno automaticky, protože ještě neexistuje žádný časový interval."
 
 #: product/stock/models.py:64
 msgid "start"
-msgstr ""
+msgstr "start"
 
 #: product/stock/models.py:65
 msgid "Period starts at this time. May also be a future date."
-msgstr ""
+msgstr "Začátek intervalu. Může být i v budoucnosti."
 
 #: product/stock/models.py:72 product/stock/models.py:232
 msgid "period"
-msgstr ""
+msgstr "interval"
 
 #: product/stock/models.py:73
 msgid "periods"
-msgstr ""
+msgstr "intervaly"
 
 #: product/stock/models.py:88 product/stock/models.py:95
 msgid "New period"
-msgstr ""
+msgstr "Nový interval"
 
 #: product/stock/models.py:219
 msgid "initial amount"
-msgstr ""
+msgstr "počáteční množství"
 
 #: product/stock/models.py:220
 msgid "correction"
-msgstr ""
+msgstr "oprava"
 
 #: product/stock/models.py:221
 msgid "purchase"
-msgstr ""
+msgstr "nákup"
 
 #: product/stock/models.py:223
 msgid "returns"
-msgstr ""
+msgstr "vratky"
 
 #: product/stock/models.py:224
 msgid "reservation"
-msgstr ""
+msgstr "rezervace"
 
 #: product/stock/models.py:225
 msgid "incoming"
-msgstr ""
+msgstr "příjem"
 
 #: product/stock/models.py:226
 msgid "outgoing"
-msgstr ""
+msgstr "výdej"
 
 #: product/stock/models.py:236 reporting/order.py:56 reporting/order.py:75
 #: reporting/product.py:34 shop/models.py:541
 #: shop/templates/plata/shop_cart.html:18
 msgid "product"
-msgstr ""
+msgstr "produkt"
 
 #: product/stock/models.py:240
 msgid "change"
@@ -401,33 +401,33 @@ msgstr ""
 #: product/stock/models.py:256 reporting/order.py:55 reporting/order.py:74
 #: reporting/product.py:35 shop/models.py:545
 msgid "SKU"
-msgstr ""
+msgstr "Kód zboží"
 
 #: product/stock/models.py:258 reporting/order.py:78 shop/models.py:568
 #: shop/templates/plata/shop_cart.html:21
 msgid "line item price"
-msgstr ""
+msgstr "cena za jednotku"
 
 #: product/stock/models.py:261 shop/models.py:572
 msgid "line item discount"
-msgstr ""
+msgstr "jednotková sleva"
 
 #: product/stock/models.py:264 shop/models.py:578
 msgid "line item tax"
-msgstr ""
+msgstr "jednotková daň"
 
 #: product/stock/models.py:271
 msgid "stock transaction"
-msgstr ""
+msgstr "skladová transakce"
 
 #: product/stock/models.py:272
 msgid "stock transactions"
-msgstr ""
+msgstr "skladové transakce"
 
 #: product/stock/models.py:308
 #, python-format
 msgid "Not enough stock available for %s."
-msgstr ""
+msgstr "Nedostatek zboží na skladě pro %s."
 
 #: reporting/order.py:40
 msgid "order date"
@@ -513,7 +513,7 @@ msgstr "ID objednávky"
 
 #: shop/admin.py:86
 msgid "Packing slip"
-msgstr ""
+msgstr "Dodací list"
 
 #: shop/admin.py:94
 msgid "Invoice"
@@ -561,7 +561,7 @@ msgstr "priorita"
 
 #: shop/models.py:40
 msgid "Used to order the tax classes in the administration interface."
-msgstr ""
+msgstr "Použito pro zvolení třídy daně skrze administrační rozhraní."
 
 #: shop/models.py:45
 msgid "tax classes"
@@ -669,11 +669,11 @@ msgstr "Zaplacená částka"
 
 #: shop/models.py:192 shop/models.py:582 shop/models.py:739
 msgid "data"
-msgstr ""
+msgstr "data"
 
 #: shop/models.py:193 shop/models.py:583 shop/models.py:740
 msgid "JSON-encoded additional data about the order payment."
-msgstr ""
+msgstr "Doplňková data o platbě objednávky ve formátu JSON."
 
 #: shop/models.py:197
 msgid "orders"
@@ -736,7 +736,7 @@ msgstr "položky"
 #: shop/models.py:591
 #, python-format
 msgid "%(quantity)s of %(name)s"
-msgstr ""
+msgstr "%(quantity)s z %(name)s"
 
 #: shop/models.py:654
 msgid "order status"
@@ -749,7 +749,7 @@ msgstr "stavy objednávky"
 #: shop/models.py:658
 #, python-format
 msgid "Status %(status)s for %(order)s"
-msgstr ""
+msgstr "Stav %(status)s pro %(order)s"
 
 #: shop/models.py:699
 msgid "pending"
@@ -777,7 +777,7 @@ msgstr "klíč platebního modulu"
 
 #: shop/models.py:716
 msgid "Machine-readable identifier for the payment module used."
-msgstr ""
+msgstr "Strojově čitelný identifikátor pro použitý platební modul."
 
 #: shop/models.py:718
 msgid "payment module"
@@ -785,7 +785,7 @@ msgstr "platební modul"
 
 #: shop/models.py:720
 msgid "For example 'Cash on delivery', 'PayPal', ..."
-msgstr ""
+msgstr "Například 'Dobírka', 'PayPal', ..."
 
 #: shop/models.py:722
 msgid "payment method"
@@ -793,7 +793,7 @@ msgstr "způsob platby"
 
 #: shop/models.py:725
 msgid "For example 'MasterCard', 'VISA' or some other card."
-msgstr ""
+msgstr "Například 'Mastercard', 'VISA' nebo jiné karty."
 
 #: shop/models.py:727
 msgid "transaction ID"
@@ -801,11 +801,11 @@ msgstr "ID transakce"
 
 #: shop/models.py:730
 msgid "Unique ID identifying this payment in the foreign system."
-msgstr ""
+msgstr "Unikátní ID identifikující tuto platbu v systémech třetích stran."
 
 #: shop/models.py:734
 msgid "Point in time when payment has been authorized."
-msgstr ""
+msgstr "Datum a čas kdy byla platba potvrzena."
 
 #: shop/models.py:745
 msgid "order payments"
@@ -814,20 +814,20 @@ msgstr "platby od objednávky"
 #: shop/models.py:751
 #, python-format
 msgid "%(authorized)s of %(currency)s %(amount).2f for %(order)s"
-msgstr ""
+msgstr "%(authorized)s %(currency)s %(amount).2f pro %(order)s"
 
 #: shop/models.py:754
 msgid "Authorized"
-msgstr "Autorizován"
+msgstr "Potvrzena"
 
 #: shop/models.py:754
 msgid "Not authorized"
-msgstr "Neautorizován"
+msgstr "Nepotvrzena"
 
 #: shop/models.py:774
 #, python-format
 msgid "Currency of payment %s does not match."
-msgstr ""
+msgstr "Měna pro platbu %s nesouhlasí."
 
 #: shop/models.py:800
 msgid "price"
@@ -843,7 +843,7 @@ msgstr "včetně daně"
 
 #: shop/models.py:809
 msgid "Is tax included in given unit price?"
-msgstr ""
+msgstr "Je v jednotkové ceně zahrnuto DPH?"
 
 #: shop/templates/_form_errors.html:3
 msgid "Please correct the following errors:"
@@ -883,7 +883,7 @@ msgstr "Jdi do košíku"
 
 #: shop/templates/base.html:112
 msgid "That's what we know about you:"
-msgstr ""
+msgstr "Tohle o tobě víme:"
 
 #: shop/templates/base.html:115
 msgid "User"
@@ -901,7 +901,7 @@ msgstr "Platba"
 
 #: shop/templates/payment/ogone_form.html:8
 msgid "You will be forwarded to Ogone for payment now."
-msgstr ""
+msgstr "Nyní budete přesměrováni na Ogone platební bránu."
 
 #: shop/templates/payment/ogone_form.html:28
 #: shop/templates/payment/postfinance_form.html:30
@@ -910,15 +910,15 @@ msgstr "Zaplatit"
 
 #: shop/templates/payment/paypal_form.html:8
 msgid "You will be forwarded to Paypal for payment now."
-msgstr ""
+msgstr "Nyní budete přesměrováni na platební bránu PayPalu."
 
 #: shop/templates/payment/paypal_form.html:63
 msgid "Purchase Items"
-msgstr ""
+msgstr "Zakoupené položky"
 
 #: shop/templates/payment/postfinance_form.html:8
 msgid "You will be forwarded to Postfinance for payment now."
-msgstr ""
+msgstr "Nyní budete přesměrováni na platební bránu Postfinance."
 
 #: shop/templates/plata/_order_overview.html:23
 #: shop/templates/plata/shop_discounts.html:5
@@ -941,7 +941,7 @@ msgstr "Úspěšně jste si u nás vytvořili účet."
 #: shop/templates/plata/notifications/contact_created.txt:4
 #, python-format
 msgid "Go to http://%(domain)s/ and enter the following details:"
-msgstr ""
+msgstr "Zadejte to prohlížeče adresu http://%(domain)s/ a zadejte tam následující informace:"
 
 #: shop/templates/plata/notifications/contact_created.txt:6
 msgid "Your username:"
@@ -1033,7 +1033,8 @@ msgstr "Objednávka byla potvrzena."
 msgid ""
 "As soon as we receive a confirmation from the payment provider, you'll be "
 "sent a confirmation e-mail."
-msgstr ""
+msgstr "Hned jak dostaneme e-mail od provozovatele platební brány, "
+"zašleme Vám potvrzovací e-mail."
 
 #: shop/templates/product/product_detail.html:23
 msgid "Add to cart"
@@ -1047,13 +1048,13 @@ msgstr "Košík je prázdný."
 msgid ""
 "You have already confirmed this order earlier, but it is not fully paid for "
 "yet."
-msgstr ""
+msgstr "Již jste dříve tuto objednávku potvrdili, ale zatím není zaplacena."
 
 #: shop/views.py:375
 #, python-format
 msgid ""
 "%(name)s has been removed from the inventory and from your cart as well."
-msgstr ""
+msgstr "zboží %(name)s bylo odstraněno z nabídky a z Vašeho košíku."
 
 #: shop/views.py:403
 msgid "The cart has been updated."
