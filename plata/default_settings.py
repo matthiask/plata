@@ -83,3 +83,9 @@ PLATA_SHOP_PRODUCT = getattr(settings, 'PLATA_SHOP_PRODUCT', 'product.Product')
 
 #: Since ZIP code is far from universal, and more an L10N than I18N issue:
 PLATA_ZIP_CODE_LABEL = getattr(settings, 'PLATA_ZIP_CODE_LABEL', _('ZIP code'))
+
+#: Custom font for PDF generation
+PLATA_CUSTOM_PDF_FONT_NAME = getattr(settings, 'PLATA_CUSTOM_PDF_FONT_NAME', '')
+PLATA_CUSTOM_PDF_FONT_PATH = getattr(settings, 'PLATA_CUSTOM_PDF_FONT_PATH', '')
+PLATA_CUSTOM_PDF_FONT_BOLD_NAME = getattr(settings, 'PLATA_CUSTOM_PDF_FONT_BOLD_NAME', '')
+PLATA_CUSTOM_PDF_FONT_BOLD_PATH = getattr(settings, 'PLATA_CUSTOM_PDF_FONT_BOLD_PATH', '')

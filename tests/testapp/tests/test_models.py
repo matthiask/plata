@@ -11,12 +11,12 @@ from django.core.serializers import serialize
 from django.db.models import Q
 from django.utils import six, timezone
 
-from pdfdocument.document import PDFDocument
 
 import plata
 from plata.discount.models import Discount, DiscountBase
 from plata.product.stock.models import Period, StockTransaction
 import plata.reporting.order
+from plata.reporting.pdfdocument import PlataPDFDocument
 from plata.shop.models import Order, OrderStatus, OrderPayment
 
 from .base import PlataTest
@@ -899,7 +899,7 @@ class ModelTest(PlataTest):
         # This should not crash; generating a PDF exercises the methods
         # and properties of the order
         plata.reporting.order.invoice_pdf(
-            PDFDocument(BytesIO()),
+            PlataPDFDocument(BytesIO()),
             Order.objects.create())
 
     def test_25_discount_validation(self):
