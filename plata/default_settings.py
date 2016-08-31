@@ -85,7 +85,7 @@ PLATA_SHOP_PRODUCT = getattr(settings, 'PLATA_SHOP_PRODUCT', 'product.Product')
 PLATA_ZIP_CODE_LABEL = getattr(settings, 'PLATA_ZIP_CODE_LABEL', _('ZIP code'))
 
 #: Custom font for PDF generation
-PLATA_CUSTOM_PDF_FONT_NAME = getattr(settings, 'PLATA_CUSTOM_PDF_FONT_NAME', '')
-PLATA_CUSTOM_PDF_FONT_PATH = getattr(settings, 'PLATA_CUSTOM_PDF_FONT_PATH', '')
-PLATA_CUSTOM_PDF_FONT_BOLD_NAME = getattr(settings, 'PLATA_CUSTOM_PDF_FONT_BOLD_NAME', '')
-PLATA_CUSTOM_PDF_FONT_BOLD_PATH = getattr(settings, 'PLATA_CUSTOM_PDF_FONT_BOLD_PATH', '')
+PLATA_PDF_FONT_NAME = getattr(settings, 'PLATA_PDF_FONT_NAME', '')
+PLATA_PDF_FONT_PATH = getattr(settings, 'PLATA_PDF_FONT_PATH', '')
+PLATA_PDF_FONT_BOLD_NAME = getattr(settings, 'PLATA_PDF_FONT_BOLD_NAME', '')
+PLATA_PDF_FONT_BOLD_PATH = getattr(settings, 'PLATA_PDF_FONT_BOLD_PATH', '')
