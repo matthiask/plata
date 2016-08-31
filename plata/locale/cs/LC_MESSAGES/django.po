@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-29 10:59-0800\n"
+"POT-Creation-Date: 2016-08-31 15:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -79,7 +79,7 @@ msgstr "PSČ"
 
 #: discount/admin.py:24
 msgid "Configuration options"
-msgstr "Možnosti nastavení"
+msgstr "Možnosti konfigurace"
 
 #: discount/admin.py:25
 msgid "Save and continue editing to configure options."
@@ -100,19 +100,19 @@ msgstr "Konfigurace"
 
 #: discount/models.py:29
 msgid "amount voucher excl. tax (reduces total tax on order)"
-msgstr ""
+msgstr "peněžní kupón bez DPH (sníží celkovou daň objednávky)"
 
 #: discount/models.py:31
 msgid "amount voucher incl. tax (reduces total tax on order)"
-msgstr ""
+msgstr "peněžní kupón s DPH (sníží celkovou daň objednávky)"
 
 #: discount/models.py:33
 msgid "percentage voucher (reduces total tax on order)"
-msgstr "procentuální poukázka (zmenšuje celkovou daň u objednávky)"
+msgstr "procentuální kupón (sníží celkovou daň objednávky)"
 
 #: discount/models.py:35
 msgid "means of payment (does not change total tax on order)"
-msgstr "způsob platby (nemění celkovou daň u objednávky)"
+msgstr "způsob platby (nemění celkovou daň objednávky)"
 
 #: discount/models.py:42
 msgid "All products"
@@ -122,8 +122,8 @@ msgstr "Všechny produkty"
 msgid "Exclude sale prices"
 msgstr "Vyřadit položky ve slevě"
 
-#: discount/models.py:50 product/stock/models.py:61
-#: product/stock/models.py:255 shop/models.py:33 shop/models.py:544
+#: discount/models.py:50 product/stock/models.py:61 product/stock/models.py:255
+#: shop/models.py:33 shop/models.py:544
 msgid "name"
 msgstr "jméno"
 
@@ -137,7 +137,7 @@ msgstr "hodnota"
 
 #: discount/models.py:57
 msgid "Only required for amount discounts."
-msgstr "Požadováno pouze pro celočíselné slevy."
+msgstr "Požadováno pouze pro peněžní slevy."
 
 #: discount/models.py:59 shop/models.py:44 shop/models.py:562
 #: shop/models.py:812
@@ -146,7 +146,7 @@ msgstr "daňová třída"
 
 #: discount/models.py:61
 msgid "Only required for amount discounts incl. tax."
-msgstr ""
+msgstr "Vyžadováno pouze pro peněžní slevy včetně DPH"
 
 #: discount/models.py:64
 msgid "configuration"
@@ -154,23 +154,23 @@ msgstr "konfigurace"
 
 #: discount/models.py:65
 msgid "If you edit this field directly, changes below will be ignored."
-msgstr ""
+msgstr "Pokud budete toto pole upravovat ručně, změny níže budou ignorovány."
 
 #: discount/models.py:83
 msgid "Percentage discounts cannot have currency and tax class set."
-msgstr ""
+msgstr "Procentuální slevy nemohou mít měnu a třídu daně."
 
 #: discount/models.py:88
 msgid "Amount discounts excl. tax need a currency."
-msgstr ""
+msgstr "Peněžní slevy bez DPH musí mít nastavenou měnu."
 
 #: discount/models.py:91
 msgid "Amount discounts excl. tax cannot have tax class set."
-msgstr ""
+msgstr "Peněžní slevy nez DPH nemohou mít nastavenou třídu daně."
 
 #: discount/models.py:96
 msgid "Amount discounts incl. tax need a currency and a tax class."
-msgstr ""
+msgstr "Peněžní slevy s DPH musí mít nastavenou měnu a třídu daně."
 
 #: discount/models.py:100
 msgid "Means of payment need a currency."
@@ -267,17 +267,17 @@ msgstr ""
 msgid "currency"
 msgstr "měna"
 
-#: payment/modules/base.py:135
+#: payment/modules/base.py:134
 #, python-format
 msgid "%(stage)s: %(order)s processed by %(payment_module)s"
 msgstr ""
 
-#: payment/modules/base.py:181
+#: payment/modules/base.py:180
 #, python-format
 msgid "Remaining discount for order %s"
 msgstr ""
 
-#: payment/modules/base.py:210 payment/modules/cod.py:42
+#: payment/modules/base.py:209 payment/modules/cod.py:42
 #: payment/modules/ogone.py:238 payment/modules/paypal.py:197
 #: payment/modules/postfinance.py:222 product/stock/models.py:222
 msgid "sale"
@@ -472,7 +472,8 @@ msgstr "Včetně daně"
 #: reporting/order.py:149
 #, python-format
 msgid "Already paid for with %(payment_method)s (Transaction %(transaction)s)."
-msgstr "Již zaplaceno metodou %(payment_method)s (Transaction %(transaction)s)."
+msgstr ""
+"Již zaplaceno metodou %(payment_method)s (Transaction %(transaction)s)."
 
 #: reporting/order.py:155
 msgid "Already paid for."
@@ -531,8 +532,8 @@ msgid ""
 "This e-mail address might belong to you, but we cannot know for sure because "
 "you are not authenticated yet."
 msgstr ""
-"Tento e-mail může být váš, ale zatím to nemůžeme vědět jistě, protože "
-"jste se ještě nepřihlásil."
+"Tento e-mail může být váš, ale zatím to nemůžeme vědět jistě, protože jste "
+"se ještě nepřihlásil."
 
 #: shop/forms.py:115
 msgid "This code does not validate"
@@ -678,7 +679,7 @@ msgstr ""
 msgid "orders"
 msgstr "objednávky"
 
-#: shop/models.py:401 shop/views.py:383
+#: shop/models.py:401 shop/views.py:385
 msgid "Cannot modify order once it has been confirmed."
 msgstr "Nemůžete upravit objednávku, když již byla potvrzena."
 
@@ -848,7 +849,7 @@ msgstr ""
 msgid "Please correct the following errors:"
 msgstr "Opravte prosím následující chyby:"
 
-#: shop/templates/_form_errors.html:8 shop/templates/_form_errors.html:24
+#: shop/templates/_form_errors.html:8 shop/templates/_form_errors.html.py:24
 msgid "Form errors"
 msgstr "Chyby formuláře"
 
@@ -1048,20 +1049,21 @@ msgid ""
 "yet."
 msgstr ""
 
-#: shop/views.py:373
+#: shop/views.py:375
 #, python-format
 msgid ""
 "%(name)s has been removed from the inventory and from your cart as well."
 msgstr ""
 
-#: shop/views.py:401
+#: shop/views.py:403
 msgid "The cart has been updated."
 msgstr "Košík byl aktualizován."
 
-#: shop/views.py:636
+#: shop/views.py:638
 msgid "Payment failed, please try again."
 msgstr "Platba selhala, zkuste to znovu."
 
-#: shop/views.py:645
+#: shop/views.py:647
 msgid "Payment failed; you can continue editing your order and try again."
-msgstr "Platba selhala; můžete pokračovat v úpravě vaší objednávky a zkusit to znovu."
+msgstr ""
+"Platba selhala; můžete pokračovat v úpravě vaší objednávky a zkusit to znovu."
