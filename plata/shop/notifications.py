@@ -78,20 +78,20 @@ from django.utils.translation import activate
 
 class BaseHandler(object):
     def invoice_pdf(self, order):
-        from pdfdocument.document import PDFDocument
+        from plata.reporting.pdfdocument import PlataPDFDocument
         from plata.reporting.order import invoice_pdf
 
         with contextlib.closing(BytesIO()) as content:
-            pdf = PDFDocument(content)
+            pdf = PlataPDFDocument(content)
             invoice_pdf(pdf, order)
             return content.getvalue()
 
     def packing_slip_pdf(self, order):
-        from pdfdocument.document import PDFDocument
+        from plata.reporting.pdfdocument import PlataPDFDocument
         from plata.reporting.order import packing_slip_pdf
 
         with contextlib.closing(BytesIO()) as content:
-            pdf = PDFDocument(content)
+            pdf = PlataPDFDocument(content)
             packing_slip_pdf(pdf, order)
             return content.getvalue()
 
