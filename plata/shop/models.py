@@ -433,6 +433,10 @@ class Order(BillingShippingAddress):
             item.quantity = absolute
 
         if item.quantity > 0:
+            
+            if data is not None:
+                item.data = data
+
             try:
                 price = product.get_price(
                     currency=self.currency,
@@ -445,9 +449,6 @@ class Order(BillingShippingAddress):
                 raise ValidationError(
                     _('The price could not be determined.'),
                     code='unknown_price')
-
-            if data is not None:
-                item.data = data
 
             price.handle_order_item(item)
             product.handle_order_item(item)
