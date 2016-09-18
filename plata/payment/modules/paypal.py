@@ -41,13 +41,13 @@ class PaymentProcessor(ProcessorBase):
     default_name = _('Paypal')
 
     def get_urls(self):
-        from django.conf.urls import patterns, url
+        from django.conf.urls import url
 
-        return patterns(
-            '',
-            url(r'^payment/paypal/ipn/$', self.ipn,
+        return [
+            url(r'^payment/paypal/ipn/$',
+                self.ipn,
                 name='plata_payment_paypal_ipn'),
-        )
+        ]
 
     def process_order_confirmed(self, request, order):
         PAYPAL = settings.PAYPAL

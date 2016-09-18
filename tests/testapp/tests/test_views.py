@@ -33,7 +33,9 @@ Product = plata.product_model()
 class ViewTest(PlataTest):
     def setUp(self):
         self.ORIG_TEMPLATE_DIRS = settings.TEMPLATE_DIRS
-        settings.TEMPLATE_DIRS = (os.path.join(os.path.dirname(__file__), 'templates'),)
+        settings.TEMPLATE_DIRS = (
+            os.path.join(os.path.dirname(__file__), 'templates'),
+        )
 
     def tearDown(self):
         settings.TEMPLATE_DIRS = self.ORIG_TEMPLATE_DIRS
@@ -47,8 +49,8 @@ class ViewTest(PlataTest):
 
     def test_02_authenticated_user_has_contact(self):
         """Test shop.contact_from_user works correctly"""
-        user = User.objects.create_user('test', 'test@example.com',
-            'testing')
+        user = User.objects.create_user(
+            'test', 'test@example.com', 'testing')
         self.client.login(username='test', password='testing')
 
         contact = Contact.objects.create(user=user)
@@ -71,19 +73,22 @@ class ViewTest(PlataTest):
         p2.name = 'Test Product 2'
         p2.save()
 
-        p1.stock_transactions.create(type=StockTransaction.PURCHASE, change=100)
-        p2.stock_transactions.create(type=StockTransaction.PURCHASE, change=100)
+        p1.stock_transactions.create(
+            type=StockTransaction.PURCHASE, change=100)
+        p2.stock_transactions.create(
+            type=StockTransaction.PURCHASE, change=100)
         self.assertEqual(Product.objects.filter(items_in_stock=0).count(), 0)
 
-        self.assertContains(self.client.get(p1.get_absolute_url()),
+        self.assertContains(
+            self.client.get(p1.get_absolute_url()),
             p1.name)
 
         self.client.post(p1.get_absolute_url(), {
             'quantity': 5,
-            })
+        })
         self.client.post(p2.get_absolute_url(), {
             'quantity': 3,
-            })
+        })
 
         self.assertEqual(Order.objects.count(), 1)
         self.assertContains(self.client.get('/cart/'), 'value="5"')
@@ -102,7 +107,7 @@ class ViewTest(PlataTest):
 
             'items-1-id': i2.id,
             'items-1-quantity': i2.quantity,
-            }), '/cart/')
+        }), '/cart/')
 
         self.assertEqual(order.modify_item(p1, 0).quantity, 6)
         self.assertEqual(order.items.count(), 2)
@@ -119,14 +124,14 @@ class ViewTest(PlataTest):
 
             'items-1-id': i2.id,
             'items-1-quantity': 0,
-            }), '/checkout/')
+        }), '/checkout/')
 
         self.assertEqual(order.modify_item(p1, 0).quantity, 6)
         self.assertEqual(order.items.count(), 1)
 
         self.client.post(p2.get_absolute_url(), {
             'quantity': 5,
-            })
+        })
         self.assertEqual(order.items.count(), 2)
 
         # TODO test what happens when a product has been deleted from the
@@ -150,7 +155,7 @@ class ViewTest(PlataTest):
 
             'items-1-id': i2.id,
             'items-1-quantity': 5,
-            })
+        })
         self.assertRedirects(response, '/checkout/')
         self.assertEqual(order.items.count(), 1)
 
@@ -166,10 +171,10 @@ class ViewTest(PlataTest):
             'order-billing_zip_code': u'8042',
             'order-billing_city': u'Beispielstadt',
             'order-billing_country': u'CH',
-            # 'order-shipping_same_as_billing': True, # billing information is missing...
+            # 'order-shipping_same_as_billing': True,  # information is missing
             'order-email': 'something@example.com',
             'order-currency': 'CHF',
-            }).status_code, 200)  # ... therefore view does not redirect
+        }).status_code, 200)  # ... therefore view does not redirect
 
         self.assertRedirects(self.client.post('/checkout/', {
             '_checkout': 1,
@@ -184,7 +189,7 @@ class ViewTest(PlataTest):
             'order-email': 'something@example.com',
             'order-currency': 'CHF',
             'order-notes': 'Test\n\nJust testing.',
-            }), '/confirmation/')
+        }), '/confirmation/')
 
         Discount.objects.create(
             is_active=True,
@@ -195,32 +200,33 @@ class ViewTest(PlataTest):
 
         self.assertContains(self.client.post('/discounts/', {
             'code': 'something-invalid',
-            }), 'not validate')
+        }), 'not validate')
 
         self.assertRedirects(self.client.post('/discounts/', {
             'code': 'asdf',
-            }), '/discounts/')
+        }), '/discounts/')
 
         self.assertRedirects(self.client.post('/discounts/', {
             'proceed': 'True',
-            }), '/confirmation/')
+        }), '/confirmation/')
 
-        self.assertEqual(self.client.post('/confirmation/', {}).status_code, 200)
+        self.assertEqual(
+            self.client.post('/confirmation/', {}).status_code, 200)
         self.assertEqual(Order.objects.get(pk=order.id).status, Order.CHECKOUT)
 
         self.assertContains(self.client.post('/confirmation/', {
             'terms_and_conditions': True,
             'payment_method': 'postfinance',
-            }), 'SHASign')
+        }), 'SHASign')
 
         self.assertContains(self.client.post('/confirmation/', {
             'terms_and_conditions': True,
             'payment_method': 'paypal',
-            }), 'cgi-bin/webscr')
+        }), 'cgi-bin/webscr')
 
         self.assertRedirects(self.client.post(p2.get_absolute_url(), {
             'quantity': 42,
-            }), '/cart/', target_status_code=302)
+        }), '/cart/', target_status_code=302)
         self.assertRedirects(self.client.post('/cart/', {
             'items-INITIAL_FORMS': 1,
             'items-TOTAL_FORMS': 1,
@@ -229,8 +235,9 @@ class ViewTest(PlataTest):
             'items-0-id': i2.id,
             'items-0-quantity': 43,
             'items-0-DELETE': False,
-            }), '/confirmation/?confirmed=1')
-        self.assertTrue(Order.objects.all()[0].items.get(product=p2).quantity != 42)
+        }), '/confirmation/?confirmed=1')
+        self.assertTrue(
+            Order.objects.all()[0].items.get(product=p2).quantity != 42)
 
         # Test this view works at all
         self.client.get('/order/payment_failure/')
@@ -239,37 +246,46 @@ class ViewTest(PlataTest):
         self.assertRedirects(self.client.post('/confirmation/', {
             'terms_and_conditions': True,
             'payment_method': 'cod',
-            }), '/order/success/')
+        }), '/order/success/')
         self.assertEqual(len(mail.outbox), 2)  # invoice and packing slip
         self.assertEqual(Order.objects.get(pk=order.id).status, Order.PAID)
 
         # Clear order
-        self.assertRedirects(self.client.get('/order/new/?next=%s' % p1.get_absolute_url()),
+        self.assertRedirects(
+            self.client.get('/order/new/?next=%s' % p1.get_absolute_url()),
             p1.get_absolute_url())
         # Can call URL several times without change in behavior
-        self.assertRedirects(self.client.get('/order/new/'), '/',
+        self.assertRedirects(
+            self.client.get('/order/new/'), '/',
             target_status_code=302)
 
         # Cart is empty
         self.assertRedirects(self.client.post('/confirmation/', {
             'terms_and_conditions': True,
             'payment_method': 'cod',
-            }), '/cart/')
+        }), '/cart/')
 
         self.assertRedirects(self.client.post('/confirmation/', {
             'terms_and_conditions': True,
             'payment_method': 'paypal',
-            }), '/cart/')
+        }), '/cart/')
 
-        user = User.objects.create_superuser('admin', 'admin@example.com', 'password')
+        User.objects.create_superuser(
+            'admin', 'admin@example.com', 'password')
 
         self.client.login(username='admin', password='password')
-        self.assertEqual(self.client.get('/reporting/invoice_pdf/%s/' % order.id)['Content-Type'],
+        self.assertEqual(
+            self.client.get(
+                '/reporting/invoice_pdf/%s/' % order.id)['Content-Type'],
             'application/pdf')
-        self.assertEqual(self.client.get('/reporting/packing_slip_pdf/%s/' % order.id)['Content-Type'],
+        self.assertEqual(
+            self.client.get(
+                '/reporting/packing_slip_pdf/%s/' % order.id)['Content-Type'],
             'application/pdf')
-        self.assertEqual(self.client.get('/reporting/product_xls/')['Content-Type'],
-            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        self.assertEqual(
+            self.client.get('/reporting/product_xls/')['Content-Type'],
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
 
     def test_05_creation(self):
         """Test creation of orders through the shop object"""
@@ -285,23 +301,23 @@ class ViewTest(PlataTest):
 
     def test_06_postfinance_ipn(self):
         """Test Postfinance server-to-server request handling"""
-        shop = plata.shop_instance()
-        request = get_request()
 
         product = self.create_product()
 
         Period.objects.create(name='Test period')
-        product.stock_transactions.create(type=StockTransaction.PURCHASE, change=10)
+        product.stock_transactions.create(
+            type=StockTransaction.PURCHASE, change=10)
         self.client.post(product.get_absolute_url(), {
             'quantity': 5,
-            })
+        })
 
         response = self.client.post('/confirmation/', {
             'terms_and_conditions': True,
             'payment_method': 'postfinance',
-            })
+        })
         self.assertContains(response, 'SHASign')
-        self.assertContains(response, '721735bc3876094bb7e5ff075de8411d85494a66')
+        self.assertContains(
+            response, '721735bc3876094bb7e5ff075de8411d85494a66')
 
         self.assertEqual(StockTransaction.objects.count(), 2)
         self.assertEqual(Order.objects.get().status, Order.CONFIRMED)
@@ -313,8 +329,10 @@ class ViewTest(PlataTest):
         self.assertEqual(StockTransaction.objects.count(), 1)
         self.assertEqual(Order.objects.get().status, Order.CHECKOUT)
 
-        self.assertContains(self.client.post('/payment/postfinance/ipn/', {
-            }), 'Missing data', status_code=403)
+        self.assertContains(
+            self.client.post('/payment/postfinance/ipn/', {}),
+            'Missing data',
+            status_code=403)
 
         order = Order.objects.get(pk=1)
 
@@ -330,14 +348,16 @@ class ViewTest(PlataTest):
             'NCERROR': '',
             'BRAND': 'VISA',
             'SHASIGN': 'this-value-is-invalid',
-            }
+        }
 
-        self.assertContains(self.client.post('/payment/postfinance/ipn/', ipn_data),
+        self.assertContains(
+            self.client.post('/payment/postfinance/ipn/', ipn_data),
             'Hash did not validate', status_code=403)
 
         ipn_data['SHASIGN'] = '4b4cf5f9a5f0b54cc119be3696f43f81139232ae'
 
-        self.assertContains(self.client.post('/payment/postfinance/ipn/', ipn_data),
+        self.assertContains(
+            self.client.post('/payment/postfinance/ipn/', ipn_data),
             'OK', status_code=200)
 
         order = Order.objects.get(pk=1)
@@ -354,9 +374,11 @@ class ViewTest(PlataTest):
         # Manipulate paid amount
         order.paid -= 10
         order.save()
-        self.assertRedirects(self.client.get('/cart/'), '/confirmation/?confirmed=1')
+        self.assertRedirects(
+            self.client.get('/cart/'), '/confirmation/?confirmed=1')
 
-        self.assertContains(self.client.get('/order/success/'),
+        self.assertContains(
+            self.client.get('/order/success/'),
             '<h1>Order has been partially paid.</h1>')
 
         # Revert manipulation
@@ -376,10 +398,9 @@ class ViewTest(PlataTest):
         }
 
         from plata.payment.modules import paypal
-        import cgi
-        
+
         def mock_urlopen(*args, **kwargs):
-            qs = cgi.parse_qs(args[1])
+            qs = six.moves.urllib.parse.parse_qs(args[1])
             if not six.PY3:
                 # Fix doubly encoded UTF-8
                 # Thanks, http://stackoverflow.com/a/1177542
@@ -397,19 +418,17 @@ class ViewTest(PlataTest):
             return s
         paypal.urlopen = mock_urlopen
 
-        shop = plata.shop_instance()
-        request = get_request()
-
         product = self.create_product()
-        product.stock_transactions.create(type=StockTransaction.PURCHASE, change=10)
+        product.stock_transactions.create(
+            type=StockTransaction.PURCHASE, change=10)
         self.client.post(product.get_absolute_url(), {
             'quantity': 5,
-            })
+        })
 
         response = self.client.post('/confirmation/', {
             'terms_and_conditions': True,
             'payment_method': 'paypal',
-            })
+        })
         self.assertContains(response, 'sandbox')
 
         self.assertEqual(StockTransaction.objects.count(), 2)
@@ -434,13 +453,14 @@ class ViewTest(PlataTest):
                 StockTransaction.PURCHASE,
                 StockTransaction.SALE,
                 StockTransaction.PAYMENT_PROCESS_RESERVATION,
-            )), set(StockTransaction.objects.values_list('type', flat=True)))
+            )),
+            set(StockTransaction.objects.values_list('type', flat=True)))
 
     def test_08_checkout_preexisting_user(self):
-        """Test checkout behavior using already existing user without contact"""
+        """Test checkout behavior using existing user without contact"""
         User.objects.create_user('else', 'else@example.com', 'test')
 
-        user = User.objects.create_user('test', 'test@example.com', 'test')
+        User.objects.create_user('test', 'test@example.com', 'test')
         self.client.login(username='test', password='test')
 
         p1 = self.create_product(stock=100)
@@ -463,14 +483,16 @@ class ViewTest(PlataTest):
             'order-email': 'else@example.com',
             'order-currency': 'CHF',
             'order-create_account': True,
-            }
+        }
 
-        self.assertContains(self.client.post('/checkout/', checkout_data),
+        self.assertContains(
+            self.client.post('/checkout/', checkout_data),
             'This e-mail address belongs to a different account')
 
         self.assertEqual(len(mail.outbox), 0)
         checkout_data['order-email'] = 'something@example.com'
-        self.assertRedirects(self.client.post('/checkout/', checkout_data),
+        self.assertRedirects(
+            self.client.post('/checkout/', checkout_data),
             '/confirmation/')
         self.assertEqual(len(mail.outbox), 1)
 
@@ -506,14 +528,17 @@ class ViewTest(PlataTest):
             'order-email': 'else@example.com',
             'order-currency': 'CHF',
             'order-create_account': True,
-            }
+        }
 
-        self.assertContains(self.client.post('/checkout/', checkout_data),
-            'This e-mail address might belong to you, but we cannot know for sure because you are not authenticated yet')
+        self.assertContains(
+            self.client.post('/checkout/', checkout_data),
+            'This e-mail address might belong to you, but we cannot know for'
+            ' sure because you are not authenticated yet')
 
         self.assertEqual(len(mail.outbox), 0)
         checkout_data['order-email'] = 'something@example.com'
-        self.assertRedirects(self.client.post('/checkout/', checkout_data),
+        self.assertRedirects(
+            self.client.post('/checkout/', checkout_data),
             '/confirmation/')
         self.assertEqual(len(mail.outbox), 1)
 
@@ -534,11 +559,12 @@ class ViewTest(PlataTest):
     def test_10_login_in_checkout_preexisting_contact(self):
         """Test checkout behavior using already existing contact and user"""
         Contact.objects.create(
-            user=User.objects.create_user('else@example.com', 'else@example.com', 'test'),
+            user=User.objects.create_user(
+                'else@example.com', 'else@example.com', 'test'),
             currency='CHF',
             billing_first_name='Hans',
             billing_last_name='Muster',
-            )
+        )
 
         p1 = self.create_product(stock=100)
         self.client.post(p1.get_absolute_url(), {'quantity': 5})
@@ -551,7 +577,7 @@ class ViewTest(PlataTest):
             '_login': 1,
             'login-username': 'else@example.com',
             'login-password': 'test',
-            }), '/checkout/')
+        }), '/checkout/')
 
         # Test that the order is still active after logging in
         response = self.client.get('/checkout/')
@@ -571,10 +597,11 @@ class ViewTest(PlataTest):
             'order-email': 'else@example.com',
             'order-currency': 'CHF',
             'order-create_account': True,
-            }
+        }
 
         self.assertEqual(len(mail.outbox), 0)
-        self.assertRedirects(self.client.post('/checkout/', checkout_data),
+        self.assertRedirects(
+            self.client.post('/checkout/', checkout_data),
             '/confirmation/')
         self.assertEqual(len(mail.outbox), 0)
 
@@ -589,7 +616,8 @@ class ViewTest(PlataTest):
 
     def test_11_login_in_checkout_create_contact(self):
         """Test checkout using already existing user, but no contact"""
-        User.objects.create_user('else@example.com', 'else@example.com', 'test')
+        User.objects.create_user(
+            'else@example.com', 'else@example.com', 'test')
 
         p1 = self.create_product(stock=100)
         self.client.post(p1.get_absolute_url(), {'quantity': 5})
@@ -602,7 +630,7 @@ class ViewTest(PlataTest):
             '_login': 1,
             'login-username': 'else@example.com',
             'login-password': 'test',
-            }), '/checkout/')
+        }), '/checkout/')
 
         checkout_data = {
             '_checkout': 1,
@@ -617,10 +645,11 @@ class ViewTest(PlataTest):
             'order-email': 'else@example.com',
             'order-currency': 'CHF',
             'order-create_account': True,
-            }
+        }
 
         # If order wasn't active after logging in anymore, this would not work
-        self.assertRedirects(self.client.post('/checkout/', checkout_data),
+        self.assertRedirects(
+            self.client.post('/checkout/', checkout_data),
             '/confirmation/')
 
         contact = Contact.objects.get()
@@ -641,7 +670,8 @@ class ViewTest(PlataTest):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['Location'], 'http://testserver/cart/?e=1')
 
-        self.assertContains(self.client.get('/cart/'),
+        self.assertContains(
+            self.client.get('/cart/'),
             'Not enough stock available for')
 
     def test_13_expired_reservation(self):
@@ -663,28 +693,38 @@ class ViewTest(PlataTest):
             10)
 
         self.assertEqual(StockTransaction.objects.items_in_stock(p1), 10)
-        self.assertEqual(StockTransaction.objects.items_in_stock(p1,
-            include_reservations=True), 3)
+        self.assertEqual(
+            StockTransaction.objects.items_in_stock(
+                p1, include_reservations=True),
+            3)
 
-        StockTransaction.objects.update(created=timezone.now()-timedelta(minutes=10))
+        StockTransaction.objects.update(
+            created=timezone.now() - timedelta(minutes=10))
         self.assertEqual(StockTransaction.objects.items_in_stock(p1), 10)
-        self.assertEqual(StockTransaction.objects.items_in_stock(p1,
-            include_reservations=True), 3)
+        self.assertEqual(
+            StockTransaction.objects.items_in_stock(
+                p1, include_reservations=True),
+            3)
 
-        StockTransaction.objects.update(created=timezone.now()-timedelta(minutes=20))
-        self.assertEqual(StockTransaction.objects.items_in_stock(p1,
-            include_reservations=True), 10)
+        StockTransaction.objects.update(
+            created=timezone.now() - timedelta(minutes=20))
+        self.assertEqual(
+            StockTransaction.objects.items_in_stock(
+                p1, include_reservations=True),
+            10)
         self.assertEqual(StockTransaction.objects.items_in_stock(p1), 10)
 
         order = self.create_order()
         order.modify_item(p1, relative=5)
         order.validate(order.VALIDATE_ALL)
 
-        StockTransaction.objects.update(created=timezone.now()-timedelta(minutes=10))
+        StockTransaction.objects.update(
+            created=timezone.now() - timedelta(minutes=10))
         self.assertRaises(ValidationError, order.validate, order.VALIDATE_ALL)
 
     def test_14_remaining_discount(self):
-        """Test that a new discount is created when there is an amount remaining"""
+        """Test that a new discount is created when there is an amount
+        remaining"""
         p1 = self.create_product(stock=10)
         self.client.post(p1.get_absolute_url(), {'quantity': 5})
 
@@ -700,12 +740,12 @@ class ViewTest(PlataTest):
         self.assertRedirects(self.client.post('/discounts/', {
             'code': discount.code,
             'proceed': 'True',
-            }), '/confirmation/')
+        }), '/confirmation/')
 
         self.assertRedirects(self.client.post('/confirmation/', {
             'terms_and_conditions': True,
             'payment_method': 'cod',
-            }), '/order/success/')
+        }), '/order/success/')
 
         self.assertEqual(Discount.objects.count(), 2)
 
@@ -722,23 +762,23 @@ class ViewTest(PlataTest):
         self.assertRedirects(self.client.post('/discounts/', {
             'code': new_discount.code,
             'proceed': 'True',
-            }), '/confirmation/')
+        }), '/confirmation/')
 
         self.assertRedirects(self.client.post('/confirmation/', {
             'terms_and_conditions': True,
             'payment_method': 'cod',
-            }), '/order/success/')
+        }), '/order/success/')
 
         self.client.get('/order/new/')
-        self.client.get('/order/new/')  # Should not do anything the second time
+        self.client.get('/order/new/')  # Shouldn't do anything the second time
         self.client.post(p1.get_absolute_url(), {'quantity': 1})
         self.assertContains(self.client.post('/discounts/', {
             'code': new_discount.code,
             'proceed': 'True',
-            }), 'Allowed uses for this discount has already been reached.')
+        }), 'Allowed uses for this discount has already been reached.')
 
-        # Stock transactions must be created for orders which are paid from the start
-        # 10 purchase, -5 sale, -1 sale
+        # Stock transactions must be created for orders which are paid from
+        # the start. 10 purchase, -5 sale, -1 sale
         self.assertEqual(StockTransaction.objects.count(), 3)
         p1 = Product.objects.get(pk=p1.pk)
         self.assertEqual(p1.items_in_stock, 4)

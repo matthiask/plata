@@ -19,6 +19,7 @@ class ProductAdmin(admin.ModelAdmin):
 
 admin.site.register(models.Product, ProductAdmin)
 
-admin.site.register(models.Contact,
+admin.site.register(
+    models.Contact,
     list_display=('user', 'zip_code', 'city', 'country'),
-    )
+)

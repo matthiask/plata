@@ -114,8 +114,8 @@ class OrderPaymentAdmin(admin.ModelAdmin):
         'amount', 'payment_module', 'payment_method',
         'transaction_id', 'notes', 'data')
 
-    notes_short = lambda self, obj: (
-        obj.notes[:40] + '...' if len(obj.notes) > 50 else obj.notes)
+    def notes_short(self, obj):
+        return obj.notes[:40] + '...' if len(obj.notes) > 50 else obj.notes
     notes_short.short_description = _('notes')
 
 

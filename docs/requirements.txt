@@ -1,0 +1,7 @@
+Django<1.9
+simplejson
+openpyxl
+reportlab
+pdfdocument
+django-countries
+pytz

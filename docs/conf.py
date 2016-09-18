@@ -15,6 +15,10 @@ import sys
 import os
 
 import PIL.Image
+
+import plata
+
+
 sys.modules['Image'] = PIL.Image
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -54,8 +58,6 @@ copyright = u'2010, Feinheit GmbH and contributors'
 #
 # The short X.Y version.
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
-
-import plata
 
 version = '.'.join(map(str, plata.VERSION))
 # The full version, including alpha/beta/rc tags.

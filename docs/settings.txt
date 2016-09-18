@@ -43,6 +43,17 @@ Settings
 ``PLATA_REPORTING_STATIONERY``:
   Stationery used by PDFDocument to render invoice and packing slip PDFs.
 
+``PLATA_PDF_FONT_NAME``:
+  Custom regular font name to be used by PDFDocument for rendering PDF invoices. Defaults to ``''`` (using default of ``reportlab``).
+
+``PLATA_PDF_FONT_PATH``
+  Custom regular font path to be used by PDFDocument for rendering PDF invoices. Defaults to ``''``.
+
+``PLATA_PDF_FONT_BOLD_NAME``
+  Custom bold font path to be used by PDFDocument for rendering PDF invoices. Defaults to ``''``.
+
+``PLATA_PDF_FONT_BOLD_PATH``
+  Custom bold font path to be used by PDFDocument for rendering PDF invoices. Defaults to ``''``.
 
 ``PLATA_STOCK_TRACKING``:
   Accurate transactional stock tracking. Needs the ``plata.product.stock``

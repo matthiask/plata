@@ -26,7 +26,7 @@ class AdminTest(PlataTest):
         self.product_admin_url = '/admin/%s/%s/' % (
             product_model._meta.app_label,
             product_model._meta.model_name,
-            )
+        )
 
     def login(self):
         self.client.login(username='admin', password='password')
@@ -55,18 +55,17 @@ class AdminTest(PlataTest):
             'prices-INITIAL_FORMS': '0',
             'prices-MAX_NUM_FORMS': '',
             'prices-TOTAL_FORMS': '1',
-            }
+        }
 
         self.client.post(self.product_admin_url + 'add/', product_data)
         self.assertEqual(Product.objects.count(), 1)
 
         self.assertEqual(
-            self.client.post(self.product_admin_url + 'add/', product_data).status_code,
+            self.client.post(
+                self.product_admin_url + 'add/', product_data).status_code,
             302)
 
         self.assertEqual(Product.objects.count(), 2)
-
-        p = Product.objects.get(pk=2)
 
         discount_data = {
             'name': 'Discount 1',
@@ -78,27 +77,34 @@ class AdminTest(PlataTest):
             'valid_until': '',
             'allowed_uses': '',
             'used': 0,
-            }
+        }
 
-        self.assertContains(self.client.post('/admin/discount/discount/add/', discount_data),
+        self.assertContains(
+            self.client.post('/admin/discount/discount/add/', discount_data),
             'required')
 
         # Does not redirect
-        self.assertEqual(self.client.post('/admin/discount/discount/add/', discount_data).status_code, 200)
+        self.assertEqual(
+            self.client.post(
+                '/admin/discount/discount/add/', discount_data).status_code,
+            200)
 
         discount_data['config_options'] = ('all',)
-        self.assertRedirects(self.client.post('/admin/discount/discount/add/', discount_data),
+        self.assertRedirects(
+            self.client.post('/admin/discount/discount/add/', discount_data),
             '/admin/discount/discount/')
 
         discount_data['config_options'] = ('exclude_sale',)
         discount_data['code'] += '-'
         self.client.post('/admin/discount/discount/add/', discount_data)
-        self.assertContains(self.client.get('/admin/discount/discount/2/'),
+        self.assertContains(
+            self.client.get('/admin/discount/discount/2/'),
             'Discount configuration: Exclude sale prices')
 
         discount_data['name'] = 'Discount 2'
         discount_data['code'] = 'discount2'
-        self.assertRedirects(self.client.post('/admin/discount/discount/add/', discount_data),
+        self.assertRedirects(
+            self.client.post('/admin/discount/discount/add/', discount_data),
             '/admin/discount/discount/')
 
         discount_data = model_to_dict(Discount.objects.get(pk=3))
@@ -115,8 +121,9 @@ class AdminTest(PlataTest):
             # Manually modified config_json overrides anything selected in the
             # generated form items
             'config_json': u'{"all": {}}',
-            })
-        self.assertRedirects(self.client.post('/admin/discount/discount/3/', discount_data),
+        })
+        self.assertRedirects(
+            self.client.post('/admin/discount/discount/3/', discount_data),
             '/admin/discount/discount/')
 
     def test_02_orders(self):
@@ -127,7 +134,6 @@ class AdminTest(PlataTest):
         orders = self.client.get('/admin/shop/order/')
 
         # Order item and list filter
-        self.assertContains(orders, 'Is a cart', count=2)
-        self.assertContains(orders, '/invoice_pdf/%d/' % order.id, count=1)
-        self.assertContains(orders, '/packing_slip_pdf/%d/' % order.id,
-            count=1)
+        self.assertContains(orders, 'Is a cart', 2)
+        self.assertContains(orders, '/invoice_pdf/%d/' % order.id, 1)
+        self.assertContains(orders, '/packing_slip_pdf/%d/' % order.id, 1)

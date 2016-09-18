@@ -8,6 +8,7 @@ class PriceInline(admin.TabularInline):
     extra = 0
 
 
-admin.site.register(Product,
+admin.site.register(
+    Product,
     inlines=[PriceInline],
-    )
+)
