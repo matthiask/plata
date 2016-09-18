@@ -9,6 +9,7 @@ from plata.shop import models
 
 from .actions import export_as_csv_action
 
+
 class OrderItemInline(admin.TabularInline):
     model = models.OrderItem
     raw_id_fields = ('product',)

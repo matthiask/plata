@@ -742,15 +742,14 @@ class Shop(object):
 
 class SinglePageCheckoutShop(Shop):
     def get_shop_urls(self):
-        return patterns(
-            '',
+        return [
             self.get_cart_url(),
             self.get_checkout_url(),
             self.get_already_confirmed_url(),
             self.get_success_url(),
             self.get_failure_url(),
             self.get_new_url(),
-        )
+        ]
 
     def get_already_confirmed_url(self):
         return url(r'^confirmed/$', checkout_process_decorator(

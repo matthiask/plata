@@ -438,7 +438,7 @@ class Order(BillingShippingAddress):
             item.quantity = absolute
 
         if item.quantity > 0:
-            
+
             if data is not None:
                 item.data = data
 

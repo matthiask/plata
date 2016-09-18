@@ -1,6 +1,6 @@
 """
-Even though these shop signal handlers might be useful you might be better
-of writing your own handlers for the three important signals:
+Even though these shop signal handlers might be useful, you might be better
+off writing your own handlers for the three important signals:
 
 - ``contact_created``: A new contact has been created during the checkout
   process

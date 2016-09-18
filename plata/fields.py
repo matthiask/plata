@@ -6,18 +6,19 @@ import re
 import simplejson as json
 
 from django import forms, VERSION
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.dateparse import parse_date, parse_datetime, parse_time
 from django.utils import six
 from django.utils.functional import curry
 from django.utils.translation import ugettext_lazy as _
 
+
 import plata
 
 # TODO: Add support for PostgreSQL specific JSONField
 #     https://docs.djangoproject.com/en/dev/ref/contrib/postgres/fields/#jsonfield
-#     It work on Django >= 1.9, PostgreSQL >= 9.4
-
+#     It works on Django >= 1.9, PostgreSQL >= 9.4
 
 
 try:
@@ -109,7 +110,7 @@ class JSONFormField(forms.fields.CharField):
 
         return super(JSONFormField, self).clean(value, *args, **kwargs)
 
- 
+
 class JSONField(_JSONFieldBase):
     """
     TextField which transparently serializes/unserializes JSON objects
@@ -177,7 +178,7 @@ class JSONField(_JSONFieldBase):
         return json.dumps(
             super(JSONField, self).value_from_object(obj),
             default=json_encode_default, use_decimal=True)
-        
+
     def from_db_value(self, value, expression, connection, context):
         """
          Convert the input JSON value into python structures, raises
@@ -193,7 +194,7 @@ class JSONField(_JSONFieldBase):
                 # with django 1.6 i have '"{}"' as default value here
                 if value[0] == value[-1] == '"':
                     value = value[1:-1]
- 
+
                 return json.loads(value)
             except Exception as err:
                 raise ValidationError(str(err))
