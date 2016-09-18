@@ -43,9 +43,9 @@ class PaymentProcessor(ProcessorBase):
         return True
 
     def get_urls(self):
-        from django.conf.urls import patterns, url
+        from django.conf.urls import url
 
-        return patterns('',
+        return [
             url(r'^datatrans/success/$',
                 self.datatrans_success,
                 name='plata_payment_datatrans_success'),
@@ -55,7 +55,7 @@ class PaymentProcessor(ProcessorBase):
             url(r'^datatrans/cancel/$',
                 self.datatrans_cancel,
                 name='plata_payment_datatrans_cancel'),
-        )
+        ]
 
     def process_order_confirmed(self, request, order):
         DATATRANS = settings.DATATRANS

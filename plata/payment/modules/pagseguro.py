@@ -32,13 +32,12 @@ class PaymentProcessor(ProcessorBase):
     default_name = _('Pagseguro')
 
     def get_urls(self):
-        from django.conf.urls import patterns, url
+        from django.conf.urls import url
 
-        return patterns(
-            '',
+        return [
             url(r'^payment/pagseguro/notify/$', self.psnotify,
                 name='plata_payment_pagseguro_notify'),
-        )
+        ]
 
     def process_order_confirmed(self, request, order):
         PAGSEGURO = settings.PAGSEGURO
@@ -82,8 +81,9 @@ class PaymentProcessor(ProcessorBase):
                     f.close()
 
                 notificationCode = data['notificationCode']
-                result = urllib.urlopen('https://ws.pagseguro.uol.com.br/v2/transactions/notifications/%s?email=%s&token=%s' %
-                                        (notificationCode, PAGSEGURO['EMAIL'], PAGSEGURO['TOKEN'])).read()
+                result = urllib.urlopen(
+                    'https://ws.pagseguro.uol.com.br/v2/transactions/notifications/%s?email=%s&token=%s' %
+                    (notificationCode, PAGSEGURO['EMAIL'], PAGSEGURO['TOKEN'])).read()
 
                 if PAGSEGURO.get('LOG'):
                     f = open(PAGSEGURO['LOG'], 'a')
@@ -104,7 +104,8 @@ class PaymentProcessor(ProcessorBase):
 
                 if PAGSEGURO.get('LOG'):
                     f = open(PAGSEGURO.get('LOG'), 'a')
-                    f.write("%s - status: %s, ref: %s, code: %s\n" % (time.ctime(), status, reference, notificationCode))
+                    f.write("%s - status: %s, ref: %s, code: %s\n" % (
+                        time.ctime(), status, reference, notificationCode))
                     f.close()
 
                 logger.info('Pagseguro: Verified request %s' % result)

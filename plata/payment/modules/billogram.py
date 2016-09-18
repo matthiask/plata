@@ -40,13 +40,12 @@ class PaymentProcessor(ProcessorBase):
         )
 
     def get_urls(self):
-        from django.conf.urls import patterns, url
-        return patterns(
-            '',
+        from django.conf.urls import url
+        return [
             url(r'^payment/billogram/$',
                 self.callback,
                 name='billogram_callback')
-        )
+        ]
 
     def get_or_create_customer(self, order):
         customer_no = order.user_id + CUSTOMER_NO_OFFSET
@@ -77,7 +76,7 @@ class PaymentProcessor(ProcessorBase):
                 billing_address = order.billing_address.split('\n', 1)
                 if len(billing_address) > 1:
                     careof, street_address = billing_address
-                    #todo strip any c/o from careof, it will be doubled
+                    # TODO: strip any c/o from careof, it will be doubled
                 else:
                     careof, street_address = '', billing_address[0]
                 customer_data['address'] = {
@@ -92,7 +91,7 @@ class PaymentProcessor(ProcessorBase):
                 customer_data["delivery_address"] = {
                     "name": "%s %s" % (order.shipping_first_name,
                                        order.shipping_last_name),
-                    "street_address": order.shipping_address,  #todo split this too
+                    "street_address": order.shipping_address,  # todo split this too
                     "city": order.shipping_city,
                     "zipcode": order.shipping_zip_code,
                     "country": order.shipping_country.code,
@@ -116,7 +115,7 @@ class PaymentProcessor(ProcessorBase):
                 "price": str(item.product.get_price(orderitem=item).unit_price_excl_tax),
                 "vat": int(item.tax_rate),
             } for item in order.items.all()],
-            "invoice_fee": str(order.shipping_cost),  #todo use a real invoice fee field
+            "invoice_fee": str(order.shipping_cost),  # TODO: use a real invoice fee field
         }
         if 'localhost' not in request.get_host():  # Billogram does not allow localhost to be sent in
             billogram_data["callbacks"] = {
@@ -143,16 +142,17 @@ class PaymentProcessor(ProcessorBase):
             # message error
             return redirect(reverse('plata_order_payment_failure'))
         else:
-            #set as authorized?
-            #subtract from stock
-            #message success
+            # set as authorized?
+            # subtract from stock
+            # message success
             return redirect(reverse('plata_order_payment_pending'))
 
     @csrf_exempt_m
     @require_POST_m
     def callback(self, request):
         data = json.loads(request.body)
-        if data['signature'] != hashlib.md5(data['callback_id'] + \
+        if data['signature'] != hashlib.md5(
+                data['callback_id'] +
                 settings.BILLOGRAM_SIGN_KEY).hexdigest():
             return http.HttpResponseBadRequest()
 
@@ -179,9 +179,9 @@ class PaymentProcessor(ProcessorBase):
         elif event_type == 'CustomerMessage':
             payment.notes = data['event']['data']['message']
         elif event_type == 'BillogramEnded' and data['billogram']['state'] == 'Paid':
-             payment.authorized = timezone.now()
-             payment.status = plata.shop.models.OrderPayment.AUTHORIZED
-        #todo release stock if cancelled or credited
+            payment.authorized = timezone.now()
+            payment.status = plata.shop.models.OrderPayment.AUTHORIZED
+        # TODO: release stock if cancelled or credited
         payment.save()
         order = order.reload()
         if not order.balance_remaining:

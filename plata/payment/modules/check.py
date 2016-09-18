@@ -33,13 +33,12 @@ class PaymentProcessor(ProcessorBase):
     default_name = _('Check/Bank transfer')
 
     def get_urls(self):
-        from django.conf.urls import patterns, url
+        from django.conf.urls import url
 
-        return patterns(
-            '',
+        return [
             url(r'^payment/check/confirm/(?P<uuid>[^/]+)/$', self.confirm,
                 name='plata_payment_check_confirm'),
-        )
+        ]
 
     def process_order_confirmed(self, request, order):
         if not order.balance_remaining:

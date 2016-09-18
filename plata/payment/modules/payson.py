@@ -36,14 +36,13 @@ class PaymentProcessor(ProcessorBase):
                                            settings.PAYSON_USER_KEY)
 
     def get_urls(self):
-        from django.conf.urls import patterns, url
-        return patterns(
-            '',
+        from django.conf.urls import url
+        return [
             url(r'^payment/payson/ipn/$', self.ipn,
                 name='payson_ipn'),
             url(r'^payment/payson/return/$', self.return_url,
                 name='payson_return'),
-        )
+        ]
 
     def process_order_confirmed(self, request, order):
         if not order.balance_remaining:
@@ -51,7 +50,7 @@ class PaymentProcessor(ProcessorBase):
         if order.currency not in ('SEK', 'EUR'):
             raise ValueError('Payson payments only support SEK and EUR, not %s.' % order.currency)
 
-        #todo log
+        # TODO: log
         payment = self.create_pending_payment(order)
         self.reserve_stock_item(order, payment)
         locale_code = (order.language_code or settings.LANGUAGE_CODE).upper()[:2]
@@ -68,7 +67,7 @@ class PaymentProcessor(ProcessorBase):
             ipnNotificationUrl=request.build_absolute_uri(reverse('payson_ipn')),
             localeCode=locale_code,
             currencyCode=order.currency,
-#            custom=None,
+            # custom=None,
             trackingId='-'.join((str(order.id), str(payment.id))),
             guaranteeOffered=u'NO',
             orderItemList=(payson_api.OrderItem(
@@ -141,8 +140,7 @@ class PaymentProcessor(ProcessorBase):
         token = request.GET.get('TOKEN') or request.GET.get('token')
         payment_details_response = self.payson_api.payment_details(token)
         if payment_details_response.success:
-            order = self.update_payment(payment_details_response, request)
+            self.update_payment(payment_details_response, request)
             if payment_details_response.status == 'COMPLETED':
                 return redirect(reverse('plata_order_success'))
         return redirect(reverse('plata_order_payment_failure'))
-
