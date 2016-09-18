@@ -31,4 +31,3 @@ class PlataPDFDocument(PDFDocument):
             init_regular_font(suffix='-Bold')
 
         super(PlataPDFDocument, self).__init__(*args, **kwargs)
-
