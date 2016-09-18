@@ -1,4 +1,7 @@
 # this list is taken from .travis.yml and not complete
+setuptools
+wheel
+pip
 simplejson==3.8.2
 openpyxl==2.2.6  # unreleased! current is 2.4.0
 reportlab==3.2.0  # current is 3.3.0, but no release notes
