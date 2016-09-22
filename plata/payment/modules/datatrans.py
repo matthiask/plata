@@ -16,8 +16,7 @@ from xml.etree import ElementTree as ET
 
 from django.conf import settings
 from django.http import HttpResponseForbidden
-from django.shortcuts import render_to_response, redirect
-from django.template import RequestContext
+from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
@@ -79,14 +78,14 @@ class PaymentProcessor(ProcessorBase):
         else:
             DT_URL = "https://pilot.datatrans.biz/upp/jsp/upStart.jsp"
 
-        return render_to_response('payment/datatrans_form.html', {
+        return render(request, 'payment/datatrans_form.html', {
             'order': order,
             'total_in_smallest_unit': payment.amount * SMALLEST_UNIT_FACTOR,
             'payment': payment,
             'HTTP_HOST': request.META.get('HTTP_HOST'),
             'post_url': DT_URL,
             'MERCHANT_ID': DATATRANS['MERCHANT_ID'],
-            }, context_instance=RequestContext(request))
+            })
 
     @csrf_exempt_m
     def datatrans_error(self, request):
