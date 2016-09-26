@@ -33,7 +33,7 @@ csrf_exempt_m = method_decorator(csrf_exempt)
 
 
 def urlopen(*args, **kwargs):
-    return six.moves.urllib.urlopen(*args, **kwargs)
+    return six.moves.urllib.request.urlopen(*args, **kwargs)
 
 
 class PaymentProcessor(ProcessorBase):
