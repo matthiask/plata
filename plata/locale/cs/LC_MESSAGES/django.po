@@ -581,7 +581,7 @@ msgstr "příjmení"
 
 #: shop/models.py:65 shop/models.py:81
 msgid "address"
-msgstr "ulice"
+msgstr "ulice a číslo popisné"
 
 #: shop/models.py:68 shop/models.py:84
 msgid "city"
