@@ -155,7 +155,7 @@ class OrderReport(object):
                 self.pdf.p(
                     _('Already paid for with: %(payment_method)s.') % {
                         'payment_method': payment_method + (
-                            (" (Transaction %(transaction)s)" % {'transaction': payment.transaction})
+                            (" (Transaction %(transaction)s)" % {'transaction': payment.transaction_id})
                             if payment.transaction_id else ""
                         )
                     })
