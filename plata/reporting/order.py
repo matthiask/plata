@@ -144,13 +144,21 @@ class OrderReport(object):
             except IndexError:
                 payment = None
 
-            if payment and payment.payment_method:
+            payment_method = payment.payment_method
+            if not payment_method:
+                if payment.payment_module == 'Bank transfer':
+                    payment_method = _("Bank transfer")
+                elif payment.payment_module == 'Cash':
+                    payment_method = _("Cash")
+
+            if payment and payment_method:
                 self.pdf.p(
-                    _('Already paid for with %(payment_method)s'
-                        ' (Transaction %(transaction)s).') % {
-                        'payment_method': payment.payment_method,
-                        'transaction': payment.transaction_id,
-                        })
+                    _('Already paid for with: %(payment_method)s.') % {
+                        'payment_method': payment_method + (
+                            (" (Transaction %(transaction)s)" % {'transaction': payment.transaction})
+                            if payment.transaction_id else ""
+                        )
+                    })
             else:
                 self.pdf.p(_('Already paid for.'))
         else:
@@ -163,13 +171,76 @@ class OrderReport(object):
             self.pdf.spacer(1 * mm)
             self.pdf.p(self.order.notes)
 
+    def address_table(self):
+        self.pdf.table(
+            [
+                (
+                    _("Seller"),
+                    _("Customer")
+                ),
+                (
+                    plata.settings.PLATA_REPORTING_ADDRESSLINE,
+                    self.get_address_data()
+                )
+            ],
+            (8.2 * cm, 8.2 * cm), self.pdf.style.tableBase + (
+                (
+                    'FONT', (0, 0), (-1, 0),
+                    '%s-Bold' % self.pdf.style.fontName, self.pdf.style.fontSize),
+                ('TOPPADDING', (0, 0), (-1, -1), 1),
+                ('BOTTOMPADDING', (0, 0), (-1, -1), 2),
+                ('ALIGN', (1, 0), (1, -1), 'LEFT'),
+            )
+        )
+        self.pdf.spacer(10 * mm)
+        self.pdf.next_frame()
+
+    def get_address_data(self, prefix=''):
+        # overrided so we can just return address as text
+        obj = self.order.addresses()['billing']
+        if type(obj) == dict:
+            data = obj
+        else:
+            data = {}
+            for field in (
+                    'company', 'manner_of_address', 'first_name', 'last_name',
+                    'address', 'zip_code', 'city', 'full_override'):
+                attribute = '%s%s' % (prefix, field)
+                data[field] = getattr(obj, attribute, u'').strip()
+
+        address = []
+        if data.get('company', False):
+            address.append(data['company'])
+
+        title = data.get('manner_of_address', '')
+        if title:
+            title += u' '
+
+        if data.get('first_name', False):
+            address.append(u'%s%s %s' % (title, data.get('first_name', ''),
+                                         data.get('last_name', '')))
+        else:
+            address.append(u'%s%s' % (title, data.get('last_name', '')))
+
+        address.append(data.get('address'))
+        address.append(u'%s %s' % (
+            data.get('zip_code', ''),
+            data.get('city', '')))
+
+        if data.get('full_override'):
+            address = [
+                l.strip() for l in
+                data.get('full_override').replace('\r', '').splitlines()]
+
+        return '\n'.join(address)
+
 
 def invoice_pdf(pdf, order):
     """PDF suitable for use as invoice"""
 
     report = OrderReport(pdf, order)
     report.init_letter()
-    report.address('billing')
+    report.address_table()
     report.title()
     report.items_with_prices()
     report.summary()
