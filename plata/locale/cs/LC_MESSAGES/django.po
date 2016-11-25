@@ -482,7 +482,7 @@ msgstr "Hotovost"
 #: reporting/order.py:156
 #, python-format
 msgid "Already paid for with: %(payment_method)s."
-msgstr "Již zaplaceno metodou %(payment_method)s."
+msgstr "Již zaplaceno metodou: %(payment_method)s."
 
 #: reporting/order.py:163
 msgid "Already paid for."
