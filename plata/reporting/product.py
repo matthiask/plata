@@ -6,8 +6,9 @@ from django.db.models import Sum
 from django.utils.text import capfirst
 from django.utils.translation import ugettext as _
 
+from xlsxdocument import XLSXDocument
+
 import plata
-from plata.reporting.utils import XLSDocument
 
 
 def product_xls():
@@ -19,7 +20,7 @@ def product_xls():
     from plata.product.stock.models import Period
     StockTransaction = plata.stock_model()
 
-    xls = XLSDocument()
+    xls = XLSXDocument()
     xls.add_sheet(capfirst(_('products')))
 
     _transactions = StockTransaction.objects.filter(

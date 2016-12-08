@@ -7,3 +7,4 @@ Pillow
 pytz
 reportlab
 simplejson
+xlsxdocument
