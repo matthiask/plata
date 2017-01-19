@@ -39,6 +39,7 @@ setup(
         'openpyxl>=2.2',
         'reportlab>=3.2',
         'pdfdocument>=3.1',
+        'xlsxdocument',
         'django-countries>=3.3',
         'pytz',
     ],
