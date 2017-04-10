@@ -1,5 +1,3 @@
-import sys
-
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -31,7 +29,8 @@ class Product(ProductBase):
 
 
 class ProductPrice(PriceBase):
-    product = models.ForeignKey(Product, verbose_name=_('product'),
+    product = models.ForeignKey(
+        Product, verbose_name=_('product'),
         related_name='prices')
 
     class Meta:

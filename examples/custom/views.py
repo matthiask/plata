@@ -54,12 +54,14 @@ product_list = generic.ListView.as_view(
 
 
 class OrderItemForm(forms.Form):
-    quantity = forms.IntegerField(label=_('quantity'), initial=1,
+    quantity = forms.IntegerField(
+        label=_('quantity'), initial=1,
         min_value=1, max_value=100)
 
 
 def product_detail(request, object_id):
-    product = get_object_or_404(Product.objects.filter(is_active=True), pk=object_id)
+    product = get_object_or_404(
+        Product.objects.filter(is_active=True), pk=object_id)
 
     if request.method == 'POST':
         form = OrderItemForm(request.POST)
