@@ -41,3 +41,21 @@ This example demonstrates how a product model might be made even simpler:
 By extending ``ProductBase`` and ``PriceBase`` at the same time, all
 product related information is kept in one Django model. This (obviously)
 means that each product can only have one price.
+
+
+setup for examples
+==================
+
+* make sure that ``examples/manage.py`` is configured to use your example
+  of choice, e.g. 'simple'.
+* setup basic Django models: ``./manage.py migrate``
+* prepare shop models (important: all at once, otherwise you’ll run into
+  a dependency hell): ``./manage.py makemigrations shop contact discount simple``
+* setup shop models: ``./manage.py migrate``
+* create an user: ``./manage.py createsuperuser``
+  (the examples contain no user management and depend on admin staff users.)
+* create tax classes, products, discounts etc. at the admin site
+
+If you want to try different examples, you must delete the migrations from
+shop, contact and discount!
+
