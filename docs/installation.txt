@@ -10,8 +10,8 @@ Installation
 This document describes the steps needed to get Plata up and running.
 
 Plata is based on Django_, so you need a working Django_ installation
-first. Plata is developed using Django_ 1.8, and will not
-work with any earlier version.
+first. Plata is developed using Django_ 1.10, and is not tested against
+any earlier version.
 
 You can download a version of plata using ``pip``::
 
@@ -82,7 +82,7 @@ follows here::
 
 
 Plata has to know the location of your shop model, because it is referenced
-f.e. in the product ``ForeignKey`` of order items. If the product model exists
+e.g. in the ``product`` ForeignKey of order items. If the product model exists
 in the ``myapp`` Django application, add the following setting::
 
     PLATA_SHOP_PRODUCT = 'myapp.Product'
