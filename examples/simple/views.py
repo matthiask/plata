@@ -2,8 +2,7 @@ from django import forms
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db.models import ObjectDoesNotExist
-from django.shortcuts import get_object_or_404, redirect, render_to_response
-from django.template import RequestContext
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import ugettext as _
 from django.views import generic
 
@@ -51,8 +50,9 @@ def product_detail(request, object_id):
             return redirect('plata_shop_cart')
     else:
         form = OrderItemForm()
-
-    return render_to_response('product/product_detail.html', {
-        'object': product,
-        'form': form,
-        }, context_instance=RequestContext(request))
+    return render(
+        request,
+        'product/product_detail.html', {
+            'object': product,
+            'form': form,
+        })
