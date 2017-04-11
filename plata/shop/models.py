@@ -11,7 +11,7 @@ from django.db import models
 from django.db.models import F, ObjectDoesNotExist, Sum
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _, ugettext
 
 from django_countries.fields import CountryField
 
@@ -226,7 +226,7 @@ class Order(BillingShippingAddress):
         """
         if self._order_id:
             return self._order_id
-        return unicode(_('No. %d' % int(self.id)))
+        return ugettext('No. %d') % self.id
 
     def recalculate_total(self, save=True):
         """
