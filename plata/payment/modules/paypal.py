@@ -107,7 +107,7 @@ class PaymentProcessor(ProcessorBase):
                         'non-ASCII characters. Please either '
                         'a) update your PayPal preferences to use UTF-8 '
                         'b) configure your site so that IPN requests are '
-                        'not ready before they reach the hanlder'
+                        'not ready before they reach the handler'
                     )
 
         PAYPAL = settings.PAYPAL
