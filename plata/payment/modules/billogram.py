@@ -34,9 +34,9 @@ class PaymentProcessor(ProcessorBase):
     def __init__(self, *args, **kwargs):
         super(PaymentProcessor, self).__init__(*args, **kwargs)
         self.api = billogram_api.BillogramAPI(
-            settings.BILLOGRAM_API_USER,
-            settings.BILLOGRAM_API_AUTHKEY,
-            api_base=settings.BILLOGRAM_API_BASE
+            settings.BILLOGRAM['API_USER'],
+            settings.BILLOGRAM['API_AUTHKEY'],
+            api_base=settings.BILLOGRAM['API_BASE']
         )
 
     def get_urls(self):
@@ -70,7 +70,8 @@ class PaymentProcessor(ProcessorBase):
                     "name": name,
                     "email": order.email,
                 },
-                "company_type": "%sindividual" % ('foreign ' if order.billing_country.code != 'SE' else ''),
+                "company_type": "%sindividual" % (
+                    'foreign ' if order.billing_country.code != 'SE' else ''),
             }
             if address:
                 billing_address = order.billing_address.split('\n', 1)
@@ -121,7 +122,7 @@ class PaymentProcessor(ProcessorBase):
             billogram_data["callbacks"] = {
                 "url": request.build_absolute_uri(reverse('billogram_callback')),
                 "custom": '-'.join((str(order.id), str(payment.id))),
-                "sign_key": settings.BILLOGRAM_SIGN_KEY,
+                "sign_key": settings.BILLOGRAM['SIGN_KEY'],
             }
 
         methods = []
@@ -153,7 +154,7 @@ class PaymentProcessor(ProcessorBase):
         data = json.loads(request.body)
         if data['signature'] != hashlib.md5(
                 data['callback_id'] +
-                settings.BILLOGRAM_SIGN_KEY).hexdigest():
+                settings.BILLOGRAM['SIGN_KEY']).hexdigest():
             return http.HttpResponseBadRequest()
 
         order_id, payment_id = data['custom'].split('-')

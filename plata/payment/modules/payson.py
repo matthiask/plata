@@ -32,8 +32,9 @@ class PaymentProcessor(ProcessorBase):
 
     def __init__(self, shop):
         super(PaymentProcessor, self).__init__(shop)
-        self.payson_api = payson_api.PaysonApi(settings.PAYSON_USER_ID,
-                                           settings.PAYSON_USER_KEY)
+        self.payson_api = payson_api.PaysonApi(
+            settings.PAYSON['USER_ID'],
+            settings.PAYSON['USER_KEY'])
 
     def get_urls(self):
         from django.conf.urls import url
@@ -63,7 +64,7 @@ class PaymentProcessor(ProcessorBase):
             senderEmail=order.email,
             senderFirstName=order.billing_first_name,
             senderLastName=order.billing_last_name,
-            receiverList=[payson_api.Receiver(settings.PAYSON_EMAIL, order.total), ],
+            receiverList=[payson_api.Receiver(settings.PAYSON['EMAIL'], order.total), ],
             ipnNotificationUrl=request.build_absolute_uri(reverse('payson_ipn')),
             localeCode=locale_code,
             currencyCode=order.currency,
