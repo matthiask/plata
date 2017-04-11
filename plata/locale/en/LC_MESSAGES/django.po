@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Plata next\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-19 21:22+0100\n"
+"POT-Creation-Date: 2017-04-11 15:59+0200\n"
 "PO-Revision-Date: 2017-01-19 21:29+0100\n"
 "Last-Translator: Henning Hraban Ramm <hraban@fiee.net>\n"
 "Language-Team: \n"
@@ -540,7 +540,6 @@ msgid "Incl. tax"
 msgstr "Incl. tax"
 
 #: reporting/order.py:150
-#| msgid "Check/Bank transfer"
 msgid "Bank transfer"
 msgstr "Bank transfer"
 
@@ -550,8 +549,6 @@ msgstr "Cash"
 
 #: reporting/order.py:156
 #, python-format
-#| msgid ""
-#| "Already paid for with %(payment_method)s (Transaction %(transaction)s)."
 msgid "Already paid for with: %(payment_method)s."
 msgstr "Already paid for with: %(payment_method)s."
 

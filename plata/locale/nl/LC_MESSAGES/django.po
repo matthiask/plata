@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Plata next\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-19 21:22+0100\n"
+"POT-Creation-Date: 2017-04-11 15:59+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Henning Hraban Ramm <hraban@fiee.net>\n"
 "Language-Team: \n"
@@ -279,7 +279,7 @@ msgstr "%(stage)s: %(order)s verwerkt door %(payment_module)s"
 #: payment/modules/base.py:193
 #, python-format
 msgid "Remaining discount for order %s"
-msgstr ""
+msgstr "Resterende korting voor orders %s"
 
 #: payment/modules/base.py:222 payment/modules/check.py:56
 #: payment/modules/cod.py:42 payment/modules/datatrans.py:180
@@ -302,7 +302,7 @@ msgstr "Factuur"
 
 #: payment/modules/check.py:33
 msgid "Check/Bank transfer"
-msgstr ""
+msgstr "Bank overschrijving"
 
 #: payment/modules/check.py:66
 #, python-format
@@ -347,12 +347,12 @@ msgstr "Pagseguro"
 
 #: payment/modules/pagseguro.py:117
 msgid "Malformed order ID"
-msgstr ""
+msgstr "Ongeldige order-ID"
 
 #: payment/modules/pagseguro.py:123
 #, python-format
 msgid "Order %s does not exist"
-msgstr ""
+msgstr "De order %s bestaat niet."
 
 #: payment/modules/paypal.py:41
 msgid "Paypal"
@@ -534,7 +534,7 @@ msgstr "Incl. belasting"
 
 #: reporting/order.py:150
 msgid "Bank transfer"
-msgstr ""
+msgstr "Bankoverschrijving"
 
 #: reporting/order.py:152
 msgid "Cash"
@@ -555,11 +555,11 @@ msgstr "Nog niet betaald."
 
 #: reporting/order.py:178
 msgid "Seller"
-msgstr ""
+msgstr "Verkoper"
 
 #: reporting/order.py:179
 msgid "Customer"
-msgstr ""
+msgstr "Klant"
 
 #: reporting/product.py:24
 msgid "products"
@@ -625,7 +625,7 @@ msgstr "Betalingswijze"
 
 #: shop/forms.py:178
 msgid "Remove"
-msgstr ""
+msgstr "Verwijderen"
 
 #: shop/forms.py:194
 msgid "Provide either \"relative\" or \"absolute\"."
@@ -695,7 +695,7 @@ msgstr "Bedankt voor uw bestelling!"
 
 #: shop/models.py:133
 msgid "Order is pending payment"
-msgstr ""
+msgstr "Volgorde is in afwachting van betaling"
 
 #: shop/models.py:134
 msgid "Order has been paid"
@@ -723,7 +723,7 @@ msgstr "e-mail adres"
 
 #: shop/models.py:158
 msgid "price includes tax"
-msgstr ""
+msgstr "prijs is inclusief BTW"
 
 #: shop/models.py:165
 msgid "items discount"
@@ -781,7 +781,7 @@ msgstr ""
 
 #: shop/models.py:455
 msgid "The price could not be determined."
-msgstr ""
+msgstr "De prijs kon niet worden vastgesteld."
 
 #: shop/models.py:496
 msgid "Cannot proceed to checkout without order items."
@@ -899,11 +899,11 @@ msgstr "Tijdstip waarop de betaling is goedgekeurd."
 
 #: shop/models.py:749
 msgid "transaction fee"
-msgstr ""
+msgstr "transactiekosten"
 
 #: shop/models.py:754
 msgid "Fee charged by the payment processor."
-msgstr ""
+msgstr "Toetaling door de Betalingsverwerker."
 
 #: shop/models.py:759
 msgid "order payments"
@@ -982,7 +982,7 @@ msgstr "Dashboard"
 #: shop/templates/base.html:105
 #, python-format
 msgid " logged in as %(useremail)s"
-msgstr ""
+msgstr "Ingelogd als %(useremail)s"
 
 #: shop/templates/base.html:122
 msgid "Go to cart"
@@ -1045,11 +1045,11 @@ msgstr "belasting"
 
 #: shop/templates/plata/notifications/contact_created.txt:1
 msgid "Account creation successful"
-msgstr ""
+msgstr "Account aanmaken"
 
 #: shop/templates/plata/notifications/contact_created.txt:3
 msgid "You have successfully created an account on our site!"
-msgstr ""
+msgstr "Je hebt een account gecreëerd bij onze site!"
 
 #: shop/templates/plata/notifications/contact_created.txt:4
 #, python-format
@@ -1058,11 +1058,11 @@ msgstr ""
 
 #: shop/templates/plata/notifications/contact_created.txt:6
 msgid "Your username:"
-msgstr ""
+msgstr "Uw gebruikersnaam:"
 
 #: shop/templates/plata/notifications/contact_created.txt:7
 msgid "Your password:"
-msgstr ""
+msgstr "Uw wachtwoord:"
 
 #: shop/templates/plata/notifications/order_paid.txt:6
 #: shop/templates/plata/notifications/packing_slip.txt:8
@@ -1182,7 +1182,7 @@ msgstr "Winkelwagen is leeg."
 
 #: shop/views.py:34
 msgid "You are not authenticated"
-msgstr ""
+msgstr "U bent niet geverifieerd"
 
 #: shop/views.py:47
 msgid ""
