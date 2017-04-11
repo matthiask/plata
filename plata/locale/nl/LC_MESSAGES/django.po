@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Plata next\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-11 15:59+0200\n"
+"POT-Creation-Date: 2017-04-11 16:32+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Henning Hraban Ramm <hraban@fiee.net>\n"
 "Language-Team: \n"
@@ -593,7 +593,7 @@ msgstr "order-id"
 msgid "Packing slip"
 msgstr "Pakbon"
 
-#: shop/admin.py:96
+#: shop/admin.py:96 shop/templates/base.html:145
 msgid "Invoice"
 msgstr "Factuur"
 
@@ -768,6 +768,11 @@ msgstr "JSON-gecodeerde aanvullende gegevens over de bestelling betaling."
 #: shop/models.py:201
 msgid "orders"
 msgstr "bestellingen"
+
+#: shop/models.py:229
+#, python-format
+msgid "No. %d"
+msgstr ""
 
 #: shop/models.py:406 shop/views.py:430
 msgid "Cannot modify order once it has been confirmed."
@@ -963,7 +968,8 @@ msgstr "toon alle"
 msgid "Home"
 msgstr "Thuis"
 
-#: shop/templates/base.html:102 shop/templates/product/product_detail.html:5
+#: shop/templates/base.html:102 shop/templates/base.html:148
+#: shop/templates/product/product_detail.html:5
 #: shop/templates/product/product_list.html:5
 #: shop/templates/product/product_list.html:8
 msgid "Products"

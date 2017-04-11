@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Plata next\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-11 15:59+0200\n"
-"PO-Revision-Date: 2017-01-19 21:29+0100\n"
+"POT-Creation-Date: 2017-04-11 16:32+0200\n"
+"PO-Revision-Date: 2017-04-11 16:33+0200\n"
 "Last-Translator: Henning Hraban Ramm <hraban@fiee.net>\n"
 "Language-Team: \n"
 "Language: en\n"
@@ -600,7 +600,7 @@ msgstr "order ID"
 msgid "Packing slip"
 msgstr "Packing slip"
 
-#: shop/admin.py:96
+#: shop/admin.py:96 shop/templates/base.html:145
 msgid "Invoice"
 msgstr "Invoice"
 
@@ -775,6 +775,11 @@ msgstr "JSON-encoded additional data about the order payment."
 #: shop/models.py:201
 msgid "orders"
 msgstr "orders"
+
+#: shop/models.py:229
+#, python-format
+msgid "No. %d"
+msgstr "No. %d"
 
 #: shop/models.py:406 shop/views.py:430
 msgid "Cannot modify order once it has been confirmed."
@@ -972,7 +977,8 @@ msgstr "show all"
 msgid "Home"
 msgstr "Home"
 
-#: shop/templates/base.html:102 shop/templates/product/product_detail.html:5
+#: shop/templates/base.html:102 shop/templates/base.html:148
+#: shop/templates/product/product_detail.html:5
 #: shop/templates/product/product_list.html:5
 #: shop/templates/product/product_list.html:8
 msgid "Products"

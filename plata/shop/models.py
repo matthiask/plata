@@ -226,7 +226,7 @@ class Order(BillingShippingAddress):
         """
         if self._order_id:
             return self._order_id
-        return u'No. %d' % self.id
+        return unicode(_('No. %d' % int(self.id)))
 
     def recalculate_total(self, save=True):
         """

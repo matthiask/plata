@@ -142,10 +142,10 @@ display:none;
             </ul>
             {% if plata.order.id %}
             {% url "plata_reporting_invoice_pdf" plata.order.id as invoice_url %}
-            {% if invoice_url %}<a href="{{ invoice_url }}">Invoice</a>{% endif %}
+            {% if invoice_url %}<a href="{{ invoice_url }}">{% trans "Invoice" %}</a>{% endif %}
             {% endif %}
             {% url "plata_reporting_product_xls" as product_xls_url %}
-            {% if product_xls_url %}<a href="{{ product_xls_url }}">Products</a>{% endif %}
+            {% if product_xls_url %}<a href="{{ product_xls_url }}">{% trans "Products" %}</a>{% endif %}
         </td>
     </tr>
 </table>
