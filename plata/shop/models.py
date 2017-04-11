@@ -448,7 +448,7 @@ class Order(BillingShippingAddress):
                     orderitem=item)
             except ObjectDoesNotExist:
                 logger.error(
-                    u'No price could be found for %s with currency %s' % (
+                    'No price could be found for %s with currency %s' % (
                         product, self.currency))
 
                 raise ValidationError(
@@ -462,6 +462,10 @@ class Order(BillingShippingAddress):
             if item.pk:
                 item.delete()
                 item.pk = None
+
+        if self.data == '':
+            # happens if the cart is new, might be an error of JSONField
+            self.data = {}
 
         if recalculate:
             self.recalculate_total()
