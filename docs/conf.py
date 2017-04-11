@@ -13,11 +13,7 @@
 
 import sys
 import os
-
 import PIL.Image
-
-import plata
-
 
 sys.modules['Image'] = PIL.Image
 
@@ -26,9 +22,11 @@ sys.modules['Image'] = PIL.Image
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.append(os.path.abspath('.'))
 sys.path.append(os.path.abspath('..'))
-sys.path.append(os.path.abspath('../venv/lib/python2.7/site-packages'))
+# sys.path.append(os.path.abspath('../venv/lib/python2.7/site-packages'))
 sys.path.append(os.path.abspath('../tests/'))
 os.environ['DJANGO_SETTINGS_MODULE'] = 'testapp.settings'
+
+import plata
 
 # -- General configuration ----------------------------------------------------
 
