@@ -1,0 +1,132 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: plata examples\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-04-11 19:31+0200\n"
+"PO-Revision-Date: 2017-04-11 19:33+0200\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Last-Translator: Henning Hraban Ramm <hraban@fiee.net>\n"
+"Language-Team: \n"
+"X-Generator: Poedit 1.8.7\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+#: custom/models.py:14 oneprice/models.py:17 simple/models.py:11
+#: staggered/models.py:12
+msgid "is active"
+msgstr "is active"
+
+#: custom/models.py:15 oneprice/models.py:18 simple/models.py:12
+#: staggered/models.py:13
+msgid "name"
+msgstr "name"
+
+#: custom/models.py:16 oneprice/models.py:19 simple/models.py:13
+#: staggered/models.py:14
+msgid "slug"
+msgstr "slug"
+
+#: custom/models.py:17 oneprice/models.py:20 simple/models.py:14
+#: staggered/models.py:15
+msgid "ordering"
+msgstr "ordering"
+
+#: custom/models.py:19 oneprice/models.py:22 simple/models.py:16
+#: staggered/models.py:17
+msgid "description"
+msgstr "description"
+
+#: custom/models.py:23 custom/models.py:35 oneprice/models.py:26
+#: simple/models.py:20 simple/models.py:33 staggered/models.py:21
+#: staggered/models.py:47
+msgid "product"
+msgstr "product"
+
+#: custom/models.py:24 oneprice/models.py:27 simple/models.py:21
+#: staggered/models.py:22
+msgid "products"
+msgstr "products"
+
+#: custom/models.py:41 simple/models.py:39 staggered/models.py:54
+msgid "price"
+msgstr "price"
+
+#: custom/models.py:42 simple/models.py:40 staggered/models.py:55
+msgid "prices"
+msgstr "prices"
+
+#: custom/models.py:49
+msgid "user"
+msgstr "user"
+
+#: custom/models.py:53
+msgid "company"
+msgstr "company"
+
+#: custom/models.py:54
+msgid "first name"
+msgstr "first name"
+
+#: custom/models.py:55
+msgid "last name"
+msgstr "last name"
+
+#: custom/models.py:56
+msgid "address"
+msgstr "address"
+
+#: custom/models.py:57
+msgid "ZIP code"
+msgstr "ZIP code"
+
+#: custom/models.py:58
+msgid "city"
+msgstr "city"
+
+#: custom/models.py:59
+msgid "country"
+msgstr "country"
+
+#: custom/templates/plata/shop_checkout.html:5
+#: custom/templates/plata/shop_checkout.html:8
+msgid "Checkout"
+msgstr "Checkout"
+
+#: custom/templates/plata/shop_checkout.html:19
+#: custom/templates/plata/shop_checkout.html:51
+msgid "Submit"
+msgstr "Submit"
+
+#: custom/templates/plata/shop_checkout.html:33
+msgid "Address"
+msgstr "Address"
+
+#: custom/views.py:38
+msgid "create account"
+msgstr "create account"
+
+#: custom/views.py:57 oneprice/views.py:28 simple/views.py:28
+#: staggered/views.py:28
+msgid "quantity"
+msgstr "quantity"
+
+#: custom/views.py:72 oneprice/views.py:43 simple/views.py:43
+#: staggered/views.py:58
+msgid "The cart has been updated."
+msgstr "The cart has been updated."
+
+#: staggered/models.py:49
+msgid "From quantity"
+msgstr "From quantity"
+
+#: staggered/views.py:41
+msgid "Price could not be determined."
+msgstr "Price could not be determined."
