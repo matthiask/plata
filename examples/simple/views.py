@@ -39,7 +39,9 @@ def product_detail(request, object_id):
         if form.is_valid():
             order = shop.order_from_request(request, create=True)
             try:
-                order.modify_item(product, form.cleaned_data.get('quantity'))
+                order.modify_item(
+                    product,
+                    relative=form.cleaned_data.get('quantity'))
                 messages.success(request, _('The cart has been updated.'))
             except ValidationError, e:
                 if e.code == 'order_sealed':
