@@ -41,6 +41,11 @@ if [ ! -d "$CHOICE" ]; then
     exit 4
 fi
 
+if [ "$CHOICE" == "custom" ]; then
+    # this doesn’t use plata’s contact model
+    PLATAMODULES=${PLATAMODULES#"contact "}
+fi
+
 export DJANGO_SETTINGS_MODULE="$CHOICE.settings"
 echo "Please make sure that example/manage.py uses the right settings!"
 

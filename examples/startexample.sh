@@ -29,6 +29,11 @@ fi
 
 echo Using example "$EXAMPLE".
 
+if [ "$EXAMPLE" == "custom" ]; then
+    # this doesn’t use plata’s contact model
+    PLATAMODULES=${PLATAMODULES#"contact "}
+fi
+
 export DJANGO_SETTINGS_MODULE="$EXAMPLE.settings"
 
 if [ ! -d "$EXAMPLE/migrations" ]; then
@@ -50,7 +55,7 @@ if [ ! -d "$EXAMPLE/migrations" ]; then
     python manage.py makemigrations $PLATAMODULES $EXAMPLE
     python manage.py migrate
     
-    echo Last step: Create a new superuser.
+    echo Last step: Create a new superuser. You can cancel this.
     python manage.py createsuperuser
 else
     echo Existing migrations found. If there are problems, you might run reset-migrations.sh
