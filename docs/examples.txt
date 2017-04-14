@@ -59,3 +59,11 @@ setup for examples
 If you want to try different examples, you must delete the migrations from
 shop, contact and discount!
 
+For your convenience, we included two (bash) shell scripts, to be called
+from within the examples directory of a git checkout. 
+* `reset-migrations.sh` lets you delete the migrations from alle examples
+  and all plata modules.
+* `startexample.sh` automates the necessary migrations setup and starts one
+  example.
+There are some checks and prompts to avoid damage, but of course we can’t be
+held responsible for anything that happens.
