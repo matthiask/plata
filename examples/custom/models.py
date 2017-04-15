@@ -1,13 +1,17 @@
-import sys
-
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import
+from __future__ import unicode_literals
 from django.contrib.auth.models import User
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import python_2_unicode_compatible
 
 from plata.product.models import ProductBase
 from plata.shop.models import PriceBase
 
 
+@python_2_unicode_compatible
 class Product(ProductBase):
     """(Nearly) the simplest product model ever"""
 
@@ -23,7 +27,7 @@ class Product(ProductBase):
         verbose_name = _('product')
         verbose_name_plural = _('products')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     @models.permalink
@@ -31,8 +35,10 @@ class Product(ProductBase):
         return ('plata_product_detail', (), {'object_id': self.pk})
 
 
+@python_2_unicode_compatible
 class ProductPrice(PriceBase):
-    product = models.ForeignKey(Product, verbose_name=_('product'),
+    product = models.ForeignKey(
+        Product, verbose_name=_('product'),
         related_name='prices')
 
     class Meta:
@@ -42,13 +48,16 @@ class ProductPrice(PriceBase):
         verbose_name_plural = _('prices')
 
 
+@python_2_unicode_compatible
 class Contact(models.Model):
-    ADDRESS_FIELDS = ['company', 'first_name', 'last_name', 'address',
+    ADDRESS_FIELDS = [
+        'company', 'first_name', 'last_name', 'address',
         'zip_code', 'city', 'country']
 
-    user = models.OneToOneField(User, verbose_name=_('user'),
+    user = models.OneToOneField(
+        User, verbose_name=_('user'),
         related_name='contactuser')
-    #currency = CurrencyField(help_text=_('Preferred currency.'))
+    # currency = CurrencyField(help_text=_('Preferred currency.'))
 
     company = models.CharField(_('company'), max_length=100, blank=True)
     first_name = models.CharField(_('first name'), max_length=100)
@@ -58,8 +67,8 @@ class Contact(models.Model):
     city = models.CharField(_('city'), max_length=100)
     country = models.CharField(_('country'), max_length=3, blank=True)
 
-    def __unicode__(self):
-        return unicode(self.user)
+    def __str__(self):
+        return self.user.__str__
 
     def update_from_order(self, order, request=None):
         for field in self.ADDRESS_FIELDS:

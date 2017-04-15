@@ -1,11 +1,17 @@
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import
+from __future__ import unicode_literals
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import python_2_unicode_compatible
 
 import plata
 from plata.product.models import ProductBase
 from plata.shop.models import PriceBase
 
 
+@python_2_unicode_compatible
 class Product(ProductBase):
     """(Nearly) the simplest product model ever"""
 
@@ -21,12 +27,11 @@ class Product(ProductBase):
         verbose_name = _('product')
         verbose_name_plural = _('products')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
-    @models.permalink
     def get_absolute_url(self):
-        return ('plata_product_detail', (), {'object_id': self.pk})
+        return reverse('plata_product_detail', kwargs={'object_id': self.pk})
 
     def get_price(self, currency=None, orderitem=None):
         if currency is None:
@@ -43,8 +48,10 @@ class Product(ProductBase):
             raise possible.model.DoesNotExist
 
 
+@python_2_unicode_compatible
 class ProductPrice(PriceBase):
-    product = models.ForeignKey(Product, verbose_name=_('product'),
+    product = models.ForeignKey(
+        Product, verbose_name=_('product'),
         related_name='prices')
     from_quantity = models.IntegerField(_('From quantity'), default=1)
 
