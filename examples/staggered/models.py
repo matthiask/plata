@@ -48,7 +48,6 @@ class Product(ProductBase):
             raise possible.model.DoesNotExist
 
 
-@python_2_unicode_compatible
 class ProductPrice(PriceBase):
     product = models.ForeignKey(
         Product, verbose_name=_('product'),

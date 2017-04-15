@@ -35,7 +35,6 @@ class Product(ProductBase):
         return ('plata_product_detail', (), {'object_id': self.pk})
 
 
-@python_2_unicode_compatible
 class ProductPrice(PriceBase):
     product = models.ForeignKey(
         Product, verbose_name=_('product'),
