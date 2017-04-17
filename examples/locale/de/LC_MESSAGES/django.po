@@ -7,91 +7,91 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plata examples\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-11 19:31+0200\n"
+"POT-Creation-Date: 2017-04-17 17:30+0200\n"
 "PO-Revision-Date: 2017-04-11 19:36+0200\n"
+"Last-Translator: Henning Hraban Ramm <hraban@fiee.net>\n"
+"Language-Team: fiëé visuëlle <hraban@fiee.net>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Last-Translator: Henning Hraban Ramm <hraban@fiee.net>\n"
-"Language-Team: fiëé visuëlle <hraban@fiee.net>\n"
 "X-Generator: Poedit 1.8.7\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
-#: custom/models.py:14 oneprice/models.py:17 simple/models.py:11
-#: staggered/models.py:12
+#: custom/models.py:18 oneprice/models.py:21 simple/models.py:17
+#: staggered/models.py:18
 msgid "is active"
 msgstr "ist aktiv"
 
-#: custom/models.py:15 oneprice/models.py:18 simple/models.py:12
-#: staggered/models.py:13
+#: custom/models.py:19 oneprice/models.py:22 simple/models.py:18
+#: staggered/models.py:19
 msgid "name"
 msgstr "Name"
 
-#: custom/models.py:16 oneprice/models.py:19 simple/models.py:13
-#: staggered/models.py:14
+#: custom/models.py:20 oneprice/models.py:23 simple/models.py:19
+#: staggered/models.py:20
 msgid "slug"
 msgstr "Slug"
 
-#: custom/models.py:17 oneprice/models.py:20 simple/models.py:14
-#: staggered/models.py:15
+#: custom/models.py:21 oneprice/models.py:24 simple/models.py:20
+#: staggered/models.py:21
 msgid "ordering"
 msgstr "Sortierung"
 
-#: custom/models.py:19 oneprice/models.py:22 simple/models.py:16
-#: staggered/models.py:17
+#: custom/models.py:23 oneprice/models.py:26 simple/models.py:22
+#: staggered/models.py:23
 msgid "description"
 msgstr "Beschreibung"
 
-#: custom/models.py:23 custom/models.py:35 oneprice/models.py:26
-#: simple/models.py:20 simple/models.py:33 staggered/models.py:21
-#: staggered/models.py:47
+#: custom/models.py:27 custom/models.py:40 oneprice/models.py:30
+#: simple/models.py:26 simple/models.py:38 staggered/models.py:27
+#: staggered/models.py:53
 msgid "product"
 msgstr "Produkt"
 
-#: custom/models.py:24 oneprice/models.py:27 simple/models.py:21
-#: staggered/models.py:22
+#: custom/models.py:28 oneprice/models.py:31 simple/models.py:27
+#: staggered/models.py:28
 msgid "products"
 msgstr "Produkte"
 
-#: custom/models.py:41 simple/models.py:39 staggered/models.py:54
+#: custom/models.py:46 simple/models.py:44 staggered/models.py:60
 msgid "price"
 msgstr "Preis"
 
-#: custom/models.py:42 simple/models.py:40 staggered/models.py:55
+#: custom/models.py:47 simple/models.py:45 staggered/models.py:61
 msgid "prices"
 msgstr "Preise"
 
-#: custom/models.py:49
+#: custom/models.py:57
 msgid "user"
 msgstr "Benutzer"
 
-#: custom/models.py:53
+#: custom/models.py:61
 msgid "company"
 msgstr "Firma"
 
-#: custom/models.py:54
+#: custom/models.py:62
 msgid "first name"
 msgstr "Vorname"
 
-#: custom/models.py:55
+#: custom/models.py:63
 msgid "last name"
 msgstr "Nachname"
 
-#: custom/models.py:56
+#: custom/models.py:64
 msgid "address"
 msgstr "Adresse"
 
-#: custom/models.py:57
+#: custom/models.py:65
 msgid "ZIP code"
 msgstr "PLZ"
 
-#: custom/models.py:58
+#: custom/models.py:66
 msgid "city"
 msgstr "Ort"
 
-#: custom/models.py:59
+#: custom/models.py:67
 msgid "country"
 msgstr "Land"
 
@@ -118,12 +118,12 @@ msgstr "Konto erstellen"
 msgid "quantity"
 msgstr "Menge\t"
 
-#: custom/views.py:72 oneprice/views.py:43 simple/views.py:43
-#: staggered/views.py:58
+#: custom/views.py:72 oneprice/views.py:43 simple/views.py:45
+#: staggered/views.py:59
 msgid "The cart has been updated."
 msgstr "Der Warenkorb wurde aktualisiert."
 
-#: staggered/models.py:49
+#: staggered/models.py:55
 msgid "From quantity"
 msgstr "Ab Menge"
 

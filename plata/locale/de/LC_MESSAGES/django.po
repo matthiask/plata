@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plata next\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-11 16:32+0200\n"
-"PO-Revision-Date: 2017-04-11 16:33+0200\n"
+"POT-Creation-Date: 2017-04-17 17:30+0200\n"
+"PO-Revision-Date: 2017-04-17 17:38+0200\n"
 "Last-Translator: Henning Hraban Ramm <hraban@fiee.net>\n"
 "Language-Team: DE <hraban@fiee.net>\n"
 "Language: de_DE\n"
@@ -52,7 +52,7 @@ msgid "date of birth"
 msgstr "Geburtsdatum"
 
 #: contact/models.py:34 product/stock/models.py:235 shop/models.py:138
-#: shop/models.py:653
+#: shop/models.py:657
 msgid "created"
 msgstr "Erstellt"
 
@@ -62,7 +62,7 @@ msgstr "Bevorzugte Währung."
 
 #: contact/models.py:37 product/stock/models.py:61 product/stock/models.py:253
 #: reporting/order.py:170 shop/admin.py:120 shop/models.py:193
-#: shop/models.py:656 shop/models.py:742
+#: shop/models.py:660 shop/models.py:746
 msgid "notes"
 msgstr "Bemerkungen"
 
@@ -126,7 +126,9 @@ msgid "Exclude sale prices"
 msgstr "Ausverkaufspreise ausschließen"
 
 #: discount/models.py:50 product/stock/models.py:60 product/stock/models.py:257
-#: shop/models.py:33 shop/models.py:550
+#: shipping/models.py:25 shipping/models.py:41 shipping/models.py:74
+#: shipping/models.py:95 shipping/models.py:104 shipping/models.py:171
+#: shop/models.py:33 shop/models.py:554
 msgid "name"
 msgstr "Name"
 
@@ -142,8 +144,8 @@ msgstr "Wert"
 msgid "Only required for amount discounts."
 msgstr "Nur bei Betragsrabatten notwendig."
 
-#: discount/models.py:59 shop/models.py:44 shop/models.py:568
-#: shop/models.py:826
+#: discount/models.py:59 shop/models.py:44 shop/models.py:572
+#: shop/models.py:830
 msgid "tax class"
 msgstr "Steuerklasse"
 
@@ -192,7 +194,8 @@ msgstr "Bei Zahlungsmitteln darf die Steuerklasse nicht gesetzt sein."
 msgid "Unknown discount type."
 msgstr "Unbekannter Rabatttyp."
 
-#: discount/models.py:248 discount/models.py:363 shop/forms.py:98
+#: discount/models.py:248 discount/models.py:363 shipping/models.py:30
+#: shop/forms.py:98
 msgid "code"
 msgstr "Code"
 
@@ -254,7 +257,7 @@ msgid "Discount and order currencies do not match."
 msgstr "Rabatt- und Bestellungswährung sind unterschiedlich."
 
 #: discount/models.py:359 product/stock/models.py:248 shop/models.py:200
-#: shop/models.py:711
+#: shop/models.py:715
 msgid "order"
 msgstr "Bestellung"
 
@@ -291,7 +294,7 @@ msgstr "Verbleibender Rabatt von Bestellung %s"
 #: payment/modules/base.py:222 payment/modules/check.py:56
 #: payment/modules/cod.py:42 payment/modules/datatrans.py:180
 #: payment/modules/ogone.py:238 payment/modules/pagseguro.py:151
-#: payment/modules/paypal.py:197 payment/modules/payson.py:113
+#: payment/modules/paypal.py:197 payment/modules/payson.py:114
 #: payment/modules/postfinance.py:222 product/stock/models.py:224
 msgid "sale"
 msgstr "Verkauf"
@@ -463,7 +466,7 @@ msgid "outgoing"
 msgstr "Abgang"
 
 #: product/stock/models.py:238 reporting/order.py:56 reporting/order.py:75
-#: reporting/product.py:35 shop/models.py:547
+#: reporting/product.py:35 shop/models.py:551
 #: shop/templates/plata/shop_cart.html:24
 msgid "product"
 msgstr "Produkt"
@@ -476,25 +479,25 @@ msgstr "Änderung"
 msgid "Use negative numbers for sales, lendings and other outgoings."
 msgstr "Negative Werte für Verkäufe, Ausleihen und andere Abgänge verwenden."
 
-#: product/stock/models.py:251 shop/models.py:758
+#: product/stock/models.py:251 shop/models.py:762
 msgid "order payment"
 msgstr "Bezahlung"
 
 #: product/stock/models.py:258 reporting/order.py:55 reporting/order.py:74
-#: reporting/product.py:36 shop/models.py:551
+#: reporting/product.py:36 shop/models.py:555
 msgid "SKU"
 msgstr "Artikel-Nr."
 
-#: product/stock/models.py:260 reporting/order.py:78 shop/models.py:574
+#: product/stock/models.py:260 reporting/order.py:78 shop/models.py:578
 #: shop/templates/plata/shop_cart.html:27
 msgid "line item price"
 msgstr "Gesamtpreis"
 
-#: product/stock/models.py:263 shop/models.py:578
+#: product/stock/models.py:263 shop/models.py:582
 msgid "line item discount"
 msgstr "Rabatt auf Einzelposten"
 
-#: product/stock/models.py:266 shop/models.py:584
+#: product/stock/models.py:266 shop/models.py:588
 msgid "line item tax"
 msgstr "Steuer auf Einzelposten"
 
@@ -523,12 +526,12 @@ msgstr "Noch nicht bestätigt"
 msgid "Order"
 msgstr "Bestellung"
 
-#: reporting/order.py:57 reporting/order.py:76 shop/models.py:553
+#: reporting/order.py:57 reporting/order.py:76 shop/models.py:557
 #: shop/templates/plata/shop_cart.html:26
 msgid "quantity"
 msgstr "Menge"
 
-#: reporting/order.py:77 shop/models.py:557 shop/models.py:819
+#: reporting/order.py:77 shop/models.py:561 shop/models.py:823
 #: shop/templates/plata/shop_cart.html:25
 msgid "unit price"
 msgstr "Einheitspreis"
@@ -587,6 +590,199 @@ msgstr "Produkte"
 #: reporting/product.py:37
 msgid "stock"
 msgstr "Lager"
+
+#: shipping/models.py:27
+msgid "verbose name of this group of countries, e.g. \"European Union\""
+msgstr "Ausführlicher Name dieser Ländergruppe, z. B. „Europäische Union“"
+
+#: shipping/models.py:32
+msgid "short form of the name, e.g. \"EU\"."
+msgstr "Kurzform des Namens, z.B. „EU“."
+
+#: shipping/models.py:36 shipping/models.py:52 shipping/models.py:113
+msgid "country group"
+msgstr "Ländergruppe"
+
+#: shipping/models.py:37
+msgid "country groups"
+msgstr "Ländergruppen"
+
+#: shipping/models.py:53
+msgid ""
+"The country belongs to this group of countries for which your shipping "
+"provider charges the same."
+msgstr ""
+"Das Land gehört zu dieser Gruppe von Ländern, für die Ihr "
+"Versanddienstleister die gleichen Gebühren erhebt."
+
+#: shipping/models.py:57 shipping/models.py:62 shop/models.py:69
+#: shop/models.py:85
+msgid "country"
+msgstr "Land"
+
+#: shipping/models.py:58
+msgid "countries"
+msgstr "Länder"
+
+#: shipping/models.py:76
+msgid "name of the shipping provider, e.g. \"Royal Mail\"."
+msgstr "Name des Versanddienstleisters, z. B. „Deutsche Post“."
+
+#: shipping/models.py:79
+msgid "remarks"
+msgstr "Anmerkungen"
+
+#: shipping/models.py:80
+msgid "internal information"
+msgstr "Interne Informationen"
+
+#: shipping/models.py:85
+msgid "serves these countries"
+msgstr "bedient diese Länder"
+
+#: shipping/models.py:86
+msgid "You can use this service to ship to this group of countries."
+msgstr ""
+"Sie können mit diesem Dienstleister in diese Gruppe von Ländern versenden."
+
+#: shipping/models.py:90 shipping/models.py:110
+msgid "shipping provider"
+msgstr "Versanddienstleister"
+
+#: shipping/models.py:91
+msgid "shipping providers"
+msgstr "Versanddienstleister"
+
+#: shipping/models.py:106
+msgid ""
+"How your shipping provider calls this class of packet, e.g. \"Parcel XL\"."
+msgstr ""
+"Bezeichnung Ihres Versanddienstleisters für diese Versandklasse, z.B. „Paket "
+"XL“"
+
+#: shipping/models.py:114
+msgid "The tariff is valid for this group of countries."
+msgstr "Der Tarif gilt für diese Gruppe von Ländern."
+
+#: shipping/models.py:117
+msgid "internal price"
+msgstr "interner Preis"
+
+#: shipping/models.py:119
+msgid "The price that the provider charges you."
+msgstr "Der Preis, den der Anbieter Ihnen berechnet."
+
+#: shipping/models.py:121
+msgid "packaging price"
+msgstr "Verpackungspreis"
+
+#: shipping/models.py:124
+msgid "What the packaging for a packet of this size costs you."
+msgstr "Soviel kostet Sie die Verpackung für eine Sendung dieser Größe."
+
+#: shipping/models.py:126
+msgid "external price"
+msgstr "externer Preis"
+
+#: shipping/models.py:128
+msgid ""
+"The price that you charge your customers, e.g. internal price plus packaging."
+msgstr "Der Preis, den Sie Ihren Kunden berechnen, z.B. Porto plus Verpackung."
+
+#: shipping/models.py:131
+msgid "Currency for all of these prices."
+msgstr "Währung für alle diese Preise."
+
+#: shipping/models.py:134 shop/models.py:158
+msgid "price includes tax"
+msgstr "Preis inkl. MwSt."
+
+#: shipping/models.py:137
+#, python-format
+msgid "weight of packaging [%s]"
+msgstr "Gewicht der Verpackung [%s]"
+
+#: shipping/models.py:139
+msgid "The approx. weight of the necessary packaging for this package"
+msgstr "Das ungefähre Gewicht der notwendigen Verpackung für dieses Paket."
+
+#: shipping/models.py:141
+#, python-format
+msgid "max. weight [%s]"
+msgstr "Max. Gewicht [%s]"
+
+#: shipping/models.py:143
+msgid "Maximum weight for this tariff. 0 = ignored"
+msgstr "Höchstgewicht für diesen Tarif. 0 = ignoriert"
+
+#: shipping/models.py:145
+#, python-format
+msgid "max. length [%s]"
+msgstr "Max. Länge [%s]"
+
+#: shipping/models.py:147
+msgid "Maximum length for this tariff. 0 = ignored"
+msgstr "Maximale Länge für diesen Tarif. 0 = ignoriert"
+
+#: shipping/models.py:150
+#, python-format
+msgid "max. width [%s]"
+msgstr "Max. Breite [%s]"
+
+#: shipping/models.py:152
+msgid "Maximum width for this tariff. 0 = ignored"
+msgstr "Maximale Breite für diesen Tarif. 0 = ignoriert"
+
+#: shipping/models.py:155
+#, python-format
+msgid "max. height [%s]"
+msgstr "Max. Höhe [%s]"
+
+#: shipping/models.py:157
+msgid "Maximum height for this tariff. 0 = ignored"
+msgstr "Maximale Höhe für diesen Tarif. 0 = ignoriert"
+
+#: shipping/models.py:160
+#, python-format
+msgid "max. dimensions [%s]"
+msgstr "Max. Abmessungen [%s]"
+
+#: shipping/models.py:162
+msgid "Maximum measure of length+width+height for this tariff. 0 = ignored"
+msgstr "Höchstwerte von Länge + Breite + Höhe für diesen Tarif. 0 = ignoriert"
+
+#: shipping/models.py:166
+msgid "postage"
+msgstr "Porto"
+
+#: shipping/models.py:167
+msgid "postage classes"
+msgstr "Portoklassen"
+
+#: shipping/models.py:178
+msgid "maximum weight, formatted with unit"
+msgstr "Maximalgewicht, formatiert mit Einheit"
+
+#: shipping/models.py:179 shipping/models.py:180
+msgid "max. weight"
+msgstr "Höchstgewicht"
+
+#: shipping/models.py:194
+msgid "maximum size of length + width + height"
+msgstr "Höchstwert von Länge + Breite + Höhe"
+
+#: shipping/models.py:195 shipping/models.py:196
+#, python-format
+msgid "max. size [%s]"
+msgstr "Max. Größe [%s]"
+
+#: shipping/models.py:212
+msgid "maximum size of length + width + height, formatted with unit"
+msgstr "Höchstwert von Länge + Breite + Höhe, formatiert mit Einheit."
+
+#: shipping/models.py:213 shipping/models.py:214
+msgid "max. size"
+msgstr "Max. Größe"
 
 #: shop/admin.py:45 shop/templates/plata/_order_overview.html:10
 msgid "Order items"
@@ -692,10 +888,6 @@ msgstr "Adresse"
 msgid "city"
 msgstr "Ort"
 
-#: shop/models.py:69 shop/models.py:85
-msgid "country"
-msgstr "Land"
-
 #: shop/models.py:72
 msgid "shipping address equals billing address"
 msgstr "Lieferadresse gleich Rechnungsadresse"
@@ -732,17 +924,13 @@ msgstr "bestätigt"
 msgid "language"
 msgstr "Sprache"
 
-#: shop/models.py:151 shop/models.py:655 shop/models.py:714
+#: shop/models.py:151 shop/models.py:659 shop/models.py:718
 msgid "status"
 msgstr "Status"
 
 #: shop/models.py:154
 msgid "e-mail address"
 msgstr "E-Mail-Adresse"
-
-#: shop/models.py:158
-msgid "price includes tax"
-msgstr "Preis inkl. MwSt."
 
 #: shop/models.py:165
 msgid "items discount"
@@ -776,11 +964,11 @@ msgstr "Bezahlt"
 msgid "This much has been paid already."
 msgstr "Soviel wurde schon bezahlt."
 
-#: shop/models.py:196 shop/models.py:588 shop/models.py:745
+#: shop/models.py:196 shop/models.py:592 shop/models.py:749
 msgid "data"
 msgstr "Daten"
 
-#: shop/models.py:197 shop/models.py:589 shop/models.py:746
+#: shop/models.py:197 shop/models.py:593 shop/models.py:750
 msgid "JSON-encoded additional data about the order payment."
 msgstr "JSON-codierte zusätzliche Angaben über die Bezahlung."
 
@@ -808,165 +996,165 @@ msgstr ""
 msgid "The price could not be determined."
 msgstr "Der Preis konnte nicht bestimmt werden."
 
-#: shop/models.py:496
+#: shop/models.py:500
 msgid "Cannot proceed to checkout without order items."
 msgstr ""
 "Kann Bestellprozess nicht starten, wenn keine Einzelposten gewählt wurden."
 
-#: shop/models.py:533
+#: shop/models.py:537
 msgid "Order contains more than one currency."
 msgstr "Die Bestellung enthält mehr als eine Währung"
 
-#: shop/models.py:559
+#: shop/models.py:563
 msgid "Unit price excl. tax"
 msgstr "Einheitspreis ohne MwSt."
 
-#: shop/models.py:561
+#: shop/models.py:565
 msgid "unit tax"
 msgstr "Steuer pro Einheit"
 
-#: shop/models.py:565
+#: shop/models.py:569
 msgid "tax rate"
 msgstr "MwSt.-Rate"
 
-#: shop/models.py:571
+#: shop/models.py:575
 msgid "is sale"
 msgstr "ist im Ausverkauf"
 
-#: shop/models.py:576
+#: shop/models.py:580
 msgid "Line item price excl. tax"
 msgstr "Einzelpostenpreis ohne MwSt."
 
-#: shop/models.py:581
+#: shop/models.py:585
 msgid "Discount excl. tax"
 msgstr "Rabatt exkl. MwSt."
 
-#: shop/models.py:593
+#: shop/models.py:597
 msgid "order item"
 msgstr "Einzelposten"
 
-#: shop/models.py:594
+#: shop/models.py:598
 msgid "order items"
 msgstr "Einzelposten"
 
-#: shop/models.py:597
+#: shop/models.py:601
 #, python-format
 msgid "%(quantity)s of %(name)s"
 msgstr "%(quantity)s von %(name)s"
 
-#: shop/models.py:660
+#: shop/models.py:664
 msgid "order status"
 msgstr "Bestellstatus"
 
-#: shop/models.py:661
+#: shop/models.py:665
 msgid "order statuses"
 msgstr "Bestellstatusse"
 
-#: shop/models.py:664
+#: shop/models.py:668
 #, python-format
 msgid "Status %(status)s for %(order)s"
 msgstr "Status %(status)s für %(order)s"
 
-#: shop/models.py:705
+#: shop/models.py:709
 msgid "pending"
 msgstr "hängig"
 
-#: shop/models.py:706
+#: shop/models.py:710
 msgid "processed"
 msgstr "verarbeitet"
 
-#: shop/models.py:707 shop/models.py:739
+#: shop/models.py:711 shop/models.py:743
 msgid "authorized"
 msgstr "autorisiert"
 
-#: shop/models.py:712
+#: shop/models.py:716
 msgid "timestamp"
 msgstr "Zeitstempel"
 
-#: shop/models.py:717
+#: shop/models.py:721
 msgid "amount"
 msgstr "Betrag"
 
-#: shop/models.py:719
+#: shop/models.py:723
 msgid "payment module key"
 msgstr "Bezahlmodul-Key"
 
-#: shop/models.py:722
+#: shop/models.py:726
 msgid "Machine-readable identifier for the payment module used."
 msgstr "Maschinenlesbare Kennung des verwendeten Bezahlungsmoduls."
 
-#: shop/models.py:724
+#: shop/models.py:728
 msgid "payment module"
 msgstr "Bezahlmodul"
 
-#: shop/models.py:726
+#: shop/models.py:730
 msgid "For example 'Cash on delivery', 'PayPal', ..."
 msgstr "Z.B. 'Rechnung', 'PayPal', ..."
 
-#: shop/models.py:728
+#: shop/models.py:732
 msgid "payment method"
 msgstr "Bezahlmethode"
 
-#: shop/models.py:731
+#: shop/models.py:735
 msgid "For example 'MasterCard', 'VISA' or some other card."
 msgstr "Z.B. 'MasterCard', 'VISA' oder andere Karte."
 
-#: shop/models.py:733
+#: shop/models.py:737
 msgid "transaction ID"
 msgstr "Transaktionsnummer"
 
-#: shop/models.py:736
+#: shop/models.py:740
 msgid "Unique ID identifying this payment in the foreign system."
 msgstr ""
 "Eindeutige Identifikationsnummer dieser Bezahlung beim Zahlungsanbieter."
 
-#: shop/models.py:740
+#: shop/models.py:744
 msgid "Point in time when payment has been authorized."
 msgstr "Zeitpunkt, wann diese Bezahlung autorisiert wurde."
 
-#: shop/models.py:749
+#: shop/models.py:753
 msgid "transaction fee"
 msgstr "Transaktionsgebühr"
 
-#: shop/models.py:754
+#: shop/models.py:758
 msgid "Fee charged by the payment processor."
 msgstr "Gebühr des Zahlungsdienstleisters"
 
-#: shop/models.py:759
+#: shop/models.py:763
 msgid "order payments"
 msgstr "Bezahlungen"
 
-#: shop/models.py:765
+#: shop/models.py:769
 #, python-format
 msgid "%(authorized)s of %(currency)s %(amount).2f for %(order)s"
 msgstr "%(authorized)s von %(currency)s %(amount).2f für %(order)s"
 
-#: shop/models.py:768
+#: shop/models.py:772
 msgid "Authorized"
 msgstr "Autorisiert"
 
-#: shop/models.py:768
+#: shop/models.py:772
 msgid "Not authorized"
 msgstr "Nicht autorisiert"
 
-#: shop/models.py:788
+#: shop/models.py:792
 #, python-format
 msgid "Currency of payment %s does not match."
 msgstr "Währung der Zahlung %s ist unterschiedlich."
 
-#: shop/models.py:814
+#: shop/models.py:818
 msgid "price"
 msgstr "Preis"
 
-#: shop/models.py:815
+#: shop/models.py:819
 msgid "prices"
 msgstr "Preise"
 
-#: shop/models.py:822
+#: shop/models.py:826
 msgid "tax included"
 msgstr "MwSt. enthalten"
 
-#: shop/models.py:823
+#: shop/models.py:827
 msgid "Is tax included in given unit price?"
 msgstr "Ist die MwSt. im angegebenen Einheitspreis enthalten?"
 

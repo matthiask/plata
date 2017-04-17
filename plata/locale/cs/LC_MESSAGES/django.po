@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plata\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-11 16:32+0200\n"
+"POT-Creation-Date: 2017-04-17 17:30+0200\n"
 "PO-Revision-Date: 2017-04-11 16:34+0200\n"
 "Last-Translator: Henning Hraban Ramm <hraban@fiee.net>\n"
 "Language-Team: \n"
@@ -52,7 +52,7 @@ msgid "date of birth"
 msgstr "datum narození"
 
 #: contact/models.py:34 product/stock/models.py:235 shop/models.py:138
-#: shop/models.py:653
+#: shop/models.py:657
 msgid "created"
 msgstr "vytvořen"
 
@@ -62,7 +62,7 @@ msgstr "Preferovaná měna."
 
 #: contact/models.py:37 product/stock/models.py:61 product/stock/models.py:253
 #: reporting/order.py:170 shop/admin.py:120 shop/models.py:193
-#: shop/models.py:656 shop/models.py:742
+#: shop/models.py:660 shop/models.py:746
 msgid "notes"
 msgstr "poznámky"
 
@@ -124,7 +124,9 @@ msgid "Exclude sale prices"
 msgstr "Vyřadit položky ve slevě"
 
 #: discount/models.py:50 product/stock/models.py:60 product/stock/models.py:257
-#: shop/models.py:33 shop/models.py:550
+#: shipping/models.py:25 shipping/models.py:41 shipping/models.py:74
+#: shipping/models.py:95 shipping/models.py:104 shipping/models.py:171
+#: shop/models.py:33 shop/models.py:554
 msgid "name"
 msgstr "jméno"
 
@@ -140,8 +142,8 @@ msgstr "hodnota"
 msgid "Only required for amount discounts."
 msgstr "Požadováno pouze pro peněžní slevy."
 
-#: discount/models.py:59 shop/models.py:44 shop/models.py:568
-#: shop/models.py:826
+#: discount/models.py:59 shop/models.py:44 shop/models.py:572
+#: shop/models.py:830
 msgid "tax class"
 msgstr "daňová třída"
 
@@ -185,7 +187,8 @@ msgstr "Způsob platby nemůže mít zadanou třídu daně."
 msgid "Unknown discount type."
 msgstr "Neznámý typ slevy."
 
-#: discount/models.py:248 discount/models.py:363 shop/forms.py:98
+#: discount/models.py:248 discount/models.py:363 shipping/models.py:30
+#: shop/forms.py:98
 msgid "code"
 msgstr "kód"
 
@@ -246,7 +249,7 @@ msgid "Discount and order currencies do not match."
 msgstr "Sleva a objednávka mají rozdílnou měnu."
 
 #: discount/models.py:359 product/stock/models.py:248 shop/models.py:200
-#: shop/models.py:711
+#: shop/models.py:715
 msgid "order"
 msgstr "objednávka"
 
@@ -283,7 +286,7 @@ msgstr "Zbývající sleva pro objednávku %s"
 #: payment/modules/base.py:222 payment/modules/check.py:56
 #: payment/modules/cod.py:42 payment/modules/datatrans.py:180
 #: payment/modules/ogone.py:238 payment/modules/pagseguro.py:151
-#: payment/modules/paypal.py:197 payment/modules/payson.py:113
+#: payment/modules/paypal.py:197 payment/modules/payson.py:114
 #: payment/modules/postfinance.py:222 product/stock/models.py:224
 msgid "sale"
 msgstr "sleva"
@@ -448,7 +451,7 @@ msgid "outgoing"
 msgstr "výdej"
 
 #: product/stock/models.py:238 reporting/order.py:56 reporting/order.py:75
-#: reporting/product.py:35 shop/models.py:547
+#: reporting/product.py:35 shop/models.py:551
 #: shop/templates/plata/shop_cart.html:24
 msgid "product"
 msgstr "produkt"
@@ -461,25 +464,25 @@ msgstr ""
 msgid "Use negative numbers for sales, lendings and other outgoings."
 msgstr ""
 
-#: product/stock/models.py:251 shop/models.py:758
+#: product/stock/models.py:251 shop/models.py:762
 msgid "order payment"
 msgstr ""
 
 #: product/stock/models.py:258 reporting/order.py:55 reporting/order.py:74
-#: reporting/product.py:36 shop/models.py:551
+#: reporting/product.py:36 shop/models.py:555
 msgid "SKU"
 msgstr "Kód zboží"
 
-#: product/stock/models.py:260 reporting/order.py:78 shop/models.py:574
+#: product/stock/models.py:260 reporting/order.py:78 shop/models.py:578
 #: shop/templates/plata/shop_cart.html:27
 msgid "line item price"
 msgstr "cena za jednotku"
 
-#: product/stock/models.py:263 shop/models.py:578
+#: product/stock/models.py:263 shop/models.py:582
 msgid "line item discount"
 msgstr "jednotková sleva"
 
-#: product/stock/models.py:266 shop/models.py:584
+#: product/stock/models.py:266 shop/models.py:588
 msgid "line item tax"
 msgstr "jednotková daň"
 
@@ -508,12 +511,12 @@ msgstr "Zatím nepotvrzeno"
 msgid "Order"
 msgstr "Objednávka"
 
-#: reporting/order.py:57 reporting/order.py:76 shop/models.py:553
+#: reporting/order.py:57 reporting/order.py:76 shop/models.py:557
 #: shop/templates/plata/shop_cart.html:26
 msgid "quantity"
 msgstr "množství"
 
-#: reporting/order.py:77 shop/models.py:557 shop/models.py:819
+#: reporting/order.py:77 shop/models.py:561 shop/models.py:823
 #: shop/templates/plata/shop_cart.html:25
 msgid "unit price"
 msgstr "cena za jednotku"
@@ -572,6 +575,210 @@ msgstr "produkty"
 #: reporting/product.py:37
 msgid "stock"
 msgstr "sklad"
+
+#: shipping/models.py:27
+msgid "verbose name of this group of countries, e.g. \"European Union\""
+msgstr ""
+
+#: shipping/models.py:32
+msgid "short form of the name, e.g. \"EU\"."
+msgstr ""
+
+#: shipping/models.py:36 shipping/models.py:52 shipping/models.py:113
+#, fuzzy
+#| msgid "country"
+msgid "country group"
+msgstr "stát"
+
+#: shipping/models.py:37
+#, fuzzy
+#| msgid "country"
+msgid "country groups"
+msgstr "stát"
+
+#: shipping/models.py:53
+msgid ""
+"The country belongs to this group of countries for which your shipping "
+"provider charges the same."
+msgstr ""
+
+#: shipping/models.py:57 shipping/models.py:62 shop/models.py:69
+#: shop/models.py:85
+msgid "country"
+msgstr "stát"
+
+#: shipping/models.py:58
+#, fuzzy
+#| msgid "country"
+msgid "countries"
+msgstr "stát"
+
+#: shipping/models.py:76
+msgid "name of the shipping provider, e.g. \"Royal Mail\"."
+msgstr ""
+
+#: shipping/models.py:79
+msgid "remarks"
+msgstr ""
+
+#: shipping/models.py:80
+msgid "internal information"
+msgstr ""
+
+#: shipping/models.py:85
+msgid "serves these countries"
+msgstr ""
+
+#: shipping/models.py:86
+msgid "You can use this service to ship to this group of countries."
+msgstr ""
+
+#: shipping/models.py:90 shipping/models.py:110
+#, fuzzy
+#| msgid "shipping method"
+msgid "shipping provider"
+msgstr "způsob doručení"
+
+#: shipping/models.py:91
+#, fuzzy
+#| msgid "shipping cost"
+msgid "shipping providers"
+msgstr "cena doručení"
+
+#: shipping/models.py:106
+msgid ""
+"How your shipping provider calls this class of packet, e.g. \"Parcel XL\"."
+msgstr ""
+
+#: shipping/models.py:114
+msgid "The tariff is valid for this group of countries."
+msgstr ""
+
+#: shipping/models.py:117
+#, fuzzy
+#| msgid "internal use"
+msgid "internal price"
+msgstr "interní použití"
+
+#: shipping/models.py:119
+msgid "The price that the provider charges you."
+msgstr ""
+
+#: shipping/models.py:121
+msgid "packaging price"
+msgstr ""
+
+#: shipping/models.py:124
+msgid "What the packaging for a packet of this size costs you."
+msgstr ""
+
+#: shipping/models.py:126
+#, fuzzy
+#| msgid "line item price"
+msgid "external price"
+msgstr "cena za jednotku"
+
+#: shipping/models.py:128
+msgid ""
+"The price that you charge your customers, e.g. internal price plus packaging."
+msgstr ""
+
+#: shipping/models.py:131
+msgid "Currency for all of these prices."
+msgstr ""
+
+#: shipping/models.py:134 shop/models.py:158
+msgid "price includes tax"
+msgstr "cena s daní"
+
+#: shipping/models.py:137
+#, python-format
+msgid "weight of packaging [%s]"
+msgstr ""
+
+#: shipping/models.py:139
+msgid "The approx. weight of the necessary packaging for this package"
+msgstr ""
+
+#: shipping/models.py:141
+#, python-format
+msgid "max. weight [%s]"
+msgstr ""
+
+#: shipping/models.py:143
+msgid "Maximum weight for this tariff. 0 = ignored"
+msgstr ""
+
+#: shipping/models.py:145
+#, python-format
+msgid "max. length [%s]"
+msgstr ""
+
+#: shipping/models.py:147
+msgid "Maximum length for this tariff. 0 = ignored"
+msgstr ""
+
+#: shipping/models.py:150
+#, python-format
+msgid "max. width [%s]"
+msgstr ""
+
+#: shipping/models.py:152
+msgid "Maximum width for this tariff. 0 = ignored"
+msgstr ""
+
+#: shipping/models.py:155
+#, python-format
+msgid "max. height [%s]"
+msgstr ""
+
+#: shipping/models.py:157
+msgid "Maximum height for this tariff. 0 = ignored"
+msgstr ""
+
+#: shipping/models.py:160
+#, python-format
+msgid "max. dimensions [%s]"
+msgstr ""
+
+#: shipping/models.py:162
+msgid "Maximum measure of length+width+height for this tariff. 0 = ignored"
+msgstr ""
+
+#: shipping/models.py:166
+msgid "postage"
+msgstr ""
+
+#: shipping/models.py:167
+#, fuzzy
+#| msgid "tax classes"
+msgid "postage classes"
+msgstr "třídy daně"
+
+#: shipping/models.py:178
+msgid "maximum weight, formatted with unit"
+msgstr ""
+
+#: shipping/models.py:179 shipping/models.py:180
+msgid "max. weight"
+msgstr ""
+
+#: shipping/models.py:194
+msgid "maximum size of length + width + height"
+msgstr ""
+
+#: shipping/models.py:195 shipping/models.py:196
+#, python-format
+msgid "max. size [%s]"
+msgstr ""
+
+#: shipping/models.py:212
+msgid "maximum size of length + width + height, formatted with unit"
+msgstr ""
+
+#: shipping/models.py:213 shipping/models.py:214
+msgid "max. size"
+msgstr ""
 
 #: shop/admin.py:45 shop/templates/plata/_order_overview.html:10
 msgid "Order items"
@@ -677,10 +884,6 @@ msgstr "ulice a číslo popisné"
 msgid "city"
 msgstr "město"
 
-#: shop/models.py:69 shop/models.py:85
-msgid "country"
-msgstr "stát"
-
 #: shop/models.py:72
 msgid "shipping address equals billing address"
 msgstr "poštovní adresa odpovídá fakturační"
@@ -719,17 +922,13 @@ msgstr "potvrzeno"
 msgid "language"
 msgstr "jazyk"
 
-#: shop/models.py:151 shop/models.py:655 shop/models.py:714
+#: shop/models.py:151 shop/models.py:659 shop/models.py:718
 msgid "status"
 msgstr "status"
 
 #: shop/models.py:154
 msgid "e-mail address"
 msgstr "e-mailová adresa"
-
-#: shop/models.py:158
-msgid "price includes tax"
-msgstr "cena s daní"
 
 #: shop/models.py:165
 msgid "items discount"
@@ -763,11 +962,11 @@ msgstr "zaplaceno"
 msgid "This much has been paid already."
 msgstr "Zaplacená částka"
 
-#: shop/models.py:196 shop/models.py:588 shop/models.py:745
+#: shop/models.py:196 shop/models.py:592 shop/models.py:749
 msgid "data"
 msgstr "data"
 
-#: shop/models.py:197 shop/models.py:589 shop/models.py:746
+#: shop/models.py:197 shop/models.py:593 shop/models.py:750
 msgid "JSON-encoded additional data about the order payment."
 msgstr "Doplňková data o platbě objednávky ve formátu JSON."
 
@@ -794,165 +993,165 @@ msgstr ""
 msgid "The price could not be determined."
 msgstr "Cena nemohla být určena."
 
-#: shop/models.py:496
+#: shop/models.py:500
 msgid "Cannot proceed to checkout without order items."
 msgstr "Nelze postoupit k dalšímu kroku s prázdným košíkem."
 
-#: shop/models.py:533
+#: shop/models.py:537
 msgid "Order contains more than one currency."
 msgstr "Objednávka obsahuje více než jednu měnu."
 
-#: shop/models.py:559
+#: shop/models.py:563
 msgid "Unit price excl. tax"
 msgstr "Cena za jednotku bez daně"
 
-#: shop/models.py:561
+#: shop/models.py:565
 msgid "unit tax"
 msgstr "jednotková daň"
 
-#: shop/models.py:565
+#: shop/models.py:569
 msgid "tax rate"
 msgstr "daň"
 
-#: shop/models.py:571
+#: shop/models.py:575
 msgid "is sale"
 msgstr "ve slevě"
 
-#: shop/models.py:576
+#: shop/models.py:580
 msgid "Line item price excl. tax"
 msgstr "Cena za jednotku bez daně"
 
-#: shop/models.py:581
+#: shop/models.py:585
 msgid "Discount excl. tax"
 msgstr "Sleva bez daně"
 
-#: shop/models.py:593
+#: shop/models.py:597
 msgid "order item"
 msgstr "položka"
 
-#: shop/models.py:594
+#: shop/models.py:598
 msgid "order items"
 msgstr "položky"
 
-#: shop/models.py:597
+#: shop/models.py:601
 #, python-format
 msgid "%(quantity)s of %(name)s"
 msgstr "%(quantity)s z %(name)s"
 
-#: shop/models.py:660
+#: shop/models.py:664
 msgid "order status"
 msgstr "stav objednávky"
 
-#: shop/models.py:661
+#: shop/models.py:665
 msgid "order statuses"
 msgstr "stavy objednávky"
 
-#: shop/models.py:664
+#: shop/models.py:668
 #, python-format
 msgid "Status %(status)s for %(order)s"
 msgstr "Stav %(status)s pro %(order)s"
 
-#: shop/models.py:705
+#: shop/models.py:709
 msgid "pending"
 msgstr "probíhá"
 
-#: shop/models.py:706
+#: shop/models.py:710
 msgid "processed"
 msgstr "dokončena"
 
-#: shop/models.py:707 shop/models.py:739
+#: shop/models.py:711 shop/models.py:743
 msgid "authorized"
 msgstr "ověřena"
 
-#: shop/models.py:712
+#: shop/models.py:716
 msgid "timestamp"
 msgstr "časové razítko"
 
-#: shop/models.py:717
+#: shop/models.py:721
 msgid "amount"
 msgstr "množství"
 
-#: shop/models.py:719
+#: shop/models.py:723
 msgid "payment module key"
 msgstr "klíč platebního modulu"
 
-#: shop/models.py:722
+#: shop/models.py:726
 msgid "Machine-readable identifier for the payment module used."
 msgstr "Strojově čitelný identifikátor pro použitý platební modul."
 
-#: shop/models.py:724
+#: shop/models.py:728
 msgid "payment module"
 msgstr "platební modul"
 
-#: shop/models.py:726
+#: shop/models.py:730
 msgid "For example 'Cash on delivery', 'PayPal', ..."
 msgstr "Například 'Dobírka', 'PayPal', ..."
 
-#: shop/models.py:728
+#: shop/models.py:732
 msgid "payment method"
 msgstr "způsob platby"
 
-#: shop/models.py:731
+#: shop/models.py:735
 msgid "For example 'MasterCard', 'VISA' or some other card."
 msgstr "Například 'Mastercard', 'VISA' nebo jiné karty."
 
-#: shop/models.py:733
+#: shop/models.py:737
 msgid "transaction ID"
 msgstr "ID transakce"
 
-#: shop/models.py:736
+#: shop/models.py:740
 msgid "Unique ID identifying this payment in the foreign system."
 msgstr "Unikátní ID identifikující tuto platbu v systémech třetích stran."
 
-#: shop/models.py:740
+#: shop/models.py:744
 msgid "Point in time when payment has been authorized."
 msgstr "Datum a čas kdy byla platba potvrzena."
 
-#: shop/models.py:749
+#: shop/models.py:753
 #, fuzzy
 #| msgid "transaction ID"
 msgid "transaction fee"
 msgstr "ID transakce"
 
-#: shop/models.py:754
+#: shop/models.py:758
 msgid "Fee charged by the payment processor."
 msgstr ""
 
-#: shop/models.py:759
+#: shop/models.py:763
 msgid "order payments"
 msgstr "platby od objednávky"
 
-#: shop/models.py:765
+#: shop/models.py:769
 #, python-format
 msgid "%(authorized)s of %(currency)s %(amount).2f for %(order)s"
 msgstr "%(authorized)s %(currency)s %(amount).2f pro %(order)s"
 
-#: shop/models.py:768
+#: shop/models.py:772
 msgid "Authorized"
 msgstr "Potvrzena"
 
-#: shop/models.py:768
+#: shop/models.py:772
 msgid "Not authorized"
 msgstr "Nepotvrzena"
 
-#: shop/models.py:788
+#: shop/models.py:792
 #, python-format
 msgid "Currency of payment %s does not match."
 msgstr "Měna pro platbu %s nesouhlasí."
 
-#: shop/models.py:814
+#: shop/models.py:818
 msgid "price"
 msgstr "cena"
 
-#: shop/models.py:815
+#: shop/models.py:819
 msgid "prices"
 msgstr "ceny"
 
-#: shop/models.py:822
+#: shop/models.py:826
 msgid "tax included"
 msgstr "včetně daně"
 
-#: shop/models.py:823
+#: shop/models.py:827
 msgid "Is tax included in given unit price?"
 msgstr "Je v jednotkové ceně zahrnuto DPH?"
 
