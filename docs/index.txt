@@ -28,6 +28,7 @@ Contents
    contracts
    taxes
    discounts
+   shipping
    migrations
    examples
 
@@ -43,6 +44,7 @@ API Documentation
    api/discounts
    api/shop
    api/payment
+   api/shipping
    api/views
    api/contextprocessors
    api/fields

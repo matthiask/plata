@@ -1,0 +1,44 @@
+.. _shipping:
+
+========
+Shipping
+========
+
+This (new and still incomplete) module will provide the calculation of shipping
+costs, depending on the size and weight of your products.
+
+You can register the tariffs of several shipping providers (postal services)
+for groups of countries that cost the same postage and several package sizes.
+
+Setup:
+* Include `plata.shipping` in your `INSTALLED_APPS`.
+* Run `manage.py makemigrations shipping` and `manage.py migrate`.
+* Login to your admin interface and ...
+* Create some country groups – the first will be your home country, others
+  depend on the tariff groups of your shipping provider, like "European Union",
+  "World 1", "World 2" etc.
+* Define the countries that belong to these groups.
+* Setup the shipping providers you work with, depending on the countries they
+  serve.
+* At last it’s the most work to register all the different postage tariffs.
+
+Some providers have maximum sizes for each dimension (length, weidth, height),
+others calculate by adding these. Some calculate by "tape measure", i.e.
+combined length and girth (in German: Gurtmaß), you must translate that to our
+"3D" sum yourself.
+`Postage.max_size` is the smaller of either the sum of length, width and height
+or `max_3d`.
+
+Because also the packaging has a considerable weight that depends on the package
+size, this is also a property of `Postage`. If you don’t need it, leave it at 0.
+
+
+Configuration
+=============
+
+You can change the displayed units, e.g. if someone insists in obsolete
+non-metric units::
+
+    PLATA_SHIPPING_WEIGHT_UNIT = 'g'
+    PLATA_SHIPPING_LENGTH_UNIT = 'mm'
+

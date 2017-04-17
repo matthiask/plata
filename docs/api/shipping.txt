@@ -1,0 +1,6 @@
+Shipping
+=======
+
+.. automodule:: plata.shipping
+   :members:
+   :noindex:
