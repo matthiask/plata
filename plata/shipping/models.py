@@ -9,10 +9,8 @@ from django_countries.fields import CountryField
 import plata
 from plata.fields import CurrencyField
 
-
-# change this if you insist in obsolete non-metric units
-WEIGHT_UNIT = 'g'
-LENGTH_UNIT = 'mm'
+WEIGHT_UNIT = plata.settings.PLATA_SHIPPING_WEIGHT_UNIT
+LENGTH_UNIT = plata.settings.PLATA_SHIPPING_LENGTH_UNIT
 
 
 @python_2_unicode_compatible

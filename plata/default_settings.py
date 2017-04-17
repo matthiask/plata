@@ -53,6 +53,11 @@ PLATA_SHIPPING_FIXEDAMOUNT = getattr(settings, 'PLATA_SHIPPING_FIXEDAMOUNT', {
     'tax': Decimal('7.6'),
 })
 
+#: ``shipping.Postage`` configuration
+#: change this if you insist in obsolete non-metric units
+PLATA_SHIPPING_WEIGHT_UNIT = 'g'
+PLATA_SHIPPING_LENGTH_UNIT = 'mm'
+
 #: Stationery for invoice and packing slip PDF generation
 PLATA_REPORTING_STATIONERY = getattr(
     settings,
