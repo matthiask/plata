@@ -18,6 +18,14 @@ Cash on delivery
    :noindex:
 
 
+Check support
+-------------
+
+.. automodule:: plata.payment.modules.check
+   :members:
+   :noindex:
+
+
 PayPal support
 --------------
 
@@ -34,18 +42,10 @@ Postfinance support
    :noindex:
 
 
-Billogram support
------------------
-
-.. automodule:: plata.payment.modules.billogram
-   :members:
-   :noindex:
-
-
-Check support
+Ogone support
 -------------
 
-.. automodule:: plata.payment.modules.check
+.. automodule:: plata.payment.modules.ogone
    :members:
    :noindex:
 
@@ -58,18 +58,10 @@ Datatrans support
    :noindex:
 
 
-Ogone support
--------------
-
-.. automodule:: plata.payment.modules.ogone
-   :members:
-   :noindex:
-
-
-PagSeguro support
+Billogram support
 -----------------
 
-.. automodule:: plata.payment.modules.pagseguro
+.. automodule:: plata.payment.modules.billogram
    :members:
    :noindex:
 
@@ -78,6 +70,14 @@ Payson support
 --------------
 
 .. automodule:: plata.payment.modules.payson
+   :members:
+   :noindex:
+
+
+PagSeguro support
+-----------------
+
+.. automodule:: plata.payment.modules.pagseguro
    :members:
    :noindex:
 
