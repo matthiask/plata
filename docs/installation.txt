@@ -223,16 +223,18 @@ Generic views using ``plata.shop_instance()`` could look like this::
 
 Next, you need to add the Shop's URLs to your URLconf::
 
-    from django.conf.urls import *
-    from myapp.views import shop
+    from django.conf.urls import include, url
+    from myapp.views import shop, product_list, product_detail
 
-    urlpatterns = patterns('',
+    urlpatterns = [
         url(r'^shop/', include(shop.urls)),
-        url(r'^products/$', 'myapp.views.product_list',
+        url(r'^products/$',
+            product_list,
             name='plata_product_list'),
-        url(r'^products/(?P<slug>[-\w]+)/$', 'myapp.views.product_detail',
+        url(r'^products/(?P<slug>[-\w]+)/$',
+            product_detail,
             name='plata_product_detail'),
-    )
+    ]
 
 
 The context processor
