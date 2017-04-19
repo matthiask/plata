@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Plata next\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-17 17:30+0200\n"
-"PO-Revision-Date: 2017-04-17 17:30+0200\n"
+"POT-Creation-Date: 2017-04-19 10:56+0200\n"
+"PO-Revision-Date: 2017-04-19 10:57+0200\n"
 "Last-Translator: Henning Hraban Ramm <hraban@fiee.net>\n"
 "Language-Team: \n"
 "Language: en\n"
@@ -73,7 +73,7 @@ msgstr "contact"
 msgid "contacts"
 msgstr "contacts"
 
-#: default_settings.py:85
+#: default_settings.py:90
 msgid "ZIP code"
 msgstr "ZIP code"
 
@@ -123,8 +123,8 @@ msgid "Exclude sale prices"
 msgstr "Exclude sale prices"
 
 #: discount/models.py:50 product/stock/models.py:60 product/stock/models.py:257
-#: shipping/models.py:25 shipping/models.py:41 shipping/models.py:74
-#: shipping/models.py:95 shipping/models.py:104 shipping/models.py:171
+#: shipping/models.py:23 shipping/models.py:39 shipping/models.py:72
+#: shipping/models.py:93 shipping/models.py:102 shipping/models.py:169
 #: shop/models.py:33 shop/models.py:554
 msgid "name"
 msgstr "name"
@@ -186,7 +186,7 @@ msgstr "Means of payment cannot have tax class set."
 msgid "Unknown discount type."
 msgstr "Unknown discount type."
 
-#: discount/models.py:248 discount/models.py:363 shipping/models.py:30
+#: discount/models.py:248 discount/models.py:363 shipping/models.py:28
 #: shop/forms.py:98
 msgid "code"
 msgstr "code"
@@ -579,25 +579,23 @@ msgstr "products"
 msgid "stock"
 msgstr "stock"
 
-#: shipping/models.py:27
+#: shipping/models.py:25
 msgid "verbose name of this group of countries, e.g. \"European Union\""
 msgstr "verbose name of this group of countries, e.g. \"European Union\""
 
-#: shipping/models.py:32
+#: shipping/models.py:30
 msgid "short form of the name, e.g. \"EU\"."
 msgstr "short form of the name, e.g. \"EU\"."
 
-#: shipping/models.py:36 shipping/models.py:52 shipping/models.py:113
-#| msgid "country"
+#: shipping/models.py:34 shipping/models.py:50 shipping/models.py:111
 msgid "country group"
 msgstr "country group"
 
-#: shipping/models.py:37
-#| msgid "country"
+#: shipping/models.py:35
 msgid "country groups"
 msgstr "country groups"
 
-#: shipping/models.py:53
+#: shipping/models.py:51
 msgid ""
 "The country belongs to this group of countries for which your shipping "
 "provider charges the same."
@@ -605,177 +603,171 @@ msgstr ""
 "The country belongs to this group of countries for which your shipping "
 "provider charges the same."
 
-#: shipping/models.py:57 shipping/models.py:62 shop/models.py:69
+#: shipping/models.py:55 shipping/models.py:60 shop/models.py:69
 #: shop/models.py:85
 msgid "country"
 msgstr "country"
 
-#: shipping/models.py:58
-#| msgid "country"
+#: shipping/models.py:56
 msgid "countries"
 msgstr "countries"
 
-#: shipping/models.py:76
+#: shipping/models.py:74
 msgid "name of the shipping provider, e.g. \"Royal Mail\"."
 msgstr "name of the shipping provider, e.g. \"Royal Mail\"."
 
-#: shipping/models.py:79
+#: shipping/models.py:77
 msgid "remarks"
 msgstr "remarks"
 
-#: shipping/models.py:80
+#: shipping/models.py:78
 msgid "internal information"
 msgstr "internal information"
 
-#: shipping/models.py:85
+#: shipping/models.py:83
 msgid "serves these countries"
 msgstr "serves these countries"
 
-#: shipping/models.py:86
+#: shipping/models.py:84
 msgid "You can use this service to ship to this group of countries."
 msgstr "You can use this service to ship to this group of countries."
 
-#: shipping/models.py:90 shipping/models.py:110
-#| msgid "shipping method"
+#: shipping/models.py:88 shipping/models.py:108
 msgid "shipping provider"
 msgstr "shipping provider"
 
-#: shipping/models.py:91
-#| msgid "shipping cost"
+#: shipping/models.py:89
 msgid "shipping providers"
 msgstr "shipping providers"
 
-#: shipping/models.py:106
+#: shipping/models.py:104
 msgid ""
 "How your shipping provider calls this class of packet, e.g. \"Parcel XL\"."
 msgstr ""
 "How your shipping provider calls this class of packet, e.g. \"Parcel XL\"."
 
-#: shipping/models.py:114
+#: shipping/models.py:112
 msgid "The tariff is valid for this group of countries."
 msgstr "The tariff is valid for this group of countries."
 
-#: shipping/models.py:117
-#| msgid "internal use"
+#: shipping/models.py:115
 msgid "internal price"
 msgstr "internal price"
 
-#: shipping/models.py:119
+#: shipping/models.py:117
 msgid "The price that the provider charges you."
 msgstr "The price that the provider charges you."
 
-#: shipping/models.py:121
+#: shipping/models.py:119
 msgid "packaging price"
 msgstr "packaging price"
 
-#: shipping/models.py:124
+#: shipping/models.py:122
 msgid "What the packaging for a packet of this size costs you."
 msgstr "What the packaging for a packet of this size costs you."
 
-#: shipping/models.py:126
-#| msgid "line item price"
+#: shipping/models.py:124
 msgid "external price"
 msgstr "external price"
 
-#: shipping/models.py:128
+#: shipping/models.py:126
 msgid ""
 "The price that you charge your customers, e.g. internal price plus packaging."
 msgstr ""
 "The price that you charge your customers, e.g. internal price plus packaging."
 
-#: shipping/models.py:131
+#: shipping/models.py:129
 msgid "Currency for all of these prices."
 msgstr "Currency for all of these prices."
 
-#: shipping/models.py:134 shop/models.py:158
+#: shipping/models.py:132 shop/models.py:158
 msgid "price includes tax"
 msgstr "price includes tax"
 
-#: shipping/models.py:137
+#: shipping/models.py:135
 #, python-format
 msgid "weight of packaging [%s]"
 msgstr "weight of packaging [%s]"
 
-#: shipping/models.py:139
+#: shipping/models.py:137
 msgid "The approx. weight of the necessary packaging for this package"
 msgstr "The approx. weight of the necessary packaging for this package"
 
-#: shipping/models.py:141
+#: shipping/models.py:139
 #, python-format
 msgid "max. weight [%s]"
 msgstr "max. weight [%s]"
 
-#: shipping/models.py:143
+#: shipping/models.py:141
 msgid "Maximum weight for this tariff. 0 = ignored"
 msgstr "Maximum weight for this tariff. 0 = ignored"
 
-#: shipping/models.py:145
+#: shipping/models.py:143
 #, python-format
 msgid "max. length [%s]"
 msgstr "max. length [%s]"
 
-#: shipping/models.py:147
+#: shipping/models.py:145
 msgid "Maximum length for this tariff. 0 = ignored"
 msgstr "Maximum length for this tariff. 0 = ignored"
 
-#: shipping/models.py:150
+#: shipping/models.py:148
 #, python-format
 msgid "max. width [%s]"
 msgstr "max. width [%s]"
 
-#: shipping/models.py:152
+#: shipping/models.py:150
 msgid "Maximum width for this tariff. 0 = ignored"
 msgstr "Maximum width for this tariff. 0 = ignored"
 
-#: shipping/models.py:155
+#: shipping/models.py:153
 #, python-format
 msgid "max. height [%s]"
 msgstr "max. height [%s]"
 
-#: shipping/models.py:157
+#: shipping/models.py:155
 msgid "Maximum height for this tariff. 0 = ignored"
 msgstr "Maximum height for this tariff. 0 = ignored"
 
-#: shipping/models.py:160
+#: shipping/models.py:158
 #, python-format
 msgid "max. dimensions [%s]"
 msgstr "max. dimensions [%s]"
 
-#: shipping/models.py:162
+#: shipping/models.py:160
 msgid "Maximum measure of length+width+height for this tariff. 0 = ignored"
 msgstr "Maximum measure of length+width+height for this tariff. 0 = ignored"
 
-#: shipping/models.py:166
+#: shipping/models.py:164
 msgid "postage"
 msgstr "postage"
 
-#: shipping/models.py:167
-#| msgid "tax classes"
+#: shipping/models.py:165
 msgid "postage classes"
 msgstr "postage classes"
 
-#: shipping/models.py:178
+#: shipping/models.py:176
 msgid "maximum weight, formatted with unit"
 msgstr "maximum weight, formatted with unit"
 
-#: shipping/models.py:179 shipping/models.py:180
+#: shipping/models.py:177 shipping/models.py:178
 msgid "max. weight"
 msgstr "max. weight"
 
-#: shipping/models.py:194
+#: shipping/models.py:192
 msgid "maximum size of length + width + height"
 msgstr "maximum size of length + width + height"
 
-#: shipping/models.py:195 shipping/models.py:196
+#: shipping/models.py:193 shipping/models.py:194
 #, python-format
 msgid "max. size [%s]"
 msgstr "max. size [%s]"
 
-#: shipping/models.py:212
+#: shipping/models.py:210
 msgid "maximum size of length + width + height, formatted with unit"
 msgstr "maximum size of length + width + height, formatted with unit"
 
-#: shipping/models.py:213 shipping/models.py:214
+#: shipping/models.py:211 shipping/models.py:212
 msgid "max. size"
 msgstr "max. size"
 
@@ -1151,6 +1143,11 @@ msgstr "tax included"
 #: shop/models.py:827
 msgid "Is tax included in given unit price?"
 msgstr "Is tax included in given unit price?"
+
+#: shop/models.py:833
+#, python-format
+msgid "%(currency)s %(value).2f"
+msgstr "%(currency)s %(value).2f"
 
 #: shop/templates/_form_errors.html:3
 msgid "Please correct the following errors:"

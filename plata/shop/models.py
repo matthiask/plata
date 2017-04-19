@@ -830,7 +830,8 @@ class PriceBase(models.Model):
         TaxClass, verbose_name=_('tax class'), related_name='+')
 
     def __str__(self):
-        return '%s %.2f' % (self.currency, self.unit_price)
+        return _('%(currency)s %(value).2f') % {
+            'currency': self.currency, 'value': self._unit_price }
 
     def __cmp__(self, other):
         return int(
