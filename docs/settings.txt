@@ -39,6 +39,14 @@ Settings
 
   Defaults to ``{'cost': Decimal('8.00'), 'tax': Decimal('7.6')}``
 
+``PLATA_ZIP_CODE_LABEL``:
+  Since ZIP code is far from universal, and more an L10N than I18N issue...
+  Defaults to ``'ZIP code'``.
+
+``PLATA_SHIPPING_WEIGHT_UNIT`` and ``PLATA_SHIPPING_LENGTH_UNIT``:
+  If you use :class:`~plata.shop.shipping.Postage` and don’t like metric units,
+  you can change them here. Defaults to ``'g'`` resp. ``'mm'``.
+  No calculations involved, just a display string.
 
 ``PLATA_REPORTING_STATIONERY``:
   Stationery used by PDFDocument to render invoice and packing slip PDFs.
