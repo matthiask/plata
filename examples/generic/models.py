@@ -31,11 +31,6 @@ class Product(ProductBase):
     is_active = models.BooleanField(
         _('is active'),
         default=True)
-    # name = models.CharField(_('name'), max_length=100)
-    # slug = models.SlugField(_('slug'), unique=True)
-    # ordering = models.PositiveIntegerField(_('ordering'), default=0)
-
-    # description = models.TextField(_('description'), blank=True)
     content_type = models.ForeignKey(
         ContentType,
         verbose_name=_('content type'),
