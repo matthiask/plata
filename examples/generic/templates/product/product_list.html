@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block title %}{% trans "Products" %} - {{ block.super }}{% endblock %}
+
+{% block content %}
+<h1>{% trans "Products" %}</h1>
+
+{% for product in object_list %}
+<div class="h-product">
+<h2><a href="{{ product.get_absolute_url }}">{{ product }}</a></h2>
+<div class="e-description">{{ product.description|linebreaks }}</div>
+<div class="p-category" style="display:none;">{{ product.content_type }}</div>
+</div>
+{% endfor %}
+
+{% include "_pagination.html" %}
+{% endblock %}

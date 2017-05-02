@@ -1,5 +1,5 @@
 #!/bin/bash
-EXAMPLES="custom oneprice simple staggered"
+EXAMPLES="custom oneprice simple staggered generic"
 PLATAMODULES="contact discount shop"
 
 if [ ! -d "staggered" ]; then

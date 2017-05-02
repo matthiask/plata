@@ -43,6 +43,21 @@ product related information is kept in one Django model. This (obviously)
 means that each product can only have one price.
 
 
+``generic`` example
+===================
+
+Plata accepts only one product model. But you might want to sell widely
+differing stuff, like physical things and downloads, that need different models.
+This example shows how to setup a product model with a generic relationship
+to the real product.
+
+The data entry is somewhat complicated – first create some "Things" and
+"Downloads", then edit the "Products" for their prices.
+
+This example also uses the ``CountryGroup`` from ``plata.shipping`` to implement
+prices that depend on the customer’s country.
+
+
 setup for examples
 ==================
 
