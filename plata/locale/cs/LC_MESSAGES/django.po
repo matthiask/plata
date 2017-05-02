@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plata\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-19 10:56+0200\n"
-"PO-Revision-Date: 2017-04-11 16:34+0200\n"
+"POT-Creation-Date: 2017-05-02 09:13+0200\n"
+"PO-Revision-Date: 2017-05-02 09:14+0200\n"
 "Last-Translator: Henning Hraban Ramm <hraban@fiee.net>\n"
 "Language-Team: \n"
 "Language: cs\n"
@@ -341,15 +341,15 @@ msgstr "Dobírka"
 
 #: payment/modules/datatrans.py:39
 msgid "Datatrans"
-msgstr ""
+msgstr "Datatrans"
 
 #: payment/modules/ogone.py:86
 msgid "Ogone"
-msgstr ""
+msgstr "Ogone"
 
 #: payment/modules/pagseguro.py:32
 msgid "Pagseguro"
-msgstr ""
+msgstr "Pagseguro"
 
 #: payment/modules/pagseguro.py:117
 #, fuzzy
@@ -364,15 +364,15 @@ msgstr ""
 
 #: payment/modules/paypal.py:41
 msgid "Paypal"
-msgstr ""
+msgstr "Paypal"
 
 #: payment/modules/payson.py:31
 msgid "Payson"
-msgstr ""
+msgstr "Payson"
 
 #: payment/modules/postfinance.py:81
 msgid "Postfinance"
-msgstr ""
+msgstr "Postfinance"
 
 #: product/stock/admin.py:14
 msgid "initial stock"
