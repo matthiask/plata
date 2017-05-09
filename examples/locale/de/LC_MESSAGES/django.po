@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plata examples\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-02 09:13+0200\n"
-"PO-Revision-Date: 2017-05-02 09:13+0200\n"
+"POT-Creation-Date: 2017-05-09 22:50+0200\n"
+"PO-Revision-Date: 2017-05-09 22:51+0200\n"
 "Last-Translator: Henning Hraban Ramm <hraban@fiee.net>\n"
 "Language-Team: fiëé visuëlle <hraban@fiee.net>\n"
 "Language: de\n"
@@ -24,8 +24,8 @@ msgstr ""
 msgid "is active"
 msgstr "ist aktiv"
 
-#: custom/models.py:19 generic/models.py:58 generic/models.py:123
-#: generic/models.py:155 oneprice/models.py:22 simple/models.py:18
+#: custom/models.py:19 generic/models.py:53 generic/models.py:114
+#: generic/models.py:146 oneprice/models.py:22 simple/models.py:18
 #: staggered/models.py:19
 msgid "name"
 msgstr "Name"
@@ -45,23 +45,23 @@ msgstr "Sortierung"
 msgid "description"
 msgstr "Beschreibung"
 
-#: custom/models.py:27 custom/models.py:40 generic/models.py:49
-#: generic/models.py:78 oneprice/models.py:30 simple/models.py:26
+#: custom/models.py:27 custom/models.py:40 generic/models.py:44
+#: generic/models.py:68 oneprice/models.py:30 simple/models.py:26
 #: simple/models.py:38 staggered/models.py:27 staggered/models.py:53
 msgid "product"
 msgstr "Produkt"
 
-#: custom/models.py:28 generic/models.py:50 oneprice/models.py:31
+#: custom/models.py:28 generic/models.py:45 oneprice/models.py:31
 #: simple/models.py:27 staggered/models.py:28
 msgid "products"
 msgstr "Produkte"
 
-#: custom/models.py:46 generic/models.py:90 simple/models.py:44
+#: custom/models.py:46 generic/models.py:80 simple/models.py:44
 #: staggered/models.py:60
 msgid "price"
 msgstr "Preis"
 
-#: custom/models.py:47 generic/models.py:91 simple/models.py:45
+#: custom/models.py:47 generic/models.py:81 simple/models.py:45
 #: staggered/models.py:61
 msgid "prices"
 msgstr "Preise"
@@ -134,57 +134,79 @@ msgstr "Code"
 msgid "Short unique code for this product."
 msgstr "Eindeutiges Kürzel für dieses Produkt."
 
-#: generic/models.py:41
+#: generic/models.py:36
 msgid "content type"
 msgstr "Inhaltstyp"
 
-#: generic/models.py:44
+#: generic/models.py:39
 msgid "object id"
 msgstr "Objekt-ID"
 
-#: generic/models.py:46
+#: generic/models.py:41
 msgid "object title"
 msgstr "Objektname"
 
-#: generic/models.py:84
+#: generic/models.py:74
 msgid "country group"
 msgstr "Ländergruppe"
 
-#: generic/models.py:85
+#: generic/models.py:75
 msgid "The price is valid for this country or group of countries."
 msgstr "Der Preis ist gültig für dieses Land oder diese Ländergruppe."
 
-#: generic/models.py:100 generic/models.py:132
+#: generic/models.py:90 generic/models.py:123
 msgid "Title"
 msgstr "Titel"
 
-#: generic/models.py:103 generic/models.py:135
+#: generic/models.py:93 generic/models.py:126
 msgid "Description"
 msgstr "Beschreibung"
 
-#: generic/models.py:106
+#: generic/models.py:96
 msgid "weight"
 msgstr "Gewicht"
 
-#: generic/models.py:112
+#: generic/models.py:97
+msgid "in kg"
+msgstr "in kg"
+
+#: generic/models.py:103
 msgid "thing"
 msgstr "Ding"
 
-#: generic/models.py:113
+#: generic/models.py:104
 msgid "things"
 msgstr "Dinge"
 
-#: generic/models.py:139
+#: generic/models.py:130
 msgid "file"
 msgstr "Datei"
 
-#: generic/models.py:144
+#: generic/models.py:135
 msgid "download"
 msgstr "Download"
 
-#: generic/models.py:145
+#: generic/models.py:136
 msgid "downloads"
 msgstr "Downloads"
+
+#: generic/templates/product/product_detail.html:5
+#: generic/templates/product/product_list.html:5
+#: generic/templates/product/product_list.html:8
+msgid "Products"
+msgstr "Produkte"
+
+#: generic/templates/product/product_detail.html:12
+msgid "Weight:"
+msgstr "Gewicht:"
+
+#: generic/templates/product/product_detail.html:13
+msgid "Download"
+msgstr "Download"
+
+#: generic/templates/product/product_detail.html:28
+msgid "Add to cart"
+msgstr "In den Warenkorb"
 
 #: staggered/models.py:55
 msgid "From quantity"

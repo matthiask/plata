@@ -7,6 +7,7 @@ Payment support
 Plata supports the following means of payment:
 
 * :ref:`payment_cod`
+* :ref:`payment_prepay`
 * :ref:`payment_check`
 * :ref:`payment_paypal`
 * :ref:`payment_postfinance`
@@ -27,6 +28,17 @@ Cash on delivery
 
 This payment module does not need any configuration. It simply creates
 an order payment with the order total as amount and confirms the order.
+
+
+.. _payment_prepay
+
+Payment in advance
+==================
+
+Send an invoice to the customer and wait for clearance by an admin.
+This is just a copy of the check module without mentioning checques.
+
+Configuration: ``PLATA_PAYMENT_PREPAY_NOTIFICATIONS``
 
 
 .. _payment_check:

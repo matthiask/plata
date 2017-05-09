@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Plata next\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-02 09:13+0200\n"
+"POT-Creation-Date: 2017-05-09 22:50+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Henning Hraban Ramm <hraban@fiee.net>\n"
 "Language-Team: \n"
@@ -288,7 +288,8 @@ msgstr "Resterende korting voor orders %s"
 #: payment/modules/cod.py:42 payment/modules/datatrans.py:180
 #: payment/modules/ogone.py:238 payment/modules/pagseguro.py:151
 #: payment/modules/paypal.py:197 payment/modules/payson.py:114
-#: payment/modules/postfinance.py:222 product/stock/models.py:224
+#: payment/modules/postfinance.py:222 payment/modules/prepay.py:57
+#: product/stock/models.py:224
 msgid "sale"
 msgstr "verkoop"
 
@@ -368,6 +369,37 @@ msgstr "Payson"
 #: payment/modules/postfinance.py:81
 msgid "Postfinance"
 msgstr "Postfinance"
+
+#: payment/modules/prepay.py:34
+#, fuzzy
+#| msgid "Bank transfer"
+msgid "Bank transfer in advance"
+msgstr "Bankoverschrijving"
+
+#: payment/modules/prepay.py:67
+#, python-format
+msgid ""
+"The order %(order)s has been confirmed for bank transfer in advance.\n"
+"\n"
+"Customer: %(first_name)s %(last_name)s <%(email)s>\n"
+"\n"
+"Items: %(items)s\n"
+"\n"
+"Amount due: %(remaining)s %(currency)s\n"
+"\n"
+"Click on this link when the payment is received: %(confirm_link)s\n"
+msgstr ""
+
+#: payment/modules/prepay.py:91
+msgid ""
+"Configure the notification emails in the PLATA_PAYMENT_PREPAY_NOTIFICATIONS "
+"setting"
+msgstr ""
+
+#: payment/modules/prepay.py:93
+#, python-format
+msgid "%(prefix)sNew order on bank transfer (%(order)s)"
+msgstr ""
 
 #: product/stock/admin.py:14
 msgid "initial stock"
