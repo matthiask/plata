@@ -20,3 +20,4 @@ plata.log
 /tests/htmlcov
 build
 .settings
+examples/downloads
