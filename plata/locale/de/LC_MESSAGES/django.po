@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plata next\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-09 22:50+0200\n"
-"PO-Revision-Date: 2017-05-09 22:53+0200\n"
+"POT-Creation-Date: 2017-05-02 09:13+0200\n"
+"PO-Revision-Date: 2017-04-19 10:57+0200\n"
 "Last-Translator: Henning Hraban Ramm <hraban@fiee.net>\n"
 "Language-Team: DE <hraban@fiee.net>\n"
 "Language: de_DE\n"
@@ -295,8 +295,7 @@ msgstr "Verbleibender Rabatt von Bestellung %s"
 #: payment/modules/cod.py:42 payment/modules/datatrans.py:180
 #: payment/modules/ogone.py:238 payment/modules/pagseguro.py:151
 #: payment/modules/paypal.py:197 payment/modules/payson.py:114
-#: payment/modules/postfinance.py:222 payment/modules/prepay.py:57
-#: product/stock/models.py:224
+#: payment/modules/postfinance.py:222 product/stock/models.py:224
 msgid "sale"
 msgstr "Verkauf"
 
@@ -389,47 +388,6 @@ msgstr "Payson"
 #: payment/modules/postfinance.py:81
 msgid "Postfinance"
 msgstr "Postfinance"
-
-#: payment/modules/prepay.py:34
-msgid "Bank transfer in advance"
-msgstr "Überweisung im Voraus"
-
-#: payment/modules/prepay.py:67
-#, python-format
-msgid ""
-"The order %(order)s has been confirmed for bank transfer in advance.\n"
-"\n"
-"Customer: %(first_name)s %(last_name)s <%(email)s>\n"
-"\n"
-"Items: %(items)s\n"
-"\n"
-"Amount due: %(remaining)s %(currency)s\n"
-"\n"
-"Click on this link when the payment is received: %(confirm_link)s\n"
-msgstr ""
-"Die Bestellung %(order)s wurde für Vorab-Überweisung bestätigt.\n"
-"\n"
-"Kunde: %(first_name)s %(last_name)s <%(email)s>\n"
-"\n"
-"Posten: %(items)s\n"
-"\n"
-"Fälliger Betrag: %(remaining)s %(currency)s\n"
-"\n"
-"Klicken Sie auf diesen Link, wenn die Zahlung eingegangen ist: "
-"%(confirm_link)s\n"
-
-#: payment/modules/prepay.py:91
-msgid ""
-"Configure the notification emails in the PLATA_PAYMENT_PREPAY_NOTIFICATIONS "
-"setting"
-msgstr ""
-"Konfigurieren Sie die Email-Meldungen in der Einstellung "
-"PLATA_PAYMENT_PREPAY_NOTIFICATIONS"
-
-#: payment/modules/prepay.py:93
-#, python-format
-msgid "%(prefix)sNew order on bank transfer (%(order)s)"
-msgstr "%(prefix)sNeue Bestellung auf Vorab-Überweisung (%(order)s)"
 
 #: product/stock/admin.py:14
 msgid "initial stock"
