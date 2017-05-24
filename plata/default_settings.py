@@ -28,7 +28,6 @@ PLATA_ORDER_PROCESSORS = getattr(settings, 'PLATA_ORDER_PROCESSORS', [
 #: Activated payment modules
 PLATA_PAYMENT_MODULES = getattr(settings, 'PLATA_PAYMENT_MODULES', [
     'plata.payment.modules.cod.PaymentProcessor',
-    'plata.payment.modules.postfinance.PaymentProcessor',
     'plata.payment.modules.paypal.PaymentProcessor',
 ])
 

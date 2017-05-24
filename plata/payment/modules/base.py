@@ -141,7 +141,7 @@ class ProcessorBase(object):
 
     def order_paid(self, order, payment=None, request=None):
         """
-        Call this when the order has been fully paid for
+        Call this when the order has been fully paid for.
 
         This method does the following:
 

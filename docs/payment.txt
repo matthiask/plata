@@ -94,6 +94,9 @@ SHA-1 IN hashing algorithm. (Someone should update this to a safer method!)
 The default server to server notification URL is ``payment/postfinance/ipn/``;
 the base path is defined by where you added ``shop.urls``.
 
+Postfinance e-Payment is still active in 2017, but deprecated. You won’t get
+a new PSPID.
+
 
 .. _payment_datatrans:
 
@@ -106,6 +109,12 @@ The Datatrans payment module requires the following configuration values::
         'MERCHANT_ID': '1000000000000',
         'LIVE': False
         }
+
+To work with them, you must inquire about contracts.
+
+In their lowest pay scale they charge about 500 CHF for setup plus 20 CHF per
+month plus transaction fees (in 2017). That was too much for my customer, so
+I stopped updating the datatrans payment module.
 
 
 .. _payment_billogram:
