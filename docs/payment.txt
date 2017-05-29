@@ -94,8 +94,9 @@ SHA-1 IN hashing algorithm. (Someone should update this to a safer method!)
 The default server to server notification URL is ``payment/postfinance/ipn/``;
 the base path is defined by where you added ``shop.urls``.
 
-Postfinance e-Payment is still active in 2017, but deprecated. You won’t get
-a new PSPID.
+More information:
+* https://www.postfinance.ch/de/unternehmen/produkte/debitorenloesungen/e-payment-zahlungsarten.html
+* https://www.postfinance.ch/de/unternehmen/produkte/debitorenloesungen/e-payment-psp.html
 
 
 .. _payment_datatrans:
