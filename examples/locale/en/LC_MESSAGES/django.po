@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plata examples\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-09 22:50+0200\n"
+"POT-Creation-Date: 2017-08-27 10:06+0200\n"
 "PO-Revision-Date: 2017-05-09 22:51+0200\n"
 "Last-Translator: Henning Hraban Ramm <hraban@fiee.net>\n"
 "Language-Team: \n"
@@ -193,17 +193,14 @@ msgstr "downloads"
 #: generic/templates/product/product_detail.html:5
 #: generic/templates/product/product_list.html:5
 #: generic/templates/product/product_list.html:8
-#| msgid "products"
 msgid "Products"
 msgstr "Products"
 
 #: generic/templates/product/product_detail.html:12
-#| msgid "weight"
 msgid "Weight:"
 msgstr "Weight:"
 
 #: generic/templates/product/product_detail.html:13
-#| msgid "download"
 msgid "Download"
 msgstr "Download"
 

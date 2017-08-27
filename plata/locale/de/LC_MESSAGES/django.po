@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: plata next\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-02 09:13+0200\n"
-"PO-Revision-Date: 2017-04-19 10:57+0200\n"
+"POT-Creation-Date: 2017-08-27 10:06+0200\n"
+"PO-Revision-Date: 2017-08-27 10:07+0200\n"
 "Last-Translator: Henning Hraban Ramm <hraban@fiee.net>\n"
 "Language-Team: DE <hraban@fiee.net>\n"
 "Language: de_DE\n"
@@ -74,7 +74,7 @@ msgstr "Kontakt"
 msgid "contacts"
 msgstr "Kontakte"
 
-#: default_settings.py:90
+#: default_settings.py:93
 msgid "ZIP code"
 msgstr "PLZ"
 
@@ -295,13 +295,15 @@ msgstr "Verbleibender Rabatt von Bestellung %s"
 #: payment/modules/cod.py:42 payment/modules/datatrans.py:180
 #: payment/modules/ogone.py:238 payment/modules/pagseguro.py:151
 #: payment/modules/paypal.py:197 payment/modules/payson.py:114
-#: payment/modules/postfinance.py:222 product/stock/models.py:224
+#: payment/modules/postfinance.py:222 payment/modules/prepay.py:57
+#: product/stock/models.py:224
 msgid "sale"
 msgstr "Verkauf"
 
 #: payment/modules/base.py:233 payment/modules/datatrans.py:72
-#: payment/modules/ogone.py:109 payment/modules/pagseguro.py:53
-#: payment/modules/paypal.py:64 payment/modules/postfinance.py:104
+#: payment/modules/datatrans2.py:71 payment/modules/ogone.py:109
+#: payment/modules/pagseguro.py:53 payment/modules/paypal.py:64
+#: payment/modules/postfinance.py:104 payment/modules/stripe.py:100
 #: product/stock/models.py:229
 msgid "payment process reservation"
 msgstr "Reservation während Zahlungsprozess"
@@ -356,7 +358,7 @@ msgstr "%(prefix)sNeuer Scheck/Bankauftrag (%(order)s)"
 msgid "Cash on delivery"
 msgstr "Bezahlung bei Empfang der Ware"
 
-#: payment/modules/datatrans.py:39
+#: payment/modules/datatrans.py:39 payment/modules/datatrans2.py:38
 msgid "Datatrans"
 msgstr "Datatrans"
 
@@ -388,6 +390,56 @@ msgstr "Payson"
 #: payment/modules/postfinance.py:81
 msgid "Postfinance"
 msgstr "Postfinance"
+
+#: payment/modules/prepay.py:34
+msgid "Bank transfer in advance"
+msgstr "Überweisung im Voraus"
+
+#: payment/modules/prepay.py:67
+#, python-format
+msgid ""
+"The order %(order)s has been confirmed for bank transfer in advance.\n"
+"\n"
+"Customer: %(first_name)s %(last_name)s <%(email)s>\n"
+"\n"
+"Items: %(items)s\n"
+"\n"
+"Amount due: %(remaining)s %(currency)s\n"
+"\n"
+"Click on this link when the payment is received: %(confirm_link)s\n"
+msgstr ""
+"Die Bestellung %(order)s wurde für Überweisung im Voraus bestätigt.\n"
+"\n"
+"Kunde: %(first_name)s %(last_name)s <%(email)s>\n"
+"\n"
+"Posten: %(items)s\n"
+"\n"
+"Fälliger Betrag: %(remaining)s %(currency)s\n"
+"\n"
+"Klicken Sie auf diesen Link, wenn die Zahlung eingegangen ist: "
+"%(confirm_link)s\n"
+
+#: payment/modules/prepay.py:91
+msgid ""
+"Configure the notification emails in the PLATA_PAYMENT_PREPAY_NOTIFICATIONS "
+"setting"
+msgstr ""
+"Konfigurieren Sie die Email-Meldungen in der Einstellung "
+"PLATA_PAYMENT_PREPAY_NOTIFICATIONS"
+
+#: payment/modules/prepay.py:93
+#, python-format
+msgid "%(prefix)sNew order on bank transfer (%(order)s)"
+msgstr "%(prefix)sNeuer Bankauftrag (%(order)s)"
+
+#: payment/modules/stripe.py:73
+msgid "Stripe"
+msgstr "Stripe"
+
+#: payment/modules/stripe.py:127 payment/modules/stripe.py:145
+#, python-format
+msgid "Order %s"
+msgstr "Bestellung %s"
 
 #: product/stock/admin.py:14
 msgid "initial stock"
@@ -1221,12 +1273,18 @@ msgstr "Benutzer"
 msgid "Contact"
 msgstr "Kontakt"
 
+#: shop/templates/payment/datatrans2_form.html:4
 #: shop/templates/payment/ogone_form.html:6
 #: shop/templates/payment/pagseguro_form.html:5
 #: shop/templates/payment/paypal_form.html:6
 #: shop/templates/payment/postfinance_form.html:6
+#: shop/templates/payment/stripe_form.html:4
 msgid "Payment"
 msgstr "Bezahlung"
+
+#: shop/templates/payment/datatrans2_form.html:14
+msgid "Pay"
+msgstr "Bezahlen"
 
 #: shop/templates/payment/ogone_form.html:8
 msgid "You will be forwarded to Ogone for payment now."
@@ -1253,6 +1311,14 @@ msgstr "Sie werden für die Zahlungsabwicklung zu Paypal weitergeleitet."
 #: shop/templates/payment/postfinance_form.html:8
 msgid "You will be forwarded to Postfinance for payment now."
 msgstr "Sie werden für die Zahlungsabwicklung zu Postfinance weitergeleitet."
+
+#: shop/templates/payment/stripe_form.html:8
+msgid "Thank you for your payment!"
+msgstr "Vielen Dank für Ihre Bezahlung!"
+
+#: shop/templates/payment/stripe_form.html:16
+msgid "Pay with Card"
+msgstr "Mit Kreditkarte bezahlen"
 
 #: shop/templates/plata/_order_overview.html:23
 #: shop/templates/plata/shop_discounts.html:5
