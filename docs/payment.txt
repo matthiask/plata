@@ -30,7 +30,7 @@ This payment module does not need any configuration. It simply creates
 an order payment with the order total as amount and confirms the order.
 
 
-.. _payment_prepay
+.. _payment_prepay:
 
 Payment in advance
 ==================

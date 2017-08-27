@@ -4,16 +4,18 @@
 Plata - the lean and mean Django-based Shop
 ===========================================
 
+This is the documentation for fiee’s fork of Feinheit’s project.
+Find the sources at https://github.com/fiee/plata
 
 Overview
 ========
 
 Instead of fighting against a big and all-knowing shop system, which
-never does the right thing although it "only requires pushing a few
-configuration buttons here and there", Plata caters to the programmer
+never does the right thing although it “only requires pushing a few
+configuration buttons here and there”, Plata caters to the programmer
 by only providing order, payment and discount models and some code
 for cart, checkout and payment views. Building a shop on top of Django
-and Plata still requires programming -- but that's what we do after all.
+and Plata still requires programming – but that's what we do after all.
 
 
 Contents
