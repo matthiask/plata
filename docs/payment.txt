@@ -71,7 +71,7 @@ You should also specify `'RETURN_SCHEME'` and `'IPN_SCHEME'` within the
 and `RETURN_SCHEME` will auto-select `'http'` or `'https'` based on
 the `request.is_secure()` value of the payment initiating request.
 
-'''Never''' use unencrypted communication in production!
+**Never** use unencrypted communication in production!
 
 
 .. _payment_stripe:
@@ -89,6 +89,10 @@ Configuration values::
         'LOGO': '%simg/yoursiteslogo.png' % STATIC_URL,
         'template': 'myshop/payment/stripe_form.html',
     }
+
+Testing or live payments depend on the keys; you might use different
+setup files. Don’t keep secrets (passwords etc.) in setting files
+that get checked in into source control!
 
 If you use zero-decimal currencies like `'JPY'` or `'KRW'`, you should setup::
 
@@ -144,6 +148,7 @@ The default server to server notification URL is ``payment/postfinance/ipn/``;
 the base path is defined by where you added ``shop.urls``.
 
 More information:
+
 * https://www.postfinance.ch/de/unternehmen/produkte/debitorenloesungen/e-payment-zahlungsarten.html
 * https://www.postfinance.ch/de/unternehmen/produkte/debitorenloesungen/e-payment-psp.html
 

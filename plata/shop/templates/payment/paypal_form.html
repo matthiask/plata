@@ -17,7 +17,7 @@
 <input type="hidden" name="upload" value="1" />
 <input type="hidden" name="no_shipping" value="1" />
 <input type="hidden" name="invoice" value="Order-{{ order.id }}-{{ payment.id }}" />
-{% if order.partially_paid %}
+{% if order.partially_paid %}{# WTF? this attribute doesn’t exist #}
     <input type="hidden" name="item_name_1" value="Remaining Balance for order {{ order.id }}" />
     <input type="hidden" name="amount_1" value="{{ order.balance_remaining|stringformat:".2f" }}" />
     <input type="hidden" name="quantity_1" value="1" />
