@@ -1,0 +1,30 @@
+{% extends base_template|default:"base.html" %}
+{% load i18n plata_tags %}
+
+{% block title %}{% trans "Payment" %} - {{ block.super }}{% endblock %}
+
+{% block content %}
+{% if callback %}
+{% trans "Thank you for your payment!" %}
+{% else %}
+<form action="{{ post_url }}" method="POST">
+{% csrf_token %}
+{{ form.management_form }}
+{{ form.id }}
+  <script
+    src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+    data-label="{% trans 'Pay with Card' %}"
+    data-key="{{ public_key }}"
+    data-amount="{{ amount }}"
+    data-currency="{{ currency }}"
+    data-name="{{ name }}"
+    data-description="{{ description }}"
+    data-image="{{ logo }}"
+    data-locale="auto"
+    {% if user.email %}data-email="{{ user.email }}"{% endif %}
+    data-zip-code="true">
+  </script>
+</form>
+{% endif %}
+{% endblock %}
+

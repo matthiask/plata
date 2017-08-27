@@ -81,6 +81,10 @@ PLATA_STOCK_TRACKING_MODEL = getattr(
 
 #: All available currencies. Use ISO 4217 currency codes in this list only.
 CURRENCIES = getattr(settings, 'CURRENCIES', ('CHF', 'EUR', 'USD', 'CAD'))
+#: If you use currencies that don’t have a minor unit (zero-decimal currencies);
+#: ATM only relevant to Stripe payments, see https://stripe.com/docs/currencies
+CURRENCIES_WITHOUT_CENTS = getattr(
+    settings, 'CURRENCIES_WITHOUT_CENTS', ('JPY', 'KRW'))
 
 #: Target of order item product foreign key (Defaults to ``'product.Product'``)
 PLATA_SHOP_PRODUCT = getattr(settings, 'PLATA_SHOP_PRODUCT', 'product.Product')
