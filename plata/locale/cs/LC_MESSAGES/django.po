@@ -281,7 +281,7 @@ msgstr "Zbývající sleva pro objednávku %s"
 #: payment/modules/ogone.py:238 payment/modules/paypal.py:197
 #: payment/modules/postfinance.py:222 product/stock/models.py:222
 msgid "sale"
-msgstr "sleva"
+msgstr "prodej"
 
 #: payment/modules/cod.py:24
 msgid "Cash on delivery"
