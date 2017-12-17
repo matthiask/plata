@@ -17,8 +17,6 @@ except ImportError:
     from django.contrib.auth.models import User
 
 
-
-
 signals.contact_created.connect(
     notifications.ContactCreatedHandler(always_bcc=['shop@example.com']),
     weak=False)

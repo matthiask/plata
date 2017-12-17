@@ -14,8 +14,6 @@ except ImportError:
     from django.contrib.auth.models import User
 
 
-
-
 class BaseCheckoutForm(forms.ModelForm):
     """
     Needs the request and the shop object as keyword argument
