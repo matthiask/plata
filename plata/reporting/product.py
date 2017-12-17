@@ -6,9 +6,8 @@ from django.db.models import Sum
 from django.utils.text import capfirst
 from django.utils.translation import ugettext as _
 
-from xlsxdocument import XLSXDocument
-
 import plata
+from xlsxdocument import XLSXDocument
 
 
 def product_xls():

@@ -1,10 +1,9 @@
 from __future__ import absolute_import, unicode_literals
 
+import plata
 from pdfdocument.document import PDFDocument
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-
-import plata
 
 
 def init_regular_font(suffix=''):
@@ -31,4 +30,3 @@ class PlataPDFDocument(PDFDocument):
             init_regular_font(suffix='-Bold')
 
         super(PlataPDFDocument, self).__init__(*args, **kwargs)
-

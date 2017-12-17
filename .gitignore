@@ -17,3 +17,6 @@ plata.log
 /tests/venv
 /tests/.coverage
 /tests/htmlcov
+.tox
+.coverage
+htmlcov

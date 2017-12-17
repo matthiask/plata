@@ -1,22 +1,26 @@
 from __future__ import absolute_import, unicode_literals
 
-from decimal import Decimal
 import logging
 import re
+from decimal import Decimal
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.core.urlresolvers import get_callable
 from django.db import models
 from django.db.models import F, ObjectDoesNotExist, Sum
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
-from django_countries.fields import CountryField
-
 import plata
+from django_countries.fields import CountryField
 from plata.fields import CurrencyField, JSONField
+
+
+try:
+    from django.urls.utils import get_callable
+except ImportError:
+    from django.core.urlresolvers import get_callable
 
 
 logger = logging.getLogger('plata.shop.order')
@@ -433,7 +437,7 @@ class Order(BillingShippingAddress):
             item.quantity = absolute
 
         if item.quantity > 0:
-            
+
             if data is not None:
                 item.data = data
 

@@ -1,6 +1,14 @@
 from decimal import Decimal
 
+from django.contrib.auth.models import AnonymousUser
 from django.test import TestCase
+
+import plata
+from plata.contact.models import Contact
+from plata.product.stock.models import StockTransaction
+from plata.shop import notifications, signals
+from plata.shop.models import Order, OrderItem, TaxClass
+
 
 try:  # pragma: no cover
     from django.contrib.auth import get_user_model
@@ -8,13 +16,7 @@ try:  # pragma: no cover
 except ImportError:
     from django.contrib.auth.models import User
 
-from django.contrib.auth.models import AnonymousUser
 
-import plata
-from plata.contact.models import Contact
-from plata.product.stock.models import StockTransaction
-from plata.shop import notifications, signals
-from plata.shop.models import TaxClass, Order, OrderItem
 
 
 signals.contact_created.connect(

@@ -3,7 +3,7 @@ from __future__ import absolute_import, unicode_literals
 import logging
 import warnings
 
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import ugettext, ugettext_lazy as _
 
 import plata
 from plata.shop import signals

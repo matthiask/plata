@@ -6,10 +6,9 @@ from django.core.urlresolvers import get_callable
 from django.utils.text import capfirst
 from django.utils.translation import activate, ugettext as _
 
+import plata
 from pdfdocument.document import cm, mm
 from pdfdocument.elements import create_stationery_fn
-
-import plata
 
 
 class OrderReport(object):

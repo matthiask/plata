@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from testapp.models import Product, Price
+from testapp.models import Price, Product
 
 
 class PriceInline(admin.TabularInline):

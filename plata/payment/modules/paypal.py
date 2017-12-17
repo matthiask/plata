@@ -11,14 +11,13 @@ Needs the following settings to work correctly::
 
 from __future__ import absolute_import, unicode_literals
 
-from decimal import Decimal
 import logging
+from decimal import Decimal
 
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseForbidden
-from django.utils import timezone
+from django.utils import six, timezone
 from django.utils.decorators import method_decorator
-from django.utils import six
 from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
 

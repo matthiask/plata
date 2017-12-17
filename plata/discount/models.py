@@ -1,8 +1,8 @@
 from __future__ import absolute_import, unicode_literals
 
+import random
 from datetime import date
 from decimal import Decimal
-import random
 
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -12,7 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 
 import plata
 from plata.fields import CurrencyField, JSONField
-from plata.shop.models import TaxClass, Order
+from plata.shop.models import Order, TaxClass
 
 
 @python_2_unicode_compatible
