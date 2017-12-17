@@ -166,6 +166,10 @@ class StockTransactionManager(models.Manager):
                 **kwargs)
 
 
+def current_period():
+    return Period.objects.current()
+
+
 @python_2_unicode_compatible
 class StockTransaction(models.Model):
     """
@@ -228,7 +232,7 @@ class StockTransaction(models.Model):
     )
 
     period = models.ForeignKey(
-        Period, default=Period.objects.current,
+        Period, default=current_period,
         related_name='stock_transactions', verbose_name=_('period'))
     created = models.DateTimeField(_('created'), default=timezone.now)
     product = models.ForeignKey(
