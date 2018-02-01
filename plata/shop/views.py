@@ -1,7 +1,7 @@
 from __future__ import absolute_import, unicode_literals
 
-from functools import wraps
 import logging
+from functools import wraps
 
 from django.conf.urls import include, url
 from django.contrib import auth, messages

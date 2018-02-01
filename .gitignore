@@ -21,3 +21,6 @@ plata.log
 build
 .settings
 examples/downloads
+.tox
+.coverage
+htmlcov

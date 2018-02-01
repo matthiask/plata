@@ -4,6 +4,7 @@ from django.db.models import FieldDoesNotExist, signals
 
 import plata
 
+
 default_app_config = 'plata.product.stock.AppConfig'
 
 

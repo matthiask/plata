@@ -22,10 +22,10 @@ from datetime import timedelta
 
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Sum, Q
+from django.db.models import Q, Sum
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import ugettext, ugettext_lazy as _
 
 import plata
 from plata.shop.models import Order, OrderPayment

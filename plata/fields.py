@@ -3,18 +3,18 @@ from __future__ import absolute_import, unicode_literals
 import datetime
 import logging
 import re
-import simplejson as json
 
 from django import forms, VERSION
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils.dateparse import parse_date, parse_datetime, parse_time
 from django.utils import six
+from django.utils.dateparse import parse_date, parse_datetime, parse_time
 from django.utils.functional import curry
 from django.utils.translation import ugettext_lazy as _
 
 
 import plata
+import simplejson as json
 
 # TODO: Add support for PostgreSQL specific JSONField
 #     https://docs.djangoproject.com/en/dev/ref/contrib/postgres/fields/#jsonfield

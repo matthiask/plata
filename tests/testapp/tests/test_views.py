@@ -1,19 +1,11 @@
 from __future__ import absolute_import, unicode_literals
 
-from io import BytesIO
 import os
 import warnings
-
 from datetime import timedelta
+from io import BytesIO
 
 from django.conf import settings
-
-try:  # pragma: no cover
-    from django.contrib.auth import get_user_model
-    User = get_user_model()
-except ImportError:
-    from django.contrib.auth.models import User
-
 from django.core import mail
 from django.core.exceptions import ValidationError
 from django.utils import six, timezone
@@ -25,6 +17,16 @@ from plata.product.stock.models import Period, StockTransaction
 from plata.shop.models import Order, OrderPayment
 
 from .base import PlataTest, get_request
+
+
+try:  # pragma: no cover
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+except ImportError:
+    from django.contrib.auth.models import User
+
+
+
 
 
 Product = plata.product_model()

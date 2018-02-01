@@ -1,9 +1,9 @@
 from __future__ import absolute_import, unicode_literals
 
+import warnings
 from datetime import date, datetime
 from decimal import Decimal
 from io import BytesIO
-import warnings
 
 from django import forms
 from django.core.exceptions import ValidationError
@@ -11,13 +11,12 @@ from django.core.serializers import serialize
 from django.db.models import Q
 from django.utils import six, timezone
 
-
 import plata
+import plata.reporting.order
 from plata.discount.models import Discount, DiscountBase
 from plata.product.stock.models import Period, StockTransaction
-import plata.reporting.order
 from plata.reporting.pdfdocument import PlataPDFDocument
-from plata.shop.models import Order, OrderStatus, OrderPayment
+from plata.shop.models import Order, OrderPayment, OrderStatus
 
 from .base import PlataTest
 

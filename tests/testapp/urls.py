@@ -6,8 +6,8 @@ from plata.contact.models import Contact
 from plata.discount.models import Discount
 from plata.shop.models import Order
 from plata.shop.views import Shop
-
 from testapp import views
+
 
 admin.autodiscover()
 

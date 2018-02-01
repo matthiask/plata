@@ -53,7 +53,10 @@ def shop_instance():
     if not shop_instance_cache:
         # Load default URL patterns to ensure that the shop
         # object has been created
-        from django.core.urlresolvers import get_resolver
+        try:
+            from django.urls import get_resolver
+        except ImportError:
+            from django.core.urlresolvers import get_resolver
         get_resolver(None)._populate()
 
     return shop_instance_cache
