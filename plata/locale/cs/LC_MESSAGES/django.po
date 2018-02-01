@@ -290,7 +290,7 @@ msgstr "Zbývající sleva pro objednávku %s"
 #: payment/modules/postfinance.py:222 payment/modules/prepay.py:57
 #: product/stock/models.py:224
 msgid "sale"
-msgstr "sleva"
+msgstr "prodej"
 
 #: payment/modules/base.py:233 payment/modules/datatrans.py:72
 #: payment/modules/datatrans2.py:71 payment/modules/ogone.py:109
