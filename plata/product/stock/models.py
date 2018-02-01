@@ -36,6 +36,7 @@ class PeriodManager(models.Manager):
         """
         Return the newest active period
         """
+
         try:
             return self.filter(start__lte=timezone.now()).order_by(
                 '-start')[0]
@@ -165,7 +166,7 @@ class StockTransactionManager(models.Manager):
 
 
 def current_period():
-    return Period.objects.current().id
+    return Period.objects.current()
 
 
 @python_2_unicode_compatible

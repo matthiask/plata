@@ -26,9 +26,6 @@ except ImportError:
     from django.contrib.auth.models import User
 
 
-
-
-
 Product = plata.product_model()
 
 
