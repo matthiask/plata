@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: plata\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-08-27 10:06+0200\n"
-"PO-Revision-Date: 2017-05-02 09:14+0200\n"
+"PO-Revision-Date: 2018-06-28 22:16+0200\n"
 "Last-Translator: Henning Hraban Ramm <hraban@fiee.net>\n"
 "Language-Team: \n"
 "Language: cs\n"
@@ -849,7 +849,7 @@ msgstr "Dodací list"
 
 #: shop/admin.py:96 shop/templates/base.html:145
 msgid "Invoice"
-msgstr "Faktura"
+msgstr "Doklad"
 
 #: shop/admin.py:102
 msgid "add. info"
