@@ -4,7 +4,7 @@ import datetime
 import logging
 import re
 
-from django import forms, VERSION
+from django import forms
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import six
@@ -22,13 +22,6 @@ try:
 except TypeError:  # pragma: no cover
     raise Exception("simplejson>=2.1 with support for use_decimal required.")
 
-
-if VERSION >= (1, 8):
-    _JSONFieldBase = models.TextField
-else:
-    # Django < 1.8, deprecated code, remove it after Django 1.9 release (in
-    # December 2015)
-    _JSONFieldBase = six.with_metaclass(models.SubfieldBase, models.TextField)
 
 #: Field offering all defined currencies
 CurrencyField = curry(
@@ -100,7 +93,7 @@ class JSONFormField(forms.fields.CharField):
         return super(JSONFormField, self).clean(value, *args, **kwargs)
 
 
-class JSONField(_JSONFieldBase):
+class JSONField(models.TextField):
     """
     TextField which transparently serializes/unserializes JSON objects
 
