@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 from django.contrib.auth.models import AnonymousUser
-from django.test import TestCase
+from django.test import Client, TestCase
 
 import plata
 from plata.contact.models import Contact
@@ -221,3 +221,10 @@ class PlataTest(TestCase):
         """
 
         return product
+
+    def login(self):
+        user = User.objects.create_user(
+            'test', 'test@example.com', 'testing')
+        client = Client()
+        client.login(username='test', password='testing')
+        return client
