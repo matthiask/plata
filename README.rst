@@ -15,7 +15,6 @@ and Plata requires programming -- but that's what we do -- programming!
 Visit these sites for more information
 ======================================
 
-* Plata's own website: http://www.feinheit.ch/labs/
 * Documentation (this fork): https://plata-docs.fiee.net
 * Documentation (original): http://plata-django-shop.readthedocs.io
 * Plata on github: https://github.com/matthiask/plata (original)
