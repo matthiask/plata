@@ -180,7 +180,7 @@ class DiscountBase(models.Model):
 
         # Don't allow bigger discounts than the items subtotal
         if discount > items_subtotal:
-            self.remaining = discount - items_subtotal
+            self.remaining = (discount - items_subtotal).quantize(Decimal("0E-10"))
             self.save()
             discount = items_subtotal
 
@@ -381,7 +381,7 @@ class AppliedDiscount(DiscountBase):
         decimal_places=10,
         default=0,
         help_text=_(
-            "Discount amount excl. tax remaining after discount has" " been applied."
+            "Discount amount excl. tax remaining after discount has been applied."
         ),
     )
 

@@ -5,6 +5,7 @@ python:
 - "3.5"  # Django 1.8 does not officially support 3.6
 - "2.7"
 env:
+- REQ="Django>=1.11,<2.0"
 - REQ="Django>=1.8,<1.9"
 install:
 - pip install -U pip wheel

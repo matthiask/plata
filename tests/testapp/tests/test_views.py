@@ -4,6 +4,7 @@ import warnings
 from datetime import timedelta
 from io import BytesIO
 
+import django
 from django.core import mail
 from django.core.exceptions import ValidationError
 from django.utils import six, timezone
@@ -700,7 +701,10 @@ class ViewTest(PlataTest):
 
         response = self.client.get("/checkout/")
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response["Location"], "http://testserver/cart/?e=1")
+        self.assertEqual(
+            response["Location"],
+            "http://testserver/cart/?e=1" if django.VERSION < (1, 11) else "/cart/?e=1",
+        )
 
         self.assertContains(self.client.get("/cart/"), "Not enough stock available for")
 
