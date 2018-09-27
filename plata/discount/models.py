@@ -70,7 +70,7 @@ class DiscountBase(models.Model):
         _("configuration"),
         blank=True,
         help_text=_(
-            "If you edit this field directly, changes below will be" " ignored."
+            "If you edit this field directly, changes below will be ignored."
         ),
     )
 
@@ -90,19 +90,19 @@ class DiscountBase(models.Model):
         if self.type == self.PERCENTAGE_VOUCHER:
             if self.currency or self.tax_class:
                 raise ValidationError(
-                    _("Percentage discounts cannot have currency and tax" " class set.")
+                    _("Percentage discounts cannot have currency and tax class set.")
                 )
         elif self.type == self.AMOUNT_VOUCHER_EXCL_TAX:
             if not self.currency:
                 raise ValidationError(_("Amount discounts excl. tax need a currency."))
             if self.tax_class:
                 raise ValidationError(
-                    _("Amount discounts excl. tax cannot have tax class" " set.")
+                    _("Amount discounts excl. tax cannot have tax class set.")
                 )
         elif self.type == self.AMOUNT_VOUCHER_INCL_TAX:
             if not (self.currency and self.tax_class):
                 raise ValidationError(
-                    _("Amount discounts incl. tax need a currency and a tax" " class.")
+                    _("Amount discounts incl. tax need a currency and a tax class.")
                 )
         elif self.type == self.MEANS_OF_PAYMENT:
             if not self.currency:
