@@ -129,7 +129,7 @@ class PaymentProcessor(ProcessorBase):
                 querystring = 'cmd=_notify-validate&%s' % (
                     request.POST.urlencode()
                 )
-                status = urlopen(PP_URL, querystring.encode('utf-8')).read()
+                status = urlopen(PP_URL, querystring).read()
 
                 if not status == b"VERIFIED":
                     logger.error(

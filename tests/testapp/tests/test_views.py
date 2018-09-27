@@ -419,13 +419,15 @@ class ViewTest(PlataTest):
         paypal.urlopen = mock_urlopen
 
         product = self.create_product()
+        client = self.login()
+
         product.stock_transactions.create(
             type=StockTransaction.PURCHASE, change=10)
-        self.client.post(product.get_absolute_url(), {
+        client.post(product.get_absolute_url(), {
             'quantity': 5,
         })
 
-        response = self.client.post('/confirmation/', {
+        response = client.post('/confirmation/', {
             'terms_and_conditions': True,
             'payment_method': 'paypal',
         })
