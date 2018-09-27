@@ -19,7 +19,10 @@ shop = Shop(
 
 
 urlpatterns = [
-    url(r'^$', lambda request: redirect('plata_product_list')),
+    url(
+        r'^$',
+        lambda request: redirect('plata_product_list'),
+        name='plata_home'),
     url(r'', include(shop.urls)),
     url(r'^products/$',
         views.product_list,
