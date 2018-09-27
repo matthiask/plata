@@ -168,7 +168,10 @@ class ProcessorBase(object):
                 except Discount.DoesNotExist:
                     return
 
-                if discount.used < discount.allowed_uses or not discount.allowed_uses:
+                if (
+                    discount.allowed_uses is None
+                    or discount.used < discount.allowed_uses
+                ):
                     discount.used += 1
                     discount.save()
                 else:
