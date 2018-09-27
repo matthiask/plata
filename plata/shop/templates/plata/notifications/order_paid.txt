@@ -1,11 +1,11 @@
-{% load i18n %}{% trans %}Order completed{% endtrans %}
+{% load i18n %}{% blocktrans %}Order completed{% endblocktrans %}
 
-{% trans %}You have successfully confirmed your order.{% endtrans %}
+{% blocktrans %}You have successfully confirmed your order.{% endblocktrans %}
 
 {% if remaining_discount %}
 {% blocktrans %}You received a new discount code, because the discount you used for
 this order has not been completely used up yet:{% endblocktrans %}
 
-{% trans %}Code{% endtrans %}: {{ remaining_discount.code }}
-{% trans %}Value{% endtrans %}: {{ remaining_discount.value }} {{ remaining_discount.get_type_display }}
+{% trans 'Code' %}: {{ remaining_discount.code }}
+{% trans 'Value' %}: {{ remaining_discount.value }} {{ remaining_discount.get_type_display }}
 {% endif %}
