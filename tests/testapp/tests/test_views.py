@@ -41,10 +41,11 @@ class ViewTest(PlataTest):
 
     def test_01_cart_empty(self):
         """Test cart is empty redirects work properly"""
-        self.assertContains(self.client.get('/cart/'), 'Cart is empty')
-        self.assertRedirects(self.client.get('/checkout/'), '/cart/')
-        self.assertRedirects(self.client.get('/discounts/'), '/cart/')
-        self.assertRedirects(self.client.get('/confirmation/'), '/cart/')
+        client = self.login()
+        self.assertContains(client.get('/cart/'), 'Cart is empty')
+        self.assertRedirects(client.get('/checkout/'), '/cart/')
+        self.assertRedirects(client.get('/discounts/'), '/cart/')
+        self.assertRedirects(client.get('/confirmation/'), '/cart/')
 
     def test_02_authenticated_user_has_contact(self):
         """Test shop.contact_from_user works correctly"""
@@ -78,25 +79,27 @@ class ViewTest(PlataTest):
             type=StockTransaction.PURCHASE, change=100)
         self.assertEqual(Product.objects.filter(items_in_stock=0).count(), 0)
 
+        client = self.login()
+
         self.assertContains(
-            self.client.get(p1.get_absolute_url()),
+            client.get(p1.get_absolute_url()),
             p1.name)
 
-        self.client.post(p1.get_absolute_url(), {
+        client.post(p1.get_absolute_url(), {
             'quantity': 5,
         })
-        self.client.post(p2.get_absolute_url(), {
+        client.post(p2.get_absolute_url(), {
             'quantity': 3,
         })
 
         self.assertEqual(Order.objects.count(), 1)
-        self.assertContains(self.client.get('/cart/'), 'value="5"')
+        self.assertContains(client.get('/cart/'), 'value="5"')
 
         order = Order.objects.all()[0]
         i1 = order.modify_item(p1, 0)
         i2 = order.modify_item(p2, 0)
 
-        self.assertRedirects(self.client.post('/cart/', {
+        self.assertRedirects(client.post('/cart/', {
             'items-INITIAL_FORMS': 2,
             'items-TOTAL_FORMS': 2,
             'items-MAX_NUM_FORMS': 2,
@@ -111,7 +114,7 @@ class ViewTest(PlataTest):
         self.assertEqual(order.modify_item(p1, 0).quantity, 6)
         self.assertEqual(order.items.count(), 2)
 
-        self.assertRedirects(self.client.post('/cart/', {
+        self.assertRedirects(client.post('/cart/', {
             'checkout': True,
 
             'items-INITIAL_FORMS': 2,
@@ -128,7 +131,7 @@ class ViewTest(PlataTest):
         self.assertEqual(order.modify_item(p1, 0).quantity, 6)
         self.assertEqual(order.items.count(), 1)
 
-        self.client.post(p2.get_absolute_url(), {
+        client.post(p2.get_absolute_url(), {
             'quantity': 5,
         })
         self.assertEqual(order.items.count(), 2)
@@ -141,7 +144,7 @@ class ViewTest(PlataTest):
         i2 = order.modify_item(p2, 0)
 
         self.assertEqual(Order.objects.get().status, Order.CART)
-        response = self.client.post('/cart/', {
+        response = client.post('/cart/', {
             'checkout': True,
 
             'items-INITIAL_FORMS': 2,
@@ -158,10 +161,10 @@ class ViewTest(PlataTest):
         self.assertRedirects(response, '/checkout/')
         self.assertEqual(order.items.count(), 1)
 
-        self.client.get('/checkout/')
+        client.get('/checkout/')
         self.assertEqual(Order.objects.get().status, Order.CHECKOUT)
 
-        self.assertEqual(self.client.post('/checkout/', {
+        self.assertEqual(client.post('/checkout/', {
             '_checkout': 1,
             'order-billing_company': u'BigCorp',
             'order-billing_first_name': u'Hans',
@@ -175,7 +178,7 @@ class ViewTest(PlataTest):
             'order-currency': 'CHF',
         }).status_code, 200)  # ... therefore view does not redirect
 
-        self.assertRedirects(self.client.post('/checkout/', {
+        self.assertRedirects(client.post('/checkout/', {
             '_checkout': 1,
             'order-billing_company': u'BigCorp',
             'order-billing_first_name': u'Hans',
@@ -197,36 +200,36 @@ class ViewTest(PlataTest):
             name='Percentage discount',
             value=30)
 
-        self.assertContains(self.client.post('/discounts/', {
+        self.assertContains(client.post('/discounts/', {
             'code': 'something-invalid',
         }), 'not validate')
 
-        self.assertRedirects(self.client.post('/discounts/', {
+        self.assertRedirects(client.post('/discounts/', {
             'code': 'asdf',
         }), '/discounts/')
 
-        self.assertRedirects(self.client.post('/discounts/', {
+        self.assertRedirects(client.post('/discounts/', {
             'proceed': 'True',
         }), '/confirmation/')
 
         self.assertEqual(
-            self.client.post('/confirmation/', {}).status_code, 200)
+            client.post('/confirmation/', {}).status_code, 200)
         self.assertEqual(Order.objects.get(pk=order.id).status, Order.CHECKOUT)
 
-        self.assertContains(self.client.post('/confirmation/', {
+        self.assertContains(client.post('/confirmation/', {
             'terms_and_conditions': True,
             'payment_method': 'postfinance',
         }), 'SHASign')
 
-        self.assertContains(self.client.post('/confirmation/', {
+        self.assertContains(client.post('/confirmation/', {
             'terms_and_conditions': True,
             'payment_method': 'paypal',
         }), 'cgi-bin/webscr')
 
-        self.assertRedirects(self.client.post(p2.get_absolute_url(), {
+        self.assertRedirects(client.post(p2.get_absolute_url(), {
             'quantity': 42,
         }), '/cart/', target_status_code=302)
-        self.assertRedirects(self.client.post('/cart/', {
+        self.assertRedirects(client.post('/cart/', {
             'items-INITIAL_FORMS': 1,
             'items-TOTAL_FORMS': 1,
             'items-MAX_NUM_FORMS': 1,
@@ -239,32 +242,31 @@ class ViewTest(PlataTest):
             Order.objects.all()[0].items.get(product=p2).quantity != 42)
 
         # Test this view works at all
-        self.client.get('/order/payment_failure/')
+        client.get('/order/payment_failure/')
 
-        self.assertEqual(len(mail.outbox), 0)
-        self.assertRedirects(self.client.post('/confirmation/', {
+        self.assertRedirects(client.post('/confirmation/', {
             'terms_and_conditions': True,
             'payment_method': 'cod',
         }), '/order/success/')
-        self.assertEqual(len(mail.outbox), 2)  # invoice and packing slip
+        self.assertEqual(len(mail.outbox), 3)  # account creation, invoice and packing slip
         self.assertEqual(Order.objects.get(pk=order.id).status, Order.PAID)
 
         # Clear order
         self.assertRedirects(
-            self.client.get('/order/new/?next=%s' % p1.get_absolute_url()),
+            client.get('/order/new/?next=%s' % p1.get_absolute_url()),
             p1.get_absolute_url())
         # Can call URL several times without change in behavior
         self.assertRedirects(
-            self.client.get('/order/new/'), '/',
+            client.get('/order/new/'), '/',
             target_status_code=302)
 
         # Cart is empty
-        self.assertRedirects(self.client.post('/confirmation/', {
+        self.assertRedirects(client.post('/confirmation/', {
             'terms_and_conditions': True,
             'payment_method': 'cod',
         }), '/cart/')
 
-        self.assertRedirects(self.client.post('/confirmation/', {
+        self.assertRedirects(client.post('/confirmation/', {
             'terms_and_conditions': True,
             'payment_method': 'paypal',
         }), '/cart/')
@@ -272,17 +274,17 @@ class ViewTest(PlataTest):
         User.objects.create_superuser(
             'admin', 'admin@example.com', 'password')
 
-        self.client.login(username='admin', password='password')
+        client.login(username='admin', password='password')
         self.assertEqual(
-            self.client.get(
+            client.get(
                 '/reporting/invoice_pdf/%s/' % order.id)['Content-Type'],
             'application/pdf')
         self.assertEqual(
-            self.client.get(
+            client.get(
                 '/reporting/packing_slip_pdf/%s/' % order.id)['Content-Type'],
             'application/pdf')
         self.assertEqual(
-            self.client.get('/reporting/product_xls/')['Content-Type'],
+            client.get('/reporting/product_xls/')['Content-Type'],
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
 
@@ -728,7 +730,8 @@ class ViewTest(PlataTest):
         """Test that a new discount is created when there is an amount
         remaining"""
         p1 = self.create_product(stock=10)
-        self.client.post(p1.get_absolute_url(), {'quantity': 5})
+        client = self.login()
+        client.post(p1.get_absolute_url(), {'quantity': 5})
 
         discount = Discount.objects.create(
             name='Testname',
@@ -739,12 +742,12 @@ class ViewTest(PlataTest):
             currency='CHF',
             )
 
-        self.assertRedirects(self.client.post('/discounts/', {
+        self.assertRedirects(client.post('/discounts/', {
             'code': discount.code,
             'proceed': 'True',
         }), '/confirmation/')
 
-        self.assertRedirects(self.client.post('/confirmation/', {
+        self.assertRedirects(client.post('/confirmation/', {
             'terms_and_conditions': True,
             'payment_method': 'cod',
         }), '/order/success/')
@@ -758,23 +761,23 @@ class ViewTest(PlataTest):
             discount.value - sum(item.subtotal for item in order.items.all()),
             new_discount.value * (1 + self.tax_class.rate / 100))
 
-        self.client.get('/order/new/')
+        client.get('/order/new/')
 
-        self.client.post(p1.get_absolute_url(), {'quantity': 1})
-        self.assertRedirects(self.client.post('/discounts/', {
+        client.post(p1.get_absolute_url(), {'quantity': 1})
+        self.assertRedirects(client.post('/discounts/', {
             'code': new_discount.code,
             'proceed': 'True',
         }), '/confirmation/')
 
-        self.assertRedirects(self.client.post('/confirmation/', {
+        self.assertRedirects(client.post('/confirmation/', {
             'terms_and_conditions': True,
             'payment_method': 'cod',
         }), '/order/success/')
 
-        self.client.get('/order/new/')
-        self.client.get('/order/new/')  # Shouldn't do anything the second time
-        self.client.post(p1.get_absolute_url(), {'quantity': 1})
-        self.assertContains(self.client.post('/discounts/', {
+        client.get('/order/new/')
+        client.get('/order/new/')  # Shouldn't do anything the second time
+        client.post(p1.get_absolute_url(), {'quantity': 1})
+        self.assertContains(client.post('/discounts/', {
             'code': new_discount.code,
             'proceed': 'True',
         }), 'Allowed uses for this discount has already been reached.')
