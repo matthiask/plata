@@ -673,6 +673,13 @@ class Shop(object):
         """Handles order payment failures"""
         order = self.order_from_request(request)
 
+        if not order:
+            messages.info(
+                request,
+                _("Payment failed and order could not be found anymore. Sorry."),
+            )
+            return self.redirect("plata_shop_cart")
+
         logger.warn("Order payment failure for %s" % order.order_id)
 
         if plata.settings.PLATA_STOCK_TRACKING:
