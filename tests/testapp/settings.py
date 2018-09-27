@@ -1,5 +1,7 @@
 # Django settings for testapp project.
 
+import os
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -37,7 +39,9 @@ MIDDLEWARE_CLASSES = (
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [
+            os.path.join(os.path.dirname(__file__), "templates"),
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -88,3 +92,4 @@ PLATA_PAYMENT_MODULES = [
     "plata.payment.modules.postfinance.PaymentProcessor",
     "plata.payment.modules.paypal.PaymentProcessor",
 ]
+PLATA_PRICE_INCLUDES_TAX = True

@@ -31,13 +31,6 @@ Product = plata.product_model()
 
 
 class ViewTest(PlataTest):
-    def setUp(self):
-        self.ORIG_TEMPLATE_DIRS = settings.TEMPLATE_DIRS
-        settings.TEMPLATE_DIRS = (os.path.join(os.path.dirname(__file__), "templates"),)
-
-    def tearDown(self):
-        settings.TEMPLATE_DIRS = self.ORIG_TEMPLATE_DIRS
-
     def test_01_cart_empty(self):
         """Test cart is empty redirects work properly"""
         client = self.login()

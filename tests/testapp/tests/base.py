@@ -66,9 +66,6 @@ class PlataTest(TestCase):
             raise
         raise Exception("%s did not raise %s" % (fn, exception))
 
-    def setUp(self):
-        plata.settings.PLATA_PRICE_INCLUDES_TAX = True
-
     def create_contact(self):
         return Contact.objects.create(
             billing_company="BigCorp",
