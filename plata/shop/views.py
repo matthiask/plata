@@ -8,11 +8,15 @@ from django.contrib import auth, messages
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
-from django.core.urlresolvers import get_callable, reverse
 from django.forms.models import ModelForm, inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils.translation import get_language, ugettext as _
+
+try:
+    from django.urls import reverse, get_callable
+except ImportError:
+    from django.core.urlresolvers import reverse, get_callable
 
 import plata
 from plata.shop import forms as shop_forms
@@ -273,7 +277,10 @@ class Shop(object):
         Overwrite this for custom authentication check.
         This is needed to support lazysignup
         """
-        return user and user.is_authenticated()
+        if user:
+            attr = user.is_authenticated
+            return attr() if callable(attr) else attr
+        return False
 
     def user_login(self, request, user):
         auth.login(request, user)

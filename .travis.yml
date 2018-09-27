@@ -5,8 +5,13 @@ python:
 - "3.5"  # Django 1.8 does not officially support 3.6
 - "2.7"
 env:
+- REQ="Django>=2.1,<2.2"
 - REQ="Django>=1.11,<2.0"
 - REQ="Django>=1.8,<1.9"
+matrix:
+  exclude:
+    - python: "2.7"
+      env: REQ="Django>=2.1,<2.2"
 install:
 - pip install -U pip wheel
 - pip install $REQ -r requirements.txt

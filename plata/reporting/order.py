@@ -2,9 +2,13 @@ from __future__ import absolute_import, unicode_literals
 
 from decimal import Decimal
 
-from django.core.urlresolvers import get_callable
 from django.utils.text import capfirst
 from django.utils.translation import activate, ugettext as _
+
+try:
+    from django.urls import get_callable
+except ImportError:
+    from django.core.urlresolvers import get_callable
 
 import plata
 from pdfdocument.document import cm, mm

@@ -4,8 +4,12 @@ from decimal import Decimal
 
 import django
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
 from django.forms.models import model_to_dict
+
+try:
+    from django.urls import reverse
+except ImportError:
+    from django.core.urlresolvers import reverse
 
 import plata
 from plata.discount.models import Discount

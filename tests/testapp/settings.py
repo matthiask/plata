@@ -27,13 +27,12 @@ STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 )
 SECRET_KEY = "58_c#ha*osgvo(809%#@kf!4_ab((a4tl6ypa_0i_teh&amp;%dul$"
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = MIDDLEWARE_CLASSES = (
     "django.middleware.common.CommonMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
-    "django.contrib.auth.middleware.SessionAuthenticationMiddleware",
 )
 
 TEMPLATES = [
