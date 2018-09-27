@@ -1,9 +1,9 @@
 from __future__ import absolute_import, unicode_literals
 import logging
 
-VERSION = (1, 2, 1, 'pre')
-__version__ = '.'.join(map(str, VERSION))
-logger = logging.getLogger('plata')
+VERSION = (1, 2, 1, "pre")
+__version__ = ".".join(map(str, VERSION))
+logger = logging.getLogger("plata")
 
 
 class LazySettings(object):
@@ -12,18 +12,12 @@ class LazySettings(object):
         from django.conf import settings as django_settings
 
         for key in dir(default_settings):
-            if not key.startswith(('PLATA', 'CURRENCIES')):
+            if not key.startswith(("PLATA", "CURRENCIES")):
                 continue
 
             setattr(
-                self,
-                key,
-                getattr(
-                    django_settings,
-                    key,
-                    getattr(
-                        default_settings,
-                        key)))
+                self, key, getattr(django_settings, key, getattr(default_settings, key))
+            )
 
     def __getattr__(self, attr):
         self._load_settings()
@@ -38,7 +32,7 @@ shop_instance_cache = None
 
 
 def register(instance):
-    logger.debug('Registering shop instance: %s' % instance)
+    logger.debug("Registering shop instance: %s" % instance)
 
     global shop_instance_cache
     shop_instance_cache = instance
@@ -67,7 +61,8 @@ def product_model():
     Return the product model defined by the ``PLATA_SHOP_PRODUCT`` setting.
     """
     from django.apps import apps
-    return apps.get_model(*settings.PLATA_SHOP_PRODUCT.split('.'))
+
+    return apps.get_model(*settings.PLATA_SHOP_PRODUCT.split("."))
 
 
 def stock_model():
@@ -79,4 +74,5 @@ def stock_model():
     if not settings.PLATA_STOCK_TRACKING:
         return None
     from django.apps import apps
-    return apps.get_model(*settings.PLATA_STOCK_TRACKING_MODEL.split('.'))
+
+    return apps.get_model(*settings.PLATA_STOCK_TRACKING_MODEL.split("."))

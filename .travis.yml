@@ -12,3 +12,13 @@ install:
 - python setup.py install
 # command to run tests, e.g. python setup.py test
 script: "cd tests && ./manage.py test testapp"
+
+jobs:
+  include:
+    - stage: style
+      env: REQ=none
+      install: skip
+      script:
+        - pip install black flake8
+        - flake8 .
+        - black --check feincms3 tests

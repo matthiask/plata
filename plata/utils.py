@@ -15,7 +15,7 @@ def jsonize(v):
 
     if isinstance(v, dict):
         return dict((i1, jsonize(i2)) for i1, i2 in v.items())
-    if hasattr(v, '__iter__'):
+    if hasattr(v, "__iter__"):
         return [jsonize(i) for i in v]
     if isinstance(v, Model):
         return v.pk

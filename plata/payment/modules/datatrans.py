@@ -27,7 +27,7 @@ from plata.shop.models import OrderPayment
 import plata
 
 
-logger = logging.getLogger('plata.payment.datatrans')
+logger = logging.getLogger("plata.payment.datatrans")
 
 csrf_exempt_m = method_decorator(csrf_exempt)
 
@@ -35,8 +35,8 @@ SMALLEST_UNIT_FACTOR = 100
 
 
 class PaymentProcessor(ProcessorBase):
-    key = 'datatrans'
-    default_name = _('Datatrans')
+    key = "datatrans"
+    default_name = _("Datatrans")
 
     def enabled_for_request(self, request):
         return True
@@ -45,15 +45,21 @@ class PaymentProcessor(ProcessorBase):
         from django.conf.urls import url
 
         return [
-            url(r'^datatrans/success/$',
+            url(
+                r"^datatrans/success/$",
                 self.datatrans_success,
-                name='plata_payment_datatrans_success'),
-            url(r'^datatrans/error/$',
+                name="plata_payment_datatrans_success",
+            ),
+            url(
+                r"^datatrans/error/$",
                 self.datatrans_error,
-                name='plata_payment_datatrans_error'),
-            url(r'^datatrans/cancel/$',
+                name="plata_payment_datatrans_error",
+            ),
+            url(
+                r"^datatrans/cancel/$",
                 self.datatrans_cancel,
-                name='plata_payment_datatrans_cancel'),
+                name="plata_payment_datatrans_cancel",
+            ),
         ]
 
     def process_order_confirmed(self, request, order):
@@ -62,46 +68,52 @@ class PaymentProcessor(ProcessorBase):
         if not order.balance_remaining:
             return self.already_paid(order, request=request)
 
-        logger.info('Processing order %s using Datatrans' % order)
+        logger.info("Processing order %s using Datatrans" % order)
 
         payment = self.create_pending_payment(order)
         if plata.settings.PLATA_STOCK_TRACKING:
             StockTransaction = plata.stock_model()
             self.create_transactions(
                 order,
-                _('payment process reservation'),
+                _("payment process reservation"),
                 type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
-                negative=True, payment=payment)
+                negative=True,
+                payment=payment,
+            )
 
-        if DATATRANS.get('LIVE', True):
+        if DATATRANS.get("LIVE", True):
             DT_URL = "https://payment.datatrans.biz/upp/jsp/upStart.jsp"
         else:
             DT_URL = "https://pilot.datatrans.biz/upp/jsp/upStart.jsp"
 
-        return render(request, 'payment/datatrans_form.html', {
-            'order': order,
-            'total_in_smallest_unit': payment.amount * SMALLEST_UNIT_FACTOR,
-            'payment': payment,
-            'HTTP_HOST': request.META.get('HTTP_HOST'),
-            'post_url': DT_URL,
-            'MERCHANT_ID': DATATRANS['MERCHANT_ID'],
-            })
+        return render(
+            request,
+            "payment/datatrans_form.html",
+            {
+                "order": order,
+                "total_in_smallest_unit": payment.amount * SMALLEST_UNIT_FACTOR,
+                "payment": payment,
+                "HTTP_HOST": request.META.get("HTTP_HOST"),
+                "post_url": DT_URL,
+                "MERCHANT_ID": DATATRANS["MERCHANT_ID"],
+            },
+        )
 
     @csrf_exempt_m
     def datatrans_error(self, request):
-        error_code = int(request.POST.get('errorCode'))
+        error_code = int(request.POST.get("errorCode"))
         logger.info("Got an error during datatrans payment! code is %s" % error_code)
-        return redirect('plata_shop_checkout')
+        return redirect("plata_shop_checkout")
 
     @csrf_exempt_m
     def datatrans_cancel(self, request):
         logger.info("Canceled transaction")
-        return redirect('plata_shop_checkout')
+        return redirect("plata_shop_checkout")
 
     @csrf_exempt_m
     def datatrans_success(self, request):
         DATATRANS = settings.DATATRANS
-        if DATATRANS.get('LIVE', True):
+        if DATATRANS.get("LIVE", True):
             DT_URL = "https://payment.datatrans.biz/upp/jsp/XML_status.jsp"
         else:
             DT_URL = "https://pilot.datatrans.biz/upp/jsp/XML_status.jsp"
@@ -111,9 +123,9 @@ class PaymentProcessor(ProcessorBase):
         try:
             response = None
             parameters = request.POST.copy()
-            parameters_repr = repr(parameters).encode('utf-8')
+            parameters_repr = repr(parameters).encode("utf-8")
             if parameters:
-                logger.info('IPN: Processing request data %s' % parameters_repr)
+                logger.info("IPN: Processing request data %s" % parameters_repr)
 
                 xml = """<?xml version="1.0" encoding="UTF-8" ?>
                 <statusService version="1">
@@ -126,38 +138,43 @@ class PaymentProcessor(ProcessorBase):
                   </body>
                 </statusService>
                 """ % {
-                    'transaction_id': parameters['uppTransactionId'],
-                    'merchant_id': DATATRANS['MERCHANT_ID']}
-                params = urllib.urlencode({'xmlRequest': xml})
+                    "transaction_id": parameters["uppTransactionId"],
+                    "merchant_id": DATATRANS["MERCHANT_ID"],
+                }
+                params = urllib.urlencode({"xmlRequest": xml})
                 xml_response = urllib.urlopen(DT_URL, params).read()
 
                 tree = ET.fromstring(xml_response)
-                response = tree.find('body/transaction/response')
-                response_code = response.find('responseCode').text
-                if response_code not in ('1', '2', '3'):
-                    logger.error('IPN: Received response_code %s, could not verify parameters %s' % (
-                        response_code, parameters_repr))
+                response = tree.find("body/transaction/response")
+                response_code = response.find("responseCode").text
+                if response_code not in ("1", "2", "3"):
+                    logger.error(
+                        "IPN: Received response_code %s, could not verify parameters %s"
+                        % (response_code, parameters_repr)
+                    )
                     parameters = None
 
             if response:
-                refno = response.find('refno').text
-                currency = response.find('currency').text
-                amount = response.find('amount').text
+                refno = response.find("refno").text
+                currency = response.find("currency").text
+                amount = response.find("amount").text
                 try:
-                    order_id, payment_id = refno.split('-')
+                    order_id, payment_id = refno.split("-")
                 except ValueError:
-                    logger.error('IPN: Error getting order for %s' % refno)
-                    return HttpResponseForbidden('Malformed order ID')
+                    logger.error("IPN: Error getting order for %s" % refno)
+                    return HttpResponseForbidden("Malformed order ID")
                 try:
                     order = self.shop.order_model.objects.get(pk=order_id)
                 except self.shop.order_model.DoesNotExist:
-                    logger.error('IPN: Order %s does not exist' % order_id)
-                    return HttpResponseForbidden('Order %s does not exist' % order_id)
+                    logger.error("IPN: Order %s does not exist" % order_id)
+                    return HttpResponseForbidden("Order %s does not exist" % order_id)
 
                 try:
                     payment = order.payments.get(pk=payment_id)
                 except order.payments.model.DoesNotExist:
-                    return HttpResponseForbidden('Payment %s does not exist' % payment_id)
+                    return HttpResponseForbidden(
+                        "Payment %s does not exist" % payment_id
+                    )
 
                 payment.status = OrderPayment.PROCESSED
                 payment.currency = currency
@@ -172,20 +189,23 @@ class PaymentProcessor(ProcessorBase):
                 payment.save()
                 order = order.reload()
 
-                logger.info('IPN: Successfully processed IPN request for %s' % order)
+                logger.info("IPN: Successfully processed IPN request for %s" % order)
 
                 if payment.authorized and plata.settings.PLATA_STOCK_TRACKING:
                     StockTransaction = plata.stock_model()
                     self.create_transactions(
-                        order, _('sale'),
+                        order,
+                        _("sale"),
                         type=StockTransaction.SALE,
-                        negative=True, payment=payment)
+                        negative=True,
+                        payment=payment,
+                    )
 
                 if not order.balance_remaining:
                     self.order_paid(order, payment=payment)
 
-                return redirect('plata_order_success')
+                return redirect("plata_order_success")
 
         except Exception as e:
-            logger.error('IPN: Processing failure %s' % unicode(e))
+            logger.error("IPN: Processing failure %s" % e)
             raise

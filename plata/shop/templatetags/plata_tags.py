@@ -19,11 +19,9 @@ def load_plata_context(context):
     Rather than having the overheads involved in globally adding it to
     TEMPLATE_CONTEXT_PROCESSORS.
     """
-    if 'plata' not in context:
-        context.update(
-            plata.context_processors.plata_context(context['request'])
-        )
-    return ''
+    if "plata" not in context:
+        context.update(plata.context_processors.plata_context(context["request"]))
+    return ""
 
 
 @register.filter
@@ -32,20 +30,21 @@ def quantity_ordered(product, order):
     e.g. {% if product|quantity_ordered:plata.order > 0 %} ... {% endif %}
     """
     try:
-        return order.items.values('quantity').get(product=product)['quantity']
+        return order.items.values("quantity").get(product=product)["quantity"]
     except ObjectDoesNotExist:
         return 0
 
 
 def _type_class(item):
     if isinstance(item.field.widget, forms.CheckboxInput):
-        return 'checkbox'
+        return "checkbox"
     elif isinstance(item.field.widget, forms.DateInput):
-        return 'date'
-    elif isinstance(item.field.widget, (
-            forms.RadioSelect, forms.CheckboxSelectMultiple)):
-        return 'list'
-    return ''
+        return "date"
+    elif isinstance(
+        item.field.widget, (forms.RadioSelect, forms.CheckboxSelectMultiple)
+    ):
+        return "list"
+    return ""
 
 
 @register.simple_tag
@@ -55,14 +54,20 @@ def form_items(form):
 
         {% form_items form %}
     """
-    return u''.join(render_to_string('_form_item.html', {
-        'item': field,
-        'is_checkbox': isinstance(field.field.widget, forms.CheckboxInput),
-        'type_class': _type_class(field),
-        }) for field in form)
+    return "".join(
+        render_to_string(
+            "_form_item.html",
+            {
+                "item": field,
+                "is_checkbox": isinstance(field.field.widget, forms.CheckboxInput),
+                "type_class": _type_class(field),
+            },
+        )
+        for field in form
+    )
 
 
-@register.inclusion_tag('_form_item.html')
+@register.inclusion_tag("_form_item.html")
 def form_item(item, additional_classes=None):
     """
     Helper for easy displaying of form items::
@@ -71,14 +76,14 @@ def form_item(item, additional_classes=None):
     """
 
     return {
-        'item': item,
-        'additional_classes': additional_classes,
-        'is_checkbox': isinstance(item.field.widget, forms.CheckboxInput),
-        'type_class': _type_class(item),
-        }
+        "item": item,
+        "additional_classes": additional_classes,
+        "is_checkbox": isinstance(item.field.widget, forms.CheckboxInput),
+        "type_class": _type_class(item),
+    }
 
 
-@register.inclusion_tag('_form_item_plain.html')
+@register.inclusion_tag("_form_item_plain.html")
 def form_item_plain(item, additional_classes=None):
     """
     Helper for easy displaying of form items without any additional
@@ -88,11 +93,11 @@ def form_item_plain(item, additional_classes=None):
     """
 
     return {
-        'item': item,
-        'additional_classes': additional_classes,
-        'is_checkbox': isinstance(item.field.widget, forms.CheckboxInput),
-        'type_class': _type_class(item),
-        }
+        "item": item,
+        "additional_classes": additional_classes,
+        "is_checkbox": isinstance(item.field.widget, forms.CheckboxInput),
+        "type_class": _type_class(item),
+    }
 
 
 @register.tag
@@ -140,15 +145,16 @@ class FormErrorsNode(template.Node):
             else:
                 formset_list.append(i)
 
-            if (getattr(i, 'errors', None) or
-                    getattr(i, 'non_field_errors', lambda: None)()):
+            if (
+                getattr(i, "errors", None)
+                or getattr(i, "non_field_errors", lambda: None)()
+            ):
                 errors = True
 
         if not errors:
-            return u''
+            return ""
 
-        return render_to_string('_form_errors.html', {
-            'forms': form_list,
-            'formsets': formset_list,
-            'errors': True,
-            })
+        return render_to_string(
+            "_form_errors.html",
+            {"forms": form_list, "formsets": formset_list, "errors": True},
+        )

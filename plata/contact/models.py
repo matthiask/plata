@@ -26,22 +26,23 @@ class Contact(BillingShippingAddress):
     """
 
     user = models.OneToOneField(
-        getattr(settings, 'AUTH_USER_MODEL', 'auth.User'),
-        verbose_name=_('user'),
-        related_name='contactuser')
+        getattr(settings, "AUTH_USER_MODEL", "auth.User"),
+        verbose_name=_("user"),
+        related_name="contactuser",
+    )
 
-    dob = models.DateField(_('date of birth'), blank=True, null=True)
-    created = models.DateTimeField(_('created'), default=timezone.now)
+    dob = models.DateField(_("date of birth"), blank=True, null=True)
+    created = models.DateTimeField(_("created"), default=timezone.now)
 
-    currency = CurrencyField(help_text=_('Preferred currency.'))
-    notes = models.TextField(_('notes'), blank=True)
+    currency = CurrencyField(help_text=_("Preferred currency."))
+    notes = models.TextField(_("notes"), blank=True)
 
     class Meta:
-        verbose_name = _('contact')
-        verbose_name_plural = _('contacts')
+        verbose_name = _("contact")
+        verbose_name_plural = _("contacts")
 
     def __str__(self):
-        return '%s' % self.user
+        return "%s" % self.user
 
     def update_from_order(self, order, request=None):
         """
@@ -53,8 +54,8 @@ class Contact(BillingShippingAddress):
         self.shipping_same_as_billing = order.shipping_same_as_billing
 
         for field in self.ADDRESS_FIELDS:
-            f = 'shipping_' + field
+            f = "shipping_" + field
             setattr(self, f, getattr(order, f))
 
-            f = 'billing_' + field
+            f = "billing_" + field
             setattr(self, f, getattr(order, f))

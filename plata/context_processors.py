@@ -14,10 +14,19 @@ def plata_context(request):
     """
 
     shop = plata.shop_instance()
-    return {'plata': {
-        'shop': shop,
-        'order': shop.order_from_request(request),
-        'contact': (shop.contact_from_user(request.user)
-            if hasattr(request, 'user') else None),
-        'price_includes_tax': shop.price_includes_tax(request),
-    }} if shop else {}
+    return (
+        {
+            "plata": {
+                "shop": shop,
+                "order": shop.order_from_request(request),
+                "contact": (
+                    shop.contact_from_user(request.user)
+                    if hasattr(request, "user")
+                    else None
+                ),
+                "price_includes_tax": shop.price_includes_tax(request),
+            }
+        }
+        if shop
+        else {}
+    )

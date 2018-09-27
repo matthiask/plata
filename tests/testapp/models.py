@@ -11,22 +11,22 @@ class Product(ProductBase):
     items_in_stock = models.IntegerField(default=0)
 
     class Meta:
-        ordering = ['name']
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
 
     @models.permalink
     def get_absolute_url(self):
-        return ('plata_product_detail', (self.pk,), {})
+        return ("plata_product_detail", (self.pk,), {})
 
     @property
     def sku(self):
-        return u''
+        return u""
 
 
 class Price(PriceBase):
-    product = models.ForeignKey(Product, related_name='prices')
+    product = models.ForeignKey(Product, related_name="prices")
 
     class Meta:
-        ordering = ['-id']
+        ordering = ["-id"]

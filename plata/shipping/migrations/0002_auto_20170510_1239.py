@@ -7,39 +7,58 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('shipping', '0001_initial'),
-    ]
+    dependencies = [("shipping", "0001_initial")]
 
     operations = [
         migrations.AlterField(
-            model_name='countrygroup',
-            name='code',
-            field=models.SlugField(help_text='short form of the name, e.g. "EU".', max_length=7, verbose_name='code'),
+            model_name="countrygroup",
+            name="code",
+            field=models.SlugField(
+                help_text='short form of the name, e.g. "EU".',
+                max_length=7,
+                verbose_name="code",
+            ),
         ),
         migrations.AlterField(
-            model_name='countrygroup',
-            name='name',
-            field=models.CharField(help_text='verbose name of this group of countries, e.g. "European Union"', max_length=63, verbose_name='name'),
+            model_name="countrygroup",
+            name="name",
+            field=models.CharField(
+                help_text='verbose name of this group of countries, e.g. "European Union"',
+                max_length=63,
+                verbose_name="name",
+            ),
         ),
         migrations.AlterField(
-            model_name='postage',
-            name='currency',
-            field=models.CharField(choices=[('EUR', 'EUR')], help_text='Currency for all of these prices.', max_length=3, verbose_name='currency'),
+            model_name="postage",
+            name="currency",
+            field=models.CharField(
+                choices=[("EUR", "EUR")],
+                help_text="Currency for all of these prices.",
+                max_length=3,
+                verbose_name="currency",
+            ),
         ),
         migrations.AlterField(
-            model_name='postage',
-            name='name',
-            field=models.CharField(help_text='How your shipping provider calls this class of packet, e.g. "Parcel XL".', max_length=31, verbose_name='name'),
+            model_name="postage",
+            name="name",
+            field=models.CharField(
+                help_text='How your shipping provider calls this class of packet, e.g. "Parcel XL".',
+                max_length=31,
+                verbose_name="name",
+            ),
         ),
         migrations.AlterField(
-            model_name='postage',
-            name='price_includes_tax',
-            field=models.BooleanField(default=True, verbose_name='price includes tax'),
+            model_name="postage",
+            name="price_includes_tax",
+            field=models.BooleanField(default=True, verbose_name="price includes tax"),
         ),
         migrations.AlterField(
-            model_name='shippingprovider',
-            name='name',
-            field=models.CharField(help_text='name of the shipping provider, e.g. "Royal Mail".', max_length=63, verbose_name='name'),
+            model_name="shippingprovider",
+            name="name",
+            field=models.CharField(
+                help_text='name of the shipping provider, e.g. "Royal Mail".',
+                max_length=63,
+                verbose_name="name",
+            ),
         ),
     ]

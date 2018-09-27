@@ -14,27 +14,27 @@ Configuration::
         }
 
 """
-from __future__ import unicode_literals
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 import logging
-import json
+
 from django.conf import settings
 from django.conf.urls import url
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.translation import ugettext_lazy as _
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST, require_GET
-import plata
-from plata.payment.modules.base import ProcessorBase
-from plata.shop.models import OrderPayment
+from django.views.decorators.http import require_POST
+
 import stripe  # official API, see https://stripe.com/docs/api/python
 
-logger = logging.getLogger('plata.payment.stripe')
+import plata
+from plata.payment.modules.base import ProcessorBase
+
+logger = logging.getLogger("plata.payment.stripe")
 csrf_exempt_m = method_decorator(csrf_exempt)
 require_POST_m = method_decorator(require_POST)
 
-stripe.api_version = '2017-04-06'
+stripe.api_version = "2017-04-06"
 
 
 def handle_errors(bla):
@@ -44,62 +44,70 @@ def handle_errors(bla):
     except stripe.error.CardError as e:
         # Since it's a decline, stripe.error.CardError will be caught
         body = e.json_body
-        err  = body['error']
-        logger.error(('Status %s: ' % e.http_status) + 'type "%(type)s", code "%(code)s", param "%(param)s": %(message)s' % err)
+        err = body["error"]
+        logger.error(
+            ("Status %s: " % e.http_status)
+            + 'type "%(type)s", code "%(code)s", param "%(param)s": %(message)s' % err
+        )
     except stripe.error.RateLimitError as e:
         # Too many requests made to the API too quickly
-        logger.error('RateLimitError: %s' % e)
+        logger.error("RateLimitError: %s" % e)
     except stripe.error.InvalidRequestError as e:
         # Invalid parameters were supplied to Stripe's API
-        logger.error('InvalidRequestError: %s' % e)
+        logger.error("InvalidRequestError: %s" % e)
     except stripe.error.AuthenticationError as e:
         # Authentication with Stripe's API failed
         # (maybe you changed API keys recently)
-        logger.error('AuthenticationError: %s' % e)
+        logger.error("AuthenticationError: %s" % e)
     except stripe.error.APIConnectionError as e:
         # Network communication with Stripe failed
-        logger.error('APIConnectionError: %s' % e)
+        logger.error("APIConnectionError: %s" % e)
     except stripe.error.StripeError as e:
         # Display a very generic error to the user, and maybe send
         # yourself an email
-        logger.error('StripeError: %s' % e)
+        logger.error("StripeError: %s" % e)
     except Exception as e:
         # Something else happened, completely unrelated to Stripe
-        logger.error('Exception: %s' % e)
+        logger.error("Exception: %s" % e)
 
 
 class PaymentProcessor(ProcessorBase):
-    key = 'stripe'
-    default_name = _('Stripe')
-    template = 'payment/%s_form.html' % key
+    key = "stripe"
+    default_name = _("Stripe")
+    template = "payment/%s_form.html" % key
     amount = 0
 
     def get_urls(self):
         return [
-            url(r'^payment/%s/$' % self.key,
+            url(
+                r"^payment/%s/$" % self.key,
                 self.callback,
-                name='%s_callback' % self.key)
+                name="%s_callback" % self.key,
+            )
         ]
 
     def process_order_confirmed(self, request, order):
         STRIPE = settings.STRIPE
-        stripe.api_key = STRIPE['SECRET_KEY']
-        if 'template' in STRIPE:
-            self.template = STRIPE['template']
+        stripe.api_key = STRIPE["SECRET_KEY"]
+        if "template" in STRIPE:
+            self.template = STRIPE["template"]
         self.amount = 0
 
         if not order.balance_remaining:
             return self.already_paid(order, request=request)
 
-        logger.info('Processing order %s using %s' % (order, self.default_name))
+        logger.info("Processing order %s using %s" % (order, self.default_name))
 
         payment = self.create_pending_payment(order)
         if plata.settings.PLATA_STOCK_TRACKING:
             StockTransaction = plata.stock_model()
             self.create_transactions(
-                order, _('payment process reservation'),
+                order,
+                _("payment process reservation"),
                 type=StockTransaction.PAYMENT_PROCESS_RESERVATION,
-                negative=True, payment=payment)
+                negative=True,
+                payment=payment,
+            )
 
         for item in order.items.all():
             itemsum = 0
@@ -116,17 +124,21 @@ class PaymentProcessor(ProcessorBase):
 
         self.order = order
 
-        return self.shop.render(request, self.template, {
-            'order': order,
-            'payment': payment,
-            'post_url': '/payment/%s/' % self.key,  # internal, gets payment token
-            'amount': self.amount,
-            'currency': order.currency.lower(),
-            'public_key': STRIPE['PUBLIC_KEY'],
-            'name': get_current_site(request).name,
-            'description': _('Order %s') % order,
-            'logo': STRIPE['LOGO']
-        })
+        return self.shop.render(
+            request,
+            self.template,
+            {
+                "order": order,
+                "payment": payment,
+                "post_url": "/payment/%s/" % self.key,  # internal, gets payment token
+                "amount": self.amount,
+                "currency": order.currency.lower(),
+                "public_key": STRIPE["PUBLIC_KEY"],
+                "name": get_current_site(request).name,
+                "description": _("Order %s") % order,
+                "logo": STRIPE["LOGO"],
+            },
+        )
 
     # @csrf_exempt_m
     @require_POST_m
@@ -134,20 +146,23 @@ class PaymentProcessor(ProcessorBase):
         # data = json.loads(request.body)
 
         customer = stripe.Customer.create(
-            email='customer@example.com',
-            source=request.form['stripeToken']
+            email="customer@example.com", source=request.form["stripeToken"]
         )
 
         charge = stripe.Charge.create(
             customer=customer.id,
             amount=self.amount,
             currency=self.order.currency.lower(),
-            description=_('Order %s') % self.order,
+            description=_("Order %s") % self.order,
         )
 
-        return self.shop.render(request, self.template, {
-            'callback': True,
-            'order': self.order,
-            'charge': charge,
-            'amount': self.amount
-        })
+        return self.shop.render(
+            request,
+            self.template,
+            {
+                "callback": True,
+                "order": self.order,
+                "charge": charge,
+                "amount": self.amount,
+            },
+        )

@@ -96,18 +96,15 @@ class BaseHandler(object):
             return content.getvalue()
 
     def context(self, ctx, **kwargs):
-        request = ctx.get('request')
+        request = ctx.get("request")
         if request is not None:
-            ctx.update({
-                'site': get_current_site(request),
-            })
+            ctx.update({"site": get_current_site(request)})
         ctx.update(kwargs)
         return ctx
 
     def create_email_message(self, template_name, **kwargs):
-        email = render_to_string(
-            template_name, self.context(kwargs)).splitlines()
-        return EmailMessage(subject=email[0], body=u'\n'.join(email[2:]))
+        email = render_to_string(template_name, self.context(kwargs)).splitlines()
+        return EmailMessage(subject=email[0], body="\n".join(email[2:]))
 
 
 class EmailHandler(BaseHandler):
@@ -147,9 +144,8 @@ class ContactCreatedHandler(EmailHandler):
 
     def message(self, sender, contact, **kwargs):
         message = self.create_email_message(
-            'plata/notifications/contact_created.txt',
-            contact=contact,
-            **kwargs)
+            "plata/notifications/contact_created.txt", contact=contact, **kwargs
+        )
         message.to.append(contact.user.email)
         return message
 
@@ -172,15 +168,13 @@ class SendInvoiceHandler(EmailHandler):
             activate(order.language_code)
 
         message = self.create_email_message(
-            'plata/notifications/order_paid.txt',
-            order=order,
-            **kwargs)
+            "plata/notifications/order_paid.txt", order=order, **kwargs
+        )
 
         message.to.append(order.email)
         message.attach(
-            'invoice-%09d.pdf' % order.id,
-            self.invoice_pdf(order),
-            'application/pdf')
+            "invoice-%09d.pdf" % order.id, self.invoice_pdf(order), "application/pdf"
+        )
         return message
 
 
@@ -203,13 +197,13 @@ class SendPackingSlipHandler(EmailHandler):
             activate(order.language_code)
 
         message = self.create_email_message(
-            'plata/notifications/packing_slip.txt',
-            order=order,
-            **kwargs)
+            "plata/notifications/packing_slip.txt", order=order, **kwargs
+        )
         message.attach(
-            'packing-slip-%09d.pdf' % order.id,
+            "packing-slip-%09d.pdf" % order.id,
             self.packing_slip_pdf(order),
-            'application/pdf')
+            "application/pdf",
+        )
         return message
 
 

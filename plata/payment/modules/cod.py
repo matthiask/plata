@@ -16,18 +16,18 @@ from plata.payment.modules.base import ProcessorBase
 from plata.shop.models import OrderPayment
 
 
-logger = logging.getLogger('plata.payment.cod')
+logger = logging.getLogger("plata.payment.cod")
 
 
 class PaymentProcessor(ProcessorBase):
-    key = 'cod'
-    default_name = _('Cash on delivery')
+    key = "cod"
+    default_name = _("Cash on delivery")
 
     def process_order_confirmed(self, request, order):
         if not order.balance_remaining:
             return self.already_paid(order, request=request)
 
-        logger.info('Processing order %s using COD' % order)
+        logger.info("Processing order %s using COD" % order)
 
         payment = self.create_pending_payment(order)
 
@@ -39,8 +39,12 @@ class PaymentProcessor(ProcessorBase):
         if plata.settings.PLATA_STOCK_TRACKING:
             StockTransaction = plata.stock_model()
             self.create_transactions(
-                order, _('sale'),
-                type=StockTransaction.SALE, negative=True, payment=payment)
+                order,
+                _("sale"),
+                type=StockTransaction.SALE,
+                negative=True,
+                payment=payment,
+            )
         self.order_paid(order, payment=payment, request=request)
 
-        return self.shop.redirect('plata_order_success')
+        return self.shop.redirect("plata_order_success")

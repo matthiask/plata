@@ -17,38 +17,38 @@ def product_xls():
     """
 
     from plata.product.stock.models import Period
+
     StockTransaction = plata.stock_model()
 
     xls = XLSXDocument()
-    xls.add_sheet(capfirst(_('products')))
+    xls.add_sheet(capfirst(_("products")))
 
-    _transactions = StockTransaction.objects.filter(
-        period=Period.objects.current(),
-        ).order_by().values('product', 'type').annotate(Sum('change'))
+    _transactions = (
+        StockTransaction.objects.filter(period=Period.objects.current())
+        .order_by()
+        .values("product", "type")
+        .annotate(Sum("change"))
+    )
 
     transactions = defaultdict(dict)
     for t in _transactions:
-        transactions[t['product']][t['type']] = t['change__sum']
+        transactions[t["product"]][t["type"]] = t["change__sum"]
 
-    titles = [
-        capfirst(_('product')),
-        _('SKU'),
-        capfirst(_('stock')),
-    ]
-    titles.extend(
-        '%s' % row[1] for row in StockTransaction.TYPE_CHOICES)
+    titles = [capfirst(_("product")), _("SKU"), capfirst(_("stock"))]
+    titles.extend("%s" % row[1] for row in StockTransaction.TYPE_CHOICES)
 
     data = []
 
     for product in plata.product_model().objects.all().select_related():
         row = [
             product,
-            getattr(product, 'sku', ''),
-            getattr(product, 'items_in_stock', -1),
-            ]
+            getattr(product, "sku", ""),
+            getattr(product, "items_in_stock", -1),
+        ]
         row.extend(
-            transactions[product.id].get(key, '')
-            for key, name in StockTransaction.TYPE_CHOICES)
+            transactions[product.id].get(key, "")
+            for key, name in StockTransaction.TYPE_CHOICES
+        )
         data.append(row)
 
     xls.table(titles, data)

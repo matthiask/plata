@@ -33,8 +33,10 @@ class ProductBase(models.Model):
         """
         if currency is None:
             currency = (
-                orderitem.currency if orderitem else
-                plata.shop_instance().default_currency())
+                orderitem.currency
+                if orderitem
+                else plata.shop_instance().default_currency()
+            )
 
         try:
             # Let's hope that ordering=[-id] from the base price definition
@@ -49,5 +51,5 @@ class ProductBase(models.Model):
         sufficient for posteriority. Old orders should always be complete
         even if the products have been changed or deleted in the meantime.
         """
-        orderitem.name = '%s' % self
-        orderitem.sku = getattr(self, 'sku', '')
+        orderitem.name = "%s" % self
+        orderitem.sku = getattr(self, "sku", "")

@@ -14,22 +14,24 @@ from plata.shop.models import Order, OrderItem, TaxClass
 
 try:  # pragma: no cover
     from django.contrib.auth import get_user_model
+
     User = get_user_model()
 except ImportError:
     from django.contrib.auth.models import User
 
 
 signals.contact_created.connect(
-    notifications.ContactCreatedHandler(always_bcc=['shop@example.com']),
-    weak=False)
+    notifications.ContactCreatedHandler(always_bcc=["shop@example.com"]), weak=False
+)
 signals.order_paid.connect(
-    notifications.SendInvoiceHandler(always_bcc=['shop@example.com']),
-    weak=False)
+    notifications.SendInvoiceHandler(always_bcc=["shop@example.com"]), weak=False
+)
 signals.order_paid.connect(
     notifications.SendPackingSlipHandler(
-        always_to=['shipping@example.com'],
-        always_bcc=['shop@example.com']),
-    weak=False)
+        always_to=["shipping@example.com"], always_bcc=["shop@example.com"]
+    ),
+    weak=False,
+)
 
 
 class Empty(object):
@@ -62,31 +64,30 @@ class PlataTest(TestCase):
             if e.code == code:
                 return True
             raise
-        raise Exception('%s did not raise %s' % (fn, exception))
+        raise Exception("%s did not raise %s" % (fn, exception))
 
     def setUp(self):
         plata.settings.PLATA_PRICE_INCLUDES_TAX = True
 
     def create_contact(self):
         return Contact.objects.create(
-            billing_company=u'BigCorp',
-            billing_first_name=u'Hans',
-            billing_last_name=u'Muster',
-            billing_address=u'Musterstrasse 42',
-            billing_zip_code=u'8042',
-            billing_city=u'Beispielstadt',
-            billing_country=u'CH',
+            billing_company="BigCorp",
+            billing_first_name="Hans",
+            billing_last_name="Muster",
+            billing_address="Musterstrasse 42",
+            billing_zip_code="8042",
+            billing_city="Beispielstadt",
+            billing_country="CH",
             shipping_same_as_billing=True,
-            currency='CHF',
-            user=User.objects.create_user('hans', 'hans', 'hans'),
+            currency="CHF",
+            user=User.objects.create_user("hans", "hans", "hans"),
         )
 
     def create_order(self, contact=None):
         contact = contact or self.create_contact()
 
         return Order.objects.create(
-            user=contact.user if contact else None,
-            currency='CHF',
+            user=contact.user if contact else None, currency="CHF"
         )
 
     def create_orderitem(self, product, order):
@@ -96,24 +97,22 @@ class PlataTest(TestCase):
             quantity=1,
             _unit_price=0,
             _unit_tax=0,
-            tax_rate=0)
+            tax_rate=0,
+        )
         product.handle_order_item(item)
         return item
 
     def create_tax_classes(self):
         self.tax_class, created = TaxClass.objects.get_or_create(
-            name='Standard Swiss Tax Rate',
-            rate=Decimal('7.60'),
+            name="Standard Swiss Tax Rate", rate=Decimal("7.60")
         )
 
         self.tax_class_germany, created = TaxClass.objects.get_or_create(
-            name='Umsatzsteuer (Germany)',
-            rate=Decimal('19.60'),
+            name="Umsatzsteuer (Germany)", rate=Decimal("19.60")
         )
 
         self.tax_class_something, created = TaxClass.objects.get_or_create(
-            name='Some tax rate',
-            rate=Decimal('12.50'),
+            name="Some tax rate", rate=Decimal("12.50")
         )
 
         return self.tax_class, self.tax_class_germany, self.tax_class_something
@@ -122,73 +121,71 @@ class PlataTest(TestCase):
         global PRODUCTION_CREATION_COUNTER
         PRODUCTION_CREATION_COUNTER += 1
 
-        tax_class, tax_class_germany, tax_class_something =\
-            self.create_tax_classes()
+        tax_class, tax_class_germany, tax_class_something = self.create_tax_classes()
 
         Product = plata.product_model()
         product = Product.objects.create(
-            name='Test Product %s' % PRODUCTION_CREATION_COUNTER,
+            name="Test Product %s" % PRODUCTION_CREATION_COUNTER
         )
 
         if stock:
             product.stock_transactions.create(
-                type=StockTransaction.PURCHASE,
-                change=stock,
+                type=StockTransaction.PURCHASE, change=stock
             )
 
         # An old price in CHF which should not influence the rest of the tests
         product.prices.create(
-            currency='CHF',
+            currency="CHF",
             tax_class=tax_class,
-            _unit_price=Decimal('99.90'),
+            _unit_price=Decimal("99.90"),
             tax_included=True,
         )
 
         product.prices.create(
-            currency='CHF',
+            currency="CHF",
             tax_class=tax_class,
-            _unit_price=Decimal('199.90'),
+            _unit_price=Decimal("199.90"),
             tax_included=True,
             # valid_from=date(2000, 1, 1),
             # valid_until=date(2001, 1, 1),
         )
 
         product.prices.create(
-            currency='CHF',
+            currency="CHF",
             tax_class=tax_class,
-            _unit_price=Decimal('299.90'),
+            _unit_price=Decimal("299.90"),
             tax_included=True,
             # valid_from=date(2000, 1, 1),
         )
 
         product.prices.create(
-            currency='CHF',
+            currency="CHF",
             tax_class=tax_class,
-            _unit_price=Decimal('299.90'),
+            _unit_price=Decimal("299.90"),
             tax_included=True,
             # valid_from=date(2000, 7, 1),
             # is_sale=True,
         )
 
         product.prices.create(
-            currency='CHF',
+            currency="CHF",
             tax_class=tax_class,
-            _unit_price=Decimal('79.90'),
+            _unit_price=Decimal("79.90"),
             tax_included=True,
             # is_sale=True,
         )
 
         product.prices.create(
-            currency='EUR',
+            currency="EUR",
             tax_class=tax_class_germany,
-            _unit_price=Decimal('49.90'),
+            _unit_price=Decimal("49.90"),
             tax_included=True,
         )
 
         product.prices.create(
-            currency='CAD',
+            currency="CAD",
             tax_class=tax_class_something,
-            _unit_price=Decimal('65.00'),
+            _unit_price=Decimal("65.00"),
             tax_included=False,
         )
 
@@ -225,8 +222,7 @@ class PlataTest(TestCase):
         return product
 
     def login(self):
-        user = User.objects.create_user(
-            'test', 'test@example.com', 'testing')
+        User.objects.create_user("test", "test@example.com", "testing")
         client = Client()
-        client.login(username='test', password='testing')
+        client.login(username="test", password="testing")
         return client

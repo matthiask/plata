@@ -11,82 +11,242 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Country',
+            name="Country",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('country', django_countries.fields.CountryField(max_length=2)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("country", django_countries.fields.CountryField(max_length=2)),
+            ],
+            options={"verbose_name": "country", "verbose_name_plural": "countries"},
+        ),
+        migrations.CreateModel(
+            name="CountryGroup",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        help_text='verbose name of this group of countries, e.g. "European Union"',
+                        max_length=63,
+                        verbose_name="Name",
+                    ),
+                ),
+                (
+                    "code",
+                    models.SlugField(
+                        help_text='short form of the name, e.g. "EU".',
+                        max_length=7,
+                        verbose_name="Code",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'country',
-                'verbose_name_plural': 'countries',
+                "verbose_name": "country group",
+                "verbose_name_plural": "country groups",
             },
         ),
         migrations.CreateModel(
-            name='CountryGroup',
+            name="Postage",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(help_text='verbose name of this group of countries, e.g. "European Union"', max_length=63, verbose_name='Name')),
-                ('code', models.SlugField(help_text='short form of the name, e.g. "EU".', max_length=7, verbose_name='Code')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        help_text='How your shipping provider calls this class of packet, e.g. "Parcel XL".',
+                        max_length=31,
+                        verbose_name="Name",
+                    ),
+                ),
+                (
+                    "price_internal",
+                    models.DecimalField(
+                        decimal_places=2,
+                        help_text="The price that the provider charges you.",
+                        max_digits=10,
+                        verbose_name="internal price",
+                    ),
+                ),
+                (
+                    "price_packaging",
+                    models.DecimalField(
+                        decimal_places=2,
+                        help_text="What the packaging for a packet of this size costs you.",
+                        max_digits=10,
+                        verbose_name="packaging price",
+                    ),
+                ),
+                (
+                    "price_external",
+                    models.DecimalField(
+                        decimal_places=2,
+                        help_text="The price that you charge your customers, e.g. internal price plus packaging.",
+                        max_digits=10,
+                        verbose_name="external price",
+                    ),
+                ),
+                (
+                    "currency",
+                    models.CharField(
+                        choices=[("EUR", "EUR"), ("USD", "USD"), ("CHF", "CHF")],
+                        help_text="Currency for all of these prices.",
+                        max_length=3,
+                        verbose_name="currency",
+                    ),
+                ),
+                (
+                    "price_includes_tax",
+                    models.BooleanField(default=True, verbose_name="Preis inkl. MwSt."),
+                ),
+                (
+                    "weight_packaging",
+                    models.PositiveIntegerField(
+                        default=0,
+                        help_text="The approx. weight of the necessary packaging for this package",
+                        verbose_name="weight of packaging [g]",
+                    ),
+                ),
+                (
+                    "max_weight",
+                    models.PositiveIntegerField(
+                        default=0,
+                        help_text="Maximum weight for this tariff. 0 = ignored",
+                        verbose_name="max. weight [g]",
+                    ),
+                ),
+                (
+                    "max_length",
+                    models.PositiveIntegerField(
+                        default=0,
+                        help_text="Maximum length for this tariff. 0 = ignored",
+                        verbose_name="max. length [mm]",
+                    ),
+                ),
+                (
+                    "max_width",
+                    models.PositiveIntegerField(
+                        default=0,
+                        help_text="Maximum width for this tariff. 0 = ignored",
+                        verbose_name="max. width [mm]",
+                    ),
+                ),
+                (
+                    "max_height",
+                    models.PositiveIntegerField(
+                        default=0,
+                        help_text="Maximum height for this tariff. 0 = ignored",
+                        verbose_name="max. height [mm]",
+                    ),
+                ),
+                (
+                    "max_3d",
+                    models.PositiveIntegerField(
+                        default=0,
+                        help_text="Maximum measure of length+width+height for this tariff. 0 = ignored",
+                        verbose_name="max. dimensions [mm]",
+                    ),
+                ),
+                (
+                    "country_group",
+                    models.ForeignKey(
+                        help_text="The tariff is valid for this group of countries.",
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="shipping.CountryGroup",
+                        verbose_name="country group",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'country group',
-                'verbose_name_plural': 'country groups',
+                "verbose_name": "postage",
+                "verbose_name_plural": "postage classes",
             },
         ),
         migrations.CreateModel(
-            name='Postage',
+            name="ShippingProvider",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(help_text='How your shipping provider calls this class of packet, e.g. "Parcel XL".', max_length=31, verbose_name='Name')),
-                ('price_internal', models.DecimalField(decimal_places=2, help_text='The price that the provider charges you.', max_digits=10, verbose_name='internal price')),
-                ('price_packaging', models.DecimalField(decimal_places=2, help_text='What the packaging for a packet of this size costs you.', max_digits=10, verbose_name='packaging price')),
-                ('price_external', models.DecimalField(decimal_places=2, help_text='The price that you charge your customers, e.g. internal price plus packaging.', max_digits=10, verbose_name='external price')),
-                ('currency', models.CharField(choices=[('EUR', 'EUR'), ('USD', 'USD'), ('CHF', 'CHF'),], help_text='Currency for all of these prices.', max_length=3, verbose_name='currency')),
-                ('price_includes_tax', models.BooleanField(default=True, verbose_name='Preis inkl. MwSt.')),
-                ('weight_packaging', models.PositiveIntegerField(default=0, help_text='The approx. weight of the necessary packaging for this package', verbose_name='weight of packaging [g]')),
-                ('max_weight', models.PositiveIntegerField(default=0, help_text='Maximum weight for this tariff. 0 = ignored', verbose_name='max. weight [g]')),
-                ('max_length', models.PositiveIntegerField(default=0, help_text='Maximum length for this tariff. 0 = ignored', verbose_name='max. length [mm]')),
-                ('max_width', models.PositiveIntegerField(default=0, help_text='Maximum width for this tariff. 0 = ignored', verbose_name='max. width [mm]')),
-                ('max_height', models.PositiveIntegerField(default=0, help_text='Maximum height for this tariff. 0 = ignored', verbose_name='max. height [mm]')),
-                ('max_3d', models.PositiveIntegerField(default=0, help_text='Maximum measure of length+width+height for this tariff. 0 = ignored', verbose_name='max. dimensions [mm]')),
-                ('country_group', models.ForeignKey(help_text='The tariff is valid for this group of countries.', on_delete=django.db.models.deletion.CASCADE, to='shipping.CountryGroup', verbose_name='country group')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        help_text='name of the shipping provider, e.g. "Royal Mail".',
+                        max_length=63,
+                        verbose_name="Name",
+                    ),
+                ),
+                (
+                    "remarks",
+                    models.TextField(
+                        blank=True,
+                        help_text="internal information",
+                        verbose_name="remarks",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'postage',
-                'verbose_name_plural': 'postage classes',
-            },
-        ),
-        migrations.CreateModel(
-            name='ShippingProvider',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(help_text='name of the shipping provider, e.g. "Royal Mail".', max_length=63, verbose_name='Name')),
-                ('remarks', models.TextField(blank=True, help_text='internal information', verbose_name='remarks')),
-            ],
-            options={
-                'verbose_name': 'shipping provider',
-                'verbose_name_plural': 'shipping providers',
+                "verbose_name": "shipping provider",
+                "verbose_name_plural": "shipping providers",
             },
         ),
         migrations.AddField(
-            model_name='postage',
-            name='provider',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='shipping.ShippingProvider', verbose_name='shipping provider'),
+            model_name="postage",
+            name="provider",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="shipping.ShippingProvider",
+                verbose_name="shipping provider",
+            ),
         ),
         migrations.AddField(
-            model_name='country',
-            name='country_group',
-            field=models.ForeignKey(help_text='The country belongs to this group of countries for which your shipping provider charges the same.', on_delete=django.db.models.deletion.CASCADE, to='shipping.CountryGroup', verbose_name='country group'),
+            model_name="country",
+            name="country_group",
+            field=models.ForeignKey(
+                help_text="The country belongs to this group of countries for which your shipping provider charges the same.",
+                on_delete=django.db.models.deletion.CASCADE,
+                to="shipping.CountryGroup",
+                verbose_name="country group",
+            ),
         ),
         migrations.AddField(
-            model_name='shippingprovider',
-            name='country_group',
-            field=models.ManyToManyField(help_text='You can use this service to ship to this group of countries.', to='shipping.CountryGroup', verbose_name='serves these countries'),
+            model_name="shippingprovider",
+            name="country_group",
+            field=models.ManyToManyField(
+                help_text="You can use this service to ship to this group of countries.",
+                to="shipping.CountryGroup",
+                verbose_name="serves these countries",
+            ),
         ),
     ]
-

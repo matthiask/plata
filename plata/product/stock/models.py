@@ -38,13 +38,12 @@ class PeriodManager(models.Manager):
         """
 
         try:
-            return self.filter(start__lte=timezone.now()).order_by(
-                '-start')[0]
+            return self.filter(start__lte=timezone.now()).order_by("-start")[0]
         except IndexError:
             return self.create(
-                name=ugettext('Automatically created'),
-                notes=ugettext(
-                    'Automatically created because no period existed yet.'))
+                name=ugettext("Automatically created"),
+                notes=ugettext("Automatically created because no period existed yet."),
+            )
 
 
 @python_2_unicode_compatible
@@ -58,19 +57,21 @@ class Period(models.Model):
     ``StockTransaction.objects.open_new_period`` does this automatically.
     """
 
-    name = models.CharField(_('name'), max_length=100)
-    notes = models.TextField(_('notes'), blank=True)
+    name = models.CharField(_("name"), max_length=100)
+    notes = models.TextField(_("notes"), blank=True)
     start = models.DateTimeField(
-        _('start'), default=timezone.now,
-        help_text=_('Period starts at this time. May also be a future date.'))
+        _("start"),
+        default=timezone.now,
+        help_text=_("Period starts at this time. May also be a future date."),
+    )
 
     class Meta:
         # See https://github.com/matthiask/plata/issues/27
         abstract = not plata.settings.PLATA_STOCK_TRACKING
-        get_latest_by = 'start'
-        ordering = ['-start']
-        verbose_name = _('period')
-        verbose_name_plural = _('periods')
+        get_latest_by = "start"
+        ordering = ["-start"]
+        verbose_name = _("period")
+        verbose_name_plural = _("periods")
 
     objects = PeriodManager()
 
@@ -85,18 +86,19 @@ class StockTransactionManager(models.Manager):
         variations with their current ``items_in_stock`` value
         """
 
-        period = Period.objects.create(name=name or ugettext('New period'))
+        period = Period.objects.create(name=name or ugettext("New period"))
 
         for p in plata.product_model()._default_manager.all():
             p.stock_transactions.create(
                 period=period,
                 type=StockTransaction.INITIAL,
                 change=p.items_in_stock,
-                notes=ugettext('New period'),
+                notes=ugettext("New period"),
             )
 
-    def items_in_stock(self, product, update=False, exclude_order=None,
-                       include_reservations=False):
+    def items_in_stock(
+        self, product, update=False, exclude_order=None, include_reservations=False
+    ):
         """
         Determine the items in stock for the given product variation,
         optionally updating the ``items_in_stock`` field in the database.
@@ -108,25 +110,22 @@ class StockTransactionManager(models.Manager):
         switched off.
         """
 
-        queryset = self.filter(
-            period=Period.objects.current(),
-            product=product)
+        queryset = self.filter(period=Period.objects.current(), product=product)
 
         if exclude_order:
             update = False
-            queryset = queryset.filter(
-                Q(order__isnull=True) | ~Q(order=exclude_order))
+            queryset = queryset.filter(Q(order__isnull=True) | ~Q(order=exclude_order))
 
         if include_reservations:
             update = False
             queryset = queryset.exclude(
                 type=self.model.PAYMENT_PROCESS_RESERVATION,
-                created__lt=timezone.now() - timedelta(seconds=15 * 60))
+                created__lt=timezone.now() - timedelta(seconds=15 * 60),
+            )
         else:
-            queryset = queryset.exclude(
-                type=self.model.PAYMENT_PROCESS_RESERVATION)
+            queryset = queryset.exclude(type=self.model.PAYMENT_PROCESS_RESERVATION)
 
-        count = queryset.aggregate(items=Sum('change')).get('items') or 0
+        count = queryset.aggregate(items=Sum("change")).get("items") or 0
 
         product_model = plata.product_model()
 
@@ -135,7 +134,7 @@ class StockTransactionManager(models.Manager):
 
         if update:
             product_model._default_manager.filter(
-                id=getattr(product, 'pk', product)
+                id=getattr(product, "pk", product)
             ).update(items_in_stock=count)
 
         return count
@@ -162,7 +161,8 @@ class StockTransactionManager(models.Manager):
                 line_item_price=item._line_item_price,
                 line_item_discount=item._line_item_discount,
                 line_item_tax=item._line_item_tax,
-                **kwargs)
+                **kwargs
+            )
 
 
 def current_period():
@@ -219,77 +219,88 @@ class StockTransaction(models.Model):
     PAYMENT_PROCESS_RESERVATION = 100  # reservation during payment process
 
     TYPE_CHOICES = (
-        (INITIAL, _('initial amount')),
-        (CORRECTION, _('correction')),
-        (PURCHASE, _('purchase')),
-        (SALE, _('sale')),
-        (RETURNS, _('returns')),
-        (RESERVATION, _('reservation')),
-        (INCOMING, _('incoming')),
-        (OUTGOING, _('outgoing')),
-        (PAYMENT_PROCESS_RESERVATION, _('payment process reservation')),
+        (INITIAL, _("initial amount")),
+        (CORRECTION, _("correction")),
+        (PURCHASE, _("purchase")),
+        (SALE, _("sale")),
+        (RETURNS, _("returns")),
+        (RESERVATION, _("reservation")),
+        (INCOMING, _("incoming")),
+        (OUTGOING, _("outgoing")),
+        (PAYMENT_PROCESS_RESERVATION, _("payment process reservation")),
     )
 
     period = models.ForeignKey(
-        Period, default=current_period,
-        related_name='stock_transactions', verbose_name=_('period'))
-    created = models.DateTimeField(_('created'), default=timezone.now)
+        Period,
+        default=current_period,
+        related_name="stock_transactions",
+        verbose_name=_("period"),
+    )
+    created = models.DateTimeField(_("created"), default=timezone.now)
     product = models.ForeignKey(
         plata.settings.PLATA_SHOP_PRODUCT,
-        related_name='stock_transactions', verbose_name=_('product'),
-        on_delete=models.SET_NULL, null=True)
-    type = models.PositiveIntegerField(_('type'), choices=TYPE_CHOICES)
+        related_name="stock_transactions",
+        verbose_name=_("product"),
+        on_delete=models.SET_NULL,
+        null=True,
+    )
+    type = models.PositiveIntegerField(_("type"), choices=TYPE_CHOICES)
     change = models.IntegerField(
-        _('change'),
-        help_text=_(
-            'Use negative numbers for sales, lendings and other'
-            ' outgoings.'))
+        _("change"),
+        help_text=_("Use negative numbers for sales, lendings and other" " outgoings."),
+    )
     order = models.ForeignKey(
-        Order, blank=True, null=True,
-        related_name='stock_transactions', verbose_name=_('order'))
+        Order,
+        blank=True,
+        null=True,
+        related_name="stock_transactions",
+        verbose_name=_("order"),
+    )
     payment = models.ForeignKey(
-        OrderPayment, blank=True, null=True,
-        related_name='stock_transactions', verbose_name=_('order payment'))
+        OrderPayment,
+        blank=True,
+        null=True,
+        related_name="stock_transactions",
+        verbose_name=_("order payment"),
+    )
 
-    notes = models.TextField(_('notes'), blank=True)
+    notes = models.TextField(_("notes"), blank=True)
 
     # There are purely informative fields; not required in any way
     # (but very useful for analysis down the road)
-    name = models.CharField(_('name'), max_length=100, blank=True)
-    sku = models.CharField(_('SKU'), max_length=100, blank=True)
+    name = models.CharField(_("name"), max_length=100, blank=True)
+    sku = models.CharField(_("SKU"), max_length=100, blank=True)
     line_item_price = models.DecimalField(
-        _('line item price'),
-        max_digits=18, decimal_places=10, blank=True, null=True)
+        _("line item price"), max_digits=18, decimal_places=10, blank=True, null=True
+    )
     line_item_discount = models.DecimalField(
-        _('line item discount'),
-        max_digits=18, decimal_places=10, blank=True, null=True)
+        _("line item discount"), max_digits=18, decimal_places=10, blank=True, null=True
+    )
     line_item_tax = models.DecimalField(
-        _('line item tax'),
-        max_digits=18, decimal_places=10, blank=True, null=True)
+        _("line item tax"), max_digits=18, decimal_places=10, blank=True, null=True
+    )
 
     class Meta:
         # See https://github.com/matthiask/plata/issues/27
         abstract = not plata.settings.PLATA_STOCK_TRACKING
-        ordering = ['-id']
-        verbose_name = _('stock transaction')
-        verbose_name_plural = _('stock transactions')
+        ordering = ["-id"]
+        verbose_name = _("stock transaction")
+        verbose_name_plural = _("stock transactions")
 
     objects = StockTransactionManager()
 
     def __str__(self):
-        return '%s %s of %s' % (
-            self.change,
-            self.get_type_display(),
-            self.product)
+        return "%s %s of %s" % (self.change, self.get_type_display(), self.product)
 
     def save(self, *args, **kwargs):
         if not self.period_id:
             self.period = Period.objects.current()
 
-        if self.product and hasattr(self.product, 'handle_stock_transaction'):
+        if self.product and hasattr(self.product, "handle_stock_transaction"):
             self.product.handle_stock_transaction(self)
 
         super(StockTransaction, self).save(*args, **kwargs)
+
     save.alters_data = True
 
 
@@ -302,11 +313,11 @@ def validate_order_stock_available(order):
     Check whether enough stock is available for all selected products,
     taking into account payment process reservations.
     """
-    for item in order.items.select_related('product'):
+    for item in order.items.select_related("product"):
         if item.quantity > StockTransaction.objects.items_in_stock(
-                item.product,
-                exclude_order=order,
-                include_reservations=True):
+            item.product, exclude_order=order, include_reservations=True
+        ):
             raise ValidationError(
-                _('Not enough stock available for %s.') % item.product,
-                code='insufficient_stock')
+                _("Not enough stock available for %s.") % item.product,
+                code="insufficient_stock",
+            )
