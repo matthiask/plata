@@ -93,3 +93,9 @@ PAYPAL = {
     'BUSINESS': 'example@paypal.com',
     'LIVE': False,
 }
+
+PLATA_PAYMENT_MODULES = [
+    'plata.payment.modules.cod.PaymentProcessor',
+    'plata.payment.modules.postfinance.PaymentProcessor',
+    'plata.payment.modules.paypal.PaymentProcessor',
+]
