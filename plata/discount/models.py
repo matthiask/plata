@@ -71,6 +71,7 @@ class DiscountBase(models.Model):
         _("configuration"),
         blank=True,
         help_text=_("If you edit this field directly, changes below will be ignored."),
+        default=dict,
     )
 
     class Meta:

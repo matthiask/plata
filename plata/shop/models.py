@@ -210,6 +210,7 @@ class Order(BillingShippingAddress):
         _("data"),
         blank=True,
         help_text=_("JSON-encoded additional data about the order payment."),
+        default=dict,
     )
 
     class Meta:
@@ -624,6 +625,7 @@ class OrderItem(models.Model):
         _("data"),
         blank=True,
         help_text=_("JSON-encoded additional data about the order payment."),
+        default=dict,
     )
 
     class Meta:
@@ -795,6 +797,7 @@ class OrderPayment(models.Model):
         _("data"),
         blank=True,
         help_text=_("JSON-encoded additional data about the order payment."),
+        default=dict,
     )
 
     transaction_fee = models.DecimalField(
