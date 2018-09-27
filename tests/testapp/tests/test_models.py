@@ -890,7 +890,9 @@ class ModelTest(PlataTest):
             )
 
             # Shipping has to be added here too; otherwise it should be 399.50
-            self.assertAlmostEqual(tax_details[Decimal("7.6")]["total"], Decimal("407.50"))
+            self.assertAlmostEqual(
+                tax_details[Decimal("7.6")]["total"], Decimal("407.50")
+            )
 
         finally:
             plata.settings.PLATA_ORDER_PROCESSORS = order_processors[:]

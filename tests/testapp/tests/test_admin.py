@@ -2,7 +2,9 @@ from __future__ import absolute_import, unicode_literals
 
 from decimal import Decimal
 
+import django
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from django.forms.models import model_to_dict
 
 import plata
@@ -95,7 +97,7 @@ class AdminTest(PlataTest):
         discount_data["code"] += "-"
         self.client.post("/admin/discount/discount/add/", discount_data)
         self.assertContains(
-            self.client.get("/admin/discount/discount/2/"),
+            self.client.get(reverse("admin:discount_discount_change", args=(2,))),
             "Discount configuration: Exclude sale prices",
         )
 
@@ -123,7 +125,9 @@ class AdminTest(PlataTest):
             }
         )
         self.assertRedirects(
-            self.client.post("/admin/discount/discount/3/", discount_data),
+            self.client.post(
+                reverse("admin:discount_discount_change", args=(3,)), discount_data
+            ),
             "/admin/discount/discount/",
         )
 
@@ -134,7 +138,7 @@ class AdminTest(PlataTest):
 
         orders = self.client.get("/admin/shop/order/")
 
-        # Order item and list filter
-        self.assertContains(orders, "Is a cart", 2)
+        # Order item and list filter, title attribute too in newer Django versions
+        self.assertContains(orders, "Is a cart", 2 if django.VERSION < (1, 11) else 3)
         self.assertContains(orders, "/invoice_pdf/%d/" % order.id, 1)
         self.assertContains(orders, "/packing_slip_pdf/%d/" % order.id, 1)
