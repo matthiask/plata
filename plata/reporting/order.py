@@ -143,17 +143,10 @@ class OrderReport(object):
             except IndexError:
                 payment = None
 
-            payment_method = payment.payment_method
-            if not payment_method:
-                if payment.payment_module == 'Bank transfer':
-                    payment_method = _("Bank transfer")
-                elif payment.payment_module == 'Cash':
-                    payment_method = _("Cash")
-
-            if payment and payment_method:
+            if payment and payment.payment_method:
                 self.pdf.p(
                     _('Already paid for with: %(payment_method)s.') % {
-                        'payment_method': payment_method + (
+                        'payment_method': payment.payment_method + (
                             (" (Transaction %(transaction)s)" % {'transaction': payment.transaction_id})
                             if payment.transaction_id else ""
                         )
