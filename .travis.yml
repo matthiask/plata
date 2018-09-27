@@ -22,4 +22,4 @@ jobs:
       script:
         - pip install black flake8
         - flake8 .
-        - black --check feincms3 tests
+        - black --check examples plata tests
