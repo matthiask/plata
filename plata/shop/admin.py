@@ -11,7 +11,7 @@ except ImportError:
 from plata.discount.models import AppliedDiscount
 from plata.shop import models
 
-from .actions import export_as_csv_action
+from xlsxdocument import export_selected
 
 
 class OrderItemInline(admin.TabularInline):
@@ -123,7 +123,7 @@ class OrderAdmin(admin.ModelAdmin):
 
     additional_info.allow_tags = True
     additional_info.short_description = _("add. info")
-    actions = [export_as_csv_action("CSV Export")]
+    actions = [export_selected]
 
 
 class OrderPaymentAdmin(admin.ModelAdmin):

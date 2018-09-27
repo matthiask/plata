@@ -44,6 +44,8 @@ Change log
   Billogram, prepaying by bank transfer, etc.
 - Event handlers for server-side Google Analytics tracking of orders
   has been added, see ``plata/shop/ga_tracking.py``.
+- Removed ``plata.shop.actions`` and added
+  ``xlsxdocument.export_selected`` for exporting orders.
 
 
 `v1.1.0`_ (2012-04-04)
