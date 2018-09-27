@@ -16,6 +16,7 @@ Plata supports the following means of payment:
 * :ref:`payment_billogram`
 * :ref:`payment_payson`
 * :ref:`payment_pagseguro`
+* :ref:`payment_stripe`
 
 ''Beware'', most of these are not up to date and their general state of
 usefulness is unknown. Always try to understand the source code.
@@ -103,7 +104,7 @@ And this is `stripe_form.html`::
     {% if not callback %}
     {% trans "Thank you for your payment!" %}
     {% include "plata/_order_overview.html" %}
-    
+
     <form action="{{ post_url }}" method="POST">
     {% csrf_token %}
     {{ form.management_form }}

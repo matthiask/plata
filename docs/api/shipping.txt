@@ -1,5 +1,5 @@
 Shipping
-=======
+========
 
 .. automodule:: plata.shipping
    :members:

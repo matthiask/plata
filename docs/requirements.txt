@@ -5,3 +5,5 @@ reportlab
 pdfdocument
 django-countries
 pytz
+billogram_api
+payson_api

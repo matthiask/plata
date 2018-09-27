@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from datetime import date
 import os
 import re
 import subprocess
@@ -13,7 +14,7 @@ sys.path.append(os.path.abspath('../tests'))
 
 project = 'plata'
 author = 'Feinheit AG'
-copyright = '2010-2017,' + author
+copyright = '2010-%s, %s' % (date.today().year, author)
 version = __import__('plata').__version__
 release = subprocess.check_output(
     'git fetch --tags; git describe',
@@ -89,7 +90,7 @@ exclude_patterns = ['build', 'Thumbs.db', '.DS_Store']
 pygments_style = 'sphinx'
 todo_include_todos = False
 
-html_theme = 'alabaster'
+html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
 htmlhelp_basename = project_slug + 'doc'
 

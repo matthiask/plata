@@ -81,3 +81,10 @@ PagSeguro support
    :members:
    :noindex:
 
+
+Stripe support
+--------------
+
+.. automodule:: plata.payment.modules.stripe
+   :members:
+   :noindex:

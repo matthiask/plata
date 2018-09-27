@@ -11,6 +11,7 @@ You can register the tariffs of several shipping providers (postal services)
 for groups of countries that cost the same postage and several package sizes.
 
 Setup:
+
 * Include `plata.shipping` in your `INSTALLED_APPS`.
 * Run `manage.py makemigrations shipping` and `manage.py migrate`.
 * Login to your admin interface and ...
