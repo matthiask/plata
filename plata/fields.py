@@ -195,7 +195,8 @@ class JSONField(_JSONFieldBase):
                 if value[0] == value[-1] == '"':
                     value = value[1:-1]
 
-                return json.loads(value)
+                return json.loads(
+                    value, use_decimal=True, object_hook=json_decode_hook)
             except Exception as err:
                 raise ValidationError(str(err))
         else:
