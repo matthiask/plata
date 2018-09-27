@@ -777,32 +777,34 @@ class ModelTest(PlataTest):
             -2
         ] = "plata.shop.processors.FixedAmountShippingProcessor"
 
-        p1 = self.create_product()
-        p2 = self.create_product()
-        order = self.create_order()
-        order.modify_item(p1, 3, recalculate=False)
-        order.modify_item(p2, 5)
+        try:
+            p1 = self.create_product()
+            p2 = self.create_product()
+            order = self.create_order()
+            order.modify_item(p1, 3, recalculate=False)
+            order.modify_item(p2, 5)
 
-        self.assertAlmostEqual(order.total, Decimal("639.20") + 8)
+            self.assertAlmostEqual(order.total, Decimal("639.20") + 8)
 
-        discount = Discount.objects.create(
-            type=Discount.AMOUNT_VOUCHER_INCL_TAX,
-            code="d2",
-            name="d2",
-            value=Decimal("640.00"),
-            is_active=True,
-            tax_class=self.tax_class,
-            currency="CHF",
-        )
+            discount = Discount.objects.create(
+                type=Discount.AMOUNT_VOUCHER_INCL_TAX,
+                code="d2",
+                name="d2",
+                value=Decimal("640.00"),
+                is_active=True,
+                tax_class=self.tax_class,
+                currency="CHF",
+            )
 
-        discount.add_to(order)
-        self.assertAlmostEqual(order.total, Decimal("7.20"))
+            discount.add_to(order)
+            self.assertAlmostEqual(order.total, Decimal("7.20"))
 
-        discount.value = Decimal("650.00")
-        discount.add_to(order)
-        self.assertAlmostEqual(order.total, Decimal("0.00"))
+            discount.value = Decimal("650.00")
+            discount.add_to(order)
+            self.assertAlmostEqual(order.total, Decimal("0.00"))
 
-        plata.settings.PLATA_ORDER_PROCESSORS = order_processors[:]
+        finally:
+            plata.settings.PLATA_ORDER_PROCESSORS = order_processors[:]
 
     def test_22_tax_rounding(self):
         """Test tax rounding behavior"""
@@ -852,44 +854,46 @@ class ModelTest(PlataTest):
             -2
         ] = "plata.shop.processors.FixedAmountShippingProcessor"
 
-        p1 = self.create_product(stock=10)
-        p2 = self.create_product(stock=10)
+        try:
+            p1 = self.create_product(stock=10)
+            p2 = self.create_product(stock=10)
 
-        p2.name = "Test 2"
-        p2.save()
+            p2.name = "Test 2"
+            p2.save()
 
-        p2.prices.all().delete()
-        p2.prices.create(
-            currency="CHF",
-            tax_class=self.tax_class_something,
-            _unit_price=Decimal("59.90"),
-            tax_included=True,
-        )
+            p2.prices.all().delete()
+            p2.prices.create(
+                currency="CHF",
+                tax_class=self.tax_class_something,
+                _unit_price=Decimal("59.90"),
+                tax_included=True,
+            )
 
-        order = self.create_order()
+            order = self.create_order()
 
-        order.modify_item(p1, 5)
-        order.modify_item(p2, 5)
+            order.modify_item(p1, 5)
+            order.modify_item(p2, 5)
 
-        self.assertEqual(order.items.count(), 2)
-        self.assertAlmostEqual(order.total, Decimal("707.00"))
+            self.assertEqual(order.items.count(), 2)
+            self.assertAlmostEqual(order.total, Decimal("707.00"))
 
-        tax_details = dict(order.data["tax_details"])
+            tax_details = dict(order.data["tax_details"])
 
-        # Two tax rates
-        self.assertEqual(len(tax_details), 2)
+            # Two tax rates
+            self.assertEqual(len(tax_details), 2)
 
-        self.assertAlmostEqual(
-            tax_details[Decimal("12.5")]["tax_amount"], Decimal("33.28"), 2
-        )
-        self.assertAlmostEqual(
-            tax_details[Decimal("7.6")]["tax_amount"], Decimal("28.78"), 2
-        )
+            self.assertAlmostEqual(
+                tax_details[Decimal("12.5")]["tax_amount"], Decimal("33.28"), 2
+            )
+            self.assertAlmostEqual(
+                tax_details[Decimal("7.6")]["tax_amount"], Decimal("28.78"), 2
+            )
 
-        # Shipping has to be added here too; otherwise it should be 399.50
-        self.assertAlmostEqual(tax_details[Decimal("7.6")]["total"], Decimal("407.50"))
+            # Shipping has to be added here too; otherwise it should be 399.50
+            self.assertAlmostEqual(tax_details[Decimal("7.6")]["total"], Decimal("407.50"))
 
-        plata.settings.PLATA_ORDER_PROCESSORS = order_processors[:]
+        finally:
+            plata.settings.PLATA_ORDER_PROCESSORS = order_processors[:]
 
     def test_24_uninitialized_order(self):
         # This should not crash; generating a PDF exercises the methods
