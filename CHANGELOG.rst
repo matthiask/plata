@@ -21,7 +21,7 @@ Change log
   either of those would be against what Plata is all about.
 - Removed mentions of South in the code base and raised the Django
   version requirement to 1.8 LTS.
-- Added support for Django 1.11 LTS.
+- Added support for Django 1.11 LTS and Django 2.1.
 - Reformatted the code using black and added enforcement of black/flake8
   cleanliness on Travis CI .
 - Made the test suite pass again.
