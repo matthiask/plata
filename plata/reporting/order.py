@@ -106,6 +106,11 @@ class OrderReport(object):
                 capfirst(_('shipping')),
                 u'%.2f' % self.order.shipping))
 
+        if self.order.payment:
+            summary_table.append((
+                capfirst(_('payment')),
+                u'%.2f' % self.order.payment))
+
         self.pdf.table(
             summary_table, (12 * cm, 4.4 * cm), self.pdf.style.table)
 
