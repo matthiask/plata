@@ -302,15 +302,16 @@ class ViewTest(PlataTest):
         """Test Postfinance server-to-server request handling"""
 
         product = self.create_product()
+        client = self.login()
 
         Period.objects.create(name='Test period')
         product.stock_transactions.create(
             type=StockTransaction.PURCHASE, change=10)
-        self.client.post(product.get_absolute_url(), {
+        client.post(product.get_absolute_url(), {
             'quantity': 5,
         })
 
-        response = self.client.post('/confirmation/', {
+        response = client.post('/confirmation/', {
             'terms_and_conditions': True,
             'payment_method': 'postfinance',
         })
@@ -322,7 +323,7 @@ class ViewTest(PlataTest):
         self.assertEqual(Order.objects.get().status, Order.CONFIRMED)
         self.assertEqual(OrderPayment.objects.count(), 1)
 
-        self.client.get('/order/payment_failure/')
+        client.get('/order/payment_failure/')
         # payment process reservation should have been removed now,
         # this does not change anything else though
         self.assertEqual(StockTransaction.objects.count(), 1)
@@ -374,16 +375,16 @@ class ViewTest(PlataTest):
         order.paid -= 10
         order.save()
         self.assertRedirects(
-            self.client.get('/cart/'), '/confirmation/?confirmed=1')
+            client.get('/cart/'), '/confirmation/?confirmed=1')
 
         self.assertContains(
-            self.client.get('/order/success/'),
+            client.get('/order/success/'),
             '<h1>Order has been partially paid.</h1>')
 
         # Revert manipulation
         order.paid += 10
         order.save()
-        self.assertRedirects(self.client.get('/checkout/'), '/order/success/')
+        self.assertRedirects(client.get('/checkout/'), '/order/success/')
 
     def test_07_paypal_ipn(self):
         """Test PayPal Instant Payment Notification handler"""
