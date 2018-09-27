@@ -16,6 +16,7 @@ script: "cd tests && ./manage.py test testapp"
 jobs:
   include:
     - stage: style
+      python: "3.6"
       env: REQ=none
       install: skip
       script:
