@@ -3,7 +3,7 @@ from django.db import models
 from django.core.exceptions import ImproperlyConfigured
 
 import plata
-import models as stock_models
+from . import models as stock_models
 import plata.shop.models as shop_models
 
 if plata.settings.PLATA_STOCK_TRACKING:
