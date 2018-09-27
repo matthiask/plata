@@ -69,9 +69,7 @@ class DiscountBase(models.Model):
     config = JSONField(
         _("configuration"),
         blank=True,
-        help_text=_(
-            "If you edit this field directly, changes below will be ignored."
-        ),
+        help_text=_("If you edit this field directly, changes below will be ignored."),
     )
 
     class Meta:
