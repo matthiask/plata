@@ -138,7 +138,7 @@ class PaymentProcessor(ProcessorBase):
             payment.save()
             order.shipping_tax_rate = billogram.invoice_fee_vat
             order.recalculate_total(save=True)
-        except Exception, e:
+        except Exception as e:
             logger.error(str(e))
             # message error
             return redirect(reverse('plata_order_payment_failure'))
