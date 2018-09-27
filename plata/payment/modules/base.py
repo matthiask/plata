@@ -68,7 +68,7 @@ class ProcessorBase(object):
 
     def enabled_for_request(self, request):
         """
-        Decides whether this payment modules is available for a given request.
+        Decides whether this payment module is available for a given request.
 
         Defaults to ``True``. If you need to disable payment modules for
         certain visitors or group of visitors, that is the method you are
