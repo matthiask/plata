@@ -51,6 +51,7 @@ class Country(models.Model):
     country = CountryField()
     country_group = models.ForeignKey(
         CountryGroup,
+        on_delete=models.CASCADE,
         verbose_name=_("country group"),
         help_text=_(
             "The country belongs to this group of countries for which your"
@@ -114,9 +115,12 @@ class Postage(models.Model):
             'How your shipping provider calls this class of packet, e.g. "Parcel XL".'
         ),
     )
-    provider = models.ForeignKey(ShippingProvider, verbose_name=_("shipping provider"))
+    provider = models.ForeignKey(
+        ShippingProvider, on_delete=models.CASCADE, verbose_name=_("shipping provider")
+    )
     country_group = models.ForeignKey(
         CountryGroup,
+        on_delete=models.CASCADE,
         verbose_name=_("country group"),
         help_text=_("The tariff is valid for this group of countries."),
     )

@@ -232,6 +232,7 @@ class StockTransaction(models.Model):
 
     period = models.ForeignKey(
         Period,
+        on_delete=models.CASCADE,
         default=current_period,
         related_name="stock_transactions",
         verbose_name=_("period"),
@@ -251,6 +252,7 @@ class StockTransaction(models.Model):
     )
     order = models.ForeignKey(
         Order,
+        on_delete=models.CASCADE,
         blank=True,
         null=True,
         related_name="stock_transactions",
@@ -258,6 +260,7 @@ class StockTransaction(models.Model):
     )
     payment = models.ForeignKey(
         OrderPayment,
+        on_delete=models.CASCADE,
         blank=True,
         null=True,
         related_name="stock_transactions",

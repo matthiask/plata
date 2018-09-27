@@ -566,7 +566,7 @@ Order.register_validator(validate_order_currencies, Order.VALIDATE_BASE)
 class OrderItem(models.Model):
     """Single order line item"""
 
-    order = models.ForeignKey(Order, related_name="items")
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items")
     product = models.ForeignKey(
         plata.settings.PLATA_SHOP_PRODUCT,
         verbose_name=_("product"),
@@ -687,7 +687,7 @@ class OrderStatus(models.Model):
     visible for analysis after the fact.
     """
 
-    order = models.ForeignKey(Order, related_name="statuses")
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="statuses")
     created = models.DateTimeField(_("created"), default=timezone.now)
     status = models.PositiveIntegerField(_("status"), choices=Order.STATUS_CHOICES)
     notes = models.TextField(_("notes"), blank=True)
@@ -745,7 +745,12 @@ class OrderPayment(models.Model):
         (AUTHORIZED, _("authorized")),
     )
 
-    order = models.ForeignKey(Order, verbose_name=_("order"), related_name="payments")
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE,
+        verbose_name=_("order"),
+        related_name="payments",
+    )
     timestamp = models.DateTimeField(_("timestamp"), default=timezone.now)
     status = models.PositiveIntegerField(
         _("status"), choices=STATUS_CHOICES, default=PENDING
@@ -872,7 +877,10 @@ class PriceBase(models.Model):
         default=plata.settings.PLATA_PRICE_INCLUDES_TAX,
     )
     tax_class = models.ForeignKey(
-        TaxClass, verbose_name=_("tax class"), related_name="+"
+        TaxClass,
+        on_delete=models.CASCADE,
+        verbose_name=_("tax class"),
+        related_name="+",
     )
 
     def __str__(self):

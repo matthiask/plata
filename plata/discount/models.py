@@ -60,6 +60,7 @@ class DiscountBase(models.Model):
     )
     tax_class = models.ForeignKey(
         TaxClass,
+        on_delete=models.CASCADE,
         verbose_name=_("tax class"),
         blank=True,
         null=True,
@@ -367,7 +368,10 @@ class AppliedDiscount(DiscountBase):
     """
 
     order = models.ForeignKey(
-        Order, related_name="applied_discounts", verbose_name=_("order")
+        Order,
+        on_delete=models.CASCADE,
+        related_name="applied_discounts",
+        verbose_name=_("order"),
     )
     # We could make this a ForeignKey to Discount.code, but we do not
     # want deletions to cascade to this table and we still need the code

@@ -27,6 +27,7 @@ class Contact(BillingShippingAddress):
 
     user = models.OneToOneField(
         getattr(settings, "AUTH_USER_MODEL", "auth.User"),
+        on_delete=models.CASCADE,
         verbose_name=_("user"),
         related_name="contactuser",
     )

@@ -26,7 +26,9 @@ class Product(ProductBase):
 
 
 class Price(PriceBase):
-    product = models.ForeignKey(Product, related_name="prices")
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="prices"
+    )
 
     class Meta:
         ordering = ["-id"]

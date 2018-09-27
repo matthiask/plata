@@ -37,7 +37,10 @@ class Product(ProductBase):
 
 class ProductPrice(PriceBase):
     product = models.ForeignKey(
-        Product, verbose_name=_("product"), related_name="prices"
+        Product,
+        on_delete=models.CASCADE,
+        verbose_name=_("product"),
+        related_name="prices",
     )
 
     class Meta:
@@ -60,7 +63,10 @@ class Contact(models.Model):
     ]
 
     user = models.OneToOneField(
-        User, verbose_name=_("user"), related_name="contactuser"
+        User,
+        on_delete=models.CASCADE,
+        verbose_name=_("user"),
+        related_name="contactuser",
     )
     # currency = CurrencyField(help_text=_('Preferred currency.'))
 

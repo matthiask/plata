@@ -54,7 +54,10 @@ class Product(ProductBase):
 
 class ProductPrice(PriceBase):
     product = models.ForeignKey(
-        Product, verbose_name=_("product"), related_name="prices"
+        Product,
+        on_delete=models.CASCADE,
+        verbose_name=_("product"),
+        related_name="prices",
     )
     from_quantity = models.IntegerField(_("From quantity"), default=1)
 
