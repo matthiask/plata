@@ -4,14 +4,19 @@
 Database migrations
 ===================
 
-Plata does not include database migrations for South (anymore). The reason for
-that is that Django (and by extension, South) does not support the concept of
-lazy foreign keys. Because you're free to choose any model as product for Plata
-(configurable using ``PLATA_SHOP_PRODUCT``) we do not know beforehand, how the
-database constraints for the order item product foreign key should look
-beforehand. Because of that it's easier for everyone to just not include any
-migrations and instead provide instructions in the release notes when a database
-migration has to be performed.
+Plata does not include database migrations. The reason for that is that
+Django does not support the concept of lazy foreign keys. Because you're
+free to choose any model as product for Plata (configurable using
+``PLATA_SHOP_PRODUCT``) we do not know beforehand, how the database
+constraints for the order item product foreign key should look
+beforehand. Because of that it's easier for everyone to just not include
+any migrations and instead provide instructions in the release notes
+when a database migration has to be performed.
+
+.. note::
+   This isn't strictly true anymore now that Django supports swappable
+   models. This guide has been written in 2012 long before Django
+   officially supported a swappable user model.
 
 The following issues on Github will shed further light upon this issue:
 
@@ -22,64 +27,31 @@ The following issues on Github will shed further light upon this issue:
 
 .. note::
 
-   Despite not bundling database migrations, using South (or another database
-   migration solution) is very much recommended and officially supported. Any
-   pitfalls will be documented here and in the release notes.
-
+   Despite not bundling database migrations, using them is very much
+   recommended and officially supported. Any pitfalls will be documented
+   here and in the release notes.
 
 .. _migrations_configuration:
 
-Configuring South for Plata
-===========================
+Configuring migrations for Plata
+================================
 
 Since the migrations are project-specific, the migration files should be added
 to your apps, and not to Plata itself. This can be achieved using the following
-South setting::
+setting::
 
-    SOUTH_MIGRATION_MODULES = {
+    MIGRATION_MODULES = {
         'contact': 'yourapp.migrate.contact',
         'discount': 'yourapp.migrate.discount',
         'stock': 'yourapp.migrate.stock',  # If you're using stock tracking
         'shop': 'yourapp.migrate.shop',
-        }
+    }
 
 You'll have to add a folder ``migrate`` in your app containing only an
-empty ``__init__.py`` file for these instructions to work. After that you
-can use ``./manage.py convert_to_south`` on each Plata app and you're done.
+empty ``__init__.py`` file for these instructions to work. After that
+run ``makemigrations`` on each Plata app and you're hopefully done.
 
 .. note::
 
    You can use any other name for the ``migrate`` folder **except for**
-   ``migrations``. By using ``migrations`` you're telling South that this
-   folder contains migrations for the ``yourapp`` app, and this **will**
-   confuse South.
-
-
-.. _migrations_upgrading:
-
-Upgrading instructions
-======================
-
-From v1.1 to v1.2
------------------
-
-Run the following commands in the SQL shell before updating to v1.2::
-
-    ./manage.py dbshell
-    DELETE FROM south_migrationhistory WHERE app_name='contact';
-    DELETE FROM south_migrationhistory WHERE app_name='discount';
-    DELETE FROM south_migrationhistory WHERE app_name='stock';
-    DELETE FROM south_migrationhistory WHERE app_name='shop';
-
-Add the SOUTH_MIGRATION_MODULES`` setting above, and run the following
-commands::
-
-    ./manage.py convert_to_south contact
-    ./manage.py convert_to_south discount
-    ./manage.py convert_to_south stock
-    ./manage.py convert_to_south shop
-
-Plata v1.2 ``Order`` model contains a new field, ``price_includes_tax``.
-After updating your installation of Plata, create a schema migration for the
-shop app. The default value will automatically be filled in using the
-``PLATA_PRICE_INCLUDES_TAX`` setting.
+   ``migrations``.
