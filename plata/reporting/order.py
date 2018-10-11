@@ -127,6 +127,7 @@ class OrderReport(object):
                             "",
                         )
                         for rate, row in self.order.data["tax_details"]
+                        if row["tax_amount"]
                     ],
                     (2 * cm, 4 * cm, 3 * cm, 3 * cm, 4.4 * cm),
                     self.pdf.style.table,
