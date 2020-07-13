@@ -9,7 +9,7 @@ from plata.shop.models import Order
 
 class CheckoutForm(shop_forms.BaseCheckoutForm):
     class Meta:
-        fields = ["notes", "email", "shipping_same_as_billing"]
+        fields = ["notes", "email", "phone", "shipping_same_as_billing"]
         fields.extend("billing_%s" % f for f in Order.ADDRESS_FIELDS)
         fields.extend("shipping_%s" % f for f in Order.ADDRESS_FIELDS)
         model = Order
@@ -28,6 +28,7 @@ class CheckoutForm(shop_forms.BaseCheckoutForm):
         if contact:
             initial = {
                 "email": contact.user.email,
+                "phone": contact.phone,
                 "shipping_same_as_billing": contact.shipping_same_as_billing,
             }
 

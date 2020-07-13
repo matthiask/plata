@@ -777,7 +777,7 @@ class SinglePageCheckoutShop(Shop):
         class CheckoutForm(shop_forms.SinglePageCheckoutForm):
             class Meta(shop_forms.SinglePageCheckoutForm.Meta):
                 model = self.order_model
-                fields = ["notes", "email", "shipping_same_as_billing"]
+                fields = ["notes", "email", "phone", "shipping_same_as_billing"]
                 fields.extend("billing_%s" % f for f in self.order_model.ADDRESS_FIELDS)
                 fields.extend(
                     "shipping_%s" % f for f in self.order_model.ADDRESS_FIELDS

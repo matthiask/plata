@@ -1513,3 +1513,6 @@ msgstr ""
 
 #~ msgid "Your %(name)s team."
 #~ msgstr "Ihr %(name)s Team."
+
+msgid "phone"
+msgstr "Telefon"

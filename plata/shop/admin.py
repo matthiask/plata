@@ -41,6 +41,7 @@ class OrderAdmin(admin.ModelAdmin):
                     "confirmed",
                     "user",
                     "email",
+                    "phone",
                     "language_code",
                     "status",
                 )

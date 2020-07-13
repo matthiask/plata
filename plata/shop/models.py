@@ -165,6 +165,7 @@ class Order(BillingShippingAddress):
 
     _order_id = models.CharField(_("order ID"), max_length=20, blank=True)
     email = models.EmailField(_("e-mail address"))
+    phone = models.CharField(_("phone"), max_length=100, blank=True)
 
     currency = CurrencyField()
     price_includes_tax = models.BooleanField(
