@@ -8,10 +8,6 @@ env:
 - REQ="Django>=2.1,<2.2"
 - REQ="Django>=1.11,<2.0"
 - REQ="Django>=1.8,<1.9"
-matrix:
-  exclude:
-    - python: "2.7"
-      env: REQ="Django>=2.1,<2.2"
 install:
 - pip install -U pip wheel
 - pip install $REQ -r requirements.txt
@@ -20,6 +16,10 @@ install:
 script: "cd tests && ./manage.py test testapp"
 
 jobs:
+  exclude:
+    - python: "2.7"
+      env: REQ="Django>=2.1,<2.2"
+
   include:
     - stage: style
       python: "3.6"
