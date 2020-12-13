@@ -2,6 +2,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django import forms
 from django.contrib import admin
+from django.contrib.admin.utils import flatten_fieldsets
 from django.utils.translation import ugettext_lazy as _
 
 from plata.discount import models
@@ -31,16 +32,15 @@ class DiscountAdminForm(forms.ModelForm):
         # 1. POST data
         # 2. get data from the instance we are editing
         # 3. fall back to allowing all products in the discount
-
-        try:
+        if "config_options" in self.data:
             selected = self.data.getlist("config_options")
-        except AttributeError:
+        else:
             if self.instance.pk:
                 selected = self.instance.config.keys()
             else:
                 selected = None
 
-        selected = selected or ("all",)
+        selected = tuple(selected) if selected else ("all",)
         self.fields["config_options"].initial = selected
 
         for s in selected:
@@ -107,6 +107,9 @@ class DiscountAdmin(admin.ModelAdmin):
     search_fields = ("name", "code", "config")
 
     def get_form(self, request, obj=None, **kwargs):
+        fields = kwargs.get("fields", []) or []
+        if "config_options" in fields:
+            fields.remove("config_options")
         form_class = super(DiscountAdmin, self).get_form(request, obj=obj, **kwargs)
         # Generate a new type to be sure that the request stays inside this
         # request/response cycle.
@@ -127,6 +130,16 @@ class DiscountAdmin(admin.ModelAdmin):
         fieldsets.extend(request._plata_discount_config_fieldsets)
 
         return fieldsets
+
+    def changeform_view(self, request, object_id=None, form_url="", extra_context=None):
+        obj = self.model.objects.filter(pk=object_id).first() if object_id else None
+        fieldsets = self.get_fieldsets(request, obj)
+        ModelForm = self.get_form(
+            request, obj, change=bool(obj), fields=flatten_fieldsets(fieldsets)
+        )
+        form_kwargs = {"instance": obj} if obj else {}
+        ModelForm(**form_kwargs)  # hack to set the plata extra fieldsets on the request
+        return super().changeform_view(request, object_id, form_url, extra_context)
 
 
 admin.site.register(models.Discount, DiscountAdmin)

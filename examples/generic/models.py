@@ -9,7 +9,6 @@ from django.contrib.contenttypes.models import ContentType
 
 # from django.core.files.storage import FileSystemStorage
 # from django.core.validators import validate_comma_separated_integer_list
-from django.utils.encoding import python_2_unicode_compatible
 from django.urls import reverse
 from django.template.loader import render_to_string
 from plata.product.models import ProductBase
@@ -22,7 +21,6 @@ CONTENT_MODELS = models.Q(app_label="generic", model="thing") | models.Q(
 )
 
 
-@python_2_unicode_compatible
 class Product(ProductBase):
     """flexible product that can address different content models"""
 
@@ -86,7 +84,6 @@ class ProductPrice(PriceBase):
         verbose_name_plural = _("prices")
 
 
-@python_2_unicode_compatible
 class Thing(models.Model):
     """
     Physical Product
@@ -115,7 +112,6 @@ class Thing(models.Model):
     __str__.short_description = _("name")
 
 
-@python_2_unicode_compatible
 class Download(models.Model):
     """
     Virtual Product

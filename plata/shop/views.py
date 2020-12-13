@@ -11,12 +11,8 @@ from django.core.exceptions import ValidationError
 from django.forms.models import ModelForm, inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.urls import reverse, get_callable
 from django.utils.translation import get_language, ugettext as _
-
-try:
-    from django.urls import reverse, get_callable
-except ImportError:
-    from django.core.urlresolvers import reverse, get_callable
 
 import plata
 from plata.shop import forms as shop_forms

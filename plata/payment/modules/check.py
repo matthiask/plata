@@ -16,9 +16,9 @@ from django.utils.translation import ugettext_lazy as _
 from django.http import Http404, HttpResponse
 from django.utils import timezone
 from django.conf import settings
-from django.core.mail import send_mail
-from django.core.urlresolvers import reverse
 from django.contrib.sites.models import Site
+from django.core.mail import send_mail
+from django.urls import reverse
 
 import plata
 from plata.payment.modules.base import ProcessorBase

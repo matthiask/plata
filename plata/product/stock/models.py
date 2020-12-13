@@ -24,7 +24,6 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q, Sum
 from django.utils import timezone
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext, ugettext_lazy as _
 
 import plata
@@ -46,7 +45,6 @@ class PeriodManager(models.Manager):
             )
 
 
-@python_2_unicode_compatible
 class Period(models.Model):
     """
     A period in which stock changes are tracked
@@ -169,7 +167,6 @@ def current_period():
     return Period.objects.current()
 
 
-@python_2_unicode_compatible
 class StockTransaction(models.Model):
     """
     Stores stock transactions transactionally :-)

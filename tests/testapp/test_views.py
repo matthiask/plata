@@ -3,11 +3,12 @@ from __future__ import absolute_import, unicode_literals
 import warnings
 from datetime import timedelta
 from io import BytesIO
+from urllib.parse import parse_qs
 
 import django
 from django.core import mail
 from django.core.exceptions import ValidationError
-from django.utils import six, timezone
+from django.utils import timezone
 
 import plata
 from plata.contact.models import Contact
@@ -421,15 +422,7 @@ class ViewTest(PlataTest):
         from plata.payment.modules import paypal
 
         def mock_urlopen(*args, **kwargs):
-            qs = six.moves.urllib.parse.parse_qs(args[1])
-            if not six.PY3:
-                # Fix doubly encoded UTF-8
-                # Thanks, http://stackoverflow.com/a/1177542
-                qs = {
-                    k: [val.encode("raw_unicode_escape").decode("utf8") for val in v]
-                    for k, v in qs.items()
-                }
-
+            qs = parse_qs(args[1])
             self.assertEqual(qs["cmd"][0], "_notify-validate")
             for k, v in paypal_ipn_data.items():
                 self.assertEqual("%s" % qs[k][0], v)

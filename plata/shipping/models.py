@@ -3,7 +3,6 @@ from __future__ import absolute_import, unicode_literals
 
 from django.utils.translation import ugettext as _
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 
 from django_countries.fields import CountryField
 
@@ -14,7 +13,6 @@ WEIGHT_UNIT = plata.settings.PLATA_SHIPPING_WEIGHT_UNIT
 LENGTH_UNIT = plata.settings.PLATA_SHIPPING_LENGTH_UNIT
 
 
-@python_2_unicode_compatible
 class CountryGroup(models.Model):
     """
     A group of countries that are equally expensive with your shopping provider.
@@ -42,7 +40,6 @@ class CountryGroup(models.Model):
     __str__.short_description = _("name")
 
 
-@python_2_unicode_compatible
 class Country(models.Model):
     """
     One country where your shipping provider would ship to.
@@ -72,7 +69,6 @@ class Country(models.Model):
         return self.country.name
 
 
-@python_2_unicode_compatible
 class ShippingProvider(models.Model):
     """
     Postal service
@@ -102,7 +98,6 @@ class ShippingProvider(models.Model):
     __str__.short_description = _("name")
 
 
-@python_2_unicode_compatible
 class Postage(models.Model):
     """
     One class of shipping postage, e.g. letter or parcel.

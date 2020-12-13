@@ -24,3 +24,4 @@ examples/downloads
 .tox
 .coverage
 htmlcov
+.idea/

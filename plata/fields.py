@@ -3,13 +3,12 @@ from __future__ import absolute_import, unicode_literals
 import datetime
 import logging
 import re
+from functools import partial
 
 from django import forms
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils import six
 from django.utils.dateparse import parse_date, parse_datetime, parse_time
-from django.utils.functional import curry
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -24,7 +23,7 @@ except TypeError:  # pragma: no cover
 
 
 #: Field offering all defined currencies
-CurrencyField = curry(
+CurrencyField = partial(
     models.CharField,
     _("currency"),
     max_length=3,
@@ -59,7 +58,7 @@ _PATTERNS = [
 
 def json_decode_hook(data):
     for key, value in list(data.items()):
-        if not isinstance(value, six.string_types):
+        if not isinstance(value, str):
             continue
 
         for regex, fns in _PATTERNS:
@@ -108,7 +107,7 @@ class JSONField(models.TextField):
 
         if isinstance(value, dict):
             return value
-        elif isinstance(value, six.string_types):
+        elif isinstance(value, str):
             # Avoid asking the JSON decoder to handle empty values:
             if not value:
                 return {}
@@ -149,7 +148,7 @@ class JSONField(models.TextField):
         if isinstance(value, dict):
             value = json.dumps(value, use_decimal=True, default=json_encode_default)
 
-        assert isinstance(value, six.string_types)
+        assert isinstance(value, str)
 
         return value
 
@@ -160,17 +159,17 @@ class JSONField(models.TextField):
             use_decimal=True,
         )
 
-    def from_db_value(self, value, expression, connection, context):
+    def from_db_value(self, value, expression, connection):
         """
-         Convert the input JSON value into python structures, raises
-         django.core.exceptions.ValidationError if the data can't be converted.
-         """
+        Convert the input JSON value into python structures, raises
+        django.core.exceptions.ValidationError if the data can't be converted.
+        """
         if self.blank and not value:
             return {}
         value = value or "{}"
-        if isinstance(value, six.binary_type):
-            value = six.text_type(value, "utf-8")
-        if isinstance(value, six.string_types):
+        if isinstance(value, bytes):
+            value = str(value, "utf-8")
+        if isinstance(value, str):
             try:
                 # with django 1.6 i have '"{}"' as default value here
                 if value[0] == value[-1] == '"':

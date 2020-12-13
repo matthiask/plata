@@ -7,7 +7,6 @@ from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import ObjectDoesNotExist, Q
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
 
 import plata
@@ -15,7 +14,6 @@ from plata.fields import CurrencyField, JSONField
 from plata.shop.models import Order, TaxClass
 
 
-@python_2_unicode_compatible
 class DiscountBase(models.Model):
     """Base class for discounts and applied discounts"""
 
