@@ -19,8 +19,8 @@ from decimal import Decimal
 from hashlib import sha1
 
 from django.conf import settings
-from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseForbidden
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.translation import get_language, to_locale, ugettext_lazy as _

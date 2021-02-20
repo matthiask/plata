@@ -1,16 +1,10 @@
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
-
-try:
-    from django.urls import reverse
-except ImportError:
-    from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from plata.product.models import ProductBase
 from plata.shop.models import PriceBase
 
 
-@python_2_unicode_compatible
 class Product(ProductBase):
     name = models.CharField(max_length=100)
     items_in_stock = models.IntegerField(default=0)

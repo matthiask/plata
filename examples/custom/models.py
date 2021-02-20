@@ -5,13 +5,11 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
-from django.utils.encoding import python_2_unicode_compatible
 
 from plata.product.models import ProductBase
 from plata.shop.models import PriceBase
 
 
-@python_2_unicode_compatible
 class Product(ProductBase):
     """(Nearly) the simplest product model ever"""
 
@@ -50,7 +48,6 @@ class ProductPrice(PriceBase):
         verbose_name_plural = _("prices")
 
 
-@python_2_unicode_compatible
 class Contact(models.Model):
     ADDRESS_FIELDS = [
         "company",

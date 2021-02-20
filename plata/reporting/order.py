@@ -2,13 +2,9 @@ from __future__ import absolute_import, unicode_literals
 
 from decimal import Decimal
 
+from django.urls import get_callable
 from django.utils.text import capfirst
 from django.utils.translation import activate, ugettext as _
-
-try:
-    from django.urls import get_callable
-except ImportError:
-    from django.core.urlresolvers import get_callable
 
 import plata
 from pdfdocument.document import cm, mm
@@ -240,8 +236,8 @@ class OrderReport(object):
 
         if data.get("full_override"):
             address = [
-                l.strip()
-                for l in data.get("full_override").replace("\r", "").splitlines()
+                line.strip()
+                for line in data.get("full_override").replace("\r", "").splitlines()
             ]
 
         return "\n".join(address)

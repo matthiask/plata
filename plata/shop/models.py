@@ -8,8 +8,8 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import F, ObjectDoesNotExist, Sum
+from django.urls.utils import get_callable
 from django.utils import timezone
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _, ugettext
 
 import plata
@@ -17,16 +17,9 @@ from django_countries.fields import CountryField
 from plata.fields import CurrencyField, JSONField
 
 
-try:
-    from django.urls.utils import get_callable
-except ImportError:
-    from django.core.urlresolvers import get_callable
-
-
 logger = logging.getLogger("plata.shop.order")
 
 
-@python_2_unicode_compatible
 class TaxClass(models.Model):
     """
     Tax class, storing a tax rate
@@ -119,7 +112,6 @@ class BillingShippingAddress(models.Model):
         return ["%s%s" % (prefix, f) for f in cls.ADDRESS_FIELDS]
 
 
-@python_2_unicode_compatible
 class Order(BillingShippingAddress):
     """The main order model. Used for carts and orders alike."""
 
@@ -564,7 +556,6 @@ def validate_order_currencies(order):
 Order.register_validator(validate_order_currencies, Order.VALIDATE_BASE)
 
 
-@python_2_unicode_compatible
 class OrderItem(models.Model):
     """Single order line item"""
 
@@ -681,7 +672,6 @@ class OrderItem(models.Model):
             return self.discounted_subtotal_excl_tax
 
 
-@python_2_unicode_compatible
 class OrderStatus(models.Model):
     """
     Order status
@@ -729,7 +719,6 @@ class OrderPaymentManager(models.Manager):
         return self.filter(authorized__isnull=False)
 
 
-@python_2_unicode_compatible
 class OrderPayment(models.Model):
     """
     Order payment
@@ -854,7 +843,6 @@ class OrderPayment(models.Model):
     delete.alters_data = True
 
 
-@python_2_unicode_compatible
 class PriceBase(models.Model):
     """
     Price for a given product, currency, tax class and time period

@@ -1,6 +1,6 @@
 from django import apps
-from django.core.exceptions import ImproperlyConfigured
-from django.db.models import FieldDoesNotExist, signals
+from django.core.exceptions import FieldDoesNotExist, ImproperlyConfigured
+from django.db.models import signals
 
 import plata
 

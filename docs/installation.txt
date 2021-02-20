@@ -205,7 +205,7 @@ Generic views using ``plata.shop_instance()`` could look like this::
                 try:
                     order.modify_item(product, relative=form.cleaned_data.get('quantity'))
                     messages.success(request, _('The cart has been updated.'))
-                except forms.ValidationError, e:
+                except forms.ValidationError as e:
                     if e.code == 'order_sealed':
                         [messages.error(request, msg) for msg in e.messages]
                     else:

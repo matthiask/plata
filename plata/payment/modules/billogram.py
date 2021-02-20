@@ -5,8 +5,8 @@ import logging
 import decimal
 from django import http
 
-from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings

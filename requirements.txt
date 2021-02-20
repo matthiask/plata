@@ -1,9 +1,4 @@
-# this list is taken from .travis.yml and not complete
-setuptools  # current is 34.3.1
-wheel
-pip
-simplejson  # ==3.8.2 current is 3.10.0
-openpyxl  # ==2.2.6 unreleased! current is 2.4.5
-reportlab  #==3.2.0 current is 3.4.0, but no release notes
-pdfdocument  # ==3.1
-django-countries<6  # ==3.4.1 current is 4.1
+openpyxl
+reportlab
+pdfdocument
+django-countries

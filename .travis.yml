@@ -2,27 +2,21 @@ language: python
 sudo: false
 cache: pip
 python:
-- "3.5"  # Django 1.8 does not officially support 3.6
-- "2.7"
+- "3.7"
 env:
+- REQ="Django>=3.1,<4.0"
 - REQ="Django>=2.1,<2.2"
-- REQ="Django>=1.11,<2.0"
-- REQ="Django>=1.8,<1.9"
 install:
 - pip install -U pip wheel
 - pip install $REQ -r requirements.txt
 - python setup.py install
 # command to run tests, e.g. python setup.py test
-script: "cd tests && ./manage.py test testapp"
+script: "cd tests && ./manage.py makemigrations && ./manage.py test testapp"
 
 jobs:
-  exclude:
-    - python: "2.7"
-      env: REQ="Django>=2.1,<2.2"
-
   include:
     - stage: style
-      python: "3.6"
+      python: "3.7"
       env: REQ=none
       install: skip
       script:

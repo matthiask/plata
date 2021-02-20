@@ -1,12 +1,8 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.contrib import admin
+from django.urls import NoReverseMatch, reverse
 from django.utils.translation import ugettext_lazy as _
-
-try:
-    from django.urls import NoReverseMatch, reverse
-except ImportError:
-    from django.core.urlresolvers import NoReverseMatch, reverse
 
 from plata.discount.models import AppliedDiscount
 from plata.shop import models
