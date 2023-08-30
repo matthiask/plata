@@ -29,7 +29,7 @@ dynamic = [
   "version",
 ]
 dependencies = [
-  "Django>3.2",
+  "Django>=4",
   "django-countries>=3.3",
   "openpyxl>=2.2",
   "pdfdocument>=3.1",
