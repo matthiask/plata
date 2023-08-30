@@ -2,9 +2,6 @@
 Plata - the lean and mean Django-based Shop
 ===========================================
 
-.. image:: https://travis-ci.org/matthiask/plata.png?branch=master
-   :target: https://travis-ci.org/matthiask/plata
-
 Instead of fighting against a big and all-knowing shop system, which
 never does the right thing although it "only requires pushing a few
 configuration buttons here and there", Plata only provides order,
