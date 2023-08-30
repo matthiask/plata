@@ -1,5 +1,3 @@
-from __future__ import absolute_import, unicode_literals
-
 import warnings
 from datetime import date, datetime
 from decimal import Decimal
@@ -17,8 +15,7 @@ from plata.discount.models import Discount, DiscountBase
 from plata.product.stock.models import Period, StockTransaction
 from plata.reporting.pdfdocument import PlataPDFDocument
 from plata.shop.models import Order, OrderPayment, OrderStatus
-
-from .base import PlataTest
+from testapp.base import PlataTest
 
 
 Product = plata.product_model()

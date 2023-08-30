@@ -6,7 +6,7 @@
         <li><a href="?{{ querystring }}&page={{ page_obj.previous_page_number }}">&laquo;</a></li>
     {% endif %}
     {% for p in page_range %}
-        <li {% ifequal p page %}class="mark"{% endifequal %}><a href="?{{ querystring }}&page={{ p }}">{{ p }}</a></li>
+        <li {% if p == page %}class="mark"{% endif %}><a href="?{{ querystring }}&page={{ p }}">{{ p }}</a></li>
     {% endfor %}
     {% if page_obj.has_next %}
         <li><a href="?{{ querystring }}&page={{ page_obj.next_page_number }}">&raquo;</a></li>

@@ -22,7 +22,7 @@ if [ ! -d "../plata/shop/migrations" ]; then
     echo Plata migrations not found.
 else
     read -e -p "Do you want to delete the migrations from plata? [y/any] " CHOICE
-    
+
     if [ "$CHOICE" == "y" ]; then
         for PACK in $PLATAMODULES; do
             echo Deleting migrations from plata/$PACK

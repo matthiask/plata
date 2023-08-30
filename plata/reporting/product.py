@@ -1,13 +1,11 @@
-from __future__ import absolute_import, unicode_literals
-
 from collections import defaultdict
 
 from django.db.models import Sum
 from django.utils.text import capfirst
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
+from xlsxdocument import XLSXDocument
 
 import plata
-from xlsxdocument import XLSXDocument
 
 
 def product_xls():

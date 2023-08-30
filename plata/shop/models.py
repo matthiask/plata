@@ -1,5 +1,3 @@
-from __future__ import absolute_import, unicode_literals
-
 import logging
 import re
 from decimal import Decimal
@@ -10,10 +8,10 @@ from django.db import models
 from django.db.models import F, ObjectDoesNotExist, Sum
 from django.urls.utils import get_callable
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext, gettext_lazy as _
+from django_countries.fields import CountryField
 
 import plata
-from django_countries.fields import CountryField
 from plata.fields import CurrencyField, JSONField
 
 
@@ -94,22 +92,20 @@ class BillingShippingAddress(models.Model):
         Return a ``dict`` containing a billing and a shipping address, taking
         into account the value of the ``shipping_same_as_billing`` flag
         """
-        billing = dict(
-            (f, getattr(self, "billing_%s" % f)) for f in self.ADDRESS_FIELDS
-        )
+        billing = {f: getattr(self, "billing_%s" % f) for f in self.ADDRESS_FIELDS}
 
         if self.shipping_same_as_billing:
             shipping = billing
         else:
-            shipping = dict(
-                (f, getattr(self, "shipping_%s" % f)) for f in self.ADDRESS_FIELDS
-            )
+            shipping = {
+                f: getattr(self, "shipping_%s" % f) for f in self.ADDRESS_FIELDS
+            }
 
         return {"billing": billing, "shipping": shipping}
 
     @classmethod
     def address_fields(cls, prefix=""):
-        return ["%s%s" % (prefix, f) for f in cls.ADDRESS_FIELDS]
+        return [f"{prefix}{f}" for f in cls.ADDRESS_FIELDS]
 
 
 class Order(BillingShippingAddress):
@@ -224,7 +220,7 @@ class Order(BillingShippingAddress):
                 latest = 0
 
             self._order_id = "O-%09d" % (latest + 1)
-        super(Order, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     save.alters_data = True
 
@@ -236,7 +232,7 @@ class Order(BillingShippingAddress):
         """
         if self._order_id:
             return self._order_id
-        return ugettext("No. %d") % self.id
+        return gettext("No. %d") % self.id
 
     def recalculate_total(self, save=True):
         """
@@ -371,7 +367,7 @@ class Order(BillingShippingAddress):
         - ``Order.VALIDATE_ALL``
         """
 
-        for g in sorted(g for g in self.VALIDATORS.keys() if g <= group):
+        for g in sorted(g for g in self.VALIDATORS if g <= group):
             for validator in self.VALIDATORS[g]:
                 validator(self)
 
@@ -457,7 +453,6 @@ class Order(BillingShippingAddress):
             item.quantity = absolute
 
         if item.quantity > 0:
-
             if data is not None:
                 item.data = data
 
@@ -465,8 +460,9 @@ class Order(BillingShippingAddress):
                 price = product.get_price(currency=self.currency, orderitem=item)
             except ObjectDoesNotExist:
                 logger.warning(
-                    "No price could be found for %s with currency %s"
-                    % (product, self.currency)
+                    "No price could be found for {} with currency {}".format(
+                        product, self.currency
+                    )
                 )
 
                 raise ValidationError(
@@ -512,14 +508,13 @@ class Order(BillingShippingAddress):
         Update the order status
         """
 
-        if status >= Order.CHECKOUT:
-            if not self.items.count():
-                raise ValidationError(
-                    _("Cannot proceed to checkout without order items."),
-                    code="order_empty",
-                )
+        if status >= Order.CHECKOUT and not self.items.count():
+            raise ValidationError(
+                _("Cannot proceed to checkout without order items."),
+                code="order_empty",
+            )
 
-        logger.info("Promoting %s to status %s" % (self, status))
+        logger.info(f"Promoting {self} to status {status}")
 
         instance = OrderStatus(order=self, status=status, notes=notes)
         instance.save()
@@ -697,7 +692,7 @@ class OrderStatus(models.Model):
         }
 
     def save(self, *args, **kwargs):
-        super(OrderStatus, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         self.order.status = self.status
         if self.status == Order.CONFIRMED:
             self.order.confirmed = timezone.now()
@@ -825,7 +820,7 @@ class OrderPayment(models.Model):
         Order.objects.filter(id=self.order_id).update(paid=paid)
 
     def save(self, *args, **kwargs):
-        super(OrderPayment, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         self._recalculate_paid()
 
         if self.currency != self.order.currency:
@@ -837,7 +832,7 @@ class OrderPayment(models.Model):
     save.alters_data = True
 
     def delete(self, *args, **kwargs):
-        super(OrderPayment, self).delete(*args, **kwargs)
+        super().delete(*args, **kwargs)
         self._recalculate_paid()
 
     delete.alters_data = True

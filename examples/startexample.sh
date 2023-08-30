@@ -45,7 +45,7 @@ if [ ! -d "$EXAMPLE/migrations" ]; then
                         for PACK in $PLATAMODULES; do
                 echo Deleting migrations from plata/$PACK
                 rm -rf ../plata/$PACK/migrations
-            done            
+            done
         else
             echo "No harm done, but expect troubles."
         fi
@@ -54,7 +54,7 @@ if [ ! -d "$EXAMPLE/migrations" ]; then
     python manage.py migrate
     python manage.py makemigrations $PLATAMODULES $EXAMPLE
     python manage.py migrate
-    
+
     echo Last step: Create a new superuser. You can cancel this.
     python manage.py createsuperuser
 else
@@ -65,4 +65,3 @@ echo Starting website – please open localhost:9876 in your browser.
 echo Please login at /admin and create some products first.
 
 python manage.py runserver 9876
-

@@ -1,15 +1,12 @@
-from __future__ import absolute_import, unicode_literals
-
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import get_object_or_404
-
 from pdfdocument.utils import pdf_response
 
-# import plata
-import plata.reporting.product
 import plata.reporting.order
+
+# import plata
 import plata.reporting.product
 from plata.reporting.pdfdocument import PlataPDFDocument
 

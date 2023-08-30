@@ -1,17 +1,15 @@
-from __future__ import absolute_import, unicode_literals
-
 from decimal import Decimal
 
 from django.urls import get_callable
 from django.utils.text import capfirst
-from django.utils.translation import activate, ugettext as _
-
-import plata
+from django.utils.translation import activate, gettext as _
 from pdfdocument.document import cm, mm
 from pdfdocument.elements import create_stationery_fn
 
+import plata
 
-class OrderReport(object):
+
+class OrderReport:
     def __init__(self, pdf, order):
         self.pdf = pdf
         self.order = order
@@ -39,8 +37,7 @@ class OrderReport(object):
 
     def title(self, title=None):
         self.pdf.p(
-            "%s: %s"
-            % (
+            "{}: {}".format(
                 capfirst(_("order date")),
                 self.order.confirmed.strftime("%d.%m.%Y")
                 if self.order.confirmed
@@ -51,7 +48,7 @@ class OrderReport(object):
 
         if not title:
             title = _("Order")
-        self.pdf.h1("%s %s" % (title, self.order.order_id))
+        self.pdf.h1(f"{title} {self.order.order_id}")
         self.pdf.hr()
 
     def items_without_prices(self):
@@ -107,27 +104,26 @@ class OrderReport(object):
 
         self.pdf.spacer(1 * mm)
 
-        total_title = "%s %s" % (capfirst(_("total")), self.order.currency)
+        total_title = "{} {}".format(capfirst(_("total")), self.order.currency)
 
-        if self.order.tax:
-            if "tax_details" in self.order.data:
-                zero = Decimal("0.00")
+        if self.order.tax and "tax_details" in self.order.data:
+            zero = Decimal("0.00")
 
-                self.pdf.table(
-                    [
-                        (
-                            "",
-                            "%s %s" % (_("Incl. tax"), "%.1f%%" % row["tax_rate"]),
-                            row["total"].quantize(zero),
-                            row["tax_amount"].quantize(zero),
-                            "",
-                        )
-                        for rate, row in self.order.data["tax_details"]
-                        if row["tax_amount"]
-                    ],
-                    (2 * cm, 4 * cm, 3 * cm, 3 * cm, 4.4 * cm),
-                    self.pdf.style.table,
-                )
+            self.pdf.table(
+                [
+                    (
+                        "",
+                        "{} {}".format(_("Incl. tax"), "%.1f%%" % row["tax_rate"]),
+                        row["total"].quantize(zero),
+                        row["tax_amount"].quantize(zero),
+                        "",
+                    )
+                    for rate, row in self.order.data["tax_details"]
+                    if row["tax_amount"]
+                ],
+                (2 * cm, 4 * cm, 3 * cm, 3 * cm, 4.4 * cm),
+                self.pdf.style.table,
+            )
 
         self.pdf.table(
             [(total_title, "%.2f" % self.order.total)],
@@ -150,10 +146,7 @@ class OrderReport(object):
                     % {
                         "payment_method": payment.payment_method
                         + (
-                            (
-                                " (Transaction %(transaction)s)"
-                                % {"transaction": payment.transaction_id}
-                            )
+                            (f" (Transaction {payment.transaction_id})")
                             if payment.transaction_id
                             else ""
                         )
@@ -212,7 +205,7 @@ class OrderReport(object):
                 "city",
                 "full_override",
             ):
-                attribute = "%s%s" % (prefix, field)
+                attribute = f"{prefix}{field}"
                 data[field] = getattr(obj, attribute, "").strip()
 
         address = []
@@ -225,14 +218,15 @@ class OrderReport(object):
 
         if data.get("first_name", False):
             address.append(
-                "%s%s %s"
-                % (title, data.get("first_name", ""), data.get("last_name", ""))
+                "{}{} {}".format(
+                    title, data.get("first_name", ""), data.get("last_name", "")
+                )
             )
         else:
-            address.append("%s%s" % (title, data.get("last_name", "")))
+            address.append("{}{}".format(title, data.get("last_name", "")))
 
         address.append(data.get("address"))
-        address.append("%s %s" % (data.get("zip_code", ""), data.get("city", "")))
+        address.append("{} {}".format(data.get("zip_code", ""), data.get("city", "")))
 
         if data.get("full_override"):
             address = [

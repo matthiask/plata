@@ -4,12 +4,11 @@ Payment module for cash on delivery handling
 Automatically completes every order passed.
 """
 
-from __future__ import absolute_import, unicode_literals
 
 import logging
 
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 import plata
 from plata.payment.modules.base import ProcessorBase

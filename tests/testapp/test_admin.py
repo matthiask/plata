@@ -1,8 +1,5 @@
-from __future__ import absolute_import, unicode_literals
-
 from decimal import Decimal
 
-import django
 from django.contrib.auth.models import User
 from django.forms.models import model_to_dict
 from django.urls import reverse
@@ -10,8 +7,7 @@ from django.urls import reverse
 import plata
 from plata.discount.models import Discount
 from plata.shop.models import TaxClass
-
-from .base import PlataTest
+from testapp.base import PlataTest
 
 
 Product = plata.product_model()
@@ -25,7 +21,7 @@ class AdminTest(PlataTest):
         u.save()
 
         product_model = Product
-        self.product_admin_url = "/admin/%s/%s/" % (
+        self.product_admin_url = "/admin/{}/{}/".format(
             product_model._meta.app_label,
             product_model._meta.model_name,
         )
@@ -139,6 +135,6 @@ class AdminTest(PlataTest):
         orders = self.client.get("/admin/shop/order/")
 
         # Order item and list filter, title attribute too in newer Django versions
-        self.assertContains(orders, "Is a cart", 2 if django.VERSION < (1, 11) else 3)
+        self.assertContains(orders, "Is a cart", 2)
         self.assertContains(orders, "/invoice_pdf/%d/" % order.id, 1)
         self.assertContains(orders, "/packing_slip_pdf/%d/" % order.id, 1)

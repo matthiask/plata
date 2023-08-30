@@ -1,12 +1,9 @@
-from __future__ import absolute_import, unicode_literals
-
 from django import forms
 from django.contrib import admin
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 import plata
-
-from . import models
+from plata.product.stock import models
 
 
 if plata.settings.PLATA_STOCK_TRACKING:

@@ -1,15 +1,15 @@
-from __future__ import absolute_import, unicode_literals
 import logging
 
-VERSION = (1, 2, 1, "pre")
-__version__ = ".".join(map(str, VERSION))
+
+__version__ = "1.2.1.pre"
 logger = logging.getLogger("plata")
 
 
-class LazySettings(object):
+class LazySettings:
     def _load_settings(self):
-        from plata import default_settings
         from django.conf import settings as django_settings
+
+        from plata import default_settings
 
         for key in dir(default_settings):
             if not key.startswith(("PLATA", "CURRENCIES")):

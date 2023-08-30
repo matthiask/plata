@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from __future__ import unicode_literals
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericTabularInline
-from generic.models import Product, ProductPrice, Thing, Download
+
+from generic.models import Download, Product, ProductPrice, Thing
 
 
 class ProductInline(GenericTabularInline):
@@ -19,6 +17,7 @@ class ProductPriceInline(admin.TabularInline):
     min_num = 1
 
 
+@admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     search_fields = ("code", "name")
     list_display = ("code", "is_active", "content_object")
@@ -35,9 +34,7 @@ class ProductAdmin(admin.ModelAdmin):
         return False
 
 
-admin.site.register(Product, ProductAdmin)
-
-
+@admin.register(Thing)
 class ThingAdmin(admin.ModelAdmin):
     search_fields = ("name", "description")
     list_display = ("name", "weight")
@@ -45,14 +42,9 @@ class ThingAdmin(admin.ModelAdmin):
     inlines = [ProductInline]
 
 
-admin.site.register(Thing, ThingAdmin)
-
-
+@admin.register(Download)
 class DownloadAdmin(admin.ModelAdmin):
     search_fields = ("name", "description")
     list_display = ("name",)
     # list_filter = ['series', ]
     inlines = [ProductInline]
-
-
-admin.site.register(Download, DownloadAdmin)

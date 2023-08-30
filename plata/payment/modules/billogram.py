@@ -1,23 +1,23 @@
-# -*- coding: utf-8 -*-
+import contextlib
+import decimal
 import hashlib
 import json
 import logging
-import decimal
-from django import http
 
+import billogram_api
+from django import http
+from django.conf import settings
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.translation import ugettext_lazy as _
-from django.conf import settings
 from django.utils.decorators import method_decorator
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
-import billogram_api
-
 import plata.shop.models
 from plata.payment.modules.base import ProcessorBase
+
 
 logger = logging.getLogger("django")
 
@@ -32,7 +32,7 @@ class PaymentProcessor(ProcessorBase):
     default_name = _("invoice")
 
     def __init__(self, *args, **kwargs):
-        super(PaymentProcessor, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.api = billogram_api.BillogramAPI(
             settings.BILLOGRAM["API_USER"],
             settings.BILLOGRAM["API_AUTHKEY"],
@@ -40,9 +40,9 @@ class PaymentProcessor(ProcessorBase):
         )
 
     def get_urls(self):
-        from django.conf.urls import url
+        from django.urls import path
 
-        return [url(r"^payment/billogram/$", self.callback, name="billogram_callback")]
+        return [path("payment/billogram/", self.callback, name="billogram_callback")]
 
     def get_or_create_customer(self, order):
         customer_no = order.user_id + CUSTOMER_NO_OFFSET
@@ -94,8 +94,7 @@ class PaymentProcessor(ProcessorBase):
 
             if delivery_address:
                 customer_data["delivery_address"] = {
-                    "name": "%s %s"
-                    % (order.shipping_first_name, order.shipping_last_name),
+                    "name": f"{order.shipping_first_name} {order.shipping_last_name}",
                     "street_address": order.shipping_address,  # todo split this too
                     "city": order.shipping_city,
                     "zipcode": order.shipping_zip_code,
@@ -184,12 +183,11 @@ class PaymentProcessor(ProcessorBase):
         if event_type == "Payment":
             amount = decimal.Decimal(data["event"]["data"]["amount"])
             payment.amount = amount
-            try:
+            with contextlib.suppress(TypeError):
                 payment.transaction_fee = amount - decimal.Decimal(
                     data["event"]["data"]["banking_amount"]
                 )
-            except TypeError:
-                pass
+
         #  payment.status
         #  payment.payment_method = payment_details.type
 

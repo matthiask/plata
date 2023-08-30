@@ -1,6 +1,6 @@
-from django.conf.urls import include, url
 from django.contrib import admin
 from django.shortcuts import redirect
+from django.urls import include, path, re_path
 
 from plata.contact.models import Contact
 from plata.discount.models import Discount
@@ -15,10 +15,10 @@ shop = Shop(contact_model=Contact, order_model=Order, discount_model=Discount)
 
 
 urlpatterns = [
-    url(r"^$", lambda request: redirect("plata_product_list"), name="plata_home"),
-    url(r"", include(shop.urls)),
-    url(r"^products/$", views.product_list, name="plata_product_list"),
-    url(r"^products/(\d+)/$", views.product_detail, name="plata_product_detail"),
-    url(r"^admin/", admin.site.urls),
-    url(r"^reporting/", include("plata.reporting.urls")),
+    path("", lambda request: redirect("plata_product_list"), name="plata_home"),
+    path("", include(shop.urls)),
+    path("products/", views.product_list, name="plata_product_list"),
+    re_path(r"^products/(\d+)/$", views.product_detail, name="plata_product_detail"),
+    re_path(r"^admin/", admin.site.urls),
+    path("reporting/", include("plata.reporting.urls")),
 ]

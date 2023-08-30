@@ -9,22 +9,22 @@ Needs the following settings to work correctly::
         }
 """
 
-from decimal import Decimal
 import logging
 import urllib
+from decimal import Decimal
 from xml.etree import ElementTree as ET
 
 from django.conf import settings
 from django.http import HttpResponseForbidden
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect, render
 from django.utils.decorators import method_decorator
 from django.utils.timezone import now
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
 
+import plata
 from plata.payment.modules.base import ProcessorBase
 from plata.shop.models import OrderPayment
-import plata
 
 
 logger = logging.getLogger("plata.payment.datatrans")
@@ -42,21 +42,21 @@ class PaymentProcessor(ProcessorBase):
         return True
 
     def get_urls(self):
-        from django.conf.urls import url
+        from django.urls import path
 
         return [
-            url(
-                r"^datatrans/success/$",
+            path(
+                "datatrans/success/",
                 self.datatrans_success,
                 name="plata_payment_datatrans_success",
             ),
-            url(
-                r"^datatrans/error/$",
+            path(
+                "datatrans/error/",
                 self.datatrans_error,
                 name="plata_payment_datatrans_error",
             ),
-            url(
-                r"^datatrans/cancel/$",
+            path(
+                "datatrans/cancel/",
                 self.datatrans_cancel,
                 name="plata_payment_datatrans_cancel",
             ),
@@ -93,7 +93,7 @@ class PaymentProcessor(ProcessorBase):
                 "order": order,
                 "total_in_smallest_unit": payment.amount * SMALLEST_UNIT_FACTOR,
                 "payment": payment,
-                "HTTP_HOST": request.META.get("HTTP_HOST"),
+                "HTTP_HOST": request.headers.get("host"),
                 "post_url": DT_URL,
                 "MERCHANT_ID": DATATRANS["MERCHANT_ID"],
             },
@@ -129,18 +129,18 @@ class PaymentProcessor(ProcessorBase):
 
                 xml = """<?xml version="1.0" encoding="UTF-8" ?>
                 <statusService version="1">
-                  <body merchantId="%(merchant_id)s">
+                  <body merchantId="{merchant_id}">
                     <transaction>
                       <request>
-                        <uppTransactionId>%(transaction_id)s</uppTransactionId>
+                        <uppTransactionId>{transaction_id}</uppTransactionId>
                       </request>
                     </transaction>
                   </body>
                 </statusService>
-                """ % {
-                    "transaction_id": parameters["uppTransactionId"],
-                    "merchant_id": DATATRANS["MERCHANT_ID"],
-                }
+                """.format(
+                    transaction_id=parameters["uppTransactionId"],
+                    merchant_id=DATATRANS["MERCHANT_ID"],
+                )
                 params = urllib.urlencode({"xmlRequest": xml})
                 xml_response = urllib.urlopen(DT_URL, params).read()
 
@@ -149,8 +149,9 @@ class PaymentProcessor(ProcessorBase):
                 response_code = response.find("responseCode").text
                 if response_code not in ("1", "2", "3"):
                     logger.error(
-                        "IPN: Received response_code %s, could not verify parameters %s"
-                        % (response_code, parameters_repr)
+                        "IPN: Received response_code {}, could not verify parameters {}".format(
+                            response_code, parameters_repr
+                        )
                     )
                     parameters = None
 

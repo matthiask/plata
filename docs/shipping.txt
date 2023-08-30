@@ -42,4 +42,3 @@ non-metric units::
 
     PLATA_SHIPPING_WEIGHT_UNIT = 'g'
     PLATA_SHIPPING_LENGTH_UNIT = 'mm'
-

@@ -1,8 +1,6 @@
-from __future__ import absolute_import, unicode_literals
-
 from django import forms
 from django.contrib import auth
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from plata.shop import signals
 from plata.shop.widgets import PlusMinusButtons, SubmitButtonInput
@@ -25,35 +23,29 @@ class BaseCheckoutForm(forms.ModelForm):
         self.shop = kwargs.pop("shop")
         self.request = kwargs.pop("request")
 
-        super(BaseCheckoutForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def clean(self):
-        data = super(BaseCheckoutForm, self).clean()
+        data = super().clean()
 
         if data.get("email"):
             users = list(User.objects.filter(email=data.get("email")))
 
-            if users:
-                if self.request.user not in users:
-                    if self.shop.user_is_authenticated(self.request.user):
-                        self._errors["email"] = self.error_class(
-                            [
-                                _(
-                                    "This e-mail address belongs to a different"
-                                    " account."
-                                )
-                            ]
-                        )
-                    else:
-                        self._errors["email"] = self.error_class(
-                            [
-                                _(
-                                    "This e-mail address might belong to you, but"
-                                    " we cannot know for sure because you are"
-                                    " not authenticated yet."
-                                )
-                            ]
-                        )
+            if users and self.request.user not in users:
+                if self.shop.user_is_authenticated(self.request.user):
+                    self._errors["email"] = self.error_class(
+                        [_("This e-mail address belongs to a different account.")]
+                    )
+                else:
+                    self._errors["email"] = self.error_class(
+                        [
+                            _(
+                                "This e-mail address might belong to you, but"
+                                " we cannot know for sure because you are"
+                                " not authenticated yet."
+                            )
+                        ]
+                    )
 
         return data
 
@@ -62,7 +54,7 @@ class BaseCheckoutForm(forms.ModelForm):
         Save the order, create or update the contact information
         (if available) and return the saved order instance
         """
-        order = super(BaseCheckoutForm, self).save(commit=False)
+        order = super().save(commit=False)
         contact = self.shop.contact_from_user(self.request.user)
 
         if contact:
@@ -116,7 +108,7 @@ class DiscountForm(forms.Form):
         request = kwargs.pop("request")  # noqa
         shop = kwargs.pop("shop")  # noqa
 
-        super(DiscountForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def clean_code(self):
         code = self.cleaned_data.get("code")
@@ -151,7 +143,7 @@ class ConfirmationForm(forms.Form):
         self.shop = kwargs.pop("shop")
         self.payment_modules = self.shop.get_payment_modules(self.request)
 
-        super(ConfirmationForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         method_choices = [(m.key, m.name) for m in self.payment_modules]
         if len(method_choices) > 1:
@@ -161,7 +153,7 @@ class ConfirmationForm(forms.Form):
         )
 
     def clean(self):
-        data = super(ConfirmationForm, self).clean()
+        data = super().clean()
         self.order.validate(self.order.VALIDATE_ALL)
         return data
 
@@ -174,7 +166,7 @@ class ConfirmationForm(forms.Form):
             sender=self.shop, order=self.order, request=self.request
         )
 
-        module = dict((m.key, m) for m in self.payment_modules)[
+        module = {m.key: m for m in self.payment_modules}[
             self.cleaned_data["payment_method"]
         ]
 
@@ -193,14 +185,14 @@ class OrderItemForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         self.orderitem = kwargs.pop("orderitem")
-        kwargs["prefix"] = "%s_%s" % (
+        kwargs["prefix"] = "{}_{}".format(
             kwargs.get("prefix", "orderitem"),
             self.orderitem.id,
         )
         initial = kwargs.pop("initial", {})
         initial["absolute"] = 0
         kwargs["initial"] = initial
-        super(OrderItemForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def clean(self):
         if (self.cleaned_data["absolute"] is None) == (
@@ -219,7 +211,7 @@ class OrderItemForm(forms.Form):
             order.modify_item(self.orderitem.product, **self.cleaned_data)
 
 
-class PaymentSelectMixin(object):
+class PaymentSelectMixin:
     """
     Handles the payment selection field
     """
@@ -232,7 +224,7 @@ class PaymentSelectMixin(object):
         return forms.ChoiceField(label=_("Payment method"), choices=method_choices)
 
     def payment_order_confirmed(self, order, payment_method):
-        module = dict((m.key, m) for m in self.payment_modules)[payment_method]
+        module = {m.key: m for m in self.payment_modules}[payment_method]
         return module.process_order_confirmed(self.request, order)
 
 
@@ -240,7 +232,7 @@ class PaymentSelectForm(forms.Form, PaymentSelectMixin):
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop("request")
         self.shop = kwargs.pop("shop")
-        super(PaymentSelectForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields["payment_method"] = self.get_payment_field(self.shop, self.request)
 
 
@@ -258,18 +250,17 @@ class SinglePageCheckoutForm(BaseCheckoutForm, PaymentSelectMixin):
         exclude = ("shipping_country", "billing_country")
 
     def __init__(self, *args, **kwargs):
-
-        super(SinglePageCheckoutForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.fields["payment_method"] = self.get_payment_field(self.shop, self.request)
 
         self.REQUIRED_ADDRESS_FIELDS = [
-            name[9:] for name in self.fields.keys() if name.startswith("shipping_")
+            name[9:] for name in self.fields if name.startswith("shipping_")
         ]
         self.REQUIRED_ADDRESS_FIELDS.remove("company")
 
     def clean(self):
-        data = super(SinglePageCheckoutForm, self).clean()
+        data = super().clean()
         if not data.get("shipping_same_as_billing"):
             for f in self.REQUIRED_ADDRESS_FIELDS:
                 field = "shipping_%s" % f

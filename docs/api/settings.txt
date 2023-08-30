@@ -9,4 +9,3 @@ module.
 .. automodule:: plata.default_settings
    :members:
    :noindex:
-

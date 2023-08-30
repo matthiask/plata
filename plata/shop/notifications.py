@@ -65,7 +65,6 @@ A real-world example follows::
         weak=False)
 """
 
-from __future__ import absolute_import, unicode_literals
 
 import contextlib
 from io import BytesIO
@@ -76,10 +75,10 @@ from django.template.loader import render_to_string
 from django.utils.translation import activate
 
 
-class BaseHandler(object):
+class BaseHandler:
     def invoice_pdf(self, order):
-        from plata.reporting.pdfdocument import PlataPDFDocument
         from plata.reporting.order import invoice_pdf
+        from plata.reporting.pdfdocument import PlataPDFDocument
 
         with contextlib.closing(BytesIO()) as content:
             pdf = PlataPDFDocument(content)
@@ -87,8 +86,8 @@ class BaseHandler(object):
             return content.getvalue()
 
     def packing_slip_pdf(self, order):
-        from plata.reporting.pdfdocument import PlataPDFDocument
         from plata.reporting.order import packing_slip_pdf
+        from plata.reporting.pdfdocument import PlataPDFDocument
 
         with contextlib.closing(BytesIO()) as content:
             pdf = PlataPDFDocument(content)

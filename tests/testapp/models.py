@@ -20,7 +20,7 @@ class Product(ProductBase):
 
     @property
     def sku(self):
-        return u""
+        return ""
 
 
 class Price(PriceBase):

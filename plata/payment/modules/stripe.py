@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Payment module for Stripe.com
 
@@ -14,21 +13,20 @@ Configuration::
         }
 
 """
-from __future__ import absolute_import, unicode_literals
 import logging
 
+import stripe  # official API, see https://stripe.com/docs/api/python
 from django.conf import settings
-from django.conf.urls import url
 from django.contrib.sites.shortcuts import get_current_site
-from django.utils.translation import ugettext_lazy as _
+from django.urls import re_path
 from django.utils.decorators import method_decorator
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
-import stripe  # official API, see https://stripe.com/docs/api/python
-
 import plata
 from plata.payment.modules.base import ProcessorBase
+
 
 logger = logging.getLogger("plata.payment.stripe")
 csrf_exempt_m = method_decorator(csrf_exempt)
@@ -47,7 +45,7 @@ def handle_errors(bla):
         err = body["error"]
         logger.error(
             ("Status %s: " % e.http_status)
-            + 'type "%(type)s", code "%(code)s", param "%(param)s": %(message)s' % err
+            + 'type "{type}", code "{code}", param "{param}": {message}'.format(**err)
         )
     except stripe.error.RateLimitError as e:
         # Too many requests made to the API too quickly
@@ -79,7 +77,7 @@ class PaymentProcessor(ProcessorBase):
 
     def get_urls(self):
         return [
-            url(
+            re_path(
                 r"^payment/%s/$" % self.key,
                 self.callback,
                 name="%s_callback" % self.key,
@@ -96,7 +94,7 @@ class PaymentProcessor(ProcessorBase):
         if not order.balance_remaining:
             return self.already_paid(order, request=request)
 
-        logger.info("Processing order %s using %s" % (order, self.default_name))
+        logger.info(f"Processing order {order} using {self.default_name}")
 
         payment = self.create_pending_payment(order)
         if plata.settings.PLATA_STOCK_TRACKING:

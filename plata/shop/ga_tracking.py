@@ -9,10 +9,9 @@ from plata.shop import signals
 signals.order_confirmed.connect(ga_tracking.on_order_confirmed)
 signals.order_paid.connect(ga_tracking.on_order_paid)
 """
-from pyga.requests import Tracker, Session, Visitor, Transaction, Item
-
 from django.conf import settings
 from django.utils.timezone import now
+from pyga.requests import Item, Session, Tracker, Transaction, Visitor
 
 
 def on_order_confirmed(order, request, **kwargs):
@@ -21,8 +20,8 @@ def on_order_confirmed(order, request, **kwargs):
         "utmb": request.COOKIES.get("__utmb", ""),
         "meta": {
             "REMOTE_ADDR": request.META.get("REMOTE_ADDR", None),
-            "HTTP_USER_AGENT": request.META.get("HTTP_USER_AGENT", None),
-            "HTTP_ACCEPT_LANGUAGE": request.META.get("HTTP_ACCEPT_LANGUAGE", None),
+            "HTTP_USER_AGENT": request.headers.get("user-agent", None),
+            "HTTP_ACCEPT_LANGUAGE": request.headers.get("accept-language", None),
         },
     }
     order.save()

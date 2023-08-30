@@ -2,6 +2,7 @@
 
 import os
 
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -10,6 +11,7 @@ ADMINS = ()
 MANAGERS = ADMINS
 
 DATABASES = {"default": {"ENGINE": "django.db.backends.sqlite3", "NAME": "test.db"}}
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 TIME_ZONE = "America/Chicago"
 LANGUAGE_CODE = "en-us"

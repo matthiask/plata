@@ -1,19 +1,15 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import
-from __future__ import unicode_literals
-from django.utils.translation import ugettext as _
-from django.conf import settings
-from django.db import models
-from django.contrib.contenttypes.fields import GenericRelation, GenericForeignKey
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
+from django.db import models
 
 # from django.core.files.storage import FileSystemStorage
 # from django.core.validators import validate_comma_separated_integer_list
 from django.urls import reverse
-from django.template.loader import render_to_string
+from django.utils.translation import gettext as _
+
 from plata.product.models import ProductBase
-from plata.shop.models import PriceBase
 from plata.shipping.models import CountryGroup
+from plata.shop.models import PriceBase
 
 
 CONTENT_MODELS = models.Q(app_label="generic", model="thing") | models.Q(
@@ -66,7 +62,10 @@ class Product(ProductBase):
 
 class ProductPrice(PriceBase):
     product = models.ForeignKey(
-        Product, verbose_name=_("product"), related_name="prices"
+        Product,
+        on_delete=models.CASCADE,
+        verbose_name=_("product"),
+        related_name="prices",
     )
     country_group = models.ForeignKey(
         CountryGroup,

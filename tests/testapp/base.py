@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from decimal import Decimal
 
 from django.contrib.auth.models import AnonymousUser
@@ -34,7 +32,7 @@ signals.order_paid.connect(
 )
 
 
-class Empty(object):
+class Empty:
     pass
 
 
@@ -64,7 +62,7 @@ class PlataTest(TestCase):
             if e.code == code:
                 return True
             raise
-        raise Exception("%s did not raise %s" % (fn, exception))
+        raise Exception(f"{fn} did not raise {exception}")
 
     def create_contact(self):
         return Contact.objects.create(

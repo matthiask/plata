@@ -1,19 +1,17 @@
-from __future__ import absolute_import, unicode_literals
-
 import logging
 import warnings
 
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 
 import plata
-from plata.shop import signals
 from plata.discount.models import Discount
+from plata.shop import signals
 
 
 logger = logging.getLogger("plata.payment")
 
 
-class ProcessorBase(object):
+class ProcessorBase:
     """Payment processor base class"""
 
     #: Safe key for this payment module (shouldn't contain special chars,
@@ -137,7 +135,7 @@ class ProcessorBase(object):
             order,
             notes=_("%(stage)s: %(order)s processed by %(payment_module)s")
             % {"stage": stage, "order": order, "payment_module": self.name},
-            **kwargs
+            **kwargs,
         )
 
     def order_paid(self, order, payment=None, request=None):
@@ -153,14 +151,15 @@ class ProcessorBase(object):
         """
 
         if order.status < order.PAID:
-            logger.info(
-                "Order %s has been completely paid for using %s" % (order, self.name)
-            )
+            logger.info(f"Order {order} has been completely paid for using {self.name}")
             order.update_status(order.PAID, "Order has been paid")
 
-            signal_kwargs = dict(
-                sender=self, order=order, payment=payment, request=request
-            )
+            signal_kwargs = {
+                "sender": self,
+                "order": order,
+                "payment": payment,
+                "request": request,
+            }
 
             for applied_discount in order.applied_discounts.all():
                 try:
@@ -179,8 +178,8 @@ class ProcessorBase(object):
 
             if order.discount_remaining:
                 logger.info(
-                    "Creating discount for remaining amount %s on"
-                    " order %s" % (order.discount_remaining, order)
+                    "Creating discount for remaining amount {} on"
+                    " order {}".format(order.discount_remaining, order)
                 )
                 discount_model = self.shop.discount_model
                 try:
@@ -196,8 +195,7 @@ class ProcessorBase(object):
                     discount = None
 
                 remaining_discount = discount_model.objects.create(
-                    name=ugettext("Remaining discount for order %s")
-                    % (order.order_id,),
+                    name=gettext("Remaining discount for order %s") % (order.order_id,),
                     type=discount_model.MEANS_OF_PAYMENT,
                     value=order.discount_remaining,
                     currency=order.currency,

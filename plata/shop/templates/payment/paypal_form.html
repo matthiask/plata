@@ -52,7 +52,7 @@
     <input type="hidden" name="last_name" value="{{ order.billing_last_name }}" />
     <input type="hidden" name="address1" value="{{ order.billing_address }}" />
     <input type="hidden" name="city" value="{{ order.billing_city }}" />
-    {# only U.S. abbreviations may be used here #}{% ifequal address.country.iso2_code|lower 'us' %}{% ifequal address.state|length 2 %}<input type="hidden" name="state" value="{{ address.state }}" />{% endifequal %}{% endifequal %}
+    {# only U.S. abbreviations may be used here #}{% if address.country.iso2_code|lower == 'us' %}{% if address.state|length == 2 %}<input type="hidden" name="state" value="{{ address.state }}" />{% endif %}{% endif %}
     <input type="hidden" name="country" value="{{ order.billing_country }}" />
     <input type="hidden" name="zip" value="{{ order.billing_zip_code }}" />
     <input type="hidden" name="email" value="{{ order.email }}" />

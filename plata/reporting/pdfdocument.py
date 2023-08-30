@@ -1,13 +1,12 @@
-from __future__ import absolute_import, unicode_literals
-
-import plata
 from pdfdocument.document import PDFDocument
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
+import plata
+
 
 def init_regular_font(suffix=""):
-    name = "%s%s" % (plata.settings.PLATA_PDF_FONT_NAME, suffix)
+    name = f"{plata.settings.PLATA_PDF_FONT_NAME}{suffix}"
     path = plata.settings.PLATA_PDF_FONT_PATH or "%s.ttf" % name
     pdfmetrics.registerFont(TTFont(name, path))
 
@@ -28,4 +27,4 @@ class PlataPDFDocument(PDFDocument):
             # init bold font variant from regular font, bold is always needed
             init_regular_font(suffix="-Bold")
 
-        super(PlataPDFDocument, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)

@@ -1,19 +1,16 @@
-from __future__ import absolute_import, unicode_literals
-
 import datetime
 import logging
 import re
 from functools import partial
 
+import simplejson as json
 from django import forms
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.dateparse import parse_date, parse_datetime, parse_time
-from django.utils.translation import ugettext_lazy as _
-
+from django.utils.translation import gettext_lazy as _
 
 import plata
-import simplejson as json
 
 
 try:
@@ -89,7 +86,7 @@ class JSONFormField(forms.fields.CharField):
             except ValueError:
                 raise forms.ValidationError("Invalid JSON data!")
 
-        return super(JSONFormField, self).clean(value, *args, **kwargs)
+        return super().clean(value, *args, **kwargs)
 
 
 class JSONField(models.TextField):
@@ -154,7 +151,7 @@ class JSONField(models.TextField):
 
     def value_from_object(self, obj):
         return json.dumps(
-            super(JSONField, self).value_from_object(obj),
+            super().value_from_object(obj),
             default=json_encode_default,
             use_decimal=True,
         )

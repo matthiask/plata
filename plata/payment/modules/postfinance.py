@@ -11,7 +11,6 @@ Needs the following settings to work correctly::
         }
 """
 
-from __future__ import absolute_import, unicode_literals
 
 import locale
 import logging
@@ -22,7 +21,7 @@ from django.conf import settings
 from django.http import HttpResponse, HttpResponseForbidden
 from django.utils import timezone
 from django.utils.decorators import method_decorator
-from django.utils.translation import get_language, to_locale, ugettext_lazy as _
+from django.utils.translation import get_language, gettext_lazy as _, to_locale
 from django.views.decorators.csrf import csrf_exempt
 
 import plata
@@ -80,11 +79,11 @@ class PaymentProcessor(ProcessorBase):
     default_name = _("Postfinance")
 
     def get_urls(self):
-        from django.conf.urls import url
+        from django.urls import path
 
         return [
-            url(
-                r"^payment/postfinance/ipn/$",
+            path(
+                "payment/postfinance/ipn/",
                 self.ipn,
                 name="plata_payment_postfinance_ipn",
             )

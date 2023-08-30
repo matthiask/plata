@@ -3,24 +3,24 @@ Pagseguro payment module for django-plata
 Authors: alexandre@mandriva.com.br, jpbraun@mandriva.com
 Date: 03/14/2012
 """
-from __future__ import absolute_import, unicode_literals
 
+import logging
+import time
+import urllib
 from datetime import datetime
 from decimal import Decimal
-import logging
-import urllib
-import time
 from xml.dom import minidom
 
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseForbidden
 from django.utils.decorators import method_decorator
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
 
+import plata
 from plata.payment.modules.base import ProcessorBase
 from plata.shop.models import OrderPayment
-import plata
+
 
 logger = logging.getLogger("plata.payment.pagseguro")
 
@@ -32,11 +32,11 @@ class PaymentProcessor(ProcessorBase):
     default_name = _("Pagseguro")
 
     def get_urls(self):
-        from django.conf.urls import url
+        from django.urls import path
 
         return [
-            url(
-                r"^payment/pagseguro/notify/$",
+            path(
+                "payment/pagseguro/notify/",
                 self.psnotify,
                 name="plata_payment_pagseguro_notify",
             )
@@ -67,7 +67,7 @@ class PaymentProcessor(ProcessorBase):
             {
                 "order": order,
                 "payment": payment,
-                "HTTP_HOST": request.META.get("HTTP_HOST"),
+                "HTTP_HOST": request.headers.get("host"),
                 "post_url": "https://pagseguro.uol.com.br/v2/checkout/payment.html",
                 "email": PAGSEGURO["EMAIL"],
             },
@@ -82,14 +82,14 @@ class PaymentProcessor(ProcessorBase):
 
         try:
             data = request.POST.copy()
-            data = dict((k, v.encode("ISO-8859-1")) for k, v in data.items())
+            data = {k: v.encode("ISO-8859-1") for k, v in data.items()}
 
             if data:
                 logger.info("Pagseguro: Processing request data %s" % data)
 
                 if PAGSEGURO.get("LOG"):
                     f = open(PAGSEGURO["LOG"], "a+")
-                    f.write("%s - notification: %s\n" % (time.ctime(), data))
+                    f.write(f"{time.ctime()} - notification: {data}\n")
                     f.close()
 
                 notificationCode = data["notificationCode"]
@@ -100,7 +100,7 @@ class PaymentProcessor(ProcessorBase):
 
                 if PAGSEGURO.get("LOG"):
                     f = open(PAGSEGURO["LOG"], "a")
-                    f.write("%s - notification check: %s" % (time.ctime(), result))
+                    f.write(f"{time.ctime()} - notification check: {result}")
                     f.close()
 
                 xml = minidom.parseString(result)
@@ -125,8 +125,9 @@ class PaymentProcessor(ProcessorBase):
                 if PAGSEGURO.get("LOG"):
                     f = open(PAGSEGURO.get("LOG"), "a")
                     f.write(
-                        "%s - status: %s, ref: %s, code: %s\n"
-                        % (time.ctime(), status, reference, notificationCode)
+                        "{} - status: {}, ref: {}, code: {}\n".format(
+                            time.ctime(), status, reference, notificationCode
+                        )
                     )
                     f.close()
 

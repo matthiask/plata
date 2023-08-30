@@ -1,9 +1,7 @@
-from __future__ import absolute_import, unicode_literals
-
 from django import forms
 from django.contrib import admin
 from django.contrib.admin.utils import flatten_fieldsets
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from plata.discount import models
 from plata.utils import jsonize
@@ -11,7 +9,7 @@ from plata.utils import jsonize
 
 class DiscountAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
-        super(DiscountAdminForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         # Seems to be necessary because of the custom validation
         self.fields["config"].required = False
@@ -35,10 +33,7 @@ class DiscountAdminForm(forms.ModelForm):
         if "config_options" in self.data:
             selected = self.data.getlist("config_options")
         else:
-            if self.instance.pk:
-                selected = self.instance.config.keys()
-            else:
-                selected = None
+            selected = self.instance.config.keys() if self.instance.pk else None
 
         selected = tuple(selected) if selected else ("all",)
         self.fields["config_options"].initial = selected
@@ -54,13 +49,13 @@ class DiscountAdminForm(forms.ModelForm):
             ]
 
             for k, f in cfg.get("form_fields", []):
-                self.fields["%s_%s" % (s, k)] = f
+                self.fields[f"{s}_{k}"] = f
 
                 # Set initial value if we have one in the configuration
                 if k in self.instance.config.get(s, {}):
                     f.initial = self.instance.config[s].get(k)
 
-                fieldset[1]["fields"].append("%s_%s" % (s, k))
+                fieldset[1]["fields"].append(f"{s}_{k}")
 
             config_fieldsets.append(fieldset)
 
@@ -79,8 +74,8 @@ class DiscountAdminForm(forms.ModelForm):
             cfg = dict(self._meta.model.CONFIG_OPTIONS)[s]
 
             option_item = {}
-            for k, f in cfg.get("form_fields", []):
-                key = "%s_%s" % (s, k)
+            for k, _f in cfg.get("form_fields", []):
+                key = f"{s}_{k}"
                 if key in data:
                     option_item[k] = data.get(key)
 
@@ -110,13 +105,13 @@ class DiscountAdmin(admin.ModelAdmin):
         fields = kwargs.get("fields", []) or []
         if "config_options" in fields:
             fields.remove("config_options")
-        form_class = super(DiscountAdmin, self).get_form(request, obj=obj, **kwargs)
+        form_class = super().get_form(request, obj=obj, **kwargs)
         # Generate a new type to be sure that the request stays inside this
         # request/response cycle.
         return type(form_class.__name__, (form_class,), {"request": request})
 
     def get_fieldsets(self, request, obj=None):
-        fieldsets = super(DiscountAdmin, self).get_fieldsets(request, obj)
+        fieldsets = super().get_fieldsets(request, obj)
         if not hasattr(request, "_plata_discount_config_fieldsets"):
             return fieldsets
 

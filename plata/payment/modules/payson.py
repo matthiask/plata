@@ -1,21 +1,21 @@
-# -*- coding: utf-8 -*-
 # Plata payment module wrapper for Payson
 import logging
 from decimal import Decimal
+
+import payson_api
 from django import http
 from django.conf import settings
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_POST, require_GET
+from django.views.decorators.http import require_GET, require_POST
 
 import plata
 import plata.shop.models
 from plata.payment.modules.base import ProcessorBase
-import payson_api
 
 
 csrf_exempt_m = method_decorator(csrf_exempt)
@@ -28,20 +28,20 @@ logger = logging.getLogger("django")
 
 class PaymentProcessor(ProcessorBase):
     key = "payson"
-    default_name = _(u"Payson")
+    default_name = _("Payson")
 
     def __init__(self, shop):
-        super(PaymentProcessor, self).__init__(shop)
+        super().__init__(shop)
         self.payson_api = payson_api.PaysonApi(
             settings.PAYSON["USER_ID"], settings.PAYSON["USER_KEY"]
         )
 
     def get_urls(self):
-        from django.conf.urls import url
+        from django.urls import path
 
         return [
-            url(r"^payment/payson/ipn/$", self.ipn, name="payson_ipn"),
-            url(r"^payment/payson/return/$", self.return_url, name="payson_return"),
+            path("payment/payson/ipn/", self.ipn, name="payson_ipn"),
+            path("payment/payson/return/", self.return_url, name="payson_return"),
         ]
 
     def process_order_confirmed(self, request, order):
@@ -73,7 +73,7 @@ class PaymentProcessor(ProcessorBase):
             currencyCode=order.currency,
             # custom=None,
             trackingId="-".join((str(order.id), str(payment.id))),
-            guaranteeOffered=u"NO",
+            guaranteeOffered="NO",
             orderItemList=(
                 payson_api.OrderItem(
                     order_item.name,

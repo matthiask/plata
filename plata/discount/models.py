@@ -1,5 +1,4 @@
-from __future__ import absolute_import, unicode_literals
-
+import contextlib
 import random
 from datetime import date
 from decimal import Decimal
@@ -7,7 +6,7 @@ from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import ObjectDoesNotExist, Q
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 import plata
 from plata.fields import CurrencyField, JSONField
@@ -80,7 +79,7 @@ class DiscountBase(models.Model):
 
     def save(self, *args, **kwargs):
         self.full_clean()
-        super(DiscountBase, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     save.alters_data = True
 
@@ -126,7 +125,7 @@ class DiscountBase(models.Model):
         )
 
         for key, parameters in self.config.items():
-            parameters = dict((str(k), v) for k, v in parameters.items())
+            parameters = {str(k): v for k, v in parameters.items()}
 
             cfg = dict(self.CONFIG_OPTIONS)[key]
 
@@ -188,7 +187,6 @@ class DiscountBase(models.Model):
             )
 
     def _apply_means_of_payment(self, order, items):
-
         items_tax = sum((item._line_item_tax for item in items), Decimal("0.00"))
 
         for item in items:
@@ -314,10 +312,8 @@ class Discount(DiscountBase):
 
         self.validate(order)
 
-        try:
+        with contextlib.suppress(ObjectDoesNotExist):
             order.applied_discounts.get(code=self.code).delete()
-        except ObjectDoesNotExist:
-            pass
 
         instance = order.applied_discounts.create(
             code=self.code,

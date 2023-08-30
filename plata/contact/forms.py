@@ -1,7 +1,5 @@
-from __future__ import absolute_import, unicode_literals
-
 from django import forms
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from plata.shop import forms as shop_forms
 from plata.shop.models import Order
@@ -45,7 +43,7 @@ class CheckoutForm(shop_forms.BaseCheckoutForm):
                 "billing_last_name": request.user.last_name,
             }
 
-        super(CheckoutForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         if not (contact or shop.user_is_authenticated(request.user)):
             self.fields["create_account"] = forms.BooleanField(
@@ -53,7 +51,7 @@ class CheckoutForm(shop_forms.BaseCheckoutForm):
             )
 
     def clean(self):
-        data = super(CheckoutForm, self).clean()
+        data = super().clean()
 
         if not data.get("shipping_same_as_billing"):
             for f in self.REQUIRED_ADDRESS_FIELDS:

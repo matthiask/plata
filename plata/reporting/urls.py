@@ -1,20 +1,18 @@
-from __future__ import unicode_literals
-
-from django.conf.urls import url
+from django.urls import path
 
 from plata.reporting import views
 
 
 urlpatterns = [
-    url(r"^product_xls/$", views.product_xls, name="plata_reporting_product_xls"),
-    url(
-        r"^invoice_pdf/(?P<order_id>\d+)/$",
+    path("product_xls/", views.product_xls, name="plata_reporting_product_xls"),
+    path(
+        "invoice_pdf/<int:order_id>/",
         views.invoice_pdf,
         name="plata_reporting_invoice_pdf",
     ),
-    url(r"^invoice/(?P<order_id>\d+)/$", views.invoice, name="plata_reporting_invoice"),
-    url(
-        r"^packing_slip_pdf/(?P<order_id>\d+)/$",
+    path("invoice/<int:order_id>/", views.invoice, name="plata_reporting_invoice"),
+    path(
+        "packing_slip_pdf/<int:order_id>/",
         views.packing_slip_pdf,
         name="plata_reporting_packing_slip_pdf",
     ),

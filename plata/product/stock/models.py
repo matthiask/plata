@@ -16,7 +16,6 @@ Follow these steps to enable this module:
   into account ``items_in_stock``.
 """
 
-from __future__ import absolute_import, unicode_literals
 
 from datetime import timedelta
 
@@ -24,7 +23,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q, Sum
 from django.utils import timezone
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import gettext, gettext_lazy as _
 
 import plata
 from plata.shop.models import Order, OrderPayment
@@ -40,8 +39,8 @@ class PeriodManager(models.Manager):
             return self.filter(start__lte=timezone.now()).order_by("-start")[0]
         except IndexError:
             return self.create(
-                name=ugettext("Automatically created"),
-                notes=ugettext("Automatically created because no period existed yet."),
+                name=gettext("Automatically created"),
+                notes=gettext("Automatically created because no period existed yet."),
             )
 
 
@@ -84,14 +83,14 @@ class StockTransactionManager(models.Manager):
         variations with their current ``items_in_stock`` value
         """
 
-        period = Period.objects.create(name=name or ugettext("New period"))
+        period = Period.objects.create(name=name or gettext("New period"))
 
         for p in plata.product_model()._default_manager.all():
             p.stock_transactions.create(
                 period=period,
                 type=StockTransaction.INITIAL,
                 change=p.items_in_stock,
-                notes=ugettext("New period"),
+                notes=gettext("New period"),
             )
 
     def items_in_stock(
@@ -159,7 +158,7 @@ class StockTransactionManager(models.Manager):
                 line_item_price=item._line_item_price,
                 line_item_discount=item._line_item_discount,
                 line_item_tax=item._line_item_tax,
-                **kwargs
+                **kwargs,
             )
 
 
@@ -245,7 +244,7 @@ class StockTransaction(models.Model):
     type = models.PositiveIntegerField(_("type"), choices=TYPE_CHOICES)
     change = models.IntegerField(
         _("change"),
-        help_text=_("Use negative numbers for sales, lendings and other" " outgoings."),
+        help_text=_("Use negative numbers for sales, lendings and other outgoings."),
     )
     order = models.ForeignKey(
         Order,
@@ -290,7 +289,7 @@ class StockTransaction(models.Model):
     objects = StockTransactionManager()
 
     def __str__(self):
-        return "%s %s of %s" % (self.change, self.get_type_display(), self.product)
+        return f"{self.change} {self.get_type_display()} of {self.product}"
 
     def save(self, *args, **kwargs):
         if not self.period_id:
@@ -299,7 +298,7 @@ class StockTransaction(models.Model):
         if self.product and hasattr(self.product, "handle_stock_transaction"):
             self.product.handle_stock_transaction(self)
 
-        super(StockTransaction, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     save.alters_data = True
 

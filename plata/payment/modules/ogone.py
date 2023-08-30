@@ -11,7 +11,6 @@ Needs the following settings to work correctly::
         }
 """
 
-from __future__ import absolute_import, unicode_literals
 
 import locale
 import logging
@@ -23,7 +22,7 @@ from django.http import HttpResponse, HttpResponseForbidden
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
-from django.utils.translation import get_language, to_locale, ugettext_lazy as _
+from django.utils.translation import get_language, gettext_lazy as _, to_locale
 from django.views.decorators.csrf import csrf_exempt
 
 import plata
@@ -85,9 +84,9 @@ class PaymentProcessor(ProcessorBase):
     default_name = _("Ogone")
 
     def get_urls(self):
-        from django.conf.urls import url
+        from django.urls import path
 
-        return [url(r"^payment/ogone/ipn/$", self.ipn, name="plata_payment_ogone_ipn")]
+        return [path("payment/ogone/ipn/", self.ipn, name="plata_payment_ogone_ipn")]
 
     def process_order_confirmed(self, request, order):
         OGONE = settings.OGONE
@@ -116,23 +115,27 @@ class PaymentProcessor(ProcessorBase):
             % int(order.balance_remaining.quantize(Decimal("0.00")) * 100),
             "currency": order.currency,
             "language": locale.normalize(to_locale(get_language())).split(".")[0],
-            "CN": "%s %s" % (order.billing_first_name, order.billing_last_name),
+            "CN": f"{order.billing_first_name} {order.billing_last_name}",
             "EMAIL": order.email,
             "ownerZIP": order.billing_zip_code,
             "owneraddress": order.billing_address,
             "ownertown": order.billing_city,
-            "accepturl": "http://%s%s"
-            % (request.get_host(), reverse("plata_order_success")),
-            "declineurl": "http://%s%s"
-            % (request.get_host(), reverse("plata_order_payment_failure")),
-            "exceptionurl": "http://%s%s"
-            % (request.get_host(), reverse("plata_order_payment_failure")),
-            "cancelurl": "http://%s%s"
-            % (request.get_host(), reverse("plata_order_payment_failure")),
+            "accepturl": "http://{}{}".format(
+                request.get_host(), reverse("plata_order_success")
+            ),
+            "declineurl": "http://{}{}".format(
+                request.get_host(), reverse("plata_order_payment_failure")
+            ),
+            "exceptionurl": "http://{}{}".format(
+                request.get_host(), reverse("plata_order_payment_failure")
+            ),
+            "cancelurl": "http://{}{}".format(
+                request.get_host(), reverse("plata_order_payment_failure")
+            ),
         }
         # create hash
         value_strings = [
-            "{0}={1}{2}".format(key.upper(), value, OGONE["SHA1_IN"])
+            "{}={}{}".format(key.upper(), value, OGONE["SHA1_IN"])
             for key, value in form_params.items()
         ]
         hash_string = "".join(sorted(value_strings))
@@ -178,9 +181,9 @@ class PaymentProcessor(ProcessorBase):
                 return HttpResponseForbidden("Missing data")
 
             value_strings = [
-                "{0}={1}{2}".format(key.upper(), value, OGONE["SHA1_OUT"])
+                "{}={}{}".format(key.upper(), value, OGONE["SHA1_OUT"])
                 for key, value in request.POST.items()
-                if value and not key == "SHASIGN"
+                if value and key != "SHASIGN"
             ]
             sha1_out = sha1(
                 ("".join(sorted(value_strings))).encode("utf-8")

@@ -1,16 +1,14 @@
 from django import forms
 from django.contrib import messages
 from django.core.exceptions import ValidationError
-from django.db.models import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404, redirect, render
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.views import generic
 
 from plata.contact.models import Contact
 from plata.discount.models import Discount
-from plata.shop.views import Shop
 from plata.shop.models import Order
-
+from plata.shop.views import Shop
 from simple.models import Product
 
 

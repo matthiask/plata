@@ -1,13 +1,10 @@
-from __future__ import absolute_import, unicode_literals
-
 from django.contrib import admin
 from django.urls import NoReverseMatch, reverse
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
+from xlsxdocument import export_selected
 
 from plata.discount.models import AppliedDiscount
 from plata.shop import models
-
-from xlsxdocument import export_selected
 
 
 class OrderItemInline(admin.TabularInline):
@@ -85,18 +82,21 @@ class OrderAdmin(admin.ModelAdmin):
         + models.Order.address_fields("shipping_")
     )
 
+    @admin.display(
+        description=_("is paid"),
+        boolean=True,
+    )
     def admin_is_paid(self, instance):
         return not instance.balance_remaining
 
-    admin_is_paid.short_description = _("is paid")
-    admin_is_paid.boolean = True
-
+    @admin.display(
+        description=_("order ID"),
+        ordering="_order_id",
+    )
     def admin_order_id(self, instance):
         return instance.order_id
 
-    admin_order_id.short_description = _("order ID")
-    admin_order_id.admin_order_field = "_order_id"
-
+    @admin.display(description=_("add. info"))
     def additional_info(self, instance):
         bits = []
 
@@ -104,7 +104,7 @@ class OrderAdmin(admin.ModelAdmin):
             url = reverse(
                 "plata_reporting_packing_slip_pdf", kwargs={"order_id": instance.id}
             )
-            bits.append('<a href="%s">%s</a>' % (url, _("Packing slip")))
+            bits.append('<a href="{}">{}</a>'.format(url, _("Packing slip")))
         except NoReverseMatch:
             pass
 
@@ -112,14 +112,12 @@ class OrderAdmin(admin.ModelAdmin):
             url = reverse(
                 "plata_reporting_invoice_pdf", kwargs={"order_id": instance.id}
             )
-            bits.append('<a href="%s">%s</a>' % (url, _("Invoice")))
+            bits.append('<a href="{}">{}</a>'.format(url, _("Invoice")))
         except NoReverseMatch:
             pass
 
         return ", ".join(bits)
 
-    additional_info.allow_tags = True
-    additional_info.short_description = _("add. info")
     actions = [export_selected]
 
 
@@ -147,10 +145,9 @@ class OrderPaymentAdmin(admin.ModelAdmin):
         "data",
     )
 
+    @admin.display(description=_("notes"))
     def notes_short(self, obj):
         return obj.notes[:40] + "..." if len(obj.notes) > 50 else obj.notes
-
-    notes_short.short_description = _("notes")
 
 
 admin.site.register(models.Order, OrderAdmin)

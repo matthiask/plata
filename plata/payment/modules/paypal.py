@@ -9,7 +9,6 @@ Needs the following settings to work correctly::
         }
 """
 
-from __future__ import absolute_import, unicode_literals
 
 import logging
 from decimal import Decimal
@@ -19,7 +18,7 @@ from django.conf import settings
 from django.http import HttpResponse, HttpResponseForbidden
 from django.utils import timezone
 from django.utils.decorators import method_decorator
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
 
 import plata
@@ -37,11 +36,9 @@ class PaymentProcessor(ProcessorBase):
     default_name = _("Paypal")
 
     def get_urls(self):
-        from django.conf.urls import url
+        from django.urls import path
 
-        return [
-            url(r"^payment/paypal/ipn/$", self.ipn, name="plata_payment_paypal_ipn")
-        ]
+        return [path("payment/paypal/ipn/", self.ipn, name="plata_payment_paypal_ipn")]
 
     def process_order_confirmed(self, request, order):
         PAYPAL = settings.PAYPAL
@@ -129,10 +126,10 @@ class PaymentProcessor(ProcessorBase):
                 querystring = "cmd=_notify-validate&%s" % (request.POST.urlencode())
                 status = urlopen(PP_URL, querystring).read()
 
-                if not status == b"VERIFIED":
+                if status != b"VERIFIED":
                     logger.error(
-                        "IPN: Received status %s, "
-                        "could not verify parameters %s" % (status, parameters_repr)
+                        f"IPN: Received status {status}, "
+                        f"could not verify parameters {parameters_repr}"
                     )
                     logger.debug("Destination: %r ? %r", PP_URL, querystring)
                     logger.debug("Request: %r", request)

@@ -1,7 +1,6 @@
 from django.contrib import admin
-from django.utils.translation import ugettext_lazy as _
 
-from . import models
+from examples.simple import models
 
 
 class ProductPriceInline(admin.TabularInline):

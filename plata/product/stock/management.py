@@ -1,10 +1,10 @@
-# -*- coding: utf-8 -*-
-from django.db import models
 from django.core.exceptions import ImproperlyConfigured
+from django.db import models
 
 import plata
-from . import models as stock_models
 import plata.shop.models as shop_models
+from plata.product.stock import models as stock_models
+
 
 if plata.settings.PLATA_STOCK_TRACKING:
     product_model = plata.product_model()
@@ -12,8 +12,7 @@ if plata.settings.PLATA_STOCK_TRACKING:
         product_model._meta.get_field("items_in_stock")
     except models.FieldDoesNotExist:
         raise ImproperlyConfigured(
-            "Product model %r must have a field named `items_in_stock`"
-            % (product_model,)
+            f"Product model {product_model!r} must have a field named `items_in_stock`"
         )
 
     models.signals.post_delete.connect(

@@ -1,13 +1,10 @@
-# -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
-
-from django.utils.translation import ugettext as _
 from django.db import models
-
+from django.utils.translation import gettext as _
 from django_countries.fields import CountryField
 
 import plata
 from plata.fields import CurrencyField
+
 
 WEIGHT_UNIT = plata.settings.PLATA_SHIPPING_WEIGHT_UNIT
 LENGTH_UNIT = plata.settings.PLATA_SHIPPING_LENGTH_UNIT
@@ -187,7 +184,7 @@ class Postage(models.Model):
         verbose_name_plural = _("postage classes")
 
     def __str__(self):
-        return "%s: %s" % (self.provider.name, self.name)
+        return f"{self.provider.name}: {self.name}"
 
     __str__.short_description = _("name")
 
@@ -230,7 +227,7 @@ class Postage(models.Model):
         if self.max_3d and self.max_3d < size:
             return "%d %s" % (self.max_3d, LENGTH_UNIT)
         if d3:
-            return "%s × %s × %s %s" % (
+            return "{} × {} × {} {}".format(
                 self.max_length,
                 self.max_width,
                 self.max_height,

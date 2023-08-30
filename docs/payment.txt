@@ -238,5 +238,3 @@ the base path is defined by where you added ``shop.urls``.
 
 This payment provider is part of Ingenico since 2014, thus it’s questionable
 if the module still works.
-
-

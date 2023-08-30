@@ -5,9 +5,6 @@ from django.db.models import signals
 import plata
 
 
-default_app_config = "plata.product.stock.AppConfig"
-
-
 class AppConfig(apps.AppConfig):
     name = "plata.product.stock"
 
@@ -18,8 +15,8 @@ class AppConfig(apps.AppConfig):
                 product_model._meta.get_field("items_in_stock")
             except FieldDoesNotExist:
                 raise ImproperlyConfigured(
-                    "Product model %r must have a field named"
-                    " `items_in_stock`" % (product_model,)
+                    f"Product model {product_model!r} must have a field named"
+                    " `items_in_stock`"
                 )
 
             from plata.product.stock.models import (

@@ -1,12 +1,10 @@
-from __future__ import absolute_import, unicode_literals
-
 from decimal import ROUND_HALF_UP, Decimal
 
 import plata
 from plata.discount.models import DiscountBase
 
 
-class ProcessorBase(object):
+class ProcessorBase:
     """
     Order processor class base. Offers helper methods for order total
     aggregation and tax calculation.

@@ -1,0 +1,121 @@
+[build-system]
+build-backend = "hatchling.build"
+requires = [
+  "hatchling",
+]
+
+[project]
+name = "plata"
+description = "Plata - the lean and mean Django-based Shop"
+readme = "README.rst"
+license = {text="BSD License"}
+authors = [
+    { name = "Matthias Kestenholz et al.", email = "mk@feinheit.ch" },
+]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Environment :: Web Environment",
+  "Framework :: Django",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: BSD License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+  "Topic :: Software Development",
+  "Topic :: Software Development :: Libraries :: Application Frameworks",
+]
+dynamic = [
+  "version",
+]
+dependencies = [
+  "Django>3.2",
+  "django-countries>=3.3",
+  "openpyxl>=2.2",
+  "pdfdocument>=3.1",
+  "reportlab>=3.2",
+  "simplejson>=3.8",
+  "xlsxdocument",
+]
+[project.optional-dependencies]
+billogram = [
+  "billogram_api",
+]
+payson = [
+  "payson_api",
+]
+stripe = [
+  "stripe",
+]
+[project.urls]
+Homepage = "https://github.com/fiee/plata/"
+
+[tool.hatch.version]
+path = "plata/__init__.py"
+
+[tool.hatch.build]
+include = [
+    "/plata",
+]
+
+[tool.ruff]
+extend-select = [
+  # pyflakes, pycodestyle
+  "F", "E", "W",
+  # mmcabe
+  "C90",
+  # isort
+  "I",
+  # pep8-naming
+  "N",
+  # pyupgrade
+  "UP",
+  # flake8-2020
+  "YTT",
+  # flake8-boolean-trap
+  "FBT",
+  # flake8-bugbear
+  "B",
+  # flake8-comprehensions
+  "C4",
+  # flake8-django
+  "DJ",
+  # flake8-implicit-string-concatenation
+  "ISC",
+  # flake8-pie
+  "PIE",
+  # flake8-simplify
+  "SIM",
+  # flake8-gettext
+  "INT",
+  # pygrep-hooks
+  "PGH",
+  # pylint
+  "PLC", "PLE", "PLW",
+  # unused noqa
+  "RUF100",
+]
+extend-ignore = [
+  # Allow zip() without strict=
+  "B905",
+  # No line length errors
+  "E501",
+]
+fix = true
+show-fixes = true
+target-version = "py38"
+
+[tool.ruff.isort]
+combine-as-imports = true
+lines-after-imports = 2
+
+[tool.ruff.mccabe]
+max-complexity = 15
+
+[tool.ruff.per-file-ignores]
+"*/migrat*/*" = [
+  # Allow using PascalCase model names in migrations
+  "N806",
+  # Ignore the fact that migration files are invalid module names
+  "N999",
+]

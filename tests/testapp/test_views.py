@@ -1,5 +1,3 @@
-from __future__ import absolute_import, unicode_literals
-
 import warnings
 from datetime import timedelta
 from io import BytesIO
@@ -15,8 +13,7 @@ from plata.contact.models import Contact
 from plata.discount.models import Discount
 from plata.product.stock.models import Period, StockTransaction
 from plata.shop.models import Order, OrderPayment
-
-from .base import PlataTest, get_request
+from testapp.base import PlataTest, get_request
 
 
 try:  # pragma: no cover
@@ -458,13 +455,11 @@ class ViewTest(PlataTest):
             self.assertTrue("Order.is_paid() has been deprecated" in str(w[-1]))
 
         self.assertEqual(
-            set(
-                (
-                    StockTransaction.PURCHASE,
-                    StockTransaction.SALE,
-                    StockTransaction.PAYMENT_PROCESS_RESERVATION,
-                )
-            ),
+            {
+                StockTransaction.PURCHASE,
+                StockTransaction.SALE,
+                StockTransaction.PAYMENT_PROCESS_RESERVATION,
+            },
             set(StockTransaction.objects.values_list("type", flat=True)),
         )
 

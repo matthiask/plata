@@ -1,22 +1,20 @@
-from __future__ import absolute_import, unicode_literals
-
 import logging
 from functools import wraps
 
-from django.conf.urls import include, url
 from django.contrib import auth, messages
-from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import ValidationError
 from django.forms.models import ModelForm, inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.urls import reverse, get_callable
-from django.utils.translation import get_language, ugettext as _
+from django.urls import get_callable, include, path, reverse
+from django.utils.translation import get_language, gettext as _
 
 import plata
 from plata.shop import forms as shop_forms
-from .forms import OrderItemForm
+from plata.shop.forms import OrderItemForm
+
 
 logger = logging.getLogger("plata.shop.views")
 
@@ -113,7 +111,7 @@ def checkout_process_decorator(*checks):
     return _dec
 
 
-class Shop(object):
+class Shop:
     """
     Plata's view and shop processing logic is contained inside this class.
 
@@ -149,7 +147,7 @@ class Shop(object):
         order_model,
         discount_model,
         default_currency=None,
-        **kwargs
+        **kwargs,
     ):
         self.contact_model = contact_model
         self.order_model = order_model
@@ -168,8 +166,7 @@ class Shop(object):
         for key, value in kwargs.items():
             if not hasattr(self, key):
                 raise TypeError(
-                    "%s() received an invalid keyword %r"
-                    % (self.__class__.__name__, key)
+                    f"{self.__class__.__name__}() received an invalid keyword {key!r}"
                 )
             setattr(self, key, value)
 
@@ -182,15 +179,15 @@ class Shop(object):
         return self.get_shop_urls() + self.get_payment_urls()
 
     def get_cart_url(self):
-        return url(
-            r"^cart/$",
+        return path(
+            "cart/",
             checkout_process_decorator(order_already_confirmed)(self.cart),
             name="plata_shop_cart",
         )
 
     def get_checkout_url(self):
-        return url(
-            r"^checkout/$",
+        return path(
+            "checkout/",
             checkout_process_decorator(
                 cart_not_empty, order_already_confirmed, order_cart_validates
             )(self.checkout),
@@ -198,8 +195,8 @@ class Shop(object):
         )
 
     def get_discounts_url(self):
-        return url(
-            r"^discounts/$",
+        return path(
+            "discounts/",
             checkout_process_decorator(
                 user_is_authenticated,
                 cart_not_empty,
@@ -210,8 +207,8 @@ class Shop(object):
         )
 
     def get_confirmation_url(self):
-        return url(
-            r"^confirmation/$",
+        return path(
+            "confirmation/",
             checkout_process_decorator(
                 user_is_authenticated, cart_not_empty, order_cart_validates
             )(self.confirmation),
@@ -219,21 +216,21 @@ class Shop(object):
         )
 
     def get_success_url(self):
-        return url(r"^order/success/$", self.order_success, name="plata_order_success")
+        return path("order/success/", self.order_success, name="plata_order_success")
 
     def get_failure_url(self):
-        return url(
-            r"^order/payment_failure/$",
+        return path(
+            "order/payment_failure/",
             self.order_payment_failure,
             name="plata_order_payment_failure",
         )
 
     def get_new_url(self):
-        return url(r"^order/new/$", self.order_new, name="plata_order_new")
+        return path("order/new/", self.order_new, name="plata_order_new")
 
     def get_pending_url(self):
-        return url(
-            r"^order/payment_pending/$",
+        return path(
+            "order/payment_pending/",
             self.order_payment_pending,
             name="plata_order_payment_pending",
         )
@@ -251,7 +248,7 @@ class Shop(object):
         ]
 
     def get_payment_urls(self):
-        return [url(r"", include(module.urls)) for module in self.get_payment_modules()]
+        return [path("", include(module.urls)) for module in self.get_payment_modules()]
 
     def get_payment_modules(self, request=None):
         """
@@ -439,7 +436,7 @@ class Shop(object):
                     elif formset.can_delete and formset._should_delete_form(form):
                         if order.is_confirmed():
                             raise ValidationError(
-                                _("Cannot modify order once" " it has been confirmed."),
+                                _("Cannot modify order once it has been confirmed."),
                                 code="order_sealed",
                             )
 
@@ -757,8 +754,8 @@ class SinglePageCheckoutShop(Shop):
         ]
 
     def get_already_confirmed_url(self):
-        return url(
-            r"^confirmed/$",
+        return path(
+            "confirmed/",
             checkout_process_decorator(cart_not_empty, order_cart_validates)(
                 self.already_confirmed
             ),
