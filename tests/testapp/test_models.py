@@ -770,9 +770,9 @@ class ModelTest(PlataTest):
     def test_20_shipping_discount(self):
         """Test applying discounts to shipping too"""
         order_processors = plata.settings.PLATA_ORDER_PROCESSORS[:]
-        plata.settings.PLATA_ORDER_PROCESSORS[
-            -2
-        ] = "plata.shop.processors.FixedAmountShippingProcessor"
+        plata.settings.PLATA_ORDER_PROCESSORS[-2] = (
+            "plata.shop.processors.FixedAmountShippingProcessor"
+        )
 
         try:
             p1 = self.create_product()
@@ -847,9 +847,9 @@ class ModelTest(PlataTest):
 
     def test_23_mixed_tax(self):
         order_processors = plata.settings.PLATA_ORDER_PROCESSORS[:]
-        plata.settings.PLATA_ORDER_PROCESSORS[
-            -2
-        ] = "plata.shop.processors.FixedAmountShippingProcessor"
+        plata.settings.PLATA_ORDER_PROCESSORS[-2] = (
+            "plata.shop.processors.FixedAmountShippingProcessor"
+        )
 
         try:
             p1 = self.create_product(stock=10)

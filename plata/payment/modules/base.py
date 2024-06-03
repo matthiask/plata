@@ -178,8 +178,8 @@ class ProcessorBase:
 
             if order.discount_remaining:
                 logger.info(
-                    "Creating discount for remaining amount {} on"
-                    " order {}".format(order.discount_remaining, order)
+                    f"Creating discount for remaining amount {order.discount_remaining} on"
+                    f" order {order}"
                 )
                 discount_model = self.shop.discount_model
                 try:

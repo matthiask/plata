@@ -16,7 +16,6 @@ Follow these steps to enable this module:
   into account ``items_in_stock``.
 """
 
-
 from datetime import timedelta
 
 from django.core.exceptions import ValidationError

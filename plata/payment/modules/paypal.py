@@ -9,7 +9,6 @@ Needs the following settings to work correctly::
         }
 """
 
-
 import logging
 from decimal import Decimal
 from urllib.request import urlopen

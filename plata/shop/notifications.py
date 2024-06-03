@@ -65,7 +65,6 @@ A real-world example follows::
         weak=False)
 """
 
-
 import contextlib
 from io import BytesIO
 

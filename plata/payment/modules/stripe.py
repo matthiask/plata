@@ -13,6 +13,7 @@ Configuration::
         }
 
 """
+
 import logging
 
 import stripe  # official API, see https://stripe.com/docs/api/python

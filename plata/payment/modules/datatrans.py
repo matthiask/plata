@@ -149,9 +149,7 @@ class PaymentProcessor(ProcessorBase):
                 response_code = response.find("responseCode").text
                 if response_code not in ("1", "2", "3"):
                     logger.error(
-                        "IPN: Received response_code {}, could not verify parameters {}".format(
-                            response_code, parameters_repr
-                        )
+                        f"IPN: Received response_code {response_code}, could not verify parameters {parameters_repr}"
                     )
                     parameters = None
 

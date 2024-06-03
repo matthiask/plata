@@ -460,9 +460,7 @@ class Order(BillingShippingAddress):
                 price = product.get_price(currency=self.currency, orderitem=item)
             except ObjectDoesNotExist:
                 logger.warning(
-                    "No price could be found for {} with currency {}".format(
-                        product, self.currency
-                    )
+                    f"No price could be found for {product} with currency {self.currency}"
                 )
 
                 raise ValidationError(
@@ -694,9 +692,11 @@ class OrderStatus(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         self.order.status = self.status
-        if self.status == Order.CONFIRMED:
-            self.order.confirmed = timezone.now()
-        elif self.status > Order.CONFIRMED and not self.order.confirmed:
+        if (
+            self.status == Order.CONFIRMED
+            or self.status > Order.CONFIRMED
+            and not self.order.confirmed
+        ):
             self.order.confirmed = timezone.now()
         elif self.status < Order.CONFIRMED:
             # Ensure that the confirmed date is not set

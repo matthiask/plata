@@ -4,7 +4,6 @@ Product model base implementation -- you do not need to use this
 It may save you some typing though.
 """
 
-
 from django.db import models
 
 import plata

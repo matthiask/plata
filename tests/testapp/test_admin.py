@@ -21,9 +21,8 @@ class AdminTest(PlataTest):
         u.save()
 
         product_model = Product
-        self.product_admin_url = "/admin/{}/{}/".format(
-            product_model._meta.app_label,
-            product_model._meta.model_name,
+        self.product_admin_url = (
+            f"/admin/{product_model._meta.app_label}/{product_model._meta.model_name}/"
         )
 
     def login(self):

@@ -125,9 +125,7 @@ class PaymentProcessor(ProcessorBase):
                 if PAGSEGURO.get("LOG"):
                     f = open(PAGSEGURO.get("LOG"), "a")
                     f.write(
-                        "{} - status: {}, ref: {}, code: {}\n".format(
-                            time.ctime(), status, reference, notificationCode
-                        )
+                        f"{time.ctime()} - status: {status}, ref: {reference}, code: {notificationCode}\n"
                     )
                     f.close()
 

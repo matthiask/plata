@@ -11,7 +11,6 @@ Needs the following settings to work correctly::
         }
 """
 
-
 import locale
 import logging
 from decimal import Decimal

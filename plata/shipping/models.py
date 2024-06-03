@@ -227,12 +227,7 @@ class Postage(models.Model):
         if self.max_3d and self.max_3d < size:
             return "%d %s" % (self.max_3d, LENGTH_UNIT)
         if d3:
-            return "{} × {} × {} {}".format(
-                self.max_length,
-                self.max_width,
-                self.max_height,
-                LENGTH_UNIT,
-            )
+            return f"{self.max_length} × {self.max_width} × {self.max_height} {LENGTH_UNIT}"
         return "%d %s" % (size, LENGTH_UNIT)
 
     max_size_f.help_text = _(

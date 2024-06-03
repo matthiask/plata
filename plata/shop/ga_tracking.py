@@ -9,6 +9,7 @@ from plata.shop import signals
 signals.order_confirmed.connect(ga_tracking.on_order_confirmed)
 signals.order_paid.connect(ga_tracking.on_order_paid)
 """
+
 from django.conf import settings
 from django.utils.timezone import now
 from pyga.requests import Item, Session, Tracker, Transaction, Visitor
