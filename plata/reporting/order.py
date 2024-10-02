@@ -75,8 +75,8 @@ class OrderReport:
                     item.sku,
                     item.name,
                     item.quantity,
-                    "%.2f" % item.unit_price,
-                    "%.2f" % item.discounted_subtotal,
+                    f"{item.unit_price:.2f}",
+                    f"{item.discounted_subtotal:.2f}",
                 )
                 for item in self.order.items.all()
             ],
@@ -87,17 +87,17 @@ class OrderReport:
     def summary(self):
         summary_table = [
             ("", ""),
-            (capfirst(_("subtotal")), "%.2f" % self.order.subtotal),
+            (capfirst(_("subtotal")), f"{self.order.subtotal:.2f}"),
         ]
 
         if self.order.discount:
             summary_table.append(
-                (capfirst(_("discount")), "%.2f" % self.order.discount)
+                (capfirst(_("discount")), f"{self.order.discount:.2f}")
             )
 
         if self.order.shipping:
             summary_table.append(
-                (capfirst(_("shipping")), "%.2f" % self.order.shipping)
+                (capfirst(_("shipping")), f"{self.order.shipping:.2f}")
             )
 
         self.pdf.table(summary_table, (12 * cm, 4.4 * cm), self.pdf.style.table)
@@ -113,7 +113,9 @@ class OrderReport:
                 [
                     (
                         "",
-                        "{} {}".format(_("Incl. tax"), "%.1f%%" % row["tax_rate"]),
+                        "{} {}".format(
+                            _("Incl. tax"), "{:.1f}%".format(row["tax_rate"])
+                        ),
                         row["total"].quantize(zero),
                         row["tax_amount"].quantize(zero),
                         "",
@@ -126,7 +128,7 @@ class OrderReport:
             )
 
         self.pdf.table(
-            [(total_title, "%.2f" % self.order.total)],
+            [(total_title, f"{self.order.total:.2f}")],
             (12 * cm, 4.4 * cm),
             self.pdf.style.tableHead,
         )
@@ -177,7 +179,7 @@ class OrderReport:
                     "FONT",
                     (0, 0),
                     (-1, 0),
-                    "%s-Bold" % self.pdf.style.fontName,
+                    f"{self.pdf.style.fontName}-Bold",
                     self.pdf.style.fontSize,
                 ),
                 ("TOPPADDING", (0, 0), (-1, -1), 1),

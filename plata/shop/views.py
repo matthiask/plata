@@ -673,7 +673,7 @@ class Shop:
             )
             return self.redirect("plata_shop_cart")
 
-        logger.warn("Order payment failure for %s" % order.order_id)
+        logger.warn(f"Order payment failure for {order.order_id}")
 
         if plata.settings.PLATA_STOCK_TRACKING:
             StockTransaction = plata.stock_model()
@@ -689,8 +689,8 @@ class Shop:
             # There authorized order payments around!
             messages.warning(request, _("Payment failed, please try again."))
             logger.warn(
-                "Order %s is already partially paid, but payment"
-                " failed anyway!" % order.order_id
+                f"Order {order.order_id} is already partially paid, but payment"
+                " failed anyway!"
             )
         elif order.status > order.CHECKOUT and order.status < order.PAID:
             order.update_status(
@@ -771,10 +771,8 @@ class SinglePageCheckoutShop(Shop):
             class Meta(shop_forms.SinglePageCheckoutForm.Meta):
                 model = self.order_model
                 fields = ["notes", "email", "phone", "shipping_same_as_billing"]
-                fields.extend("billing_%s" % f for f in self.order_model.ADDRESS_FIELDS)
-                fields.extend(
-                    "shipping_%s" % f for f in self.order_model.ADDRESS_FIELDS
-                )
+                fields.extend(f"billing_{f}" for f in self.order_model.ADDRESS_FIELDS)
+                fields.extend(f"shipping_{f}" for f in self.order_model.ADDRESS_FIELDS)
 
         return CheckoutForm
 

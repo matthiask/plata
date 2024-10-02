@@ -68,7 +68,7 @@ class PaymentProcessor(ProcessorBase):
         if not order.balance_remaining:
             return self.already_paid(order, request=request)
 
-        logger.info("Processing order %s using Datatrans" % order)
+        logger.info(f"Processing order {order} using Datatrans")
 
         payment = self.create_pending_payment(order)
         if plata.settings.PLATA_STOCK_TRACKING:
@@ -102,7 +102,7 @@ class PaymentProcessor(ProcessorBase):
     @csrf_exempt_m
     def datatrans_error(self, request):
         error_code = int(request.POST.get("errorCode"))
-        logger.info("Got an error during datatrans payment! code is %s" % error_code)
+        logger.info(f"Got an error during datatrans payment! code is {error_code}")
         return redirect("plata_shop_checkout")
 
     @csrf_exempt_m
@@ -125,7 +125,7 @@ class PaymentProcessor(ProcessorBase):
             parameters = request.POST.copy()
             parameters_repr = repr(parameters).encode("utf-8")
             if parameters:
-                logger.info("IPN: Processing request data %s" % parameters_repr)
+                logger.info(f"IPN: Processing request data {parameters_repr}")
 
                 xml = """<?xml version="1.0" encoding="UTF-8" ?>
                 <statusService version="1">
@@ -160,20 +160,18 @@ class PaymentProcessor(ProcessorBase):
                 try:
                     order_id, payment_id = refno.split("-")
                 except ValueError:
-                    logger.error("IPN: Error getting order for %s" % refno)
+                    logger.error(f"IPN: Error getting order for {refno}")
                     return HttpResponseForbidden("Malformed order ID")
                 try:
                     order = self.shop.order_model.objects.get(pk=order_id)
                 except self.shop.order_model.DoesNotExist:
-                    logger.error("IPN: Order %s does not exist" % order_id)
-                    return HttpResponseForbidden("Order %s does not exist" % order_id)
+                    logger.error(f"IPN: Order {order_id} does not exist")
+                    return HttpResponseForbidden(f"Order {order_id} does not exist")
 
                 try:
                     payment = order.payments.get(pk=payment_id)
                 except order.payments.model.DoesNotExist:
-                    return HttpResponseForbidden(
-                        "Payment %s does not exist" % payment_id
-                    )
+                    return HttpResponseForbidden(f"Payment {payment_id} does not exist")
 
                 payment.status = OrderPayment.PROCESSED
                 payment.currency = currency
@@ -188,7 +186,7 @@ class PaymentProcessor(ProcessorBase):
                 payment.save()
                 order = order.reload()
 
-                logger.info("IPN: Successfully processed IPN request for %s" % order)
+                logger.info(f"IPN: Successfully processed IPN request for {order}")
 
                 if payment.authorized and plata.settings.PLATA_STOCK_TRACKING:
                     StockTransaction = plata.stock_model()
@@ -206,5 +204,5 @@ class PaymentProcessor(ProcessorBase):
                 return redirect("plata_order_success")
 
         except Exception as e:
-            logger.error("IPN: Processing failure %s" % e)
+            logger.error(f"IPN: Processing failure {e}")
             raise

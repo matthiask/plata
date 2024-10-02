@@ -45,7 +45,7 @@ class PaymentProcessor(ProcessorBase):
         if not order.balance_remaining:
             return self.already_paid(order, request=request)
 
-        logger.info("Processing order %s using Paypal" % order)
+        logger.info(f"Processing order {order} using Paypal")
 
         payment = self.create_pending_payment(order)
         if plata.settings.PLATA_STOCK_TRACKING:
@@ -65,7 +65,7 @@ class PaymentProcessor(ProcessorBase):
 
         return self.shop.render(
             request,
-            "payment/%s_form.html" % self.key,
+            f"payment/{self.key}_form.html",
             {
                 "order": order,
                 "payment": payment,
@@ -120,9 +120,9 @@ class PaymentProcessor(ProcessorBase):
             parameters_repr = repr(parameters).encode("utf-8")
 
             if parameters:
-                logger.info("IPN: Processing request data %s" % parameters_repr)
+                logger.info(f"IPN: Processing request data {parameters_repr}")
 
-                querystring = "cmd=_notify-validate&%s" % (request.POST.urlencode())
+                querystring = f"cmd=_notify-validate&{request.POST.urlencode()}"
                 status = urlopen(PP_URL, querystring).read()
 
                 if status != b"VERIFIED":
@@ -135,7 +135,7 @@ class PaymentProcessor(ProcessorBase):
                     return HttpResponseForbidden("Unable to verify")
 
             if parameters:
-                logger.info("IPN: Verified request %s" % parameters_repr)
+                logger.info(f"IPN: Verified request {parameters_repr}")
                 reference = parameters["txn_id"]
                 invoice_id = parameters["invoice"]
                 currency = parameters["mc_currency"]
@@ -144,20 +144,20 @@ class PaymentProcessor(ProcessorBase):
                 try:
                     order, order_id, payment_id = invoice_id.split("-")
                 except ValueError:
-                    logger.error("IPN: Error getting order for %s" % invoice_id)
+                    logger.error(f"IPN: Error getting order for {invoice_id}")
                     return HttpResponseForbidden("Malformed order ID")
 
                 try:
                     order = self.shop.order_model.objects.get(pk=order_id)
                 except (self.shop.order_model.DoesNotExist, ValueError):
-                    logger.error("IPN: Order %s does not exist" % order_id)
-                    return HttpResponseForbidden("Order %s does not exist" % order_id)
+                    logger.error(f"IPN: Order {order_id} does not exist")
+                    return HttpResponseForbidden(f"Order {order_id} does not exist")
 
                 try:
                     payment = order.payments.get(pk=payment_id)
                 except (order.payments.model.DoesNotExist, ValueError):
                     payment = order.payments.model(
-                        order=order, payment_module="%s" % self.name
+                        order=order, payment_module=f"{self.name}"
                     )
 
                 payment.status = OrderPayment.PROCESSED
@@ -174,7 +174,7 @@ class PaymentProcessor(ProcessorBase):
                 payment.save()
                 order = order.reload()
 
-                logger.info("IPN: Successfully processed IPN request for %s" % order)
+                logger.info(f"IPN: Successfully processed IPN request for {order}")
 
                 if payment.authorized and plata.settings.PLATA_STOCK_TRACKING:
                     StockTransaction = plata.stock_model()
@@ -192,7 +192,7 @@ class PaymentProcessor(ProcessorBase):
                 return HttpResponse("Ok")
 
         except Exception as e:
-            logger.error("IPN: Processing failure %s" % e)
+            logger.error(f"IPN: Processing failure {e}")
             raise
         else:
             logger.warning("IPN received without POST parameters")

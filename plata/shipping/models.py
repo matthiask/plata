@@ -147,32 +147,32 @@ class Postage(models.Model):
         default=plata.settings.PLATA_PRICE_INCLUDES_TAX,
     )
     weight_packaging = models.PositiveIntegerField(
-        verbose_name=_("weight of packaging [%s]" % WEIGHT_UNIT),
+        verbose_name=_("weight of packaging [{}]".format(WEIGHT_UNIT)),
         default=0,
         help_text=_("The approx. weight of the necessary packaging for this package"),
     )
     max_weight = models.PositiveIntegerField(
-        verbose_name=_("max. weight [%s]" % WEIGHT_UNIT),
+        verbose_name=_("max. weight [{}]".format(WEIGHT_UNIT)),
         default=0,
         help_text=_("Maximum weight for this tariff. 0 = ignored"),
     )
     max_length = models.PositiveIntegerField(
-        verbose_name=_("max. length [%s]" % LENGTH_UNIT),
+        verbose_name=_("max. length [{}]".format(LENGTH_UNIT)),
         default=0,
         help_text=_("Maximum length for this tariff. 0 = ignored"),
     )
     max_width = models.PositiveIntegerField(
-        verbose_name=_("max. width [%s]" % LENGTH_UNIT),
+        verbose_name=_("max. width [{}]".format(LENGTH_UNIT)),
         default=0,
         help_text=_("Maximum width for this tariff. 0 = ignored"),
     )
     max_height = models.PositiveIntegerField(
-        verbose_name=_("max. height [%s]" % LENGTH_UNIT),
+        verbose_name=_("max. height [{}]".format(LENGTH_UNIT)),
         default=0,
         help_text=_("Maximum height for this tariff. 0 = ignored"),
     )
     max_3d = models.PositiveIntegerField(
-        verbose_name=_("max. dimensions [%s]" % LENGTH_UNIT),
+        verbose_name=_("max. dimensions [{}]".format(LENGTH_UNIT)),
         default=0,
         help_text=_(
             "Maximum measure of length+width+height for this tariff. 0 = ignored"
@@ -212,8 +212,8 @@ class Postage(models.Model):
         return size
 
     max_size.help_text = _("maximum size of length + width + height")
-    max_size.short_description = _("max. size [%s]" % LENGTH_UNIT)
-    max_size.verbose_name = _("max. size [%s]" % LENGTH_UNIT)
+    max_size.short_description = _("max. size [{}]".format(LENGTH_UNIT))
+    max_size.verbose_name = _("max. size [{}]".format(LENGTH_UNIT))
 
     def max_size_f(self):
         """

@@ -57,7 +57,7 @@ def on_order_paid(order, payment, request, **kwargs):
     transaction.tax = order.tax
     transaction.shipping = order.shipping
     transaction.city = order.billing_city.encode("utf8")
-    transaction.country = ("%s" % order.billing_country).encode("utf8")
+    transaction.country = (f"{order.billing_country}").encode()
     transaction.currency = order.currency
     for item in order.items.all():
         i = Item()

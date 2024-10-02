@@ -25,7 +25,7 @@ class PaymentProcessor(ProcessorBase):
         if not order.balance_remaining:
             return self.already_paid(order, request=request)
 
-        logger.info("Processing order %s using COD" % order)
+        logger.info(f"Processing order {order} using COD")
 
         payment = self.create_pending_payment(order)
 

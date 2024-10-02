@@ -47,9 +47,7 @@ class PaymentProcessor(ProcessorBase):
         if not order.balance_remaining:
             return self.already_paid(order)
 
-        logger.info(
-            "Processing order %s using bank transfer in advance (prepay)" % order
-        )
+        logger.info(f"Processing order {order} using bank transfer in advance (prepay)")
 
         payment = self.create_pending_payment(order)
 
@@ -85,7 +83,7 @@ Click on this link when the payment is received: {confirm_link}
                 first_name=order.user.first_name,
                 last_name=order.user.last_name,
                 email=order.email,
-                items=", ".join(("%s" % item) for item in order.items.all()),
+                items=", ".join(("{}".format(item)) for item in order.items.all()),
                 remaining=order.balance_remaining,
                 currency=order.currency,
                 confirm_link=confirm_link,

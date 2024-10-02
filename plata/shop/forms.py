@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib import auth
+from django.utils.crypto import get_random_string
 from django.utils.translation import gettext_lazy as _
 
 from plata.shop import signals
@@ -12,6 +13,10 @@ try:  # pragma: no cover
     User = get_user_model()
 except ImportError:
     from django.contrib.auth.models import User
+
+
+def _make_random_password():
+    return get_random_string(10, allowed_chars='abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789')
 
 
 class BaseCheckoutForm(forms.ModelForm):
@@ -69,7 +74,7 @@ class BaseCheckoutForm(forms.ModelForm):
             email = self.cleaned_data.get("email")
 
             if not self.shop.user_is_authenticated(self.request.user):
-                password = User.objects.make_random_password()
+                password = _make_random_password()
                 params = {"email": email, "password": password}
                 if getattr(User, "USERNAME_FIELD", "username") == "username":
                     params["username"] = email[:30]  # FIXME
@@ -263,7 +268,7 @@ class SinglePageCheckoutForm(BaseCheckoutForm, PaymentSelectMixin):
         data = super().clean()
         if not data.get("shipping_same_as_billing"):
             for f in self.REQUIRED_ADDRESS_FIELDS:
-                field = "shipping_%s" % f
+                field = f"shipping_{f}"
                 if not data.get(field):
                     self._errors[field] = self.error_class(
                         [_("This field is required.")]

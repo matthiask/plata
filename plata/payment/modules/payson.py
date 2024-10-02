@@ -49,7 +49,7 @@ class PaymentProcessor(ProcessorBase):
             return self.already_paid(order)
         if order.currency not in ("SEK", "EUR"):
             raise ValueError(
-                "Payson payments only support SEK and EUR, not %s." % order.currency
+                f"Payson payments only support SEK and EUR, not {order.currency}."
             )
 
         # TODO: log

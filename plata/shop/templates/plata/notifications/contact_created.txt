@@ -1,7 +1,7 @@
-{% load i18n %}{{ site.name }}: {% trans "Account creation successful" %}
+{% load i18n %}{{ site.name }}: {% translate "Account creation successful" %}
 
-{% trans "You have successfully created an account on our site!" %}
-{% blocktrans with domain=site.domain %}Go to http://{{ domain }}/ and enter the following details:{% endblocktrans %}
+{% translate "You have successfully created an account on our site!" %}
+{% blocktranslate with domain=site.domain %}Go to http://{{ domain }}/ and enter the following details:{% endblocktranslate %}
 
-{% trans "Your username:" %} {{ contact.user.email }}
-{% if password %}{% trans "Your password:" %} {{ password }}{% endif %}
+{% translate "Your username:" %} {{ contact.user.email }}
+{% if password %}{% translate "Your password:" %} {{ password }}{% endif %}

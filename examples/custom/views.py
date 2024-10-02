@@ -14,7 +14,7 @@ from plata.shop.views import Shop
 
 class CheckoutForm(shop_forms.BaseCheckoutForm):
     class Meta:
-        fields = ["email"] + ["billing_%s" % f for f in Contact.ADDRESS_FIELDS]
+        fields = ["email"] + [f"billing_{f}" for f in Contact.ADDRESS_FIELDS]
         model = Order
 
     def __init__(self, *args, **kwargs):
@@ -25,7 +25,7 @@ class CheckoutForm(shop_forms.BaseCheckoutForm):
         if contact:
             initial = {}
             for f in contact.ADDRESS_FIELDS:
-                initial["billing_%s" % f] = getattr(contact, f)
+                initial[f"billing_{f}"] = getattr(contact, f)
                 kwargs["initial"] = initial
             initial["email"] = contact.user.email
 

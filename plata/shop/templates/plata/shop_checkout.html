@@ -2,10 +2,10 @@
 
 {% load i18n plata_tags %}
 
-{% block title %}{% trans "Checkout" %} - {{ block.super }}{% endblock %}
+{% block title %}{% translate "Checkout" %} - {{ block.super }}{% endblock %}
 
 {% block content %}
-  <h1>{% trans "Checkout" %}</h1>
+  <h1>{% translate "Checkout" %}</h1>
 
   {% block login_form %}
     {% if loginform %}
@@ -17,12 +17,12 @@
           {{ loginform }}
           <tr>
             <td></td>
-            <td><button type="submit">{% trans "Submit" %}</button></td>
+            <td><button type="submit">{% translate "Submit" %}</button></td>
           </tr>
         </table>
       </form>
     {% endif %}
-  {% endblock %}
+  {% endblock login_form %}
 
   <form method="post" action=".">
     {% block order_form %}
@@ -36,16 +36,16 @@
           {% block billing_heading_row %}
             <tr>
               <td colspan="2">
-                <h2>{% trans "Billing address" %}</h2>
+                <h2>{% translate "Billing address" %}</h2>
               </td>
             </tr>
-          {% endblock %}
+          {% endblock billing_heading_row %}
 
           {% block create_account_field %}
             {% if orderform.create_account %}
               {% form_item orderform.create_account %}
             {% endif %}
-          {% endblock %}
+          {% endblock create_account_field %}
 
           {% block billing_fields %}
             {% form_item orderform.billing_company %}
@@ -58,16 +58,16 @@
               {% form_item orderform.billing_zip_code %}
               {% form_item orderform.billing_city %}
               {% form_item orderform.billing_country %}
-            {% endblock %}
-          {% endblock %}
+            {% endblock billing_address_fields %}
+          {% endblock billing_fields %}
 
           {% block shipping_heading_row %}
             <tr>
               <td colspan="2">
-                <h2>{% trans "Shipping address" %}</h2>
+                <h2>{% translate "Shipping address" %}</h2>
               </td>
             </tr>
-          {% endblock %}
+          {% endblock shipping_heading_row %}
 
           {% block shipping_same_as_billing_row %}
             <tr>
@@ -76,7 +76,7 @@
                 {{ orderform.shipping_same_as_billing.label_tag }}
               </td>
             </tr>
-          {% endblock %}
+          {% endblock shipping_same_as_billing_row %}
 
           {% block shipping_fields %}
             {% form_item orderform.shipping_company %}
@@ -87,26 +87,26 @@
               {% form_item orderform.shipping_zip_code %}
               {% form_item orderform.shipping_city %}
               {% form_item orderform.shipping_country %}
-            {% endblock %}
-          {% endblock %}
+            {% endblock shipping_address_fields %}
+          {% endblock shipping_fields %}
 
           {% block notes %}
             <tr>
               <td colspan="2">
-                <h2>{% trans "Notes" %}</h2>
+                <h2>{% translate "Notes" %}</h2>
               </td>
             </tr>
             {% form_item orderform.notes %}
-          {% endblock %}
+          {% endblock notes %}
 
           {% block submit %}
             <tr>
               <td></td>
-              <td><button type="submit">{% trans "Submit" %}</button></td>
+              <td><button type="submit">{% translate "Submit" %}</button></td>
             </tr>
-          {% endblock %}
-        {% endblock %}
+          {% endblock submit %}
+        {% endblock order_form_table_rows %}
       </table>
-    {% endblock %}
+    {% endblock order_form %}
   </form>
-{% endblock %}
+{% endblock content %}

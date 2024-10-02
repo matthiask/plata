@@ -8,9 +8,9 @@ requires = [
 name = "plata"
 description = "Plata - the lean and mean Django-based Shop"
 readme = "README.rst"
-license = {text="BSD License"}
+license = { text = "BSD License" }
 authors = [
-    { name = "Matthias Kestenholz et al.", email = "mk@feinheit.ch" },
+  { name = "Matthias Kestenholz et al.", email = "mk@feinheit.ch" },
 ]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
@@ -20,7 +20,12 @@ classifiers = [
   "License :: OSI Approved :: BSD License",
   "Operating System :: OS Independent",
   "Programming Language :: Python",
-  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
   "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
   "Topic :: Software Development",
   "Topic :: Software Development :: Libraries :: Application Frameworks",
@@ -29,7 +34,7 @@ dynamic = [
   "version",
 ]
 dependencies = [
-  "Django>=4.1",
+  "django>=4.1",
   "django-countries>=3.3",
   "openpyxl>=2.2",
   "pdfdocument>=3.1",
@@ -37,31 +42,35 @@ dependencies = [
   "simplejson>=3.8",
   "xlsxdocument",
 ]
-[project.optional-dependencies]
-billogram = [
-  "billogram_api",
+optional-dependencies.billogram = [
+  "billogram-api",
 ]
-payson = [
-  "payson_api",
+optional-dependencies.payson = [
+  "payson-api",
 ]
-stripe = [
+optional-dependencies.stripe = [
   "stripe",
 ]
-[project.urls]
-Homepage = "https://github.com/fiee/plata/"
+urls.Homepage = "https://github.com/fiee/plata/"
 
 [tool.hatch.version]
 path = "plata/__init__.py"
 
 [tool.hatch.build]
 include = [
-    "/plata",
+  "/plata",
 ]
 
 [tool.ruff]
+target-version = "py38"
+
+fix = true
+show-fixes = true
 extend-select = [
   # pyflakes, pycodestyle
-  "F", "E", "W",
+  "F",
+  "E",
+  "W",
   # mmcabe
   "C90",
   # isort
@@ -91,7 +100,9 @@ extend-select = [
   # pygrep-hooks
   "PGH",
   # pylint
-  "PLC", "PLE", "PLW",
+  "PLC",
+  "PLE",
+  "PLW",
   # unused noqa
   "RUF100",
 ]
@@ -101,21 +112,12 @@ extend-ignore = [
   # No line length errors
   "E501",
 ]
-fix = true
-show-fixes = true
-target-version = "py38"
-
-[tool.ruff.isort]
-combine-as-imports = true
-lines-after-imports = 2
-
-[tool.ruff.mccabe]
-max-complexity = 15
-
-[tool.ruff.per-file-ignores]
-"*/migrat*/*" = [
+per-file-ignores."*/migrat*/*" = [
   # Allow using PascalCase model names in migrations
   "N806",
   # Ignore the fact that migration files are invalid module names
   "N999",
 ]
+isort.combine-as-imports = true
+isort.lines-after-imports = 2
+mccabe.max-complexity = 15

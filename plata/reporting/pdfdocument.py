@@ -7,7 +7,7 @@ import plata
 
 def init_regular_font(suffix=""):
     name = f"{plata.settings.PLATA_PDF_FONT_NAME}{suffix}"
-    path = plata.settings.PLATA_PDF_FONT_PATH or "%s.ttf" % name
+    path = plata.settings.PLATA_PDF_FONT_PATH or f"{name}.ttf"
     pdfmetrics.registerFont(TTFont(name, path))
 
 
@@ -21,7 +21,7 @@ class PlataPDFDocument(PDFDocument):
         if plata.settings.PLATA_PDF_FONT_BOLD_NAME:
             # init bold font variant
             name = plata.settings.PLATA_PDF_FONT_BOLD_NAME
-            path = plata.settings.PLATA_PDF_FONT_BOLD_PATH or "%s.ttf" % name
+            path = plata.settings.PLATA_PDF_FONT_BOLD_PATH or f"{name}.ttf"
             pdfmetrics.registerFont(TTFont(name, path))
         elif plata.settings.PLATA_PDF_FONT_NAME:
             # init bold font variant from regular font, bold is always needed

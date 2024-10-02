@@ -2,10 +2,10 @@
 
 {% load i18n %}
 
-{% block title %}{% trans "Products" %} - {{ block.super }}{% endblock %}
+{% block title %}{% translate "Products" %} - {{ block.super }}{% endblock %}
 
 {% block content %}
-<h1>{% trans "Products" %}</h1>
+<h1>{% translate "Products" %}</h1>
 
 {% for product in object_list %}
 <div class="h-product">
@@ -16,4 +16,4 @@
 {% endfor %}
 
 {% include "_pagination.html" %}
-{% endblock %}
+{% endblock content %}

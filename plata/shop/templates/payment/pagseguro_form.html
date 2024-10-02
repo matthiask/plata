@@ -2,9 +2,9 @@
 {% load i18n %}
 
 {% block content %}
-<h1>{% trans "Payment" %}</h1>
+<h1>{% translate "Payment" %}</h1>
 
-<p>{% trans "You will be forwarded to PagSeguro for payment now." %}</p>
+<p>{% translate "You will be forwarded to PagSeguro for payment now." %}</p>
 
 <form action="{{ post_url }}" method="post" id="pagseguroform">
 	<!-- Required fields -->
@@ -33,7 +33,7 @@
 	<input type="hidden" name="senderName" value="{{ order.billing_first_name }}">
 	<input type="hidden" name="senderEmail" value="{{ order.email }}">
 
-    <input type="submit" value="{% trans "Purchase Items" %}" />
+    <input type="submit" value="{% translate "Purchase Items" %}" />
 </form>
 
 <script type="text/javascript">
@@ -42,4 +42,4 @@ window.setTimeout(function(){
 }, 1000);
 </script>
 
-{% endblock %}
+{% endblock content %}

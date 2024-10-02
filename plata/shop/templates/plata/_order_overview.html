@@ -1,13 +1,13 @@
 {% load i18n %}
 {% with order.addresses as addresses %}
-<h2>{% trans "Billing address" %}</h2>
+<h2>{% translate "Billing address" %}</h2>
 {% with addresses.billing as address %}{% include "plata/_address.html" %}{% endwith %}
 
-<h2>{% trans "Shipping address" %}</h2>
+<h2>{% translate "Shipping address" %}</h2>
 {% with addresses.shipping as address %}{% include "plata/_address.html" %}{% endwith %}
 {% endwith %}
 
-<h2>{% trans "Order items" %}</h2>
+<h2>{% translate "Order items" %}</h2>
 <table border="1">
 {% for item in order.items.all %}
 <tr>
@@ -20,7 +20,7 @@
 
 {% with order.applied_discounts.all as discounts %}
   {% if discounts %}
-    <h2>{% trans "Discounts" %}</h2>
+    <h2>{% translate "Discounts" %}</h2>
       {% for discount in discounts %}
         <tr>
           <td>{{ discount.name }}</td>
@@ -30,28 +30,28 @@
     </table>
   {% endif %}
 
-  <h2>{% trans "Total" %}</h2>
+  <h2>{% translate "Total" %}</h2>
   <table>
     <tr>
-      <th>{% trans "subtotal"|capfirst %}</th>
+      <th>{% translate "subtotal"|capfirst %}</th>
       <td>{{ order.currency }} {{ order.subtotal|floatformat:2 }}</td>
     </tr>
     {% if discounts %}
       <tr>
-        <th>{% trans "discount"|capfirst %}</th>
+        <th>{% translate "discount"|capfirst %}</th>
         <td>{{ order.currency }} {{ order.discount|floatformat:2 }}</td>
       </tr>
     {% endif %}
     <tr>
-      <th>{% trans "shipping"|capfirst %}</th>
+      <th>{% translate "shipping"|capfirst %}</th>
       <td>{{ order.currency }} {{ order.shipping|floatformat:2 }}</td>
     </tr>
     <tr>
-      <th>{% trans "tax"|capfirst %}</th>
+      <th>{% translate "tax"|capfirst %}</th>
       <td>{{ order.currency }} {{ order.tax|floatformat:2 }}</td>
     </tr>
     <tr>
-      <th>{% trans "total"|capfirst %}</th>
+      <th>{% translate "total"|capfirst %}</th>
       <td>{{ order.currency }} {{ order.total|floatformat:2 }}</td>
     </tr>
   </table>

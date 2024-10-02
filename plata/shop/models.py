@@ -92,14 +92,12 @@ class BillingShippingAddress(models.Model):
         Return a ``dict`` containing a billing and a shipping address, taking
         into account the value of the ``shipping_same_as_billing`` flag
         """
-        billing = {f: getattr(self, "billing_%s" % f) for f in self.ADDRESS_FIELDS}
+        billing = {f: getattr(self, f"billing_{f}") for f in self.ADDRESS_FIELDS}
 
         if self.shipping_same_as_billing:
             shipping = billing
         else:
-            shipping = {
-                f: getattr(self, "shipping_%s" % f) for f in self.ADDRESS_FIELDS
-            }
+            shipping = {f: getattr(self, f"shipping_{f}") for f in self.ADDRESS_FIELDS}
 
         return {"billing": billing, "shipping": shipping}
 

@@ -1008,15 +1008,13 @@ class ModelTest(PlataTest):
         order = self.create_order()
         orderitem = self.create_orderitem(product, order)
 
-        self.assertEqual("%s" % orderitem, "1 of Test Product")
+        self.assertEqual(f"{orderitem}", "1 of Test Product")
         orderstatus = OrderStatus.objects.create(order=order, status=Order.PAID)
-        self.assertEqual(
-            "%s" % orderstatus, "Status Order has been paid for O-000000001"
-        )
+        self.assertEqual(f"{orderstatus}", "Status Order has been paid for O-000000001")
         orderpayment = OrderPayment.objects.create(
             order=order, currency=100, amount=1, authorized=timezone.now()
         )
-        self.assertEqual("%s" % orderpayment, "Authorized of 100 1.00 for O-000000001")
+        self.assertEqual(f"{orderpayment}", "Authorized of 100 1.00 for O-000000001")
 
     def test_28_order_items_without_products(self):
         """Test order items where the product foreign key is NULL"""

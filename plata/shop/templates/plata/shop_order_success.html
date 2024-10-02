@@ -2,22 +2,22 @@
 
 {% load i18n plata_tags %}
 
-{% block title %}{% trans "Order successful" %} - {{ block.super }}{% endblock %}
+{% block title %}{% translate "Order successful" %} - {{ block.super }}{% endblock %}
 
 {% block content %}
 {% if not order.balance_remaining %}
-    <h1>{% trans "Thank you for shopping with us!" %}</h1>
+    <h1>{% translate "Thank you for shopping with us!" %}</h1>
     {# TODO this isn't correct for cash on delivery #}
 {% else %}
     {% if order.paid %}
-        <h1>{% trans "Order has been partially paid." %}</h1>
+        <h1>{% translate "Order has been partially paid." %}</h1>
     {% else %}
-        <h1>{% trans "Order has been confirmed." %}</h1>
+        <h1>{% translate "Order has been confirmed." %}</h1>
     {% endif %}
-    <p>{% trans "As soon as we receive a confirmation from the payment provider, you'll be sent a confirmation e-mail." %}</p>
+    <p>{% translate "As soon as we receive a confirmation from the payment provider, you'll be sent a confirmation e-mail." %}</p>
 {% endif %}
 
 {% include "plata/_order_overview.html" %}
 
-<button type="button" onclick="window.location.href='{% url "plata_order_new" %}'">{% trans "Create new order" %}</button>
-{% endblock %}
+<button type="button" onclick="window.location.href='{% url "plata_order_new" %}'">{% translate "Create new order" %}</button>
+{% endblock content %}

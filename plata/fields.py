@@ -36,7 +36,7 @@ def json_encode_default(o):
         return o.strftime("%Y-%m-%d")
     elif isinstance(o, datetime.time):
         return o.strftime("%H:%M:%S.%f%z")
-    raise TypeError("Cannot encode %r" % o)
+    raise TypeError(f"Cannot encode {o!r}")
 
 
 _PATTERNS = [

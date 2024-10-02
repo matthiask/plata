@@ -2,15 +2,15 @@
 
 {% load i18n plata_tags %}
 
-{% block title %}{% trans "Discounts" %} - {{ block.super }}{% endblock %}
+{% block title %}{% translate "Discounts" %} - {{ block.super }}{% endblock %}
 
 {% block content %}
-<h1>{% trans "Discounts" %}</h1>
+<h1>{% translate "Discounts" %}</h1>
 
 {% include "plata/_order_overview.html" %}
 
 <form method="post" action=".">{% csrf_token %}
-<h2>{% trans "Voucher code" %}</h2>
+<h2>{% translate "Voucher code" %}</h2>
 {% form_errors form %}
 
 <table>
@@ -18,9 +18,9 @@
 <tr>
     <td></td>
     <td>
-        <input type="submit" name="save" value="{% trans "Add voucher" %}" />
-        <input type="submit" name="proceed" value="{% trans "Proceed to confirmation" %}" />
+        <input type="submit" name="save" value="{% translate "Add voucher" %}" />
+        <input type="submit" name="proceed" value="{% translate "Proceed to confirmation" %}" />
 </tr>
 </table>
 </form>
-{% endblock %}
+{% endblock content %}

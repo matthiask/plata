@@ -3,9 +3,9 @@
 {% load i18n %}
 
 {% block content %}
-<h1>{% trans "Payment" %}</h1>
+<h1>{% translate "Payment" %}</h1>
 
-<p>{% trans "You will be forwarded to Paypal for payment now." %}</p>
+<p>{% translate "You will be forwarded to Paypal for payment now." %}</p>
 
 <form action="{{ post_url }}" method="post" id="paypalform">
 {% block parameters %}
@@ -59,8 +59,8 @@
     <input type="hidden" name="address_override" value="0" />
 
     <input type="hidden" name="notify_url" value="{{ IPN_SCHEME }}://{{ HTTP_HOST }}{% url "plata_payment_paypal_ipn" %}" />
-    {% endblock %}
-    <input type="submit" value="{% trans "Purchase Items" %}" />
+    {% endblock parameters %}
+    <input type="submit" value="{% translate "Purchase Items" %}" />
 </form>
 
 <script type="text/javascript">
@@ -69,4 +69,4 @@ window.setTimeout(function(){
 }, 1000);
 </script>
 
-{% endblock %}
+{% endblock content %}

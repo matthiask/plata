@@ -48,7 +48,7 @@ class PaymentProcessor(ProcessorBase):
         if not order.balance_remaining:
             return self.already_paid(order)
 
-        logger.info("Processing order %s using PagSeguro" % order)
+        logger.info(f"Processing order {order} using PagSeguro")
 
         payment = self.create_pending_payment(order)
         if plata.settings.PLATA_STOCK_TRACKING:
@@ -85,7 +85,7 @@ class PaymentProcessor(ProcessorBase):
             data = {k: v.encode("ISO-8859-1") for k, v in data.items()}
 
             if data:
-                logger.info("Pagseguro: Processing request data %s" % data)
+                logger.info(f"Pagseguro: Processing request data {data}")
 
                 if PAGSEGURO.get("LOG"):
                     f = open(PAGSEGURO["LOG"], "a+")
@@ -117,8 +117,9 @@ class PaymentProcessor(ProcessorBase):
                     )
                 except (ValueError, IndexError):
                     logger.error(
-                        "Pagseguro: Can't verify notification: %s"
-                        % result.decode("ISO-8859-1")
+                        "Pagseguro: Can't verify notification: {}".format(
+                            result.decode("ISO-8859-1")
+                        )
                     )
                     return HttpResponseForbidden("Order verification failed")
 
@@ -129,27 +130,27 @@ class PaymentProcessor(ProcessorBase):
                     )
                     f.close()
 
-                logger.info("Pagseguro: Verified request %s" % result)
+                logger.info(f"Pagseguro: Verified request {result}")
 
                 try:
                     order, order_id, payment_id = reference.split("-")
                 except ValueError:
-                    logger.error("Pagseguro: Error getting order for %s" % reference)
+                    logger.error(f"Pagseguro: Error getting order for {reference}")
                     return HttpResponseForbidden(_("Malformed order ID"))
 
                 try:
                     order = self.shop.order_model.objects.get(pk=order_id)
                 except self.shop.order_model.DoesNotExist:
-                    logger.error("Pagseguro: Order %s does not exist" % order_id)
+                    logger.error(f"Pagseguro: Order {order_id} does not exist")
                     return HttpResponseForbidden(
-                        _("Order %s does not exist" % order_id)
+                        _("Order {} does not exist".format(order_id))
                     )
 
                 try:
                     payment = order.payments.get(pk=payment_id)
                 except order.payments.model.DoesNotExist:
                     payment = order.payments.model(
-                        order=order, payment_module="%s" % self.name
+                        order=order, payment_module=f"{self.name}"
                     )
 
                 payment.status = OrderPayment.PROCESSED
@@ -166,7 +167,7 @@ class PaymentProcessor(ProcessorBase):
                 order = order.reload()
                 payment.amount = Decimal(amount)
 
-                logger.info("Pagseguro: Successfully processed request for %s" % order)
+                logger.info(f"Pagseguro: Successfully processed request for {order}")
 
                 if payment.authorized and plata.settings.PLATA_STOCK_TRACKING:
                     StockTransaction = plata.stock_model()

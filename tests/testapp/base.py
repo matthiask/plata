@@ -120,7 +120,7 @@ class PlataTest(TestCase):
 
         Product = plata.product_model()
         product = Product.objects.create(
-            name="Test Product %s" % PRODUCTION_CREATION_COUNTER
+            name=f"Test Product {PRODUCTION_CREATION_COUNTER}"
         )
 
         if stock:

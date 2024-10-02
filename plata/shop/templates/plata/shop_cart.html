@@ -2,18 +2,18 @@
 
 {% load i18n plata_tags %}
 
-{% block title %}{% trans "Cart" %} - {{ block.super }}{% endblock %}
+{% block title %}{% translate "Cart" %} - {{ block.super }}{% endblock %}
 
 {% block content %}
 {% if empty %}
-<h1>{% trans "Cart is empty!" %}</h1>
+<h1>{% translate "Cart is empty!" %}</h1>
 {% else %}
-<h1>{% trans "Cart" %}</h1>
+<h1>{% translate "Cart" %}</h1>
 
 {% url 'plata_product_list' as ppl_url %}
-<p>{% blocktrans %}
+<p>{% blocktranslate %}
 You may add products by going to the <a href="{{ ppl_url }}"> products list</a>.
-To proceed to payment, select the "Checkout" button below.{% endblocktrans %}
+To proceed to payment, select the "Checkout" button below.{% endblocktranslate %}
 </p>
 
 <form method="post" action=".">{% csrf_token %}{{ orderitemformset.management_form }}
@@ -21,18 +21,18 @@ To proceed to payment, select the "Checkout" button below.{% endblocktrans %}
 {% form_errors orderitemformset %}
 <table>
     <tr>
-        <th>{% trans "product"|capfirst %}</th>
-        <th>{% trans "unit price"|capfirst %}</th>
-        <th>{% trans "quantity"|capfirst %}</th>
-        <th>{% trans "line item price"|capfirst %}</th>
-        <th>{% trans "Delete" %}</th>
+        <th>{% translate "product"|capfirst %}</th>
+        <th>{% translate "unit price"|capfirst %}</th>
+        <th>{% translate "quantity"|capfirst %}</th>
+        <th>{% translate "line item price"|capfirst %}</th>
+        <th>{% translate "Delete" %}</th>
     </tr>
 {% for orderitemform in orderitemformset.forms %}
     <tr>
         <td>{{ orderitemform.instance.product }}</td>
         <td>{{ orderitemform.instance.unit_price|floatformat:2 }}</td>
         <td>
-            {{ orderitemform.id }}
+            {{ orderitemform.id }}
             {% form_item_plain orderitemform.quantity %}
         </td>
         <td>{{ orderitemform.instance.discounted_subtotal|floatformat:2 }}</td>
@@ -42,11 +42,11 @@ To proceed to payment, select the "Checkout" button below.{% endblocktrans %}
     <tr>
         <td colspan="2"></td>
         <td colspan="3">
-            <input type="submit" name="save" value="{% trans "Save" %}" />
-            <input type="submit" name="checkout" value="{% trans "Checkout" %}" />
+            <input type="submit" name="save" value="{% translate "Save" %}" />
+            <input type="submit" name="checkout" value="{% translate "Checkout" %}" />
         </td>
     </tr>
 </table>
 </form>
 {% endif %}
-{% endblock %}
+{% endblock content %}

@@ -58,13 +58,13 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "%s.urls" % EXAMPLE
+ROOT_URLCONF = f"{EXAMPLE}.urls"
 
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": ["%s/templates" % EXAMPLE],
+        "DIRS": [f"{EXAMPLE}/templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -78,7 +78,7 @@ TEMPLATES = [
     }
 ]
 
-WSGI_APPLICATION = "%s.wsgi.application" % EXAMPLE
+WSGI_APPLICATION = f"{EXAMPLE}.wsgi.application"
 
 
 # Database
@@ -87,7 +87,7 @@ WSGI_APPLICATION = "%s.wsgi.application" % EXAMPLE
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "%s.sqlite3" % EXAMPLE),
+        "NAME": os.path.join(BASE_DIR, f"{EXAMPLE}.sqlite3"),
     }
 }
 
@@ -139,7 +139,7 @@ PAYPAL = {"BUSINESS": "example@paypal.com", "LIVE": False}
 
 PLATA_REPORTING_ADDRESSLINE = "Example Corp. - 3. Example Street - 1234 Example"
 
-PLATA_SHOP_PRODUCT = "%s.Product" % EXAMPLE
+PLATA_SHOP_PRODUCT = f"{EXAMPLE}.Product"
 CURRENCIES = ("EUR", "CHF", "USD")
 
 TEST_RUNNER = "options.test_utils.test_runner_with_coverage"

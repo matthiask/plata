@@ -40,7 +40,7 @@ class Contact(BillingShippingAddress):
         verbose_name_plural = _("contacts")
 
     def __str__(self):
-        return "%s" % self.user
+        return f"{self.user}"
 
     def update_from_order(self, order, request=None):
         """

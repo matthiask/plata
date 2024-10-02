@@ -45,43 +45,43 @@ def handle_errors(bla):
         body = e.json_body
         err = body["error"]
         logger.error(
-            ("Status %s: " % e.http_status)
+            (f"Status {e.http_status}: ")
             + 'type "{type}", code "{code}", param "{param}": {message}'.format(**err)
         )
     except stripe.error.RateLimitError as e:
         # Too many requests made to the API too quickly
-        logger.error("RateLimitError: %s" % e)
+        logger.error(f"RateLimitError: {e}")
     except stripe.error.InvalidRequestError as e:
         # Invalid parameters were supplied to Stripe's API
-        logger.error("InvalidRequestError: %s" % e)
+        logger.error(f"InvalidRequestError: {e}")
     except stripe.error.AuthenticationError as e:
         # Authentication with Stripe's API failed
         # (maybe you changed API keys recently)
-        logger.error("AuthenticationError: %s" % e)
+        logger.error(f"AuthenticationError: {e}")
     except stripe.error.APIConnectionError as e:
         # Network communication with Stripe failed
-        logger.error("APIConnectionError: %s" % e)
+        logger.error(f"APIConnectionError: {e}")
     except stripe.error.StripeError as e:
         # Display a very generic error to the user, and maybe send
         # yourself an email
-        logger.error("StripeError: %s" % e)
+        logger.error(f"StripeError: {e}")
     except Exception as e:
         # Something else happened, completely unrelated to Stripe
-        logger.error("Exception: %s" % e)
+        logger.error(f"Exception: {e}")
 
 
 class PaymentProcessor(ProcessorBase):
     key = "stripe"
     default_name = _("Stripe")
-    template = "payment/%s_form.html" % key
+    template = f"payment/{key}_form.html"
     amount = 0
 
     def get_urls(self):
         return [
             re_path(
-                r"^payment/%s/$" % self.key,
+                rf"^payment/{self.key}/$",
                 self.callback,
-                name="%s_callback" % self.key,
+                name=f"{self.key}_callback",
             )
         ]
 
@@ -129,7 +129,7 @@ class PaymentProcessor(ProcessorBase):
             {
                 "order": order,
                 "payment": payment,
-                "post_url": "/payment/%s/" % self.key,  # internal, gets payment token
+                "post_url": f"/payment/{self.key}/",  # internal, gets payment token
                 "amount": self.amount,
                 "currency": order.currency.lower(),
                 "public_key": STRIPE["PUBLIC_KEY"],

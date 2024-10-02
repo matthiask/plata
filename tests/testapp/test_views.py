@@ -267,7 +267,7 @@ class ViewTest(PlataTest):
 
         # Clear order
         self.assertRedirects(
-            client.get("/order/new/?next=%s" % p1.get_absolute_url()),
+            client.get(f"/order/new/?next={p1.get_absolute_url()}"),
             p1.get_absolute_url(),
         )
         # Can call URL several times without change in behavior
@@ -294,11 +294,11 @@ class ViewTest(PlataTest):
 
         client.login(username="admin", password="password")
         self.assertEqual(
-            client.get("/reporting/invoice_pdf/%s/" % order.id)["Content-Type"],
+            client.get(f"/reporting/invoice_pdf/{order.id}/")["Content-Type"],
             "application/pdf",
         )
         self.assertEqual(
-            client.get("/reporting/packing_slip_pdf/%s/" % order.id)["Content-Type"],
+            client.get(f"/reporting/packing_slip_pdf/{order.id}/")["Content-Type"],
             "application/pdf",
         )
         self.assertEqual(
@@ -422,7 +422,7 @@ class ViewTest(PlataTest):
             qs = parse_qs(args[1])
             self.assertEqual(qs["cmd"][0], "_notify-validate")
             for k, v in paypal_ipn_data.items():
-                self.assertEqual("%s" % qs[k][0], v)
+                self.assertEqual(f"{qs[k][0]}", v)
             s = BytesIO(b"VERIFIED")
             return s
 
@@ -624,7 +624,7 @@ class ViewTest(PlataTest):
         contact = Contact.objects.get()
         # First name should be updated in checkout processing
         self.assertEqual(contact.billing_first_name, "Fritz")
-        self.assertEqual("%s" % contact, "else@example.com")  # Username
+        self.assertEqual(f"{contact}", "else@example.com")  # Username
 
         # Order should be assigned to contact
         self.assertEqual(Order.objects.count(), 1)

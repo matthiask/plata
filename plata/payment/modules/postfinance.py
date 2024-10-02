@@ -94,7 +94,7 @@ class PaymentProcessor(ProcessorBase):
         if not order.balance_remaining:
             return self.already_paid(order, request=request)
 
-        logger.info("Processing order %s using Postfinance" % order)
+        logger.info(f"Processing order {order} using Postfinance")
 
         payment = self.create_pending_payment(order)
         if plata.settings.PLATA_STOCK_TRACKING:
@@ -109,8 +109,9 @@ class PaymentProcessor(ProcessorBase):
 
         form_params = {
             "orderID": "Order-%d-%d" % (order.id, payment.id),
-            "amount": "%s"
-            % int(order.balance_remaining.quantize(Decimal("0.00")) * 100),
+            "amount": "{}".format(
+                int(order.balance_remaining.quantize(Decimal("0.00")) * 100)
+            ),
             "currency": order.currency,
             "PSPID": POSTFINANCE["PSPID"],
             "mode": POSTFINANCE["LIVE"] and "prod" or "test",
@@ -132,7 +133,7 @@ class PaymentProcessor(ProcessorBase):
 
         return self.shop.render(
             request,
-            "payment/%s_form.html" % self.key,
+            f"payment/{self.key}_form.html",
             {
                 "order": order,
                 "HTTP_HOST": request.get_host(),
@@ -147,7 +148,7 @@ class PaymentProcessor(ProcessorBase):
 
         try:
             parameters_repr = repr(request.POST.copy()).encode("utf-8")
-            logger.info("IPN: Processing request data %s" % parameters_repr)
+            logger.info(f"IPN: Processing request data {parameters_repr}")
 
             try:
                 orderID = request.POST["orderID"]
@@ -162,7 +163,7 @@ class PaymentProcessor(ProcessorBase):
                 BRAND = request.POST["BRAND"]
                 SHASIGN = request.POST["SHASIGN"]
             except KeyError:
-                logger.error("IPN: Missing data in %s" % parameters_repr)
+                logger.error(f"IPN: Missing data in {parameters_repr}")
                 return HttpResponseForbidden("Missing data")
 
             sha1_source = "".join(
@@ -184,13 +185,13 @@ class PaymentProcessor(ProcessorBase):
             sha1_out = sha1(sha1_source.encode("utf-8")).hexdigest()
 
             if sha1_out.lower() != SHASIGN.lower():
-                logger.error("IPN: Invalid hash in %s" % parameters_repr)
+                logger.error(f"IPN: Invalid hash in {parameters_repr}")
                 return HttpResponseForbidden("Hash did not validate")
 
             try:
                 order, order_id, payment_id = orderID.split("-")
             except ValueError:
-                logger.error("IPN: Error getting order for %s" % orderID)
+                logger.error(f"IPN: Error getting order for {orderID}")
                 return HttpResponseForbidden("Malformed order ID")
 
             # Try fetching the order and order payment objects
@@ -199,14 +200,14 @@ class PaymentProcessor(ProcessorBase):
             try:
                 order = self.shop.order_model.objects.get(pk=order_id)
             except self.shop.order_model.DoesNotExist:
-                logger.error("IPN: Order %s does not exist" % order_id)
-                return HttpResponseForbidden("Order %s does not exist" % order_id)
+                logger.error(f"IPN: Order {order_id} does not exist")
+                return HttpResponseForbidden(f"Order {order_id} does not exist")
 
             try:
                 payment = order.payments.get(pk=payment_id)
             except order.payments.model.DoesNotExist:
                 payment = order.payments.model(
-                    order=order, payment_module="%s" % self.name
+                    order=order, payment_module=f"{self.name}"
                 )
 
             payment.status = OrderPayment.PROCESSED
@@ -224,7 +225,7 @@ class PaymentProcessor(ProcessorBase):
             payment.save()
             order = order.reload()
 
-            logger.info("IPN: Successfully processed IPN request for %s" % order)
+            logger.info(f"IPN: Successfully processed IPN request for {order}")
 
             if payment.authorized and plata.settings.PLATA_STOCK_TRACKING:
                 StockTransaction = plata.stock_model()
@@ -241,5 +242,5 @@ class PaymentProcessor(ProcessorBase):
 
             return HttpResponse("OK")
         except Exception as e:
-            logger.error("IPN: Processing failure %s" % e)
+            logger.error(f"IPN: Processing failure {e}")
             raise

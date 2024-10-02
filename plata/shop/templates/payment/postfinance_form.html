@@ -3,9 +3,9 @@
 {% load i18n %}
 
 {% block content %}
-<h1>{% trans "Payment" %}</h1>
+<h1>{% translate "Payment" %}</h1>
 
-<p>{% trans "You will be forwarded to Postfinance for payment now." %}</p>
+<p>{% translate "You will be forwarded to Postfinance for payment now." %}</p>
 
 <form method="post" action="https://e-payment.postfinance.ch/ncol/{{ form_params.mode }}/orderstandard.asp" id="postfinanceform">
 {% block parameters %}
@@ -26,8 +26,8 @@
 <input type="hidden" name="declineurl" value="http://{{ HTTP_HOST }}{% url "plata_order_payment_failure" %}" />
 <input type="hidden" name="exceptionurl" value="http://{{ HTTP_HOST }}{% url "plata_order_payment_failure" %}" />
 <input type="hidden" name="cancelurl" value="http://{{ HTTP_HOST }}{% url "plata_order_payment_failure" %}" />
-{% endblock %}
-<input type="submit" value="{% trans "Pay now" %}" />
+{% endblock parameters %}
+<input type="submit" value="{% translate "Pay now" %}" />
 </form>
 
 <script type="text/javascript">
@@ -35,4 +35,4 @@ window.setTimeout(function(){
     document.getElementById('postfinanceform').submit();
 }, 1000);
 </script>
-{% endblock %}
+{% endblock content %}

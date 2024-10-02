@@ -32,7 +32,7 @@ shop_instance_cache = None
 
 
 def register(instance):
-    logger.debug("Registering shop instance: %s" % instance)
+    logger.debug(f"Registering shop instance: {instance}")
 
     global shop_instance_cache
     shop_instance_cache = instance

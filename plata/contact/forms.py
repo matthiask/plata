@@ -8,8 +8,8 @@ from plata.shop.models import Order
 class CheckoutForm(shop_forms.BaseCheckoutForm):
     class Meta:
         fields = ["notes", "email", "phone", "shipping_same_as_billing"]
-        fields.extend("billing_%s" % f for f in Order.ADDRESS_FIELDS)
-        fields.extend("shipping_%s" % f for f in Order.ADDRESS_FIELDS)
+        fields.extend(f"billing_{f}" for f in Order.ADDRESS_FIELDS)
+        fields.extend(f"shipping_{f}" for f in Order.ADDRESS_FIELDS)
         model = Order
 
     def __init__(self, *args, **kwargs):
@@ -31,8 +31,8 @@ class CheckoutForm(shop_forms.BaseCheckoutForm):
             }
 
             for f in contact.ADDRESS_FIELDS:
-                initial["billing_%s" % f] = getattr(contact, "billing_%s" % f)
-                initial["shipping_%s" % f] = getattr(contact, "shipping_%s" % f)
+                initial[f"billing_{f}"] = getattr(contact, f"billing_{f}")
+                initial[f"shipping_{f}"] = getattr(contact, f"shipping_{f}")
 
             kwargs["initial"] = initial
 
@@ -55,7 +55,7 @@ class CheckoutForm(shop_forms.BaseCheckoutForm):
 
         if not data.get("shipping_same_as_billing"):
             for f in self.REQUIRED_ADDRESS_FIELDS:
-                field = "shipping_%s" % f
+                field = f"shipping_{f}"
                 if not data.get(field):
                     self._errors[field] = self.error_class(
                         [_("This field is required.")]

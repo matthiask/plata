@@ -33,7 +33,7 @@ def product_xls():
         transactions[t["product"]][t["type"]] = t["change__sum"]
 
     titles = [capfirst(_("product")), _("SKU"), capfirst(_("stock"))]
-    titles.extend("%s" % row[1] for row in StockTransaction.TYPE_CHOICES)
+    titles.extend(f"{row[1]}" for row in StockTransaction.TYPE_CHOICES)
 
     data = []
 

@@ -2,15 +2,15 @@
 
 {% load i18n %}
 
-{% block title %}{{ object }} - {% trans "Products" %} - {{ block.super }}{% endblock %}
+{% block title %}{{ object }} - {% translate "Products" %} - {{ block.super }}{% endblock %}
 
 {% block content %}
 <div class="h-product">
 <h1 class="p-name">{{ object }}</h1>
 
 <div class="e-description">{{ object.description|linebreaks }}<br />
-{% if object.content_object.weight %}{% trans "Weight:" %} {{ object.content_object.weight }} kg{% endif %}
-{% if object.content_type.name == "download" %}({% trans "Download" %}){% endif %}
+{% if object.content_object.weight %}{% translate "Weight:" %} {{ object.content_object.weight }} kg{% endif %}
+{% if object.content_type.name == "download" %}({% translate "Download" %}){% endif %}
 </div>
 <div class="p-category" style="display:none;">{{ object.content_type }}</div>
 
@@ -25,7 +25,7 @@
 <table>
 {{ form }}
 </table>
-<input type="submit" value="{% trans "Add to cart" %}" />
+<input type="submit" value="{% translate "Add to cart" %}" />
 </form>
 </div>
-{% endblock %}
+{% endblock content %}

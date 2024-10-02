@@ -3,9 +3,9 @@
 {% load i18n %}
 
 {% block content %}
-<h1>{% trans "Payment" %}</h1>
+<h1>{% translate "Payment" %}</h1>
 
-<p>{% trans "You will be forwarded to Ogone for payment now." %}</p>
+<p>{% translate "You will be forwarded to Ogone for payment now." %}</p>
 
 <form method="post" action="https://secure.ogone.com/ncol/{{ form_params.mode }}/orderstandard.asp" id="ogoneform">
 {% block parameters %}
@@ -24,8 +24,8 @@
 <input type="hidden" name="exceptionurl" value="{{ form_params.exceptionurl }}" />
 <input type="hidden" name="cancelurl" value="{{ form_params.cancelurl }}" />
 <input type="hidden" name="SHASign" value="{{ form_params.SHASign }}" />
-{% endblock %}
-<input type="submit" value="{% trans "Pay now" %}" />
+{% endblock parameters %}
+<input type="submit" value="{% translate "Pay now" %}" />
 </form>
 
 <script type="text/javascript">
@@ -33,4 +33,4 @@ window.setTimeout(function(){
     document.getElementById('ogoneform').submit();
 }, 1000);
 </script>
-{% endblock %}
+{% endblock content %}

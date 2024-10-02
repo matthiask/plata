@@ -149,7 +149,7 @@ class DiscountBase(models.Model):
         elif self.type == self.MEANS_OF_PAYMENT:
             self._apply_means_of_payment(order, items)
         else:
-            raise NotImplementedError("Unknown discount type %s" % self.type)
+            raise NotImplementedError(f"Unknown discount type {self.type}")
 
     def _apply_amount_discount(self, order, items, tax_included):
         """

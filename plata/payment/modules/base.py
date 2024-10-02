@@ -90,7 +90,7 @@ class ProcessorBase:
         """
         Clear pending payments
         """
-        logger.info("Clearing pending payments on %s" % order)
+        logger.info(f"Clearing pending payments on {order}")
         if plata.settings.PLATA_STOCK_TRACKING:
             StockTransaction = plata.stock_model()
             for transaction in order.stock_transactions.filter(
@@ -105,12 +105,12 @@ class ProcessorBase:
         Create a pending payment
         """
         self.clear_pending_payments(order)
-        logger.info("Creating pending payment on %s" % order)
+        logger.info(f"Creating pending payment on {order}")
         return order.payments.create(
             currency=order.currency,
             amount=order.balance_remaining,
             payment_module_key=self.key,
-            payment_module="%s" % self.name,
+            payment_module=f"{self.name}",
         )
 
     def create_transactions(self, order, stage, **kwargs):
@@ -217,7 +217,7 @@ class ProcessorBase:
         Does nothing if the order **status** is ``PAID`` already.
         """
         if order.status < order.PAID:
-            logger.info("Order %s is already completely paid" % order)
+            logger.info(f"Order {order} is already completely paid")
 
             if plata.settings.PLATA_STOCK_TRACKING:
                 StockTransaction = plata.stock_model()
